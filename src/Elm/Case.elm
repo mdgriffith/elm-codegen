@@ -402,13 +402,15 @@ triple mainExpression one two three branches =
 
 {-|
 
-    Elm.Case.triple myResult
+    Elm.Case.result myResult
         { ok =
-            \ok ->
-                Elm.string "No errors"
+            Tuple.pair "ok" <|
+                \ok ->
+                    Elm.string "No errors"
         , err =
-            \err ->
-                err
+            Tuple.pair "err" <|
+                \err ->
+                    err
         }
 
 Generates
