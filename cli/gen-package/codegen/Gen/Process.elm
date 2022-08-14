@@ -30,7 +30,7 @@ come in a later release!
 spawn: Task.Task x a -> Task.Task y Process.Id
 -}
 spawn : Elm.Expression -> Elm.Expression
-spawn arg =
+spawn spawnArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Process" ]
@@ -53,7 +53,7 @@ spawn arg =
                     )
             }
         )
-        [ arg ]
+        [ spawnArg ]
 
 
 {-| Block progress on the current process for the given number of milliseconds.
@@ -65,7 +65,7 @@ delay work until later.
 sleep: Float -> Task.Task x ()
 -}
 sleep : Float -> Elm.Expression
-sleep arg =
+sleep sleepArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Process" ]
@@ -82,7 +82,7 @@ sleep arg =
                     )
             }
         )
-        [ Elm.float arg ]
+        [ Elm.float sleepArg ]
 
 
 {-| Sometimes you `spawn` a process, but later decide it would be a waste to
@@ -93,7 +93,7 @@ flight, it will also abort the request.
 kill: Process.Id -> Task.Task x ()
 -}
 kill : Elm.Expression -> Elm.Expression
-kill arg =
+kill killArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Process" ]
@@ -110,7 +110,7 @@ kill arg =
                     )
             }
         )
-        [ arg ]
+        [ killArg ]
 
 
 annotation_ : { id : Type.Annotation }
@@ -131,7 +131,7 @@ call_ :
     }
 call_ =
     { spawn =
-        \arg ->
+        \spawnArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -154,9 +154,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ spawnArg ]
     , sleep =
-        \arg ->
+        \sleepArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -173,9 +173,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ sleepArg ]
     , kill =
-        \arg ->
+        \killArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -192,7 +192,7 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ killArg ]
     }
 
 

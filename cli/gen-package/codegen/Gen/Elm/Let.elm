@@ -17,7 +17,7 @@ moduleName_ =
 
 {-| letIn: a -> Elm.Let.Let a -}
 letIn : Elm.Expression -> Elm.Expression
-letIn arg =
+letIn letInArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -30,12 +30,12 @@ letIn arg =
                     )
             }
         )
-        [ arg ]
+        [ letInArg ]
 
 
 {-| value: String -> Elm.Expression -> Elm.Let.Let (Elm.Expression -> a) -> Elm.Let.Let a -}
 value : String -> Elm.Expression -> Elm.Expression -> Elm.Expression
-value arg arg0 arg1 =
+value valueArg valueArg0 valueArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -57,7 +57,7 @@ value arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.string arg, arg0, arg1 ]
+        [ Elm.string valueArg, valueArg0, valueArg1 ]
 
 
 {-| tuple: 
@@ -68,7 +68,7 @@ value arg arg0 arg1 =
     -> Elm.Let.Let a
 -}
 tuple : String -> String -> Elm.Expression -> Elm.Expression -> Elm.Expression
-tuple arg arg0 arg1 arg2 =
+tuple tupleArg tupleArg0 tupleArg1 tupleArg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -94,7 +94,7 @@ tuple arg arg0 arg1 arg2 =
                     )
             }
         )
-        [ Elm.string arg, Elm.string arg0, arg1, arg2 ]
+        [ Elm.string tupleArg, Elm.string tupleArg0, tupleArg1, tupleArg2 ]
 
 
 {-| record: 
@@ -104,7 +104,7 @@ tuple arg arg0 arg1 arg2 =
     -> Elm.Let.Let a
 -}
 record : List String -> Elm.Expression -> Elm.Expression -> Elm.Expression
-record arg arg0 arg1 =
+record recordArg recordArg0 recordArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -128,7 +128,7 @@ record arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg), arg0, arg1 ]
+        [ Elm.list (List.map Elm.string recordArg), recordArg0, recordArg1 ]
 
 
 {-| fn: 
@@ -144,7 +144,7 @@ fn :
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-fn arg arg0 arg1 arg2 =
+fn fnArg fnArg0 fnArg1 fnArg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -180,7 +180,11 @@ fn arg arg0 arg1 arg2 =
                     )
             }
         )
-        [ Elm.string arg, arg0, Elm.functionReduced "unpack" arg1, arg2 ]
+        [ Elm.string fnArg
+        , fnArg0
+        , Elm.functionReduced "fnUnpack" fnArg1
+        , fnArg2
+        ]
 
 
 {-| fn2: 
@@ -198,7 +202,7 @@ fn2 :
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-fn2 arg arg0 arg1 arg2 arg3 =
+fn2 fn2Arg fn2Arg0 fn2Arg1 fn2Arg2 fn2Arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -247,13 +251,15 @@ fn2 arg arg0 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.string arg
-        , arg0
-        , arg1
+        [ Elm.string fn2Arg
+        , fn2Arg0
+        , fn2Arg1
         , Elm.functionReduced
-            "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg2 unpack))
-        , arg3
+            "fn2Unpack"
+            (\functionReducedUnpack ->
+                Elm.functionReduced "unpack" (fn2Arg2 functionReducedUnpack)
+            )
+        , fn2Arg3
         ]
 
 
@@ -278,7 +284,7 @@ fn3 :
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-fn3 arg arg0 arg1 arg2 arg3 arg4 =
+fn3 fn3Arg fn3Arg0 fn3Arg1 fn3Arg2 fn3Arg3 fn3Arg4 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -338,26 +344,30 @@ fn3 arg arg0 arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ Elm.string arg
-        , arg0
-        , arg1
-        , arg2
+        [ Elm.string fn3Arg
+        , fn3Arg0
+        , fn3Arg1
+        , fn3Arg2
         , Elm.functionReduced
-            "unpack"
-            (\unpack ->
+            "fn3Unpack"
+            (\functionReducedUnpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack0 ->
-                        Elm.functionReduced "unpack" (arg3 unpack unpack0)
+                    (\functionReducedUnpack0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (fn3Arg3 functionReducedUnpack
+                                functionReducedUnpack0
+                            )
                     )
             )
-        , arg4
+        , fn3Arg4
         ]
 
 
 {-| toExpression: Elm.Let.Let Elm.Expression -> Elm.Expression -}
 toExpression : Elm.Expression -> Elm.Expression
-toExpression arg =
+toExpression toExpressionArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -374,7 +384,7 @@ toExpression arg =
                     )
             }
         )
-        [ arg ]
+        [ toExpressionArg ]
 
 
 call_ :
@@ -414,7 +424,7 @@ call_ :
     }
 call_ =
     { letIn =
-        \arg ->
+        \letInArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -431,9 +441,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ letInArg ]
     , value =
-        \arg arg0 arg1 ->
+        \valueArg valueArg0 valueArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -463,9 +473,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ valueArg, valueArg0, valueArg1 ]
     , tuple =
-        \arg arg0 arg1 arg2 ->
+        \tupleArg tupleArg0 tupleArg1 tupleArg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -503,9 +513,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2 ]
+                [ tupleArg, tupleArg0, tupleArg1, tupleArg2 ]
     , record =
-        \arg arg0 arg1 ->
+        \recordArg recordArg0 recordArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -537,9 +547,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ recordArg, recordArg0, recordArg1 ]
     , fn =
-        \arg arg0 arg1 arg2 ->
+        \fnArg fnArg0 fnArg1 fnArg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -587,9 +597,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2 ]
+                [ fnArg, fnArg0, fnArg1, fnArg2 ]
     , fn2 =
-        \arg arg0 arg1 arg2 arg3 ->
+        \fn2Arg fn2Arg0 fn2Arg1 fn2Arg2 fn2Arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -652,9 +662,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2, arg3 ]
+                [ fn2Arg, fn2Arg0, fn2Arg1, fn2Arg2, fn2Arg3 ]
     , fn3 =
-        \arg arg0 arg1 arg2 arg3 arg4 ->
+        \fn3Arg fn3Arg0 fn3Arg1 fn3Arg2 fn3Arg3 fn3Arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -731,9 +741,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2, arg3, arg4 ]
+                [ fn3Arg, fn3Arg0, fn3Arg1, fn3Arg2, fn3Arg3, fn3Arg4 ]
     , toExpression =
-        \arg ->
+        \toExpressionArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -750,7 +760,7 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ toExpressionArg ]
     }
 
 

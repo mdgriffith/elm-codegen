@@ -49,7 +49,7 @@ worker :
     , subscriptions : Elm.Expression -> Elm.Expression
     }
     -> Elm.Expression
-worker arg =
+worker workerArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -101,17 +101,22 @@ worker arg =
             }
         )
         [ Elm.record
-            [ Tuple.pair "init" (Elm.functionReduced "unpack" arg.init)
+            [ Tuple.pair
+                "init"
+                (Elm.functionReduced "workerUnpack" workerArg.init)
             , Tuple.pair
                 "update"
                 (Elm.functionReduced
-                    "unpack"
-                    (\unpack -> Elm.functionReduced "unpack" (arg.update unpack)
+                    "workerUnpack"
+                    (\functionReducedUnpack ->
+                        Elm.functionReduced
+                            "unpack"
+                            (workerArg.update functionReducedUnpack)
                     )
                 )
             , Tuple.pair
                 "subscriptions"
-                (Elm.functionReduced "unpack" arg.subscriptions)
+                (Elm.functionReduced "workerUnpack" workerArg.subscriptions)
             ]
         ]
 
@@ -122,7 +127,7 @@ be handled by the overall `update` function, just like events from `Html`.
 sendToApp: Platform.Router msg a -> msg -> Platform.Task x ()
 -}
 sendToApp : Elm.Expression -> Elm.Expression -> Elm.Expression
-sendToApp arg arg0 =
+sendToApp sendToAppArg sendToAppArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -144,7 +149,7 @@ sendToApp arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ sendToAppArg, sendToAppArg0 ]
 
 
 {-| Send the router a message for your effect manager. This message will
@@ -156,7 +161,7 @@ As an example, the effect manager for web sockets
 sendToSelf: Platform.Router a msg -> msg -> Platform.Task x ()
 -}
 sendToSelf : Elm.Expression -> Elm.Expression -> Elm.Expression
-sendToSelf arg arg0 =
+sendToSelf sendToSelfArg sendToSelfArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -178,7 +183,7 @@ sendToSelf arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ sendToSelfArg, sendToSelfArg0 ]
 
 
 annotation_ :
@@ -190,11 +195,18 @@ annotation_ :
     }
 annotation_ =
     { program =
-        \arg0 arg1 arg2 -> Type.namedWith [] "Program" [ arg0, arg1, arg2 ]
-    , task = \arg0 arg1 -> Type.namedWith [ "Platform" ] "Task" [ arg0, arg1 ]
+        \programArg0 programArg1 programArg2 ->
+            Type.namedWith
+                []
+                "Program"
+                [ programArg0, programArg1, programArg2 ]
+    , task =
+        \taskArg0 taskArg1 ->
+            Type.namedWith [ "Platform" ] "Task" [ taskArg0, taskArg1 ]
     , processId = Type.namedWith [ "Platform" ] "ProcessId" []
     , router =
-        \arg0 arg1 -> Type.namedWith [ "Platform" ] "Router" [ arg0, arg1 ]
+        \routerArg0 routerArg1 ->
+            Type.namedWith [ "Platform" ] "Router" [ routerArg0, routerArg1 ]
     }
 
 
@@ -205,7 +217,7 @@ call_ :
     }
 call_ =
     { worker =
-        \arg ->
+        \workerArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -260,9 +272,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ workerArg ]
     , sendToApp =
-        \arg arg0 ->
+        \sendToAppArg sendToAppArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -284,9 +296,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ sendToAppArg, sendToAppArg0 ]
     , sendToSelf =
-        \arg arg0 ->
+        \sendToSelfArg sendToSelfArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -308,7 +320,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ sendToSelfArg, sendToSelfArg0 ]
     }
 
 

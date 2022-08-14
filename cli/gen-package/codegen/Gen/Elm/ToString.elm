@@ -17,7 +17,7 @@ moduleName_ =
 
 {-| expression: Elm.Expression -> { imports : String, body : String, signature : String } -}
 expression : Elm.Expression -> Elm.Expression
-expression arg =
+expression expressionArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "ToString" ]
@@ -35,12 +35,12 @@ expression arg =
                     )
             }
         )
-        [ arg ]
+        [ expressionArg ]
 
 
 {-| annotation: Elm.Annotation.Annotation -> { imports : String, signature : String } -}
 annotation : Elm.Expression -> Elm.Expression
-annotation arg =
+annotation annotationArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "ToString" ]
@@ -58,7 +58,7 @@ annotation arg =
                     )
             }
         )
-        [ arg ]
+        [ annotationArg ]
 
 
 {-| declaration: 
@@ -66,7 +66,7 @@ annotation arg =
     -> { imports : String, docs : String, signature : String, body : String }
 -}
 declaration : Elm.Expression -> Elm.Expression
-declaration arg =
+declaration declarationArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "ToString" ]
@@ -85,7 +85,7 @@ declaration arg =
                     )
             }
         )
-        [ arg ]
+        [ declarationArg ]
 
 
 call_ :
@@ -95,7 +95,7 @@ call_ :
     }
 call_ =
     { expression =
-        \arg ->
+        \expressionArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "ToString" ]
@@ -113,9 +113,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ expressionArg ]
     , annotation =
-        \arg ->
+        \annotationArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "ToString" ]
@@ -136,9 +136,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ annotationArg ]
     , declaration =
-        \arg ->
+        \declarationArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "ToString" ]
@@ -157,7 +157,7 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ declarationArg ]
     }
 
 

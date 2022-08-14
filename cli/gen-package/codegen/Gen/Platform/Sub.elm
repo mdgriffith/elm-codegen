@@ -37,7 +37,7 @@ subscriptions.
 batch: List (Platform.Sub.Sub msg) -> Platform.Sub.Sub msg
 -}
 batch : List Elm.Expression -> Elm.Expression
-batch arg =
+batch batchArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform", "Sub" ]
@@ -51,7 +51,7 @@ batch arg =
                     )
             }
         )
-        [ Elm.list arg ]
+        [ Elm.list batchArg ]
 
 
 {-| Transform the messages produced by a subscription.
@@ -65,7 +65,7 @@ section on [structure][] in the guide before reaching for this!
 map: (a -> msg) -> Platform.Sub.Sub a -> Platform.Sub.Sub msg
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg arg0 =
+map mapArg mapArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform", "Sub" ]
@@ -80,12 +80,12 @@ map arg arg0 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg, arg0 ]
+        [ Elm.functionReduced "mapUnpack" mapArg, mapArg0 ]
 
 
 annotation_ : { sub : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { sub = \arg0 -> Type.namedWith [] "Sub" [ arg0 ] }
+    { sub = \subArg0 -> Type.namedWith [] "Sub" [ subArg0 ] }
 
 
 call_ :
@@ -94,7 +94,7 @@ call_ :
     }
 call_ =
     { batch =
-        \arg ->
+        \batchArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Sub" ]
@@ -109,9 +109,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ batchArg ]
     , map =
-        \arg arg0 ->
+        \mapArg mapArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Sub" ]
@@ -128,7 +128,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ mapArg, mapArg0 ]
     }
 
 

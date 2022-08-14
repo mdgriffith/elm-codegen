@@ -33,7 +33,7 @@ empty =
 singleton: comparable -> Set.Set comparable
 -}
 singleton : Elm.Expression -> Elm.Expression
-singleton arg =
+singleton singletonArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -50,7 +50,7 @@ singleton arg =
                     )
             }
         )
-        [ arg ]
+        [ singletonArg ]
 
 
 {-| Insert a value into a set.
@@ -58,7 +58,7 @@ singleton arg =
 insert: comparable -> Set.Set comparable -> Set.Set comparable
 -}
 insert : Elm.Expression -> Elm.Expression -> Elm.Expression
-insert arg arg0 =
+insert insertArg insertArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -80,7 +80,7 @@ insert arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ insertArg, insertArg0 ]
 
 
 {-| Remove a value from a set. If the value is not found, no changes are made.
@@ -88,7 +88,7 @@ insert arg arg0 =
 remove: comparable -> Set.Set comparable -> Set.Set comparable
 -}
 remove : Elm.Expression -> Elm.Expression -> Elm.Expression
-remove arg arg0 =
+remove removeArg removeArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -110,7 +110,7 @@ remove arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ removeArg, removeArg0 ]
 
 
 {-| Determine if a set is empty.
@@ -118,7 +118,7 @@ remove arg arg0 =
 isEmpty: Set.Set a -> Bool
 -}
 isEmpty : Elm.Expression -> Elm.Expression
-isEmpty arg =
+isEmpty isEmptyArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -131,7 +131,7 @@ isEmpty arg =
                     )
             }
         )
-        [ arg ]
+        [ isEmptyArg ]
 
 
 {-| Determine if a value is in a set.
@@ -139,7 +139,7 @@ isEmpty arg =
 member: comparable -> Set.Set comparable -> Bool
 -}
 member : Elm.Expression -> Elm.Expression -> Elm.Expression
-member arg arg0 =
+member memberArg memberArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -157,7 +157,7 @@ member arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ memberArg, memberArg0 ]
 
 
 {-| Determine the number of elements in a set.
@@ -165,7 +165,7 @@ member arg arg0 =
 size: Set.Set a -> Int
 -}
 size : Elm.Expression -> Elm.Expression
-size arg =
+size sizeArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -178,7 +178,7 @@ size arg =
                     )
             }
         )
-        [ arg ]
+        [ sizeArg ]
 
 
 {-| Get the union of two sets. Keep all values.
@@ -186,7 +186,7 @@ size arg =
 union: Set.Set comparable -> Set.Set comparable -> Set.Set comparable
 -}
 union : Elm.Expression -> Elm.Expression -> Elm.Expression
-union arg arg0 =
+union unionArg unionArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -211,7 +211,7 @@ union arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ unionArg, unionArg0 ]
 
 
 {-| Get the intersection of two sets. Keeps values that appear in both sets.
@@ -219,7 +219,7 @@ union arg arg0 =
 intersect: Set.Set comparable -> Set.Set comparable -> Set.Set comparable
 -}
 intersect : Elm.Expression -> Elm.Expression -> Elm.Expression
-intersect arg arg0 =
+intersect intersectArg intersectArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -244,7 +244,7 @@ intersect arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ intersectArg, intersectArg0 ]
 
 
 {-| Get the difference between the first set and the second. Keeps values
@@ -253,7 +253,7 @@ that do not appear in the second set.
 diff: Set.Set comparable -> Set.Set comparable -> Set.Set comparable
 -}
 diff : Elm.Expression -> Elm.Expression -> Elm.Expression
-diff arg arg0 =
+diff diffArg diffArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -278,7 +278,7 @@ diff arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ diffArg, diffArg0 ]
 
 
 {-| Convert a set into a list, sorted from lowest to highest.
@@ -286,7 +286,7 @@ diff arg arg0 =
 toList: Set.Set a -> List a
 -}
 toList : Elm.Expression -> Elm.Expression
-toList arg =
+toList toListArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -299,7 +299,7 @@ toList arg =
                     )
             }
         )
-        [ arg ]
+        [ toListArg ]
 
 
 {-| Convert a list into a set, removing any duplicates.
@@ -307,7 +307,7 @@ toList arg =
 fromList: List comparable -> Set.Set comparable
 -}
 fromList : List Elm.Expression -> Elm.Expression
-fromList arg =
+fromList fromListArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -324,7 +324,7 @@ fromList arg =
                     )
             }
         )
-        [ Elm.list arg ]
+        [ Elm.list fromListArg ]
 
 
 {-| Map a function onto a set, creating a new set with no duplicates.
@@ -332,7 +332,7 @@ fromList arg =
 map: (comparable -> comparable2) -> Set.Set comparable -> Set.Set comparable2
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg arg0 =
+map mapArg mapArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -356,7 +356,7 @@ map arg arg0 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg, arg0 ]
+        [ Elm.functionReduced "mapUnpack" mapArg, mapArg0 ]
 
 
 {-| Fold over the values in a set, in order from lowest to highest.
@@ -368,7 +368,7 @@ foldl :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldl arg arg0 arg1 =
+foldl foldlArg foldlArg0 foldlArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -387,10 +387,12 @@ foldl arg arg0 arg1 =
             }
         )
         [ Elm.functionReduced
-            "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg unpack))
-        , arg0
-        , arg1
+            "foldlUnpack"
+            (\functionReducedUnpack ->
+                Elm.functionReduced "unpack" (foldlArg functionReducedUnpack)
+            )
+        , foldlArg0
+        , foldlArg1
         ]
 
 
@@ -403,7 +405,7 @@ foldr :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldr arg arg0 arg1 =
+foldr foldrArg foldrArg0 foldrArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -422,10 +424,12 @@ foldr arg arg0 arg1 =
             }
         )
         [ Elm.functionReduced
-            "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg unpack))
-        , arg0
-        , arg1
+            "foldrUnpack"
+            (\functionReducedUnpack ->
+                Elm.functionReduced "unpack" (foldrArg functionReducedUnpack)
+            )
+        , foldrArg0
+        , foldrArg1
         ]
 
 
@@ -446,7 +450,7 @@ foldr arg arg0 arg1 =
 filter: (comparable -> Bool) -> Set.Set comparable -> Set.Set comparable
 -}
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-filter arg arg0 =
+filter filterArg filterArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -468,7 +472,7 @@ filter arg arg0 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg, arg0 ]
+        [ Elm.functionReduced "filterUnpack" filterArg, filterArg0 ]
 
 
 {-| Create two new sets. The first contains all the elements that passed the
@@ -481,7 +485,7 @@ partition:
 -}
 partition :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-partition arg arg0 =
+partition partitionArg partitionArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -510,12 +514,12 @@ partition arg arg0 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg, arg0 ]
+        [ Elm.functionReduced "partitionUnpack" partitionArg, partitionArg0 ]
 
 
 annotation_ : { set : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { set = \arg0 -> Type.namedWith [ "Set" ] "Set" [ arg0 ] }
+    { set = \setArg0 -> Type.namedWith [ "Set" ] "Set" [ setArg0 ] }
 
 
 call_ :
@@ -540,7 +544,7 @@ call_ :
     }
 call_ =
     { singleton =
-        \arg ->
+        \singletonArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -557,9 +561,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ singletonArg ]
     , insert =
-        \arg arg0 ->
+        \insertArg insertArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -581,9 +585,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ insertArg, insertArg0 ]
     , remove =
-        \arg arg0 ->
+        \removeArg removeArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -605,9 +609,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ removeArg, removeArg0 ]
     , isEmpty =
-        \arg ->
+        \isEmptyArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -624,9 +628,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ isEmptyArg ]
     , member =
-        \arg arg0 ->
+        \memberArg memberArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -644,9 +648,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ memberArg, memberArg0 ]
     , size =
-        \arg ->
+        \sizeArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -663,9 +667,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ sizeArg ]
     , union =
-        \arg arg0 ->
+        \unionArg unionArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -690,9 +694,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ unionArg, unionArg0 ]
     , intersect =
-        \arg arg0 ->
+        \intersectArg intersectArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -717,9 +721,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ intersectArg, intersectArg0 ]
     , diff =
-        \arg arg0 ->
+        \diffArg diffArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -744,9 +748,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ diffArg, diffArg0 ]
     , toList =
-        \arg ->
+        \toListArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -763,9 +767,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ toListArg ]
     , fromList =
-        \arg ->
+        \fromListArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -782,9 +786,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ fromListArg ]
     , map =
-        \arg arg0 ->
+        \mapArg mapArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -808,9 +812,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ mapArg, mapArg0 ]
     , foldl =
-        \arg arg0 arg1 ->
+        \foldlArg foldlArg0 foldlArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -831,9 +835,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ foldlArg, foldlArg0, foldlArg1 ]
     , foldr =
-        \arg arg0 arg1 ->
+        \foldrArg foldrArg0 foldrArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -854,9 +858,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ foldrArg, foldrArg0, foldrArg1 ]
     , filter =
-        \arg arg0 ->
+        \filterArg filterArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -880,9 +884,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ filterArg, filterArg0 ]
     , partition =
-        \arg arg0 ->
+        \partitionArg partitionArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -913,7 +917,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ partitionArg, partitionArg0 ]
     }
 
 

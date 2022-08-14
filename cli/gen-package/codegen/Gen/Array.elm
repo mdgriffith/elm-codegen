@@ -41,7 +41,7 @@ the element at index `i` initialized to the result of `(f i)`.
 initialize: Int -> (Int -> a) -> Array.Array a
 -}
 initialize : Int -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-initialize arg arg0 =
+initialize initializeArg initializeArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -54,7 +54,9 @@ initialize arg arg0 =
                     )
             }
         )
-        [ Elm.int arg, Elm.functionReduced "unpack" arg0 ]
+        [ Elm.int initializeArg
+        , Elm.functionReduced "initializeUnpack" initializeArg0
+        ]
 
 
 {-| Creates an array with a given length, filled with a default element.
@@ -67,7 +69,7 @@ Notice that `repeat 3 x` is the same as `initialize 3 (always x)`.
 repeat: Int -> a -> Array.Array a
 -}
 repeat : Int -> Elm.Expression -> Elm.Expression
-repeat arg arg0 =
+repeat repeatArg repeatArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -80,7 +82,7 @@ repeat arg arg0 =
                     )
             }
         )
-        [ Elm.int arg, arg0 ]
+        [ Elm.int repeatArg, repeatArg0 ]
 
 
 {-| Create an array from a `List`.
@@ -88,7 +90,7 @@ repeat arg arg0 =
 fromList: List a -> Array.Array a
 -}
 fromList : List Elm.Expression -> Elm.Expression
-fromList arg =
+fromList fromListArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -101,7 +103,7 @@ fromList arg =
                     )
             }
         )
-        [ Elm.list arg ]
+        [ Elm.list fromListArg ]
 
 
 {-| Determine if an array is empty.
@@ -111,7 +113,7 @@ fromList arg =
 isEmpty: Array.Array a -> Bool
 -}
 isEmpty : Elm.Expression -> Elm.Expression
-isEmpty arg =
+isEmpty isEmptyArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -124,7 +126,7 @@ isEmpty arg =
                     )
             }
         )
-        [ arg ]
+        [ isEmptyArg ]
 
 
 {-| Return the length of an array.
@@ -134,7 +136,7 @@ isEmpty arg =
 length: Array.Array a -> Int
 -}
 length : Elm.Expression -> Elm.Expression
-length arg =
+length lengthArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -147,7 +149,7 @@ length arg =
                     )
             }
         )
-        [ arg ]
+        [ lengthArg ]
 
 
 {-| Return `Just` the element at the index or `Nothing` if the index is out of
@@ -161,7 +163,7 @@ range.
 get: Int -> Array.Array a -> Maybe a
 -}
 get : Int -> Elm.Expression -> Elm.Expression
-get arg arg0 =
+get getArg getArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -176,7 +178,7 @@ get arg arg0 =
                     )
             }
         )
-        [ Elm.int arg, arg0 ]
+        [ Elm.int getArg, getArg0 ]
 
 
 {-| Set the element at a particular index. Returns an updated array.
@@ -187,7 +189,7 @@ If the index is out of range, the array is unaltered.
 set: Int -> a -> Array.Array a -> Array.Array a
 -}
 set : Int -> Elm.Expression -> Elm.Expression -> Elm.Expression
-set arg arg0 arg1 =
+set setArg setArg0 setArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -203,7 +205,7 @@ set arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.int arg, arg0, arg1 ]
+        [ Elm.int setArg, setArg0, setArg1 ]
 
 
 {-| Push an element onto the end of an array.
@@ -213,7 +215,7 @@ set arg arg0 arg1 =
 push: a -> Array.Array a -> Array.Array a
 -}
 push : Elm.Expression -> Elm.Expression -> Elm.Expression
-push arg arg0 =
+push pushArg pushArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -228,7 +230,7 @@ push arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ pushArg, pushArg0 ]
 
 
 {-| Append two arrays to a new one.
@@ -238,7 +240,7 @@ push arg arg0 =
 append: Array.Array a -> Array.Array a -> Array.Array a
 -}
 append : Elm.Expression -> Elm.Expression -> Elm.Expression
-append arg arg0 =
+append appendArg appendArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -253,7 +255,7 @@ append arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ appendArg, appendArg0 ]
 
 
 {-| Get a sub-section of an array: `(slice start end array)`. The `start` is a
@@ -276,7 +278,7 @@ This makes it pretty easy to `pop` the last element off of an array:
 slice: Int -> Int -> Array.Array a -> Array.Array a
 -}
 slice : Int -> Int -> Elm.Expression -> Elm.Expression
-slice arg arg0 arg1 =
+slice sliceArg sliceArg0 sliceArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -292,7 +294,7 @@ slice arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.int arg, Elm.int arg0, arg1 ]
+        [ Elm.int sliceArg, Elm.int sliceArg0, sliceArg1 ]
 
 
 {-| Create a list of elements from an array.
@@ -302,7 +304,7 @@ slice arg arg0 arg1 =
 toList: Array.Array a -> List a
 -}
 toList : Elm.Expression -> Elm.Expression
-toList arg =
+toList toListArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -315,7 +317,7 @@ toList arg =
                     )
             }
         )
-        [ arg ]
+        [ toListArg ]
 
 
 {-| Create an indexed list from an array. Each element of the array will be
@@ -326,7 +328,7 @@ paired with its index.
 toIndexedList: Array.Array a -> List ( Int, a )
 -}
 toIndexedList : Elm.Expression -> Elm.Expression
-toIndexedList arg =
+toIndexedList toIndexedListArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -339,7 +341,7 @@ toIndexedList arg =
                     )
             }
         )
-        [ arg ]
+        [ toIndexedListArg ]
 
 
 {-| Apply a function on every element in an array.
@@ -349,7 +351,7 @@ toIndexedList arg =
 map: (a -> b) -> Array.Array a -> Array.Array b
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg arg0 =
+map mapArg mapArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -364,7 +366,7 @@ map arg arg0 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg, arg0 ]
+        [ Elm.functionReduced "mapUnpack" mapArg, mapArg0 ]
 
 
 {-| Apply a function on every element with its index as first argument.
@@ -377,7 +379,7 @@ indexedMap :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-indexedMap arg arg0 =
+indexedMap indexedMapArg indexedMapArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -395,9 +397,13 @@ indexedMap arg arg0 =
             }
         )
         [ Elm.functionReduced
-            "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg unpack))
-        , arg0
+            "indexedMapUnpack"
+            (\functionReducedUnpack ->
+                Elm.functionReduced
+                    "unpack"
+                    (indexedMapArg functionReducedUnpack)
+            )
+        , indexedMapArg0
         ]
 
 
@@ -412,7 +418,7 @@ foldl :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldl arg arg0 arg1 =
+foldl foldlArg foldlArg0 foldlArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -431,10 +437,12 @@ foldl arg arg0 arg1 =
             }
         )
         [ Elm.functionReduced
-            "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg unpack))
-        , arg0
-        , arg1
+            "foldlUnpack"
+            (\functionReducedUnpack ->
+                Elm.functionReduced "unpack" (foldlArg functionReducedUnpack)
+            )
+        , foldlArg0
+        , foldlArg1
         ]
 
 
@@ -449,7 +457,7 @@ foldr :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldr arg arg0 arg1 =
+foldr foldrArg foldrArg0 foldrArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -468,10 +476,12 @@ foldr arg arg0 arg1 =
             }
         )
         [ Elm.functionReduced
-            "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg unpack))
-        , arg0
-        , arg1
+            "foldrUnpack"
+            (\functionReducedUnpack ->
+                Elm.functionReduced "unpack" (foldrArg functionReducedUnpack)
+            )
+        , foldrArg0
+        , foldrArg1
         ]
 
 
@@ -482,7 +492,7 @@ foldr arg arg0 arg1 =
 filter: (a -> Bool) -> Array.Array a -> Array.Array a
 -}
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-filter arg arg0 =
+filter filterArg filterArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Array" ]
@@ -497,12 +507,12 @@ filter arg arg0 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg, arg0 ]
+        [ Elm.functionReduced "filterUnpack" filterArg, filterArg0 ]
 
 
 annotation_ : { array : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { array = \arg0 -> Type.namedWith [ "Array" ] "Array" [ arg0 ] }
+    { array = \arrayArg0 -> Type.namedWith [ "Array" ] "Array" [ arrayArg0 ] }
 
 
 call_ :
@@ -529,7 +539,7 @@ call_ :
     }
 call_ =
     { initialize =
-        \arg arg0 ->
+        \initializeArg initializeArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -548,9 +558,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ initializeArg, initializeArg0 ]
     , repeat =
-        \arg arg0 ->
+        \repeatArg repeatArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -567,9 +577,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ repeatArg, repeatArg0 ]
     , fromList =
-        \arg ->
+        \fromListArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -586,9 +596,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ fromListArg ]
     , isEmpty =
-        \arg ->
+        \isEmptyArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -605,9 +615,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ isEmptyArg ]
     , length =
-        \arg ->
+        \lengthArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -624,9 +634,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ lengthArg ]
     , get =
-        \arg arg0 ->
+        \getArg getArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -644,9 +654,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ getArg, getArg0 ]
     , set =
-        \arg arg0 arg1 ->
+        \setArg setArg0 setArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -669,9 +679,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ setArg, setArg0, setArg1 ]
     , push =
-        \arg arg0 ->
+        \pushArg pushArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -693,9 +703,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ pushArg, pushArg0 ]
     , append =
-        \arg arg0 ->
+        \appendArg appendArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -720,9 +730,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ appendArg, appendArg0 ]
     , slice =
-        \arg arg0 arg1 ->
+        \sliceArg sliceArg0 sliceArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -745,9 +755,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ sliceArg, sliceArg0, sliceArg1 ]
     , toList =
-        \arg ->
+        \toListArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -764,9 +774,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ toListArg ]
     , toIndexedList =
-        \arg ->
+        \toIndexedListArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -783,9 +793,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ toIndexedListArg ]
     , map =
-        \arg arg0 ->
+        \mapArg mapArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -807,9 +817,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ mapArg, mapArg0 ]
     , indexedMap =
-        \arg arg0 ->
+        \indexedMapArg indexedMapArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -833,9 +843,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ indexedMapArg, indexedMapArg0 ]
     , foldl =
-        \arg arg0 arg1 ->
+        \foldlArg foldlArg0 foldlArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -856,9 +866,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ foldlArg, foldlArg0, foldlArg1 ]
     , foldr =
-        \arg arg0 arg1 ->
+        \foldrArg foldrArg0 foldrArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -879,9 +889,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ foldrArg, foldrArg0, foldrArg1 ]
     , filter =
-        \arg arg0 ->
+        \filterArg filterArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -903,7 +913,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ filterArg, filterArg0 ]
     }
 
 

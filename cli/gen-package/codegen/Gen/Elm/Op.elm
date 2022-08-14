@@ -20,7 +20,7 @@ moduleName_ =
 equal: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 equal : Elm.Expression -> Elm.Expression -> Elm.Expression
-equal arg arg0 =
+equal equalArg equalArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -35,7 +35,7 @@ equal arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ equalArg, equalArg0 ]
 
 
 {-| `/=`
@@ -43,7 +43,7 @@ equal arg arg0 =
 notEqual: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 notEqual : Elm.Expression -> Elm.Expression -> Elm.Expression
-notEqual arg arg0 =
+notEqual notEqualArg notEqualArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -58,7 +58,7 @@ notEqual arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ notEqualArg, notEqualArg0 ]
 
 
 {-| `&&`
@@ -66,7 +66,7 @@ notEqual arg arg0 =
 and: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 and : Elm.Expression -> Elm.Expression -> Elm.Expression
-and arg arg0 =
+and andArg andArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -81,7 +81,7 @@ and arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ andArg, andArg0 ]
 
 
 {-| `||`
@@ -89,7 +89,7 @@ and arg arg0 =
 or: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 or : Elm.Expression -> Elm.Expression -> Elm.Expression
-or arg arg0 =
+or orArg orArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -104,7 +104,7 @@ or arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ orArg, orArg0 ]
 
 
 {-| `++`
@@ -112,7 +112,7 @@ or arg arg0 =
 append: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 append : Elm.Expression -> Elm.Expression -> Elm.Expression
-append arg arg0 =
+append appendArg appendArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -127,7 +127,7 @@ append arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ appendArg, appendArg0 ]
 
 
 {-| `::`
@@ -135,7 +135,7 @@ append arg arg0 =
 cons: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 cons : Elm.Expression -> Elm.Expression -> Elm.Expression
-cons arg arg0 =
+cons consArg consArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -150,7 +150,7 @@ cons arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ consArg, consArg0 ]
 
 
 {-| `+`
@@ -158,7 +158,7 @@ cons arg arg0 =
 plus: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 plus : Elm.Expression -> Elm.Expression -> Elm.Expression
-plus arg arg0 =
+plus plusArg plusArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -173,7 +173,7 @@ plus arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ plusArg, plusArg0 ]
 
 
 {-| `-`
@@ -181,7 +181,7 @@ plus arg arg0 =
 minus: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 minus : Elm.Expression -> Elm.Expression -> Elm.Expression
-minus arg arg0 =
+minus minusArg minusArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -196,7 +196,7 @@ minus arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ minusArg, minusArg0 ]
 
 
 {-| `*`
@@ -204,7 +204,7 @@ minus arg arg0 =
 multiply: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 multiply : Elm.Expression -> Elm.Expression -> Elm.Expression
-multiply arg arg0 =
+multiply multiplyArg multiplyArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -219,7 +219,7 @@ multiply arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ multiplyArg, multiplyArg0 ]
 
 
 {-| `/`
@@ -227,7 +227,7 @@ multiply arg arg0 =
 divide: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 divide : Elm.Expression -> Elm.Expression -> Elm.Expression
-divide arg arg0 =
+divide divideArg divideArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -242,7 +242,7 @@ divide arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ divideArg, divideArg0 ]
 
 
 {-| `//`
@@ -250,7 +250,7 @@ divide arg arg0 =
 intDivide: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 intDivide : Elm.Expression -> Elm.Expression -> Elm.Expression
-intDivide arg arg0 =
+intDivide intDivideArg intDivideArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -265,7 +265,7 @@ intDivide arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ intDivideArg, intDivideArg0 ]
 
 
 {-| The to-the-power-of operator `^`
@@ -273,7 +273,7 @@ intDivide arg arg0 =
 power: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 power : Elm.Expression -> Elm.Expression -> Elm.Expression
-power arg arg0 =
+power powerArg powerArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -288,7 +288,7 @@ power arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ powerArg, powerArg0 ]
 
 
 {-| `<`
@@ -296,7 +296,7 @@ power arg arg0 =
 lt: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 lt : Elm.Expression -> Elm.Expression -> Elm.Expression
-lt arg arg0 =
+lt ltArg ltArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -311,7 +311,7 @@ lt arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ ltArg, ltArg0 ]
 
 
 {-| `>`
@@ -319,7 +319,7 @@ lt arg arg0 =
 gt: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 gt : Elm.Expression -> Elm.Expression -> Elm.Expression
-gt arg arg0 =
+gt gtArg gtArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -334,7 +334,7 @@ gt arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ gtArg, gtArg0 ]
 
 
 {-| `<=`
@@ -342,7 +342,7 @@ gt arg arg0 =
 lte: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 lte : Elm.Expression -> Elm.Expression -> Elm.Expression
-lte arg arg0 =
+lte lteArg lteArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -357,7 +357,7 @@ lte arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ lteArg, lteArg0 ]
 
 
 {-| `>=`
@@ -365,7 +365,7 @@ lte arg arg0 =
 gte: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 gte : Elm.Expression -> Elm.Expression -> Elm.Expression
-gte arg arg0 =
+gte gteArg gteArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -380,7 +380,7 @@ gte arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ gteArg, gteArg0 ]
 
 
 {-| `|>`
@@ -398,7 +398,7 @@ Results in
 pipe: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 pipe : Elm.Expression -> Elm.Expression -> Elm.Expression
-pipe arg arg0 =
+pipe pipeArg pipeArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -413,17 +413,17 @@ pipe arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ pipeArg, pipeArg0 ]
 
 
 {-| Wrap an expression in parentheses.
 
-Generally you won't need this as `elm-codegen` handles parens for you, but it can be useful to semantically group operaties from this module.
+Generally you won't need this as `elm-codegen` handles parens for you, but it can be useful to semantically group operations from this module.
 
 parens: Elm.Expression -> Elm.Expression
 -}
 parens : Elm.Expression -> Elm.Expression
-parens arg =
+parens parensArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -436,7 +436,7 @@ parens arg =
                     )
             }
         )
-        [ arg ]
+        [ parensArg ]
 
 
 {-| used in the `elm/parser` library
@@ -446,7 +446,7 @@ parens arg =
 keep: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 keep : Elm.Expression -> Elm.Expression -> Elm.Expression
-keep arg arg0 =
+keep keepArg keepArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -461,7 +461,7 @@ keep arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ keepArg, keepArg0 ]
 
 
 {-| `|.`
@@ -469,7 +469,7 @@ keep arg arg0 =
 skip: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 skip : Elm.Expression -> Elm.Expression -> Elm.Expression
-skip arg arg0 =
+skip skipArg skipArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -484,7 +484,7 @@ skip arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ skipArg, skipArg0 ]
 
 
 {-| `</>` used in url parsing
@@ -492,7 +492,7 @@ skip arg arg0 =
 slash: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 slash : Elm.Expression -> Elm.Expression -> Elm.Expression
-slash arg arg0 =
+slash slashArg slashArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -507,7 +507,7 @@ slash arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ slashArg, slashArg0 ]
 
 
 {-| `<?>` used in url parsing
@@ -515,7 +515,7 @@ slash arg arg0 =
 query: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 query : Elm.Expression -> Elm.Expression -> Elm.Expression
-query arg arg0 =
+query queryArg queryArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Op" ]
@@ -530,7 +530,7 @@ query arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ queryArg, queryArg0 ]
 
 
 call_ :
@@ -559,7 +559,7 @@ call_ :
     }
 call_ =
     { equal =
-        \arg arg0 ->
+        \equalArg equalArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -574,9 +574,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ equalArg, equalArg0 ]
     , notEqual =
-        \arg arg0 ->
+        \notEqualArg notEqualArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -591,9 +591,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ notEqualArg, notEqualArg0 ]
     , and =
-        \arg arg0 ->
+        \andArg andArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -608,9 +608,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ andArg, andArg0 ]
     , or =
-        \arg arg0 ->
+        \orArg orArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -625,9 +625,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ orArg, orArg0 ]
     , append =
-        \arg arg0 ->
+        \appendArg appendArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -642,9 +642,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ appendArg, appendArg0 ]
     , cons =
-        \arg arg0 ->
+        \consArg consArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -659,9 +659,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ consArg, consArg0 ]
     , plus =
-        \arg arg0 ->
+        \plusArg plusArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -676,9 +676,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ plusArg, plusArg0 ]
     , minus =
-        \arg arg0 ->
+        \minusArg minusArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -693,9 +693,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ minusArg, minusArg0 ]
     , multiply =
-        \arg arg0 ->
+        \multiplyArg multiplyArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -710,9 +710,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ multiplyArg, multiplyArg0 ]
     , divide =
-        \arg arg0 ->
+        \divideArg divideArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -727,9 +727,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ divideArg, divideArg0 ]
     , intDivide =
-        \arg arg0 ->
+        \intDivideArg intDivideArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -744,9 +744,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ intDivideArg, intDivideArg0 ]
     , power =
-        \arg arg0 ->
+        \powerArg powerArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -761,9 +761,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ powerArg, powerArg0 ]
     , lt =
-        \arg arg0 ->
+        \ltArg ltArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -778,9 +778,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ ltArg, ltArg0 ]
     , gt =
-        \arg arg0 ->
+        \gtArg gtArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -795,9 +795,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ gtArg, gtArg0 ]
     , lte =
-        \arg arg0 ->
+        \lteArg lteArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -812,9 +812,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ lteArg, lteArg0 ]
     , gte =
-        \arg arg0 ->
+        \gteArg gteArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -829,9 +829,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ gteArg, gteArg0 ]
     , pipe =
-        \arg arg0 ->
+        \pipeArg pipeArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -846,9 +846,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ pipeArg, pipeArg0 ]
     , parens =
-        \arg ->
+        \parensArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -861,9 +861,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ parensArg ]
     , keep =
-        \arg arg0 ->
+        \keepArg keepArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -878,9 +878,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ keepArg, keepArg0 ]
     , skip =
-        \arg arg0 ->
+        \skipArg skipArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -895,9 +895,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ skipArg, skipArg0 ]
     , slash =
-        \arg arg0 ->
+        \slashArg slashArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -912,9 +912,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ slashArg, slashArg0 ]
     , query =
-        \arg arg0 ->
+        \queryArg queryArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Op" ]
@@ -929,7 +929,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ queryArg, queryArg0 ]
     }
 
 

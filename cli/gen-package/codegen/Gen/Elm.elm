@@ -26,7 +26,7 @@ moduleName_ =
 file: List String -> List Elm.Declaration -> Elm.File
 -}
 file : List String -> List Elm.Expression -> Elm.Expression
-file arg arg0 =
+file fileArg fileArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -41,7 +41,7 @@ file arg arg0 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg), Elm.list arg0 ]
+        [ Elm.list (List.map Elm.string fileArg), Elm.list fileArg0 ]
 
 
 {-| See what code this expression would generate!
@@ -51,7 +51,7 @@ file arg arg0 =
 toString: Elm.Expression -> String
 -}
 toString : Elm.Expression -> Elm.Expression
-toString arg =
+toString toStringArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -64,12 +64,12 @@ toString arg =
                     )
             }
         )
-        [ arg ]
+        [ toStringArg ]
 
 
 {-| bool: Bool -> Elm.Expression -}
 bool : Bool -> Elm.Expression
-bool arg =
+bool boolArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -82,12 +82,12 @@ bool arg =
                     )
             }
         )
-        [ Elm.bool arg ]
+        [ Elm.bool boolArg ]
 
 
 {-| int: Int -> Elm.Expression -}
 int : Int -> Elm.Expression
-int arg =
+int intArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -100,12 +100,12 @@ int arg =
                     )
             }
         )
-        [ Elm.int arg ]
+        [ Elm.int intArg ]
 
 
 {-| float: Float -> Elm.Expression -}
 float : Float -> Elm.Expression
-float arg =
+float floatArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -118,12 +118,12 @@ float arg =
                     )
             }
         )
-        [ Elm.float arg ]
+        [ Elm.float floatArg ]
 
 
 {-| char: Char.Char -> Elm.Expression -}
 char : Char.Char -> Elm.Expression
-char arg =
+char charArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -136,12 +136,12 @@ char arg =
                     )
             }
         )
-        [ Elm.char arg ]
+        [ Elm.char charArg ]
 
 
 {-| string: String -> Elm.Expression -}
 string : String -> Elm.Expression
-string arg =
+string stringArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -154,12 +154,12 @@ string arg =
                     )
             }
         )
-        [ Elm.string arg ]
+        [ Elm.string stringArg ]
 
 
 {-| hex: Int -> Elm.Expression -}
 hex : Int -> Elm.Expression
-hex arg =
+hex hexArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -172,7 +172,7 @@ hex arg =
                     )
             }
         )
-        [ Elm.int arg ]
+        [ Elm.int hexArg ]
 
 
 {-| unit: Elm.Expression -}
@@ -187,7 +187,7 @@ unit =
 
 {-| maybe: Maybe Elm.Expression -> Elm.Expression -}
 maybe : Elm.Expression -> Elm.Expression
-maybe arg =
+maybe maybeArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -201,12 +201,12 @@ maybe arg =
                     )
             }
         )
-        [ arg ]
+        [ maybeArg ]
 
 
 {-| just: Elm.Expression -> Elm.Expression -}
 just : Elm.Expression -> Elm.Expression
-just arg =
+just justArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -219,7 +219,7 @@ just arg =
                     )
             }
         )
-        [ arg ]
+        [ justArg ]
 
 
 {-| nothing: Elm.Expression -}
@@ -234,7 +234,7 @@ nothing =
 
 {-| list: List Elm.Expression -> Elm.Expression -}
 list : List Elm.Expression -> Elm.Expression
-list arg =
+list listArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -247,12 +247,12 @@ list arg =
                     )
             }
         )
-        [ Elm.list arg ]
+        [ Elm.list listArg ]
 
 
 {-| tuple: Elm.Expression -> Elm.Expression -> Elm.Expression -}
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
-tuple arg arg0 =
+tuple tupleArg tupleArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -267,12 +267,12 @@ tuple arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ tupleArg, tupleArg0 ]
 
 
 {-| triple: Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression -}
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-triple arg arg0 arg1 =
+triple tripleArg tripleArg0 tripleArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -288,7 +288,7 @@ triple arg arg0 arg1 =
                     )
             }
         )
-        [ arg, arg0, arg1 ]
+        [ tripleArg, tripleArg0, tripleArg1 ]
 
 
 {-| Sometimes you may need to add a manual type annotation.
@@ -303,7 +303,7 @@ Though be sure `elm-codegen` isn't already doing this automatically for you!
 withType: Elm.Annotation.Annotation -> Elm.Expression -> Elm.Expression
 -}
 withType : Elm.Expression -> Elm.Expression -> Elm.Expression
-withType arg arg0 =
+withType withTypeArg withTypeArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -318,7 +318,7 @@ withType arg arg0 =
                     )
             }
         )
-        [ arg, arg0 ]
+        [ withTypeArg, withTypeArg0 ]
 
 
 {-| Elm.record
@@ -329,7 +329,7 @@ withType arg arg0 =
 record: List ( String, Elm.Expression ) -> Elm.Expression
 -}
 record : List Elm.Expression -> Elm.Expression
-record arg =
+record recordArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -347,7 +347,7 @@ record arg =
                     )
             }
         )
-        [ Elm.list arg ]
+        [ Elm.list recordArg ]
 
 
 {-| record
@@ -360,7 +360,7 @@ results in
 get: String -> Elm.Expression -> Elm.Expression
 -}
 get : String -> Elm.Expression -> Elm.Expression
-get arg arg0 =
+get getArg getArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -375,7 +375,7 @@ get arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, arg0 ]
+        [ Elm.string getArg, getArg0 ]
 
 
 {-| myRecord
@@ -390,7 +390,7 @@ Results in
 updateRecord: List ( String, Elm.Expression ) -> Elm.Expression -> Elm.Expression
 -}
 updateRecord : List Elm.Expression -> Elm.Expression -> Elm.Expression
-updateRecord arg arg0 =
+updateRecord updateRecordArg updateRecordArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -409,7 +409,7 @@ updateRecord arg arg0 =
                     )
             }
         )
-        [ Elm.list arg, arg0 ]
+        [ Elm.list updateRecordArg, updateRecordArg0 ]
 
 
 {-| ifThen (Elm.bool True)
@@ -447,7 +447,7 @@ Will generate
 ifThen: Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 ifThen : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-ifThen arg arg0 arg1 =
+ifThen ifThenArg ifThenArg0 ifThenArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -463,7 +463,7 @@ ifThen arg arg0 arg1 =
                     )
             }
         )
-        [ arg, arg0, arg1 ]
+        [ ifThenArg, ifThenArg0, ifThenArg1 ]
 
 
 {-| Renders a multiline comment.
@@ -479,7 +479,7 @@ Will generate
 comment: String -> Elm.Declaration
 -}
 comment : String -> Elm.Expression
-comment arg =
+comment commentArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -492,12 +492,12 @@ comment arg =
                     )
             }
         )
-        [ Elm.string arg ]
+        [ Elm.string commentArg ]
 
 
 {-| declaration: String -> Elm.Expression -> Elm.Declaration -}
 declaration : String -> Elm.Expression -> Elm.Expression
-declaration arg arg0 =
+declaration declarationArg declarationArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -512,7 +512,7 @@ declaration arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, arg0 ]
+        [ Elm.string declarationArg, declarationArg0 ]
 
 
 {-| Add a documentation comment to a declaration!
@@ -520,7 +520,7 @@ declaration arg arg0 =
 withDocumentation: String -> Elm.Declaration -> Elm.Declaration
 -}
 withDocumentation : String -> Elm.Expression -> Elm.Expression
-withDocumentation arg arg0 =
+withDocumentation withDocumentationArg withDocumentationArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -535,7 +535,7 @@ withDocumentation arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, arg0 ]
+        [ Elm.string withDocumentationArg, withDocumentationArg0 ]
 
 
 {-| By default, everything is exposed for your module.
@@ -545,7 +545,7 @@ However, you can tag specific declarations you want exposed, and then only those
 expose: Elm.Declaration -> Elm.Declaration
 -}
 expose : Elm.Expression -> Elm.Expression
-expose arg =
+expose exposeArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -558,7 +558,7 @@ expose arg =
                     )
             }
         )
-        [ arg ]
+        [ exposeArg ]
 
 
 {-| You can also add a group tag to an exposed value. This will automatically group the `docs` statements in the module docs.
@@ -574,7 +574,7 @@ exposeWith :
     { exposeConstructor : Bool, group : Elm.Expression }
     -> Elm.Expression
     -> Elm.Expression
-exposeWith arg arg0 =
+exposeWith exposeWithArg exposeWithArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -593,10 +593,12 @@ exposeWith arg arg0 =
             }
         )
         [ Elm.record
-            [ Tuple.pair "exposeConstructor" (Elm.bool arg.exposeConstructor)
-            , Tuple.pair "group" arg.group
+            [ Tuple.pair
+                "exposeConstructor"
+                (Elm.bool exposeWithArg.exposeConstructor)
+            , Tuple.pair "group" exposeWithArg.group
             ]
-        , arg0
+        , exposeWithArg0
         ]
 
 
@@ -633,7 +635,7 @@ fileWith :
     }
     -> List Elm.Expression
     -> Elm.Expression
-fileWith arg arg0 arg1 =
+fileWith fileWithArg fileWithArg0 fileWithArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -672,12 +674,14 @@ fileWith arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
+        [ Elm.list (List.map Elm.string fileWithArg)
         , Elm.record
-            [ Tuple.pair "docs" (Elm.functionReduced "unpack" arg0.docs)
-            , Tuple.pair "aliases" (Elm.list arg0.aliases)
+            [ Tuple.pair
+                "docs"
+                (Elm.functionReduced "fileWithUnpack" fileWithArg0.docs)
+            , Tuple.pair "aliases" (Elm.list fileWithArg0.aliases)
             ]
-        , Elm.list arg1
+        , Elm.list fileWithArg1
         ]
 
 
@@ -696,7 +700,7 @@ If a `group` has been given, it will be rendered as a second level header.
 docs: { group : Maybe String, members : List String } -> String
 -}
 docs : { group : Elm.Expression, members : List String } -> Elm.Expression
-docs arg =
+docs docsArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -714,8 +718,10 @@ docs arg =
             }
         )
         [ Elm.record
-            [ Tuple.pair "group" arg.group
-            , Tuple.pair "members" (Elm.list (List.map Elm.string arg.members))
+            [ Tuple.pair "group" docsArg.group
+            , Tuple.pair
+                "members"
+                (Elm.list (List.map Elm.string docsArg.members))
             ]
         ]
 
@@ -769,7 +775,7 @@ fn:
     -> Elm.Expression
 -}
 fn : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-fn arg arg0 =
+fn fnArg fnArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -794,7 +800,7 @@ fn arg arg0 =
                     )
             }
         )
-        [ arg, Elm.functionReduced "unpack" arg0 ]
+        [ fnArg, Elm.functionReduced "fnUnpack" fnArg0 ]
 
 
 {-| fn2: 
@@ -808,7 +814,7 @@ fn2 :
     -> Elm.Expression
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-fn2 arg arg0 arg1 =
+fn2 fn2Arg fn2Arg0 fn2Arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -844,11 +850,13 @@ fn2 arg arg0 arg1 =
                     )
             }
         )
-        [ arg
-        , arg0
+        [ fn2Arg
+        , fn2Arg0
         , Elm.functionReduced
-            "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+            "fn2Unpack"
+            (\functionReducedUnpack ->
+                Elm.functionReduced "unpack" (fn2Arg1 functionReducedUnpack)
+            )
         ]
 
 
@@ -865,7 +873,7 @@ fn3 :
     -> Elm.Expression
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-fn3 arg arg0 arg1 arg2 =
+fn3 fn3Arg fn3Arg0 fn3Arg1 fn3Arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -911,16 +919,20 @@ fn3 arg arg0 arg1 arg2 =
                     )
             }
         )
-        [ arg
-        , arg0
-        , arg1
+        [ fn3Arg
+        , fn3Arg0
+        , fn3Arg1
         , Elm.functionReduced
-            "unpack"
-            (\unpack ->
+            "fn3Unpack"
+            (\functionReducedUnpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack0 ->
-                        Elm.functionReduced "unpack" (arg2 unpack unpack0)
+                    (\functionReducedUnpack0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (fn3Arg2 functionReducedUnpack
+                                functionReducedUnpack0
+                            )
                     )
             )
         ]
@@ -949,7 +961,7 @@ fn4 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-fn4 arg arg0 arg1 arg2 arg3 =
+fn4 fn4Arg fn4Arg0 fn4Arg1 fn4Arg2 fn4Arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1005,23 +1017,24 @@ fn4 arg arg0 arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg
-        , arg0
-        , arg1
-        , arg2
+        [ fn4Arg
+        , fn4Arg0
+        , fn4Arg1
+        , fn4Arg2
         , Elm.functionReduced
-            "unpack"
-            (\unpack ->
+            "fn4Unpack"
+            (\functionReducedUnpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack0 ->
+                    (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_2_1_2_0_2_4_2_0_0 ->
+                            (\functionReducedUnpack_2_1_2_0_2_4_2_0_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (arg3 unpack unpack0
-                                        unpack_2_1_2_0_2_4_2_0_0
+                                    (fn4Arg3 functionReducedUnpack
+                                         functionReducedUnpack0
+                                        functionReducedUnpack_2_1_2_0_2_4_2_0_0
                                     )
                             )
                     )
@@ -1056,7 +1069,7 @@ fn5 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-fn5 arg arg0 arg1 arg2 arg3 arg4 =
+fn5 fn5Arg fn5Arg0 fn5Arg1 fn5Arg2 fn5Arg3 fn5Arg4 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1122,28 +1135,29 @@ fn5 arg arg0 arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ arg
-        , arg0
-        , arg1
-        , arg2
-        , arg3
+        [ fn5Arg
+        , fn5Arg0
+        , fn5Arg1
+        , fn5Arg2
+        , fn5Arg3
         , Elm.functionReduced
-            "unpack"
-            (\unpack ->
+            "fn5Unpack"
+            (\functionReducedUnpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack0 ->
+                    (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_2_1_2_0_2_5_2_0_0 ->
+                            (\functionReducedUnpack_2_1_2_0_2_5_2_0_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (\unpack_2_1_2_1_2_0_2_5_2_0_0 ->
+                                    (\functionReducedUnpack_2_1_2_1_2_0_2_5_2_0_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (arg4 unpack unpack0
-                                                 unpack_2_1_2_0_2_5_2_0_0
-                                                unpack_2_1_2_1_2_0_2_5_2_0_0
+                                            (fn5Arg4 functionReducedUnpack
+                                                 functionReducedUnpack0
+                                                 functionReducedUnpack_2_1_2_0_2_5_2_0_0
+                                                functionReducedUnpack_2_1_2_1_2_0_2_5_2_0_0
                                             )
                                     )
                             )
@@ -1183,7 +1197,7 @@ fn6 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-fn6 arg arg0 arg1 arg2 arg3 arg4 arg5 =
+fn6 fn6Arg fn6Arg0 fn6Arg1 fn6Arg2 fn6Arg3 fn6Arg4 fn6Arg5 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1259,33 +1273,35 @@ fn6 arg arg0 arg1 arg2 arg3 arg4 arg5 =
                     )
             }
         )
-        [ arg
-        , arg0
-        , arg1
-        , arg2
-        , arg3
-        , arg4
+        [ fn6Arg
+        , fn6Arg0
+        , fn6Arg1
+        , fn6Arg2
+        , fn6Arg3
+        , fn6Arg4
         , Elm.functionReduced
-            "unpack"
-            (\unpack ->
+            "fn6Unpack"
+            (\functionReducedUnpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack0 ->
+                    (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_2_1_2_0_2_6_2_0_0 ->
+                            (\functionReducedUnpack_2_1_2_0_2_6_2_0_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (\unpack_2_1_2_1_2_0_2_6_2_0_0 ->
+                                    (\functionReducedUnpack_2_1_2_1_2_0_2_6_2_0_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (\unpack_2_1_2_1_2_1_2_0_2_6_2_0_0 ->
+                                            (\functionReducedUnpack_2_1_2_1_2_1_2_0_2_6_2_0_0 ->
                                                 Elm.functionReduced
                                                     "unpack"
-                                                    (arg5 unpack unpack0
-                                                         unpack_2_1_2_0_2_6_2_0_0
-                                                         unpack_2_1_2_1_2_0_2_6_2_0_0
-                                                        unpack_2_1_2_1_2_1_2_0_2_6_2_0_0
+                                                    (fn6Arg5
+                                                         functionReducedUnpack
+                                                         functionReducedUnpack0
+                                                         functionReducedUnpack_2_1_2_0_2_6_2_0_0
+                                                         functionReducedUnpack_2_1_2_1_2_0_2_6_2_0_0
+                                                        functionReducedUnpack_2_1_2_1_2_1_2_0_2_6_2_0_0
                                                     )
                                             )
                                     )
@@ -1311,7 +1327,7 @@ function:
 -}
 function :
     List Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-function arg arg0 =
+function functionArg functionArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1340,7 +1356,9 @@ function arg arg0 =
                     )
             }
         )
-        [ Elm.list arg, Elm.functionReduced "unpack" arg0 ]
+        [ Elm.list functionArg
+        , Elm.functionReduced "functionUnpack" functionArg0
+        ]
 
 
 {-| This is a special case of function declaration which will _reduce_ itself if possible.
@@ -1358,7 +1376,7 @@ Then it will replace itself with just
 functionReduced: String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 -}
 functionReduced : String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-functionReduced arg arg0 =
+functionReduced functionReducedArg functionReducedArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1375,7 +1393,9 @@ functionReduced arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, Elm.functionReduced "unpack" arg0 ]
+        [ Elm.string functionReducedArg
+        , Elm.functionReduced "functionReducedUnpack" functionReducedArg0
+        ]
 
 
 {-| A custom type declaration.
@@ -1395,7 +1415,7 @@ Will result in
 customType: String -> List Elm.Variant -> Elm.Declaration
 -}
 customType : String -> List Elm.Expression -> Elm.Expression
-customType arg arg0 =
+customType customTypeArg customTypeArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1410,12 +1430,12 @@ customType arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, Elm.list arg0 ]
+        [ Elm.string customTypeArg, Elm.list customTypeArg0 ]
 
 
 {-| variant: String -> Elm.Variant -}
 variant : String -> Elm.Expression
-variant arg =
+variant variantArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1428,12 +1448,12 @@ variant arg =
                     )
             }
         )
-        [ Elm.string arg ]
+        [ Elm.string variantArg ]
 
 
 {-| variantWith: String -> List Elm.Annotation.Annotation -> Elm.Variant -}
 variantWith : String -> List Elm.Expression -> Elm.Expression
-variantWith arg arg0 =
+variantWith variantWithArg variantWithArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1453,7 +1473,7 @@ variantWith arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, Elm.list arg0 ]
+        [ Elm.string variantWithArg, Elm.list variantWithArg0 ]
 
 
 {-| A custom type declaration.
@@ -1479,7 +1499,7 @@ Should result in
 alias: String -> Elm.Annotation.Annotation -> Elm.Declaration
 -}
 alias : String -> Elm.Expression -> Elm.Expression
-alias arg arg0 =
+alias aliasArg aliasArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1494,7 +1514,7 @@ alias arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, arg0 ]
+        [ Elm.string aliasArg, aliasArg0 ]
 
 
 {-| import Elm.Annotation as Type
@@ -1521,7 +1541,7 @@ This will give you more flexibility in the future and save you having to wire up
 portIncoming: String -> List Elm.Annotation.Annotation -> Elm.Declaration
 -}
 portIncoming : String -> List Elm.Expression -> Elm.Expression
-portIncoming arg arg0 =
+portIncoming portIncomingArg portIncomingArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1541,7 +1561,7 @@ portIncoming arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, Elm.list arg0 ]
+        [ Elm.string portIncomingArg, Elm.list portIncomingArg0 ]
 
 
 {-| Create a port that can send messages to the outside world!
@@ -1557,7 +1577,7 @@ will generate
 portOutgoing: String -> Elm.Annotation.Annotation -> Elm.Declaration
 -}
 portOutgoing : String -> Elm.Expression -> Elm.Expression
-portOutgoing arg arg0 =
+portOutgoing portOutgoingArg portOutgoingArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1572,12 +1592,12 @@ portOutgoing arg arg0 =
                     )
             }
         )
-        [ Elm.string arg, arg0 ]
+        [ Elm.string portOutgoingArg, portOutgoingArg0 ]
 
 
 {-| parse: String -> Result.Result String { declarations : List Elm.Declaration } -}
 parse : String -> Elm.Expression
-parse arg =
+parse parseArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1605,7 +1625,7 @@ parse arg =
                     )
             }
         )
-        [ Elm.string arg ]
+        [ Elm.string parseArg ]
 
 
 {-| This will insert the given string into your generated file.
@@ -1615,7 +1635,7 @@ Check out the [using packages/helpers guide](https://github.com/mdgriffith/elm-c
 unsafe: String -> Elm.Declaration
 -}
 unsafe : String -> Elm.Expression
-unsafe arg =
+unsafe unsafeArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1628,12 +1648,12 @@ unsafe arg =
                     )
             }
         )
-        [ Elm.string arg ]
+        [ Elm.string unsafeArg ]
 
 
 {-| apply: Elm.Expression -> List Elm.Expression -> Elm.Expression -}
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
-apply arg arg0 =
+apply applyArg applyArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1648,7 +1668,7 @@ apply arg arg0 =
                     )
             }
         )
-        [ arg, Elm.list arg0 ]
+        [ applyArg, Elm.list applyArg0 ]
 
 
 {-| value: 
@@ -1661,7 +1681,7 @@ apply arg arg0 =
 value :
     { importFrom : List String, name : String, annotation : Elm.Expression }
     -> Elm.Expression
-value arg =
+value valueArg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1689,9 +1709,9 @@ value arg =
         [ Elm.record
             [ Tuple.pair
                 "importFrom"
-                (Elm.list (List.map Elm.string arg.importFrom))
-            , Tuple.pair "name" (Elm.string arg.name)
-            , Tuple.pair "annotation" arg.annotation
+                (Elm.list (List.map Elm.string valueArg.importFrom))
+            , Tuple.pair "name" (Elm.string valueArg.name)
+            , Tuple.pair "annotation" valueArg.annotation
             ]
         ]
 
@@ -1712,7 +1732,7 @@ Results in the following lambda
 unwrap: List String -> String -> Elm.Expression -> Elm.Expression
 -}
 unwrap : List String -> String -> Elm.Expression -> Elm.Expression
-unwrap arg arg0 arg1 =
+unwrap unwrapArg unwrapArg0 unwrapArg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1728,7 +1748,10 @@ unwrap arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg), Elm.string arg0, arg1 ]
+        [ Elm.list (List.map Elm.string unwrapArg)
+        , Elm.string unwrapArg0
+        , unwrapArg1
+        ]
 
 
 {-| Generate a lambda which unwraps a single-variant type.
@@ -1742,7 +1765,7 @@ Results in the following lambda
 unwrapper: List String -> String -> Elm.Expression
 -}
 unwrapper : List String -> String -> Elm.Expression
-unwrapper arg arg0 =
+unwrapper unwrapperArg unwrapperArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1755,7 +1778,9 @@ unwrapper arg arg0 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg), Elm.string arg0 ]
+        [ Elm.list (List.map Elm.string unwrapperArg)
+        , Elm.string unwrapperArg0
+        ]
 
 
 annotation_ :
@@ -1892,7 +1917,7 @@ call_ :
     }
 call_ =
     { file =
-        \arg arg0 ->
+        \fileArg fileArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -1908,9 +1933,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ fileArg, fileArg0 ]
     , toString =
-        \arg ->
+        \toStringArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -1923,9 +1948,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ toStringArg ]
     , bool =
-        \arg ->
+        \boolArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -1938,9 +1963,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ boolArg ]
     , int =
-        \arg ->
+        \intArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -1953,9 +1978,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ intArg ]
     , float =
-        \arg ->
+        \floatArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -1968,9 +1993,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ floatArg ]
     , char =
-        \arg ->
+        \charArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -1983,9 +2008,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ charArg ]
     , string =
-        \arg ->
+        \stringArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -1998,9 +2023,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ stringArg ]
     , hex =
-        \arg ->
+        \hexArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2013,9 +2038,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ hexArg ]
     , maybe =
-        \arg ->
+        \maybeArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2030,9 +2055,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ maybeArg ]
     , just =
-        \arg ->
+        \justArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2045,9 +2070,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ justArg ]
     , list =
-        \arg ->
+        \listArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2062,9 +2087,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ listArg ]
     , tuple =
-        \arg arg0 ->
+        \tupleArg tupleArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2079,9 +2104,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ tupleArg, tupleArg0 ]
     , triple =
-        \arg arg0 arg1 ->
+        \tripleArg tripleArg0 tripleArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2097,9 +2122,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ tripleArg, tripleArg0, tripleArg1 ]
     , withType =
-        \arg arg0 ->
+        \withTypeArg withTypeArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2117,9 +2142,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ withTypeArg, withTypeArg0 ]
     , record =
-        \arg ->
+        \recordArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2141,9 +2166,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ recordArg ]
     , get =
-        \arg arg0 ->
+        \getArg getArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2158,9 +2183,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ getArg, getArg0 ]
     , updateRecord =
-        \arg arg0 ->
+        \updateRecordArg updateRecordArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2183,9 +2208,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ updateRecordArg, updateRecordArg0 ]
     , ifThen =
-        \arg arg0 arg1 ->
+        \ifThenArg ifThenArg0 ifThenArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2201,9 +2226,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ ifThenArg, ifThenArg0, ifThenArg1 ]
     , comment =
-        \arg ->
+        \commentArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2216,9 +2241,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ commentArg ]
     , declaration =
-        \arg arg0 ->
+        \declarationArg declarationArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2233,9 +2258,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ declarationArg, declarationArg0 ]
     , withDocumentation =
-        \arg arg0 ->
+        \withDocumentationArg withDocumentationArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2250,9 +2275,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ withDocumentationArg, withDocumentationArg0 ]
     , expose =
-        \arg ->
+        \exposeArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2265,9 +2290,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ exposeArg ]
     , exposeWith =
-        \arg arg0 ->
+        \exposeWithArg exposeWithArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2285,9 +2310,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ exposeWithArg, exposeWithArg0 ]
     , fileWith =
-        \arg arg0 arg1 ->
+        \fileWithArg fileWithArg0 fileWithArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2327,9 +2352,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ fileWithArg, fileWithArg0, fileWithArg1 ]
     , docs =
-        \arg ->
+        \docsArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2346,9 +2371,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ docsArg ]
     , fn =
-        \arg arg0 ->
+        \fnArg fnArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2373,9 +2398,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ fnArg, fnArg0 ]
     , fn2 =
-        \arg arg0 arg1 ->
+        \fn2Arg fn2Arg0 fn2Arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2411,9 +2436,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ fn2Arg, fn2Arg0, fn2Arg1 ]
     , fn3 =
-        \arg arg0 arg1 arg2 ->
+        \fn3Arg fn3Arg0 fn3Arg1 fn3Arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2459,9 +2484,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2 ]
+                [ fn3Arg, fn3Arg0, fn3Arg1, fn3Arg2 ]
     , fn4 =
-        \arg arg0 arg1 arg2 arg3 ->
+        \fn4Arg fn4Arg0 fn4Arg1 fn4Arg2 fn4Arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2517,9 +2542,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2, arg3 ]
+                [ fn4Arg, fn4Arg0, fn4Arg1, fn4Arg2, fn4Arg3 ]
     , fn5 =
-        \arg arg0 arg1 arg2 arg3 arg4 ->
+        \fn5Arg fn5Arg0 fn5Arg1 fn5Arg2 fn5Arg3 fn5Arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2585,9 +2610,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2, arg3, arg4 ]
+                [ fn5Arg, fn5Arg0, fn5Arg1, fn5Arg2, fn5Arg3, fn5Arg4 ]
     , fn6 =
-        \arg arg0 arg1 arg2 arg3 arg4 arg5 ->
+        \fn6Arg fn6Arg0 fn6Arg1 fn6Arg2 fn6Arg3 fn6Arg4 fn6Arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2663,9 +2688,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1, arg2, arg3, arg4, arg5 ]
+                [ fn6Arg, fn6Arg0, fn6Arg1, fn6Arg2, fn6Arg3, fn6Arg4, fn6Arg5 ]
     , function =
-        \arg arg0 ->
+        \functionArg functionArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2698,9 +2723,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ functionArg, functionArg0 ]
     , functionReduced =
-        \arg arg0 ->
+        \functionReducedArg functionReducedArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2717,9 +2742,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ functionReducedArg, functionReducedArg0 ]
     , customType =
-        \arg arg0 ->
+        \customTypeArg customTypeArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2735,9 +2760,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ customTypeArg, customTypeArg0 ]
     , variant =
-        \arg ->
+        \variantArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2750,9 +2775,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ variantArg ]
     , variantWith =
-        \arg arg0 ->
+        \variantWithArg variantWithArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2772,9 +2797,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ variantWithArg, variantWithArg0 ]
     , alias =
-        \arg arg0 ->
+        \aliasArg aliasArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2792,9 +2817,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ aliasArg, aliasArg0 ]
     , portIncoming =
-        \arg arg0 ->
+        \portIncomingArg portIncomingArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2814,9 +2839,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ portIncomingArg, portIncomingArg0 ]
     , portOutgoing =
-        \arg arg0 ->
+        \portOutgoingArg portOutgoingArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2834,9 +2859,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ portOutgoingArg, portOutgoingArg0 ]
     , parse =
-        \arg ->
+        \parseArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2864,9 +2889,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ parseArg ]
     , unsafe =
-        \arg ->
+        \unsafeArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2879,9 +2904,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ unsafeArg ]
     , apply =
-        \arg arg0 ->
+        \applyArg applyArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2897,9 +2922,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ applyArg, applyArg0 ]
     , value =
-        \arg ->
+        \valueArg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2924,9 +2949,9 @@ call_ =
                             )
                     }
                 )
-                [ arg ]
+                [ valueArg ]
     , unwrap =
-        \arg arg0 arg1 ->
+        \unwrapArg unwrapArg0 unwrapArg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2942,9 +2967,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0, arg1 ]
+                [ unwrapArg, unwrapArg0, unwrapArg1 ]
     , unwrapper =
-        \arg arg0 ->
+        \unwrapperArg unwrapperArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2957,7 +2982,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg0 ]
+                [ unwrapperArg, unwrapperArg0 ]
     }
 
 
