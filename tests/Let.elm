@@ -3,6 +3,7 @@ module Let exposing (suite)
 import Dict
 import Elm
 import Elm.Annotation as Type
+import Elm.Expect
 import Elm.Let
 import Elm.Op
 import Elm.ToString
@@ -16,20 +17,19 @@ import Internal.Write
 import Test exposing (..)
 
 
-renderedAs : Elm.Expression -> String -> Expectation
-renderedAs expression str =
-    Expect.equal
-        (Elm.ToString.expression expression
-            |> .body
-        )
-        (String.trim str)
-
-
+suite : Test
 suite =
     describe "Let bindings"
+        [ generation
+        ]
+
+
+generation : Test
+generation =
+    describe "Generation"
         [ test "Simple" <|
             \_ ->
-                renderedAs
+                Elm.Expect.renderedAs
                     (Elm.Let.letIn
                         (\one two ->
                             Elm.Op.append one two
@@ -50,7 +50,7 @@ one ++ two
                     """
         , test "Nested lets will merge in to one" <|
             \_ ->
-                renderedAs
+                Elm.Expect.renderedAs
                     (Elm.Let.letIn
                         (\one two ->
                             Elm.Let.letIn
@@ -85,7 +85,7 @@ in
                     """
         , test "Tuples" <|
             \_ ->
-                renderedAs
+                Elm.Expect.renderedAs
                     (Elm.Let.letIn
                         (\( first, second ) ->
                             Elm.Op.append first second
@@ -102,7 +102,7 @@ first ++ second
                     """
         , test "Records" <|
             \_ ->
-                renderedAs
+                Elm.Expect.renderedAs
                     (Elm.Let.letIn
                         (\fields ->
                             case fields of
@@ -129,7 +129,7 @@ first ++ second
                     """
         , test "Elm.fn" <|
             \_ ->
-                renderedAs
+                Elm.Expect.renderedAs
                     (Elm.Let.letIn
                         (\myFn ->
                             Elm.apply myFn [ Elm.bool True ]
@@ -158,7 +158,7 @@ myFn True
                     """
         , test "Function" <|
             \_ ->
-                renderedAs
+                Elm.Expect.renderedAs
                     (Elm.Let.letIn
                         (\myFn ->
                             myFn (Elm.bool True)
@@ -184,3 +184,17 @@ in
 myFn True
                     """
         ]
+
+
+
+--  , test "Imports are kept when expression is wrapped in letIn" <|
+--         \_ ->
+--             importsAs
+--                 (Elm.letIn [ ( "foo", Elm.unit ) ] <|
+--                     Elm.value
+--                         { importFrom = [ "Module" ]
+--                         , name = "constant"
+--                         , annotation = Nothing
+--                         }
+--                 )
+--                 "import Module"

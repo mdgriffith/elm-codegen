@@ -3,6 +3,7 @@ module PackageHelpers exposing (suite)
 import Dict
 import Elm
 import Elm.Annotation as Type
+import Elm.Expect
 import Elm.Op
 import Elm.ToString
 import Expect exposing (Expectation)
@@ -13,50 +14,6 @@ import Internal.Compiler as Compiler
 import Internal.Debug
 import Internal.Write
 import Test exposing (..)
-
-
-successfullyInferredType expression =
-    let
-        ( _, details ) =
-            Compiler.toExpressionDetails Compiler.startIndex expression
-    in
-    case details.annotation of
-        Ok _ ->
-            Expect.pass
-
-        Err errs ->
-            Expect.fail
-                ("Failed to typecheck"
-                    ++ String.join "\n"
-                        (List.map Compiler.inferenceErrorToString errs)
-                )
-
-
-renderedAs : Elm.Expression -> String -> Expectation
-renderedAs expression str =
-    Expect.equal
-        (Elm.ToString.expression expression
-            |> .body
-        )
-        str
-
-
-declarationAs decl str =
-    Expect.equal
-        (Elm.ToString.declaration decl
-            |> .body
-        )
-        str
-
-
-equal one two =
-    Expect.equal
-        (Elm.ToString.expression one
-            |> .body
-        )
-        (Elm.ToString.expression two
-            |> .body
-        )
 
 
 detectCycles list =
@@ -126,7 +83,7 @@ suite =
     describe "Package helpers"
         [ test "Make_ is equivalent to top-level just constructor" <|
             \_ ->
-                equal
+                Elm.Expect.equal
                     (Gen.Maybe.make_.just (Elm.int 5))
                     (Elm.just (Elm.int 5))
         , test "typechecking an Element.row doesn't hang forever" <|
