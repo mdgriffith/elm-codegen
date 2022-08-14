@@ -1,4 +1,4 @@
-module Elm.Expect exposing (declarationAs, equal, infersType, renderedAs)
+module Elm.Expect exposing (declarationAs, equal, importAs, infersType, renderedAs)
 
 import Elm
 import Elm.ToString
@@ -11,6 +11,15 @@ renderedAs expression str =
     Expect.equal
         (Elm.ToString.expression expression
             |> .body
+        )
+        (String.trim str)
+
+
+importAs : Elm.Expression -> String -> Expectation
+importAs expression str =
+    Expect.equal
+        (Elm.ToString.expression expression
+            |> .imports
         )
         (String.trim str)
 
