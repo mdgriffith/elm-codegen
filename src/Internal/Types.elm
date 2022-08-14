@@ -26,32 +26,7 @@ formatValue str =
             else
                 String.toLower (String.left 1 str) ++ String.dropLeft 1 str
     in
-    sanitize formatted
-
-
-sanitize : String -> String
-sanitize str =
-    case str of
-        "in" ->
-            "in_"
-
-        "type" ->
-            "type_"
-
-        "case" ->
-            "case_"
-
-        "let" ->
-            "let_"
-
-        "module" ->
-            "module_"
-
-        "exposing" ->
-            "exposing_"
-
-        _ ->
-            str
+    Internal.Compiler.sanitize formatted
 
 
 custom : List String -> String -> List Annotation.TypeAnnotation -> Annotation.TypeAnnotation

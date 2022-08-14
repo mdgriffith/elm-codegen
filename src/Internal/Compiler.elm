@@ -1266,6 +1266,9 @@ sanitize str =
         "exposing" ->
             "exposing_"
 
+        "where" ->
+            "where_"
+
         _ ->
             str
 
