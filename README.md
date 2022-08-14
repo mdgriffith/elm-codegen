@@ -20,7 +20,7 @@ Elm.declaration "anExample"
         , Elm.field "fancy" (Elm.bool True)
         ]
     )
-    |> Elm.declarationToString
+    |> Elm.ToString.declaration
 ```
 
 The above will generate the following string:
