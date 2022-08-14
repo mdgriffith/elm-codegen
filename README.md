@@ -16,8 +16,8 @@ To get started, here's a small example to give you an idea of what the code look
 ```elm
 Elm.declaration "anExample"
     (Elm.record
-        [ Elm.field "name" (Elm.string "a fancy string!")
-        , Elm.field "fancy" (Elm.bool True)
+        [ ("name", (Elm.string "a fancy string!"))
+        , ("fancy", (Elm.bool True))
         ]
     )
     |> Elm.ToString.declaration
