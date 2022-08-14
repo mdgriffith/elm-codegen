@@ -112,6 +112,7 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Debug
+import Internal.Dependencies
 import Internal.Types
 import Internal.Write
 import Set
@@ -2467,7 +2468,7 @@ parse source =
         Ok raw ->
             let
                 parsedFile =
-                    Elm.Processing.process Elm.Processing.init
+                    Elm.Processing.process elmProcessContext
                         raw
 
                 exposedList =
@@ -2509,6 +2510,14 @@ parse source =
                         (declarations ++ comments)
                         |> List.map Tuple.second
                 }
+
+
+elmProcessContext : Elm.Processing.ProcessContext
+elmProcessContext =
+    Elm.Processing.init
+        |> Elm.Processing.addDependency Internal.Dependencies.elmCore
+        |> Elm.Processing.addDependency Internal.Dependencies.elmUrl
+        |> Elm.Processing.addDependency Internal.Dependencies.elmParser
 
 
 determineExposure : Declaration.Declaration -> Expose.Exposing -> Compiler.Expose
