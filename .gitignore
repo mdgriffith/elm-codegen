@@ -12,3 +12,4 @@ play
 dist
 
 tests/Gen
+tests/package-tests/run
