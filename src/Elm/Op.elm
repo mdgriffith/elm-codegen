@@ -468,7 +468,7 @@ pipeLeft =
 
 {-| Wrap an expression in parentheses.
 
-Generally you won't need this as `elm-codegen` handles parens for you, but it can be useful to semantically group operaties from this module.
+Generally you won't need this as `elm-codegen` handles parens for you, but it can be useful to semantically group operations from this module.
 
 -}
 parens : Expression -> Expression
