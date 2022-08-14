@@ -116,7 +116,7 @@ function getFilesWithin(dir: string, endsWith: string) {
   fs.readdirSync(dir).forEach((file) => {
     const absolute = path.join(dir, file)
     if (fs.statSync(absolute).isDirectory()) {
-      files.concat(getFilesWithin(absolute, endsWith))
+      files = files.concat(getFilesWithin(absolute, endsWith))
     } else {
       if (absolute.endsWith(endsWith)) {
         files.push(absolute)
