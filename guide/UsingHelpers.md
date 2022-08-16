@@ -141,7 +141,7 @@ Additionally though, there are a few other helpers —
 2. `annotation_` — Helpers to construct a type annotation which can be used with `Elm.withType` or `Elm.value`
    - **Note!** `elm-codegen` has builtin type inference, so hopefully the number of times you need this is pretty low.
 3. `make_` — Create a value of a type. `Gen.Maybe.make_.just (Elm.string "Hello")` would generate `Just "Hello"`.
-4. `call_` — The top level "bindings" that are generated for you will take in actual primitives. However there are cases where you want to pass in an `Expression` to a function instead of an actual string! `call_` will allow you to do that. Sound confusing? Yeah, it is, check out the [Mastering Buildtime vs Runtime](https://github.com/mdgriffith/elm-codegen/tree/main/guide/MasteringBuildtimeVsRuntime.md) guide for more examples!
+4. `call_` — The top level "bindings" that are generated for you will take in actual primitives. However there are cases where you want to pass in an `Expression` to a function instead of an actual string!
 
 5. `values_` — In some cases you may need to do something fancier. The `values_` record will help you refer directly to a single value.
    So, `Gen.Html.values_.div` is an `Expression` which generates just `Html.div`.
