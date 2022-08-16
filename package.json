@@ -12,6 +12,7 @@
     "test:pkg-generation": "npm run build; cd tests/package-tests; ts-node run.ts",
     "build": "tsc && npm run pkg:build",
     "watch": "tsc --watch",
+    "prepublishOnly": "npm run build",
     "codegen": "npm run build; node bin/elm-codegen",
     "build:docs": "elm make --docs=docs.json",
     "pkg:build": "cd cli/gen-package; elm make src/Generate.elm --optimize --output=../../dist/gen-package.js",
