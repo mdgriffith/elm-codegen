@@ -47,7 +47,11 @@ async function httpsGetJson(url: string): Promise<any> {
         res.on("end", () => {
           const body = Buffer.concat(chunks).toString()
           if (res.statusCode === 200) {
-            resolve(JSON.parse(body))
+            try {
+              resolve(JSON.parse(body))
+            } catch (error) {
+              reject(error)
+            }
           } else {
             reject(new Error(`GET ${url} – expected status code 200 but got ${res.statusCode}:\n\n${body}`))
           }
