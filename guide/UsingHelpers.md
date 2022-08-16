@@ -33,6 +33,7 @@ In our `codegen/Generate.elm` file, we can write:
 
 ```elm
 import Gen.Html
+import Gen.Attributes
 
 div : Elm.Expression
 div =
@@ -55,6 +56,48 @@ Html.div
 ```
 
 Crazy, right?
+
+## Using `.call`
+
+What if you wanted to render text that is only known at _run time_?
+
+The generated package bindings also includes a thing called `.call_`, which can help you out.
+
+While normally, `Gen.Html.text` is defined as
+
+```elm
+text : String -> Elm.Expression
+```
+
+`Gen.Html.call_.text` is defined as
+
+```elm
+text : Elm.Expression -> Elm.Expression
+```
+
+Which means you can generate any expression you want to provide the string.
+
+For example, here's how we'd create a function that takes one argument called `myString` and returns some `Html`.
+
+```elm
+import Gen.Html
+import Gen.Attributes
+import Elm
+
+
+div : Elm.Expression
+div =
+    Elm.fn ("myString", Just Elm.Annotation.string)
+        (\myString ->
+            Gen.Html.div
+                [ Gen.Html.Attributes.class
+                    "hello"
+                ]
+                [ Gen.Html.call_.text
+                    myString
+                ]
+        )
+```
 
 ## Local Helpers
 
