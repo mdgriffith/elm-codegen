@@ -2,13 +2,16 @@
 
 Elm CodeGen is an **Elm package** and **CLI tool** for generating Elm code.
 
+- [Here we are on NPM](https://www.npmjs.com/package/elm-codegen)
+- [And the code docs on the Elm package website](https://package.elm-lang.org/packages/mdgriffith/elm-codgen/latest/)
+
 The goal is to be easier to write and more maintainable than that string template you have lying around. 😏
 
 Here's what this tool does for you in order to make generating code simpler.
 
 1. **Automatic imports** — Import declarations are calculated.
 2. **Built in type inference** — The types for your generated code are inferred, which means generated things can figure out their own type signatures.
-3. **Use existing packages easily** — For generating code that uses a specific _library_ such as [`elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/1.1.8/), the `elm-codegen` CLI can create some Elm code to help you out.
+3. **Use existing packages easily** — For generating code that uses a specific _library_ such as [`elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/), the `elm-codegen` CLI can create some Elm code to help you out.
    Check out the [Using packages](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md) guide to get a better idea of what this looks like!
 
 To get started, here's a small example to give you an idea of what the code looks like!
@@ -16,8 +19,8 @@ To get started, here's a small example to give you an idea of what the code look
 ```elm
 Elm.declaration "anExample"
     (Elm.record
-        [ ("name", (Elm.string "a fancy string!"))
-        , ("fancy", (Elm.bool True))
+        [ ("name", Elm.string "a fancy string!")
+        , ("fancy", Elm.bool True)
         ]
     )
     |> Elm.ToString.declaration
