@@ -1,7 +1,7 @@
 {
   "type": "package",
   "name": "mdgriffith/elm-codegen",
-  "summary": "Simple code generation for Elm",
+  "summary": "A code generation library for Elm",
   "license": "BSD-3-Clause",
   "version": "1.0.0",
   "exposed-modules": ["Elm", "Elm.Op", "Elm.Annotation", "Elm.Case", "Elm.Let", "Elm.ToString"],
