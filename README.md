@@ -42,7 +42,7 @@ anExample =
 - [Writing a generator](https://github.com/mdgriffith/elm-codegen/tree/main/guide/WritingAGenerator.md)
 - [Using packages/helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md)
 
-And finally, the [elm-codegen package documentation](https://elm-doc-preview.netlify.app/?repo=mdgriffith/elm-codegen).
+And finally, the [elm-codegen package documentation](https://package.elm-lang.org/packages/mdgriffith/elm-codegen/latest/).
 
 ## Using the CLI
 
