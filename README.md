@@ -40,3 +40,15 @@ anExample =
 - [Using packages/helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md)
 
 And finally, the [elm-codegen package documentation](https://elm-doc-preview.netlify.app/?repo=mdgriffith/elm-codegen).
+
+## Using the CLI
+
+```
+npm install -g elm-codegen
+```
+
+Then you can start a codegen project using:
+
+```
+elm-codegen init
+```
