@@ -34,7 +34,7 @@ You should be good to proceed to the [Writing a Generator](https://github.com/md
 - `--watch` — Watch the `.elm` files in the `codegen` directory and regenerate if anything changes.
 - `--debug` — Allow `Debug.log` in your generator. This is off by default.
 - `--flags={"myStuff": true}` — Pass flags to your generator as inline `JSON`.
-- `--flags-from=<file.json>` — Read a `JSON` file and pass it in to the generator as flags.
+- `--flags-from=<file.json>` — Will read a file and pass it to the generator as a flag. If the extension is `.json`, it will parse it as a `Json.Value` first!
 
 Great! Onward!
 
