@@ -7,7 +7,7 @@ The goal is to be easier to write and more maintainable than that string templat
 Here's what this tool does for you in order to make generating code simpler.
 
 1. **Automatic imports** — Import declarations are calculated.
-2. **Builtin type inference** — The types for your generated code are inferred.
+2. **Built in type inference** — The types for your generated code are inferred, which means generated things can figure out their own type signatures.
 3. **Use existing packages easily** — For generating code that uses a specific _library_ such as [`elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/1.1.8/), the `elm-codegen` CLI can create some Elm code to help you out.
    Check out the [Using packages](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md) guide to get a better idea of what this looks like!
 
