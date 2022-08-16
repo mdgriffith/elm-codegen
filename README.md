@@ -3,7 +3,7 @@
 Elm CodeGen is an **Elm package** and **CLI tool** for generating Elm code.
 
 - [Here we are on NPM](https://www.npmjs.com/package/elm-codegen)
-- [And the code docs on the Elm package website](https://package.elm-lang.org/packages/mdgriffith/elm-codgen/latest/)
+- [And the code docs on the Elm package website](https://package.elm-lang.org/packages/mdgriffith/elm-codegen/latest/)
 
 The goal is to be easier to write and more maintainable than that string template you have lying around. 😏
 
