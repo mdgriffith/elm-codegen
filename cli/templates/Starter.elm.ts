@@ -11,10 +11,9 @@ import Gen.Helper
 
 main : Program {} () ()
 main =
-    Generate.run <|
-        \\json ->
-            [ file
-            ]
+    Generate.run
+        [ file
+        ]
 
 
 
