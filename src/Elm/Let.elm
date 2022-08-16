@@ -114,6 +114,9 @@ will generate
 
 @docs fn, fn2, fn3
 
+
+# Converting to an Expression
+
 @docs toExpression
 
 -}
