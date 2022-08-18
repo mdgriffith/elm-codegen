@@ -416,7 +416,12 @@ function copyHelpers(codeGenJson: CodeGenJson, options: Options) {
       if (fs.existsSync(item)) {
         getFilesWithin(item, ".elm").forEach((elmPath) => {
           const relative = path.relative(item, elmPath)
-          fs.writeFileSync(path.join(options.output, relative), fs.readFileSync(elmPath).toString())
+          const targetFilePath = path.join(options.output, relative)
+          const targetDir = path.dirname(targetFilePath)
+          if (!fs.existsSync(targetDir)) {
+            fs.mkdirSync(targetDir, { recursive: true })
+          }
+          fs.writeFileSync(targetFilePath, fs.readFileSync(elmPath).toString())
         })
       }
     }
