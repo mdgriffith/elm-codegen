@@ -27,7 +27,7 @@
     "play-run:debug": "(npm run build; cd play; node ../bin/elm-codegen run --debug)",
     "play:install": "(npm run build; cd play; node ../bin/elm-codegen install)",
     "play:install-codec": "(npm run build; cd play; node ../bin/elm-codegen install miniBill/elm-codec)",
-    "play:install-ui": "(npm run build; cd play; node ../bin/elm-codegen install)",
+    "play:install-ui": "(npm run build; cd play; node ../bin/elm-codegen install mdgriffith/elm-ui)",
     "play:install-list": "(npm run build; cd play; node ../bin/elm-codegen install elm-community/list-extra)",
     "play:install-css": "(npm run build; cd play; node ../bin/elm-codegen install rtfeldman/elm-css)",
     "play:install-browser": "(npm run build; cd play; node ../bin/elm-codegen install elm/browser)",
