@@ -19,11 +19,11 @@
 */
 
 import * as elm_compiler from "node-elm-compiler"
+import * as https from "https"
 import * as path from "path"
 import * as fs from "fs"
 import { XMLHttpRequest } from "./run/vendor/XMLHttpRequest"
 import * as Chokidar from "chokidar"
-import fetch from "node-fetch"
 import chalk from "chalk"
 import templates from "./templates"
 const gen_package = require("./gen-package")
@@ -33,6 +33,33 @@ const gen_package = require("./gen-package")
 globalThis["XMLHttpRequest"] = XMLHttpRequest.XMLHttpRequest
 
 const currentVersion = require("../package.json").version
+
+async function httpsGetJson(url: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, (res) => {
+        const chunks: Buffer[] = []
+
+        res.on("data", (chunk: Buffer) => {
+          chunks.push(chunk)
+        })
+
+        res.on("end", () => {
+          const body = Buffer.concat(chunks).toString()
+          if (res.statusCode === 200) {
+            try {
+              resolve(JSON.parse(body))
+            } catch (error) {
+              reject(error)
+            }
+          } else {
+            reject(new Error(`GET ${url} – expected status code 200 but got ${res.statusCode}:\n\n${body}`))
+          }
+        })
+      })
+      .on("error", reject)
+  })
+}
 
 async function run_generator(output_dir: string, moduleName: string, elm_source: string, flags: any) {
   eval(elm_source)
@@ -172,8 +199,7 @@ async function install_package(
   codeGenJson: CodeGenJson
 ): Promise<CodeGenJson> {
   if (version == null) {
-    const searchResp = await fetch("https://elm-package-cache-psi.vercel.app/search.json")
-    const search = await searchResp.json()
+    const search = await httpsGetJson("https://elm-package-cache-psi.vercel.app/search.json")
     for (let found of search) {
       if (found.name == pkg) {
         version = found.version
@@ -185,8 +211,7 @@ async function install_package(
       process.exit(1)
     }
   }
-  const docsResp = await fetch(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
-  const docs = await docsResp.json()
+  const docs = await httpsGetJson(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
 
   // let codeGenJson = getCodeGenJson(install_dir)
 
