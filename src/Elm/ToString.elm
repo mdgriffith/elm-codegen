@@ -1,10 +1,20 @@
-module Elm.ToString exposing (expression, annotation, declaration)
+module Elm.ToString exposing
+    ( expression, annotation, declaration
+    , expressionWith, annotationWith, declarationWith
+    )
 
 {-| Convert values to a string!
 
 This can be useful if you're generating examples or just playing with the library and want to get an intuition for it.
 
 @docs expression, annotation, declaration
+
+
+## With Import Aliases
+
+If you want further control over import aliases,
+
+@docs expressionWith, annotationWith, declarationWith
 
 -}
 
@@ -25,7 +35,25 @@ expression :
         , body : String
         , signature : String
         }
-expression (Compiler.Expression toExp) =
+expression =
+    expressionWith noAliases
+
+
+noAliases : { aliases : List ( List String, String ) }
+noAliases =
+    { aliases = [] }
+
+
+{-| -}
+expressionWith :
+    { aliases : List ( List String, String ) }
+    -> Expression
+    ->
+        { imports : String
+        , body : String
+        , signature : String
+        }
+expressionWith options (Compiler.Expression toExp) =
     let
         expresh =
             toExp Compiler.startIndex
@@ -33,15 +61,15 @@ expression (Compiler.Expression toExp) =
     { imports =
         expresh
             |> Compiler.getImports
-            |> List.filterMap (Compiler.makeImport [])
+            |> List.filterMap (Compiler.makeImport options.aliases)
             |> Internal.Write.writeImports
-    , body = Internal.Write.writeExpression expresh.expression
+    , body = Internal.Write.writeExpressionWith options.aliases expresh.expression
     , signature =
         case expresh.annotation of
             Ok sig ->
                 case Compiler.resolve sig.inferences sig.type_ of
                     Ok finalType ->
-                        Internal.Write.writeAnnotation finalType
+                        Internal.Write.writeAnnotationWith options.aliases finalType
 
                     Err errMsg ->
                         errMsg
@@ -70,11 +98,25 @@ declaration :
         , signature : String
         , body : String
         }
-declaration decl =
+declaration =
+    declarationWith noAliases
+
+
+{-| -}
+declarationWith :
+    { aliases : List ( List String, String ) }
+    -> Declaration
+    ->
+        { imports : String
+        , docs : String
+        , signature : String
+        , body : String
+        }
+declarationWith options decl =
     { imports =
         case decl of
             Compiler.Declaration _ imps _ ->
-                List.filterMap (Compiler.makeImport []) imps
+                List.filterMap (Compiler.makeImport options.aliases) imps
                     |> Internal.Write.writeImports
 
             Compiler.Comment _ ->
@@ -82,7 +124,7 @@ declaration decl =
 
             Compiler.Block _ ->
                 ""
-    , body = Internal.Write.writeDeclaration decl
+    , body = Internal.Write.writeDeclarationWith option.aliases decl
     , docs =
         case decl of
             Compiler.Declaration _ _ (Declaration.FunctionDeclaration func) ->
@@ -109,7 +151,7 @@ declaration decl =
                         ""
 
                     Just (Node _ sig) ->
-                        Internal.Write.writeSignature sig
+                        Internal.Write.writeSignatureWith options.aliases sig
 
             Compiler.Declaration _ _ _ ->
                 ""
@@ -129,10 +171,22 @@ annotation :
         { imports : String
         , signature : String
         }
-annotation (Compiler.Annotation ann) =
+annotation =
+    annotationWith noAliases
+
+
+{-| -}
+annotationWith :
+    { aliases : List ( List String, String ) }
+    -> Annotation
+    ->
+        { imports : String
+        , signature : String
+        }
+annotationWith options (Compiler.Annotation ann) =
     { imports =
-        List.filterMap (Compiler.makeImport []) ann.imports
+        List.filterMap (Compiler.makeImport options.aliases) ann.imports
             |> Internal.Write.writeImports
     , signature =
-        Internal.Write.writeAnnotation ann.annotation
+        Internal.Write.writeAnnotationWith options.aliases ann.annotation
     }
