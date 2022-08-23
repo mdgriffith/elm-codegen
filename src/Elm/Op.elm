@@ -84,11 +84,11 @@ import Set
 
 
        one
-           |> Elm.or two
-           |> Elm.or three
+           |> Elm.Op.or two
+           |> Elm.Op.or three
 
 
-       Elm.or one two
+       Elm.Op.or one two
 
 
 
@@ -424,8 +424,8 @@ query =
 {-| `|>`
 
     Elm.value "thang"
-        |> Elm.pipe (Elm.value "thang2")
-        |> Elm.pipe (Elm.value "thang3")
+        |> Elm.Op.pipe (Elm.value "thang2")
+        |> Elm.Op.pipe (Elm.value "thang3")
 
 Results in
 
