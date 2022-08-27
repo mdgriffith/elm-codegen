@@ -120,7 +120,7 @@ type BinOp
 -}
 equal : Expression -> Expression -> Expression
 equal =
-    applyInfix2 (BinOp "==" Infix.Left 4)
+    applyInfix (BinOp "==" Infix.Left 4)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.var "a"
@@ -133,7 +133,7 @@ equal =
 -}
 notEqual : Expression -> Expression -> Expression
 notEqual =
-    applyInfix2 (BinOp "/=" Infix.Left 4)
+    applyInfix (BinOp "/=" Infix.Left 4)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.var "a"
@@ -146,7 +146,7 @@ notEqual =
 -}
 lt : Expression -> Expression -> Expression
 lt =
-    applyInfix2 (BinOp "<" Infix.Non 4)
+    applyInfix (BinOp "<" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -159,7 +159,7 @@ lt =
 -}
 gt : Expression -> Expression -> Expression
 gt =
-    applyInfix2 (BinOp ">" Infix.Non 4)
+    applyInfix (BinOp ">" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -172,7 +172,7 @@ gt =
 -}
 lte : Expression -> Expression -> Expression
 lte =
-    applyInfix2 (BinOp "<=" Infix.Non 4)
+    applyInfix (BinOp "<=" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -185,7 +185,7 @@ lte =
 -}
 gte : Expression -> Expression -> Expression
 gte =
-    applyInfix2 (BinOp ">=" Infix.Non 4)
+    applyInfix (BinOp ">=" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -198,7 +198,7 @@ gte =
 -}
 and : Expression -> Expression -> Expression
 and =
-    applyInfix2 (BinOp "&&" Infix.Right 3)
+    applyInfix (BinOp "&&" Infix.Right 3)
         (Internal.Types.function
             [ Internal.Types.bool
             , Internal.Types.bool
@@ -211,7 +211,7 @@ and =
 -}
 or : Expression -> Expression -> Expression
 or =
-    applyInfix2 (BinOp "||" Infix.Right 2)
+    applyInfix (BinOp "||" Infix.Right 2)
         (Internal.Types.function
             [ Internal.Types.bool
             , Internal.Types.bool
@@ -238,7 +238,7 @@ multiply =
 -}
 divide : Expression -> Expression -> Expression
 divide =
-    applyInfix2 (BinOp "/" Infix.Left 7)
+    applyInfix (BinOp "/" Infix.Left 7)
         (Internal.Types.function
             [ Internal.Types.float
             , Internal.Types.float
@@ -251,7 +251,7 @@ divide =
 -}
 intDivide : Expression -> Expression -> Expression
 intDivide =
-    applyInfix2 (BinOp "//" Infix.Left 7)
+    applyInfix (BinOp "//" Infix.Left 7)
         (Internal.Types.function
             [ Internal.Types.int
             , Internal.Types.int
@@ -278,7 +278,7 @@ minus =
 -}
 cons : Expression -> Expression -> Expression
 cons =
-    applyInfix2 (BinOp "::" Infix.Right 5)
+    applyInfix (BinOp "::" Infix.Right 5)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.list (Internal.Types.var "a")
@@ -291,7 +291,7 @@ cons =
 -}
 append : Expression -> Expression -> Expression
 append =
-    applyInfix2
+    applyInfix
         (BinOp "++" Infix.Right 5)
         (Internal.Types.function
             [ Internal.Types.appendable
@@ -308,7 +308,7 @@ append =
 -}
 keep : Expression -> Expression -> Expression
 keep =
-    applyInfix2 (BinOp "|=" Infix.Left 5)
+    applyInfix (BinOp "|=" Infix.Left 5)
         -- Parser (a -> b) -> Parser a -> Parser b
         (Internal.Types.function
             [ Internal.Types.custom [ "Parser" ]
@@ -333,7 +333,7 @@ keep =
 -}
 skip : Expression -> Expression -> Expression
 skip =
-    applyInfix2 (BinOp "|." Infix.Left 6)
+    applyInfix (BinOp "|." Infix.Left 6)
         (Internal.Types.function
             [ Internal.Types.custom [ "Parser" ]
                 "Parser"
@@ -356,7 +356,7 @@ skip =
 -}
 slash : Expression -> Expression -> Expression
 slash =
-    applyInfix2 (BinOp "</>" Infix.Right 7)
+    applyInfix (BinOp "</>" Infix.Right 7)
         --  Parser a b -> Parser b c -> Parser a c
         (Internal.Types.function
             [ Internal.Types.custom [ "Url", "Parser" ]
@@ -383,7 +383,7 @@ slash =
 -}
 query : Expression -> Expression -> Expression
 query =
-    applyInfix2 (BinOp "<?>" Infix.Left 8)
+    applyInfix (BinOp "<?>" Infix.Left 8)
         -- Parser a (query -> b) -> Parser query -> Parser a b
         (Internal.Types.function
             [ Internal.Types.custom [ "Url", "Parser" ]
@@ -436,7 +436,7 @@ Results in
 -}
 pipe : Expression -> Expression -> Expression
 pipe r l =
-    applyInfix2 (BinOp "|>" Infix.Left 0)
+    applyPipe (BinOp "|>" Infix.Left 0)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.function
@@ -454,7 +454,7 @@ pipe r l =
 -}
 pipeLeft : Expression -> Expression -> Expression
 pipeLeft =
-    applyInfix2 (BinOp "<|" Infix.Right 0)
+    applyPipe (BinOp "<|" Infix.Right 0)
         (Internal.Types.function
             [ Internal.Types.function
                 [ Internal.Types.var "a"
@@ -464,6 +464,42 @@ pipeLeft =
             ]
             (Internal.Types.var "b")
         )
+
+
+{-| Like applyInfix, but without parens
+-}
+applyPipe : BinOp -> Annotation.TypeAnnotation -> Expression -> Expression -> Expression
+applyPipe (BinOp symbol dir _) infixAnnotation l r =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( leftIndex, left ) =
+                    Compiler.toExpressionDetails index l
+
+                ( rightIndex, right ) =
+                    Compiler.toExpressionDetails leftIndex r
+
+                annotationIndex =
+                    Compiler.next rightIndex
+            in
+            { expression =
+                Exp.OperatorApplication symbol
+                    dir
+                    (Compiler.nodify left.expression)
+                    (Compiler.nodify right.expression)
+            , annotation =
+                Compiler.applyType
+                    (Ok
+                        { type_ = infixAnnotation
+                        , inferences = Dict.empty
+                        , aliases = Compiler.emptyAliases
+                        }
+                    )
+                    [ left
+                    , right
+                    ]
+            , imports = left.imports ++ right.imports
+            }
 
 
 {-| Wrap an expression in parentheses.
@@ -486,8 +522,8 @@ parens (Compiler.Expression toExp) =
         )
 
 
-applyInfix2 : BinOp -> Annotation.TypeAnnotation -> Expression -> Expression -> Expression
-applyInfix2 (BinOp symbol dir _) infixAnnotation l r =
+applyInfix : BinOp -> Annotation.TypeAnnotation -> Expression -> Expression -> Expression
+applyInfix (BinOp symbol dir _) infixAnnotation l r =
     Compiler.Expression <|
         \index ->
             let
