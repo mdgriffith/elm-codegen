@@ -3,6 +3,7 @@ module Internal.Write exposing
     , writeAnnotation
     , writeAnnotationWith
     , writeDeclaration
+    , writeDeclarationWith
     , writeExpression
     , writeExpressionWith
     , writeImports
@@ -109,7 +110,7 @@ writeExpression exp =
 
 
 writeExpressionWith : Aliases -> Expression -> String
-writeExpressionWith aliase exp =
+writeExpressionWith aliases exp =
     prettyExpression aliases exp
         |> Pretty.pretty 80
 
@@ -170,6 +171,12 @@ writeImports imports =
 writeDeclaration : Util.Declaration -> String
 writeDeclaration exp =
     prettyDeclaration 80 exp
+        |> Pretty.pretty 80
+
+
+writeDeclarationWith : Aliases -> Util.Declaration -> String
+writeDeclarationWith aliases decl =
+    prettyDeclarations aliases [ decl ]
         |> Pretty.pretty 80
 
 

@@ -124,7 +124,7 @@ declarationWith options decl =
 
             Compiler.Block _ ->
                 ""
-    , body = Internal.Write.writeDeclarationWith option.aliases decl
+    , body = Internal.Write.writeDeclarationWith options.aliases decl
     , docs =
         case decl of
             Compiler.Declaration _ _ (Declaration.FunctionDeclaration func) ->

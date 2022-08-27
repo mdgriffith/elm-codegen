@@ -80,6 +80,14 @@ findDepth dict key found depth =
 
 suite : Test
 suite =
+    describe "Generated code"
+        [ packageHelpers
+        , stringifying
+        ]
+
+
+packageHelpers : Test
+packageHelpers =
     describe "Package helpers"
         [ test "Make_ is equivalent to top-level just constructor" <|
             \_ ->
@@ -132,3 +140,62 @@ suite =
 test =
     { one = \\arg -> arg + 5, two = \\arg -> arg ++ "World" }"""
         ]
+
+
+stringifying : Test
+stringifying =
+    only <|
+        describe "ToString"
+            [ test "expressionWith applies aliases as expected" <|
+                \_ ->
+                    Expect.equal
+                        (Elm.record
+                            [ Elm.fn ( "arg", Nothing )
+                                (\arg ->
+                                    Elm.apply
+                                        (Elm.value
+                                            { importFrom = [ "Longer", "Module" ]
+                                            , name = "gorthalax"
+                                            , annotation = Nothing
+                                            }
+                                        )
+                                        [ arg
+                                        ]
+                                )
+                                |> Tuple.pair "one"
+                            ]
+                            |> Elm.ToString.expressionWith
+                                { aliases =
+                                    [ ( [ "Longer", "Module" ], "Ui" )
+                                    ]
+                                }
+                            |> .body
+                        )
+                        "{ one = \\arg -> Ui.gorthalax arg }"
+            , test "expressionWith generates aliases as expected" <|
+                \_ ->
+                    Expect.equal
+                        (Elm.record
+                            [ Elm.fn ( "arg", Nothing )
+                                (\arg ->
+                                    Elm.apply
+                                        (Elm.value
+                                            { importFrom = [ "Longer", "Module" ]
+                                            , name = "gorthalax"
+                                            , annotation = Nothing
+                                            }
+                                        )
+                                        [ arg
+                                        ]
+                                )
+                                |> Tuple.pair "one"
+                            ]
+                            |> Elm.ToString.expressionWith
+                                { aliases =
+                                    [ ( [ "Longer", "Module" ], "Ui" )
+                                    ]
+                                }
+                            |> .imports
+                        )
+                        "import Longer.Module as Ui"
+            ]

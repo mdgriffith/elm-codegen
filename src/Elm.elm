@@ -2094,7 +2094,7 @@ declaration nameStr (Compiler.Expression toBody) =
             toBody Compiler.startIndex
 
         name =
-            Compiler.nodify (Compiler.formatDeclarationName name)
+            Compiler.nodify (Compiler.formatDeclarationName nameStr)
 
         resolvedType =
             body.annotation
