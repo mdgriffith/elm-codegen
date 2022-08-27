@@ -1241,6 +1241,21 @@ formatValue str =
     sanitize formatted
 
 
+{-|
+
+    Top level values have the same rules as normal values, but `main` is allowed.
+
+-}
+formatDeclarationName : String -> String
+formatDeclarationName str =
+    case str of
+        "main" ->
+            "main"
+
+        _ ->
+            formatValue str
+
+
 sanitize : String -> String
 sanitize str =
     case str of

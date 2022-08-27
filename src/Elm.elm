@@ -2088,10 +2088,13 @@ renderError err =
 
 {-| -}
 declaration : String -> Expression -> Declaration
-declaration name (Compiler.Expression toBody) =
+declaration nameStr (Compiler.Expression toBody) =
     let
         body =
             toBody Compiler.startIndex
+
+        name =
+            Compiler.nodify (Compiler.formatDeclarationName name)
 
         resolvedType =
             body.annotation
@@ -2112,7 +2115,7 @@ declaration name (Compiler.Expression toBody) =
                     Ok finalType ->
                         Just
                             (Compiler.nodify
-                                { name = Compiler.nodify (Compiler.formatValue name)
+                                { name = name
                                 , typeAnnotation =
                                     Compiler.nodify finalType
                                 }
@@ -2127,14 +2130,14 @@ declaration name (Compiler.Expression toBody) =
         case body.expression of
             Exp.LambdaExpression lam ->
                 Compiler.nodify
-                    { name = Compiler.nodify (Compiler.formatValue name)
+                    { name = name
                     , arguments = lam.args
                     , expression = lam.expression
                     }
 
             _ ->
                 Compiler.nodify
-                    { name = Compiler.nodify (Compiler.formatValue name)
+                    { name = name
                     , arguments = []
                     , expression = Compiler.nodify body.expression
                     }
