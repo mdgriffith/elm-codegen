@@ -264,6 +264,11 @@ render toDocComment fileDetails =
         exposedGroups =
             Compiler.getExposedGroups fileDetails.body
 
+        warnings =
+            List.filterMap
+                Compiler.getWarning
+                fileDetails.body
+
         body =
             Internal.Write.write
                 { moduleDefinition =
@@ -312,6 +317,7 @@ render toDocComment fileDetails =
     { path =
         String.join "/" mod ++ ".elm"
     , contents = body
+    , warnings = warnings
     }
 
 
@@ -335,7 +341,7 @@ reduceDeclarationImports self decs imports =
                 remain
                 imports
 
-        (Compiler.Declaration _ newImports body) :: remain ->
+        (Compiler.Declaration _ newImports _ body) :: remain ->
             reduceDeclarationImports self
                 remain
                 (addImports self newImports imports)
@@ -366,6 +372,11 @@ addImports self newImports ( set, deduped ) =
 type alias File =
     { path : String
     , contents : String
+    , warnings :
+        List
+            { declaration : String
+            , warning : String
+            }
     }
 
 
@@ -1306,6 +1317,7 @@ customType name variants =
             )
             variants
         )
+        Nothing
         (Declaration.CustomTypeDeclaration
             { documentation = Nothing
             , name = Compiler.nodify (Compiler.formatType name)
@@ -1377,6 +1389,7 @@ alias : String -> Elm.Annotation.Annotation -> Declaration
 alias name innerAnnotation =
     Compiler.Declaration Compiler.NotExposed
         (Compiler.getAnnotationImports innerAnnotation)
+        Nothing
         (Declaration.AliasDeclaration
             { documentation = Nothing
             , name = Compiler.nodify (Compiler.formatType name)
@@ -2088,12 +2101,15 @@ renderDebugDocumentation resolvedType bodyAnnotation =
 
 renderError : List Compiler.InferenceError -> String
 renderError err =
-    "-- ELM-CODEGEN ERROR --\n\n"
-        ++ (err
-                |> List.map Compiler.inferenceErrorToString
-                |> String.join "\n\n"
-           )
-        ++ "\n\n"
+    -- "-- ELM-CODEGEN ERROR --\n\n"
+    -- ++
+    err
+        |> List.map Compiler.inferenceErrorToString
+        |> String.join "\n\n"
+
+
+
+-- ++ "\n\n"
 
 
 {-| -}
@@ -2104,7 +2120,7 @@ declaration nameStr (Compiler.Expression toBody) =
             toBody Compiler.startIndex
 
         name =
-            Compiler.nodify (Compiler.formatDeclarationName nameStr)
+            Compiler.formatDeclarationName nameStr
 
         resolvedType =
             body.annotation
@@ -2112,10 +2128,28 @@ declaration nameStr (Compiler.Expression toBody) =
                     renderError
                 |> Result.andThen
                     (\sig -> Compiler.resolve sig.inferences sig.type_)
+
+        maybeWarning =
+            case resolvedType of
+                Ok sig ->
+                    case body.annotation of
+                        Ok inference ->
+                            Nothing
+
+                        Err err ->
+                            Just
+                                { declaration = name
+                                , warning = renderError err
+                                }
+
+                Err err ->
+                    Just
+                        { declaration = name
+                        , warning = err
+                        }
     in
     { documentation =
-        Compiler.nodifyMaybe
-            (renderDocumentation resolvedType body.annotation)
+        Nothing
 
     -- (renderDebugDocumentation resolvedType body.annotation)
     , signature =
@@ -2129,7 +2163,7 @@ declaration nameStr (Compiler.Expression toBody) =
                     Ok finalType ->
                         Just
                             (Compiler.nodify
-                                { name = name
+                                { name = Compiler.nodify name
                                 , typeAnnotation =
                                     Compiler.nodify finalType
                                 }
@@ -2144,20 +2178,20 @@ declaration nameStr (Compiler.Expression toBody) =
         case body.expression of
             Exp.LambdaExpression lam ->
                 Compiler.nodify
-                    { name = name
+                    { name = Compiler.nodify name
                     , arguments = lam.args
                     , expression = lam.expression
                     }
 
             _ ->
                 Compiler.nodify
-                    { name = name
+                    { name = Compiler.nodify name
                     , arguments = []
                     , expression = Compiler.nodify body.expression
                     }
     }
         |> Declaration.FunctionDeclaration
-        |> Compiler.Declaration Compiler.NotExposed body.imports
+        |> Compiler.Declaration Compiler.NotExposed body.imports maybeWarning
 
 
 {-| For when you want the most control over a function being generated.
@@ -2418,6 +2452,7 @@ portIncoming name args =
         |> Declaration.PortDeclaration
         |> Compiler.Declaration Compiler.NotExposed
             (List.concatMap Compiler.getAnnotationImports args)
+            Nothing
 
 
 groupAnn ann =
@@ -2429,7 +2464,7 @@ groupAnn ann =
 sub : Annotation.TypeAnnotation
 sub =
     Annotation.Typed
-        (Compiler.nodify ( [ "Platform", "Sub" ], "Sub" ))
+        (Compiler.nodify ( [], "Sub" ))
         [ Compiler.nodify (Annotation.GenericType "msg") ]
 
 
@@ -2455,13 +2490,13 @@ portOutgoing name arg =
             )
     }
         |> Declaration.PortDeclaration
-        |> Compiler.Declaration Compiler.NotExposed (Compiler.getAnnotationImports arg)
+        |> Compiler.Declaration Compiler.NotExposed (Compiler.getAnnotationImports arg) Nothing
 
 
 cmd : Annotation.TypeAnnotation
 cmd =
     Annotation.Typed
-        (Compiler.nodify ( [ "Platform", "Cmd" ], "Cmd" ))
+        (Compiler.nodify ( [], "Cmd" ))
         [ Compiler.nodify (Annotation.GenericType "msg") ]
 
 
@@ -2504,6 +2539,7 @@ parse source =
                             , Compiler.Declaration
                                 (determineExposure declar exposedList)
                                 []
+                                Nothing
                                 declar
                             )
                         )

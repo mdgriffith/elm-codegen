@@ -26,6 +26,7 @@ import { XMLHttpRequest } from "./run/vendor/XMLHttpRequest"
 import * as Chokidar from "chokidar"
 import chalk from "chalk"
 import templates from "./templates"
+import Elm from "./templates/Elm.json"
 const gen_package = require("./gen-package")
 
 // We have to stub this in the allow Elm the ability to make http requests.
@@ -61,10 +62,15 @@ async function httpsGetJson(url: string): Promise<any> {
   })
 }
 
+type Warning = {
+  declaration: string
+  warning: string
+}
+
 async function run_generator(output_dir: string, moduleName: string, elm_source: string, flags: any) {
   eval(elm_source)
 
-  const promise = new Promise<{ path: string; contents: string }[]>((resolve, reject) => {
+  const promise = new Promise<{ path: string; contents: string; warnings: Warning[] }[]>((resolve, reject) => {
     // @ts-ignore
     if (!(moduleName in this.Elm)) {
       console.log(
@@ -90,16 +96,51 @@ async function run_generator(output_dir: string, moduleName: string, elm_source:
   })
 
   try {
+    let problemCount = 0
     const files = await promise
     for (const file of files) {
       const fullpath = path.join(output_dir, file.path)
       fs.mkdirSync(path.dirname(fullpath), { recursive: true })
       fs.writeFileSync(fullpath, file.contents)
+
+      if (file.warnings && file.warnings.length > 0) {
+        console.log(format_title(`ELM CODEGEN WARNING`))
+        console.log(`In the generated file: ${chalk.yellow(file.path)}`)
+        for (const warn of file.warnings) {
+          const intro = `When trying to figure out the type for ${chalk.yellow(warn.declaration)}, I ran into an issue`
+          const warning = warn.warning.split("\n")
+          const outro = [
+            "",
+            `I'm not as smart as the Elm compiler :/, but we're ${chalk.yellow(
+              "good friends"
+            )}.  I especially get confused when there are a lot of type aliases.`,
+            `If you need to, try using ${chalk.cyan("Elm.withType")} to tell me what the type should be!`,
+          ]
+          console.log(format_block([intro, ""].concat(warning).concat(outro)))
+        }
+        problemCount = problemCount + 1
+      }
     }
-    if (files.length == 1) {
-      console.log(format_block([`${chalk.cyan(output_dir + path.sep)}${chalk.yellow(files[0].path)} was generated!`]))
+    const error = []
+    if (problemCount == 1) {
+      error.push(`However, there was a warning.`)
     } else {
-      console.log(format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(output_dir)}!`]))
+      error.push(`However, there were ${problemCount} warnings along the way.`)
+    }
+
+    if (files.length == 1) {
+      console.log(
+        format_block(
+          [`${chalk.cyan(output_dir + path.sep)}${chalk.yellow(files[0].path)} was generated!`].concat(error)
+        )
+      )
+    } else {
+      console.log(
+        format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(output_dir)}!`].concat(error))
+      )
+    }
+    if (problemCount > 0) {
+      process.exit(1)
     }
   } catch (errors: { title: string; description: string }[] | any) {
     let formatted = ""
@@ -152,7 +193,6 @@ function getFilesWithin(dir: string, endsWith: string) {
   })
   return files
 }
-const docs_generator = { cwd: "cli/gen-package", file: "src/Generate.elm", moduleName: "Generate" }
 
 function format_title(title: string): string {
   const tail = "-".repeat(80 - (title.length + 2))

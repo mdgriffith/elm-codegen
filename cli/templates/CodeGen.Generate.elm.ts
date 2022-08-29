@@ -103,6 +103,11 @@ fromText f =
 type alias File =
     { path : String
     , contents : String
+    , warnings :
+        List
+            { declaration : String
+            , warning : String
+            }
     }
 
 

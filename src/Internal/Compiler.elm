@@ -36,9 +36,28 @@ getTypeModule (Annotation annotation) =
 
 
 type Declaration
-    = Declaration Expose (List Module) Declaration.Declaration
+    = Declaration Expose (List Module) (Maybe Warning) Declaration.Declaration
     | Comment String
     | Block String
+
+
+getWarning : Declaration -> Maybe Warning
+getWarning decl =
+    case decl of
+        Declaration _ _ warn _ ->
+            warn
+
+        Comment _ ->
+            Nothing
+
+        Block _ ->
+            Nothing
+
+
+type alias Warning =
+    { declaration : String
+    , warning : String
+    }
 
 
 {-| -}
@@ -811,7 +830,7 @@ documentation rawDoc decl =
             Block source ->
                 decl
 
-            Declaration exp imports body ->
+            Declaration exp imports warnings body ->
                 let
                     addDocs maybeNodedExistingDocs =
                         case maybeNodedExistingDocs of
@@ -825,6 +844,7 @@ documentation rawDoc decl =
                     Declaration.FunctionDeclaration func ->
                         Declaration exp
                             imports
+                            warnings
                             (Declaration.FunctionDeclaration
                                 { func
                                     | documentation =
@@ -835,6 +855,7 @@ documentation rawDoc decl =
                     Declaration.AliasDeclaration typealias ->
                         Declaration exp
                             imports
+                            warnings
                             (Declaration.AliasDeclaration
                                 { typealias
                                     | documentation =
@@ -845,6 +866,7 @@ documentation rawDoc decl =
                     Declaration.CustomTypeDeclaration typeDecl ->
                         Declaration exp
                             imports
+                            warnings
                             (Declaration.CustomTypeDeclaration
                                 { typeDecl
                                     | documentation =
@@ -873,8 +895,8 @@ expose decl =
         Block _ ->
             decl
 
-        Declaration _ imports body ->
-            Declaration (Exposed { group = Nothing, exposeConstructor = False }) imports body
+        Declaration _ imports warnings body ->
+            Declaration (Exposed { group = Nothing, exposeConstructor = False }) imports warnings body
 
 
 {-| -}
@@ -887,8 +909,8 @@ exposeWith opts decl =
         Block _ ->
             decl
 
-        Declaration _ imports body ->
-            Declaration (Exposed opts) imports body
+        Declaration _ imports warnings body ->
+            Declaration (Exposed opts) imports warnings body
 
 
 type alias Module =
@@ -981,7 +1003,7 @@ hasPorts decls =
                 Block _ ->
                     False
 
-                Declaration exp _ decBody ->
+                Declaration exp _ warnings decBody ->
                     case exp of
                         NotExposed ->
                             False
@@ -1008,7 +1030,7 @@ getExposed decls =
                 Block source ->
                     Nothing
 
-                Declaration exp _ decBody ->
+                Declaration exp _ warnings decBody ->
                     case exp of
                         NotExposed ->
                             Nothing
@@ -1077,7 +1099,7 @@ getExposedGroups decls =
                 Block _ ->
                     Nothing
 
-                Declaration exp _ _ ->
+                Declaration exp _ _ _ ->
                     case exp of
                         NotExposed ->
                             Nothing
@@ -1154,7 +1176,7 @@ declName decl =
         Block _ ->
             Nothing
 
-        Declaration exp _ decBody ->
+        Declaration exp _ warnings decBody ->
             case decBody of
                 Declaration.FunctionDeclaration fn ->
                     denode (.name (denode fn.declaration))

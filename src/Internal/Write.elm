@@ -388,7 +388,7 @@ prettyTopLevelExpose tlExpose =
 prettyDeclaration : Int -> Util.Declaration -> Doc t
 prettyDeclaration width decl =
     case decl of
-        Util.Declaration exp mods innerDecl ->
+        Util.Declaration exp mods _ innerDecl ->
             prettyElmSyntaxDeclaration noAliases innerDecl
 
         Util.Comment content ->
@@ -445,7 +445,7 @@ prettyDeclarations aliases decls =
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
 
-                Util.Declaration _ _ innerDecl ->
+                Util.Declaration _ _ _ innerDecl ->
                     doc
                         |> Pretty.a (prettyElmSyntaxDeclaration aliases innerDecl)
                         |> Pretty.a Pretty.line
