@@ -17,7 +17,7 @@ module Elm exposing
     , alias
     , portIncoming, portOutgoing
     , parse, unsafe
-    , apply, value
+    , apply, val, value
     , unwrap, unwrapper
     )
 
@@ -90,7 +90,7 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 # Low-level
 
-@docs apply, value
+@docs apply, val, value
 
 @docs unwrap, unwrapper
 
@@ -376,6 +376,16 @@ type alias FileDetails =
     , body : List Declaration
     , moduleComment : String
     }
+
+
+{-| -}
+val : String -> Expression
+val name =
+    value
+        { importFrom = []
+        , name = name
+        , annotation = Nothing
+        }
 
 
 {-| -}
