@@ -2101,15 +2101,9 @@ renderDebugDocumentation resolvedType bodyAnnotation =
 
 renderError : List Compiler.InferenceError -> String
 renderError err =
-    -- "-- ELM-CODEGEN ERROR --\n\n"
-    -- ++
     err
         |> List.map Compiler.inferenceErrorToString
         |> String.join "\n\n"
-
-
-
--- ++ "\n\n"
 
 
 {-| -}
