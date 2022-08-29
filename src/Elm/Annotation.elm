@@ -1,5 +1,6 @@
 module Elm.Annotation exposing
     ( Annotation, var, bool, int, float, string, char, unit
+    , cmd, sub
     , named, namedWith
     , maybe, list, tuple, triple, set, dict, result
     , record, extensible, alias
@@ -10,6 +11,8 @@ module Elm.Annotation exposing
 {-|
 
 @docs Annotation, var, bool, int, float, string, char, unit
+
+@docs cmd, sub
 
 @docs named, namedWith
 
@@ -89,6 +92,18 @@ unit =
         , imports = []
         , aliases = Compiler.emptyAliases
         }
+
+
+{-| -}
+cmd : Annotation -> Annotation
+cmd inner =
+    typed [] "Cmd" [ inner ]
+
+
+{-| -}
+sub : Annotation -> Annotation
+sub inner =
+    typed [] "Sub" [ inner ]
 
 
 {-| -}
