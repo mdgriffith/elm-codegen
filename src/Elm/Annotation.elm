@@ -219,12 +219,10 @@ alias mod name vars target =
         , imports =
             case mod of
                 [] ->
-                    Compiler.getAnnotationImports target
-                        ++ List.concatMap Compiler.getAnnotationImports vars
+                    List.concatMap Compiler.getAnnotationImports vars
 
                 _ ->
                     [ mod ]
-                        ++ Compiler.getAnnotationImports target
                         ++ List.concatMap Compiler.getAnnotationImports vars
         , aliases =
             List.foldl
