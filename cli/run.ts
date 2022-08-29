@@ -190,6 +190,24 @@ async function run_package_generator(output: string, flags: any) {
   return promise
 }
 
+// Attempt to get docs from ELM_HOME before hitting a server.
+async function get_docs(pkg: string, version: string) {
+  let elmHome = "~/.elm"
+  if (process.env.ELM_HOME) {
+    elmHome = process.env.ELM_HOME
+  } else if (process.env.HOME) {
+    elmHome = path.join(process.env.HOME, ".elm")
+  }
+
+  const elmHomeDocs = path.join(elmHome, "0.19.1", "packages", pkg, version, "docs.json")
+  if (fs.existsSync(elmHomeDocs)) {
+    const contents = fs.readFileSync(elmHomeDocs).toString()
+    return parseJSONSafe(contents)
+  }
+
+  return await httpsGetJson(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
+}
+
 // INSTALL
 //   Install bindings for a package
 async function install_package(
@@ -211,7 +229,8 @@ async function install_package(
       process.exit(1)
     }
   }
-  const docs = await httpsGetJson(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
+
+  const docs = await get_docs(pkg, version)
 
   // let codeGenJson = getCodeGenJson(install_dir)
 
