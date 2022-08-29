@@ -2112,6 +2112,10 @@ declaration nameStr (Compiler.Expression toBody) =
         case body.annotation of
             Ok sig ->
                 case resolvedType of
+                    Ok (Annotation.GenericType generic) ->
+                        -- Top level values can't be lonely generic types.
+                        Nothing
+
                     Ok finalType ->
                         Just
                             (Compiler.nodify
