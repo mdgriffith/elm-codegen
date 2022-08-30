@@ -109,6 +109,7 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
+import Internal.Clean as Clean
 import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Debug
@@ -2159,7 +2160,7 @@ declaration nameStr (Compiler.Expression toBody) =
                             (Compiler.nodify
                                 { name = Compiler.nodify name
                                 , typeAnnotation =
-                                    Compiler.nodify finalType
+                                    Compiler.nodify (Clean.clean finalType)
                                 }
                             )
 
