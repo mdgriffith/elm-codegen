@@ -72,6 +72,7 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Debug
+import Internal.Index as Index
 import Internal.Types
 import Internal.Write
 import Set
@@ -480,7 +481,7 @@ applyPipe (BinOp symbol dir _) infixAnnotation l r =
                     Compiler.toExpressionDetails leftIndex r
 
                 annotationIndex =
-                    Compiler.next rightIndex
+                    Index.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol
@@ -534,7 +535,7 @@ applyInfix (BinOp symbol dir _) infixAnnotation l r =
                     Compiler.toExpressionDetails leftIndex r
 
                 annotationIndex =
-                    Compiler.next rightIndex
+                    Index.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol
@@ -568,10 +569,10 @@ applyNumber symbol dir l r =
                     Compiler.toExpressionDetails leftIndex r
 
                 annotationIndex =
-                    Compiler.next rightIndex
+                    Index.next rightIndex
 
                 numberTypeName =
-                    Compiler.protectTypeName
+                    Index.protectTypeName
                         "number"
                         annotationIndex
             in

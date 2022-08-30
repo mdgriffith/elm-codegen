@@ -129,15 +129,17 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
+import Internal.Format as Format
+import Internal.Index as Index
 
 
 {-| -}
 type Let a
     = Let
-        (Compiler.Index
+        (Index.Index
          ->
             { letDecls : List (Node.Node Exp.LetDeclaration)
-            , index : Compiler.Index
+            , index : Index.Index
             , return : a
             }
         )
@@ -181,7 +183,7 @@ value desiredName valueExpr sourceLet =
             (\index ->
                 let
                     ( name, secondIndex ) =
-                        Compiler.getName desiredName index
+                        Index.getName desiredName index
 
                     ( finalIndex, details ) =
                         Compiler.toExpressionDetails secondIndex valueExpr
@@ -240,10 +242,10 @@ fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
             (\index ->
                 let
                     ( name, secondIndex ) =
-                        Compiler.getName desiredName index
+                        Index.getName desiredName index
 
                     ( argName, thirdIndex ) =
-                        Compiler.getName desiredArg secondIndex
+                        Index.getName desiredArg secondIndex
 
                     arg =
                         Elm.value
@@ -308,13 +310,13 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
             (\index ->
                 let
                     ( name, secondIndex ) =
-                        Compiler.getName desiredName index
+                        Index.getName desiredName index
 
                     ( oneName, thirdIndex ) =
-                        Compiler.getName oneDesiredArg secondIndex
+                        Index.getName oneDesiredArg secondIndex
 
                     ( twoName, fourIndex ) =
-                        Compiler.getName twoDesiredArg thirdIndex
+                        Index.getName twoDesiredArg thirdIndex
 
                     one =
                         Elm.value
@@ -390,16 +392,16 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
             (\index ->
                 let
                     ( name, secondIndex ) =
-                        Compiler.getName desiredName index
+                        Index.getName desiredName index
 
                     ( oneName, thirdIndex ) =
-                        Compiler.getName oneDesiredArg secondIndex
+                        Index.getName oneDesiredArg secondIndex
 
                     ( twoName, fourIndex ) =
-                        Compiler.getName twoDesiredArg thirdIndex
+                        Index.getName twoDesiredArg thirdIndex
 
                     ( threeName, fifthIndex ) =
-                        Compiler.getName threeDesiredArg fourIndex
+                        Index.getName threeDesiredArg fourIndex
 
                     one =
                         Elm.value
@@ -479,10 +481,10 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
                 (\index ->
                     let
                         ( oneName, oneIndex ) =
-                            Compiler.getName desiredNameOne index
+                            Index.getName desiredNameOne index
 
                         ( twoName, twoIndex ) =
-                            Compiler.getName desiredNameTwo oneIndex
+                            Index.getName desiredNameTwo oneIndex
 
                         ( newIndex, sourceDetails ) =
                             Compiler.toExpressionDetails twoIndex valueExpr

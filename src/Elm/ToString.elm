@@ -24,6 +24,7 @@ import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Writer
 import Internal.Compiler as Compiler
+import Internal.Index as Index
 import Internal.Write
 
 
@@ -56,7 +57,7 @@ expressionWith :
 expressionWith options (Compiler.Expression toExp) =
     let
         expresh =
-            toExp Compiler.startIndex
+            toExp Index.startIndex
     in
     { imports =
         expresh
@@ -67,7 +68,7 @@ expressionWith options (Compiler.Expression toExp) =
     , signature =
         case expresh.annotation of
             Ok sig ->
-                case Compiler.resolve Compiler.startIndex sig.inferences sig.type_ of
+                case Compiler.resolve Index.startIndex sig.inferences sig.type_ of
                     Ok finalType ->
                         Internal.Write.writeAnnotationWith options.aliases finalType
 
@@ -113,55 +114,53 @@ declarationWith :
         , body : String
         }
 declarationWith options decl =
-    { imports =
-        case decl of
-            Compiler.Declaration _ imps _ ->
-                List.filterMap (Compiler.makeImport options.aliases) imps
+    case decl of
+        Compiler.Declaration { imports, docs, toBody } ->
+            let
+                rendered =
+                    toBody Index.startIndex
+            in
+            { imports =
+                imports
+                    ++ rendered.additionalImports
+                    |> List.filterMap (Compiler.makeImport options.aliases)
                     |> Internal.Write.writeImports
+            , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedDecl rendered.declaration)
+            , docs =
+                Maybe.withDefault "" docs
+            , signature =
+                case rendered.declaration of
+                    Declaration.FunctionDeclaration func ->
+                        case func.signature of
+                            Nothing ->
+                                ""
 
-            Compiler.Comment _ ->
-                ""
+                            Just (Node _ sig) ->
+                                Internal.Write.writeSignatureWith options.aliases sig
 
-            Compiler.Block _ ->
-                ""
-    , body = Internal.Write.writeDeclarationWith options.aliases decl
-    , docs =
-        case decl of
-            Compiler.Declaration _ _ (Declaration.FunctionDeclaration func) ->
-                case func.documentation of
-                    Nothing ->
+                    _ ->
                         ""
+            }
 
-                    Just (Node.Node _ docs) ->
-                        docs
-
-            Compiler.Declaration _ _ _ ->
+        Compiler.Comment comm ->
+            { imports =
                 ""
-
-            Compiler.Comment _ ->
+            , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedComment comm)
+            , docs =
                 ""
-
-            Compiler.Block _ ->
+            , signature =
                 ""
-    , signature =
-        case decl of
-            Compiler.Declaration _ _ (Declaration.FunctionDeclaration func) ->
-                case func.signature of
-                    Nothing ->
-                        ""
+            }
 
-                    Just (Node _ sig) ->
-                        Internal.Write.writeSignatureWith options.aliases sig
-
-            Compiler.Declaration _ _ _ ->
+        Compiler.Block block ->
+            { imports =
                 ""
-
-            Compiler.Comment _ ->
+            , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedBlock block)
+            , docs =
                 ""
-
-            Compiler.Block _ ->
+            , signature =
                 ""
-    }
+            }
 
 
 {-| -}
