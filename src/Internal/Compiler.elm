@@ -1012,7 +1012,7 @@ resolve index cache annotation =
             restrictions =
                 getRestrictions annotation cache
         in
-        case resolveVariables cache annotation of
+        case resolveVariables Set.empty cache annotation of
             Ok newAnnotation ->
                 newAnnotation
                     |> rewriteTypeVariables
@@ -1022,11 +1022,15 @@ resolve index cache annotation =
                 Err err
 
     else
-        Err ""
+        Err "Type inference skipped."
 
 
-resolveVariables : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
-resolveVariables cache annotation =
+type alias Visited =
+    Set String
+
+
+resolveVariables : Visited -> VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
+resolveVariables visited cache annotation =
     case annotation of
         Annotation.FunctionTypeAnnotation (Node.Node oneCoords one) (Node.Node twoCoords two) ->
             Result.map2
@@ -1035,26 +1039,30 @@ resolveVariables cache annotation =
                         (Node.Node oneCoords oneResolved)
                         (Node.Node twoCoords twoResolved)
                 )
-                (resolveVariables cache one)
-                (resolveVariables cache two)
+                (resolveVariables visited cache one)
+                (resolveVariables visited cache two)
 
         Annotation.GenericType name ->
-            case Dict.get name cache of
-                Nothing ->
-                    Ok annotation
+            if Set.member name visited then
+                Err "Infinite type inference loop!  Whoops.  This is an issue with elm-codegen.  If you can report this to the elm-codegen repo, that would be appreciated!"
 
-                Just newType ->
-                    resolveVariables cache newType
+            else
+                case Dict.get name cache of
+                    Nothing ->
+                        Ok annotation
+
+                    Just newType ->
+                        resolveVariables (Set.insert name visited) cache newType
 
         Annotation.Typed nodedModuleName vars ->
             Result.map (Annotation.Typed nodedModuleName)
-                (resolveVariableList cache vars [])
+                (resolveVariableList visited cache vars [])
 
         Annotation.Unit ->
             Ok Annotation.Unit
 
         Annotation.Tupled nodes ->
-            Result.map Annotation.Tupled (resolveVariableList cache nodes [])
+            Result.map Annotation.Tupled (resolveVariableList visited cache nodes [])
 
         Annotation.Record fields ->
             Result.map (Annotation.Record << List.reverse)
@@ -1065,7 +1073,7 @@ resolveVariables cache annotation =
                                 Err err
 
                             Ok processedFields ->
-                                case resolveVariables cache fieldType of
+                                case resolveVariables visited cache fieldType of
                                     Err err ->
                                         Err err
 
@@ -1100,7 +1108,7 @@ resolveVariables cache annotation =
                                     Err err
 
                                 Ok processedFields ->
-                                    case resolveVariables cache fieldType of
+                                    case resolveVariables visited cache fieldType of
                                         Err err ->
                                             Err err
 
@@ -1129,19 +1137,20 @@ resolveVariables cache annotation =
 
 
 resolveVariableList :
-    VariableCache
+    Visited
+    -> VariableCache
     -> List (Node Annotation.TypeAnnotation)
     -> List (Node Annotation.TypeAnnotation)
     -> Result String (List (Node Annotation.TypeAnnotation))
-resolveVariableList cache nodes processed =
+resolveVariableList visited cache nodes processed =
     case nodes of
         [] ->
             Ok (List.reverse processed)
 
         (Node.Node coords top) :: remain ->
-            case resolveVariables cache top of
+            case resolveVariables visited cache top of
                 Ok resolved ->
-                    resolveVariableList cache remain (Node.Node coords resolved :: processed)
+                    resolveVariableList visited cache remain (Node.Node coords resolved :: processed)
 
                 Err err ->
                     Err err
@@ -1773,6 +1782,7 @@ unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
                             in
                             case
                                 resolveVariables
+                                    Set.empty
                                     (Dict.fromList (List.map2 makeAliasVarCache foundAlias.variables typeVars))
                                     foundAlias.target
                             of
