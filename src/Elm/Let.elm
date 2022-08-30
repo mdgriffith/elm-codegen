@@ -529,7 +529,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
                             \_ ->
                                 { expression =
                                     Exp.FunctionOrValue []
-                                        (Compiler.sanitize twoName)
+                                        (Format.sanitize twoName)
                                 , annotation =
                                     case sourceDetails.annotation of
                                         Err e ->

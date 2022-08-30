@@ -2,6 +2,7 @@ module Internal.Debug exposing (annotationFormatted, everything, everythingForma
 
 import Dict
 import Internal.Compiler as Compiler
+import Internal.Index as Index
 import Internal.Write
 
 
@@ -14,7 +15,7 @@ facts : Compiler.Expression -> Result String (List ( String, String ))
 facts (Compiler.Expression exp) =
     let
         expresh =
-            exp Compiler.startIndex
+            exp Index.startIndex
     in
     case expresh.annotation of
         Ok sig ->
@@ -121,7 +122,7 @@ everything :
 everything (Compiler.Expression exp) =
     let
         expresh =
-            exp Compiler.startIndex
+            exp Index.startIndex
     in
     annotation expresh.annotation
 

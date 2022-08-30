@@ -29,6 +29,7 @@ module Elm.Annotation exposing
 import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
 import Internal.Compiler as Compiler
+import Internal.Format as Format
 
 
 {-| -}
@@ -48,7 +49,7 @@ toString (Compiler.Annotation ann) =
 var : String -> Annotation
 var a =
     Compiler.Annotation
-        { annotation = Annotation.GenericType (Compiler.formatValue a)
+        { annotation = Annotation.GenericType (Format.formatValue a)
         , imports = []
         , aliases = Compiler.emptyAliases
         }
@@ -213,7 +214,7 @@ alias mod name vars target =
         { annotation =
             Annotation.Typed
                 (Compiler.nodify
-                    ( mod, Compiler.formatType name )
+                    ( mod, Format.formatType name )
                 )
                 (List.map (Compiler.nodify << Compiler.getInnerAnnotation) vars)
         , imports =
@@ -243,7 +244,7 @@ record fields =
             fields
                 |> List.map
                     (\( name, ann ) ->
-                        ( Compiler.nodify (Compiler.formatValue name)
+                        ( Compiler.nodify (Format.formatValue name)
                         , Compiler.nodify (Compiler.getInnerAnnotation ann)
                         )
                     )
@@ -276,7 +277,7 @@ extensible base fields =
                     )
                 |> Compiler.nodifyAll
                 |> Compiler.nodify
-                |> Annotation.GenericRecord (Compiler.nodify (Compiler.formatValue base))
+                |> Annotation.GenericRecord (Compiler.nodify (Format.formatValue base))
         , imports =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
@@ -297,7 +298,7 @@ named mod name =
         { annotation =
             Annotation.Typed
                 (Compiler.nodify
-                    ( mod, Compiler.formatType name )
+                    ( mod, Format.formatType name )
                 )
                 []
         , imports =
@@ -319,7 +320,7 @@ namedWith mod name args =
             Annotation.Typed
                 (Compiler.nodify
                     ( mod
-                    , Compiler.formatType name
+                    , Format.formatType name
                     )
                 )
                 (Compiler.nodifyAll

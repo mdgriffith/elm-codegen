@@ -16,6 +16,7 @@ import Gen.Elm.Case
 import Gen.List
 import Gen.Tuple
 import Internal.Compiler as Compiler
+import Internal.Format as Format
 import Internal.Write as Write
 import Json.Decode as Json
 
@@ -1408,7 +1409,7 @@ typeToName elmType =
             Nothing
 
         Elm.Type.Type name types ->
-            Just (Compiler.formatValue name)
+            Just (Format.formatValue name)
 
         Elm.Type.Record fields maybeExtensible ->
             maybeExtensible

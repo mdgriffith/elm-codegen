@@ -10,6 +10,8 @@ import Elm.Syntax.Range as Range exposing (emptyRange)
 import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
 import Error.Format
+import Internal.Format as Format
+import Internal.Index as Index exposing (Index)
 import Set exposing (Set)
 
 
@@ -84,7 +86,7 @@ expression : (Index -> ExpressionDetails) -> Expression
 expression toExp =
     Expression
         (\index ->
-            toExp (dive index)
+            toExp (Index.dive index)
         )
 
 
@@ -221,7 +223,7 @@ facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
 facts (Expression exp) =
     let
         expresh =
-            exp startIndex
+            exp Index.startIndex
     in
     case expresh.annotation of
         Ok sig ->
@@ -271,52 +273,6 @@ uniqueHelp f existing remaining accumulator =
                 uniqueHelp f (computedFirst :: existing) rest (first :: accumulator)
 
 
-{-| Indexes to make type checking work!
-
-Every `Expression` will be passed an index which it can use to add an identifier to variables (both type variables and normal ones).
-
-The "top" is never rendered, which allows for top level identifiers to be rendered with their desired name.
-
-The general flow goes like this:
-
-    declaration: startIndex
-        -> a function
-            1. Can use the index or a Compiler.next index on it's arguments
-            2. Needs to use Compiler.dive index when handing it to it's children.
-
-This means that indices as provided should always be usable at the level they show up at.
-If you're handing an index to a lower lever, use Compiler.dive.
-
--}
-type Index
-    = Index Int (List Int) Scope
-
-
-type alias Scope =
-    Set String
-
-
-{-| -}
-startIndex : Index
-startIndex =
-    Index 0 [] Set.empty
-
-
-next : Index -> Index
-next (Index top tail scope) =
-    Index (top + 1) tail scope
-
-
-nextN : Int -> Index -> Index
-nextN n (Index top tail scope) =
-    Index (top + n) tail scope
-
-
-dive : Index -> Index
-dive (Index top tail scope) =
-    Index 0 (top :: tail) scope
-
-
 toVar :
     Index
     -> String
@@ -329,10 +285,10 @@ toVar :
 toVar index desiredName =
     let
         ( name, newIndex ) =
-            getName desiredName index
+            Index.getName desiredName index
 
         typename =
-            protectTypeName desiredName index
+            Index.protectTypeName desiredName index
     in
     { name = name
     , typename = typename
@@ -369,13 +325,13 @@ toVarMaybeType :
 toVarMaybeType index desiredName maybeAnnotation =
     let
         ( name, newIndex ) =
-            getName desiredName index
+            Index.getName desiredName index
 
         { imports, annotation, aliases } =
             case maybeAnnotation of
                 Nothing ->
                     { imports = []
-                    , annotation = Annotation.GenericType (protectTypeName desiredName index)
+                    , annotation = Annotation.GenericType (Index.protectTypeName desiredName index)
                     , aliases = emptyAliases
                     }
 
@@ -416,7 +372,7 @@ toVarWithType :
 toVarWithType index desiredName (Annotation ann) =
     let
         ( name, newIndex ) =
-            getName desiredName index
+            Index.getName desiredName index
     in
     { name = name
     , index = newIndex
@@ -438,89 +394,13 @@ toVarWithType index desiredName (Annotation ann) =
     }
 
 
-getName : String -> Index -> ( String, Index )
-getName desiredName ((Index top tail scope) as index) =
-    let
-        formattedName =
-            formatValue desiredName
-    in
-    if not (Set.member formattedName scope) then
-        ( formattedName, Index top tail (Set.insert formattedName scope) )
-
-    else
-        let
-            protectedName =
-                formattedName ++ String.fromInt top
-        in
-        if not (Set.member protectedName scope) then
-            ( protectedName
-            , Index (top + 1) tail (Set.insert protectedName scope)
-            )
-
-        else
-            let
-                protectedNameLevel2 =
-                    formattedName ++ indexToString index
-            in
-            ( protectedNameLevel2
-            , Index (top + 1) tail (Set.insert protectedNameLevel2 scope)
-            )
-
-
-protectTypeName : String -> Index -> String
-protectTypeName base ((Index top tail scope) as index) =
-    case tail of
-        [] ->
-            formatValue base
-
-        _ ->
-            formatValue
-                (base ++ indexToString index)
-
-
-indexToString : Index -> String
-indexToString (Index top tail scope) =
-    (if top == 0 then
-        ""
-
-     else
-        "_"
-            ++ String.fromInt top
-    )
-        ++ (case tail of
-                [] ->
-                    ""
-
-                one :: [] ->
-                    "_" ++ String.fromInt one
-
-                one :: two :: [] ->
-                    "_"
-                        ++ String.fromInt one
-                        ++ "_"
-                        ++ String.fromInt two
-
-                one :: two :: three :: [] ->
-                    "_"
-                        ++ String.fromInt one
-                        ++ "_"
-                        ++ String.fromInt two
-                        ++ "_"
-                        ++ String.fromInt three
-
-                _ ->
-                    "_"
-                        ++ String.join "_" (List.map String.fromInt tail)
-           )
-
-
 var : Index -> String -> ( Index, String, Expression )
 var index name =
     let
         protectedName =
-            sanitize (name ++ indexToString index)
+            Format.sanitize (name ++ Index.indexToString index)
     in
-    ( next index
+    ( Index.next index
     , protectedName
     , Expression
         (\existingIndex_ ->
@@ -532,8 +412,8 @@ var index name =
                 Ok
                     { type_ =
                         Annotation.GenericType
-                            (formatValue
-                                (name ++ indexToString existingIndex_)
+                            (Format.formatValue
+                                (name ++ Index.indexToString existingIndex_)
                             )
                     , inferences = Dict.empty
                     , aliases =
@@ -1249,83 +1129,6 @@ nodifyTuple ( a, b ) =
     ( nodify a, nodify b )
 
 
-{-|
-
-    This is used as a variable or as a record field.
-
--}
-formatValue : String -> String
-formatValue str =
-    let
-        formatted =
-            String.toLower (String.left 1 str) ++ String.dropLeft 1 str
-    in
-    sanitize formatted
-
-
-{-|
-
-    Top level values have the same rules as normal values, but `main` is allowed.
-
--}
-formatDeclarationName : String -> String
-formatDeclarationName str =
-    case str of
-        "main" ->
-            "main"
-
-        _ ->
-            formatValue str
-
-
-sanitize : String -> String
-sanitize str =
-    case str of
-        "in" ->
-            "in_"
-
-        "type" ->
-            "type_"
-
-        "case" ->
-            "case_"
-
-        "let" ->
-            "let_"
-
-        "module" ->
-            "module_"
-
-        "exposing" ->
-            "exposing_"
-
-        "where" ->
-            "where_"
-
-        "main" ->
-            "main_"
-
-        "port" ->
-            "port_"
-
-        "as" ->
-            "as_"
-
-        "if" ->
-            "if_"
-
-        "import" ->
-            "import_"
-
-        _ ->
-            str
-
-
-formatType : String -> String
-formatType str =
-    String.toUpper (String.left 1 str) ++ String.dropLeft 1 str
-
-
 
 --
 --autoReduce : Int -> Expression -> Expression
@@ -1350,7 +1153,7 @@ formatType str =
 
 toExpressionDetails : Index -> Expression -> ( Index, ExpressionDetails )
 toExpressionDetails index (Expression toExp) =
-    ( next index, toExp index )
+    ( Index.next index, toExp index )
 
 
 thread : Index -> List Expression -> List ExpressionDetails
@@ -1365,7 +1168,7 @@ threadHelper index exps rendered =
             List.reverse rendered
 
         (Expression toExpDetails) :: remain ->
-            threadHelper (next index)
+            threadHelper (Index.next index)
                 remain
                 (toExpDetails index :: rendered)
 
@@ -2820,8 +2623,8 @@ inferRecordField index { nameOfRecord, fieldName } =
     let
         fieldType =
             Annotation.GenericType
-                (formatValue
-                    (fieldName ++ indexToString index)
+                (Format.formatValue
+                    (fieldName ++ Index.indexToString index)
                 )
     in
     Ok
@@ -2863,7 +2666,7 @@ protectAnnotation index ann =
     case ann of
         Annotation.GenericType str ->
             Annotation.GenericType
-                (str ++ indexToString index)
+                (str ++ Index.indexToString index)
 
         Annotation.Typed modName anns ->
             Annotation.Typed modName
@@ -2883,7 +2686,7 @@ protectAnnotation index ann =
 
         Annotation.GenericRecord recordName (Node.Node recordRange recordDefinition) ->
             Annotation.GenericRecord
-                (mapNode (\n -> n ++ indexToString index) recordName)
+                (mapNode (\n -> n ++ Index.indexToString index) recordName)
                 (Node.Node recordRange
                     (List.map (protectField index) recordDefinition)
                 )

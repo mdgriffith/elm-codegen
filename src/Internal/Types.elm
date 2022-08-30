@@ -4,6 +4,7 @@ import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler exposing (Annotation)
+import Internal.Format as Format
 
 
 nodify : a -> Node a
@@ -26,7 +27,7 @@ formatValue str =
             else
                 String.toLower (String.left 1 str) ++ String.dropLeft 1 str
     in
-    Internal.Compiler.sanitize formatted
+    Format.sanitize formatted
 
 
 custom : List String -> String -> List Annotation.TypeAnnotation -> Annotation.TypeAnnotation

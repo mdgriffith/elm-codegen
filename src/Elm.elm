@@ -114,6 +114,8 @@ import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Debug
 import Internal.Dependencies
+import Internal.Format as Format
+import Internal.Index as Index
 import Internal.Types
 import Internal.Write
 import Set
@@ -133,7 +135,7 @@ toString : Expression -> String
 toString (Compiler.Expression toExp) =
     let
         expresh =
-            toExp Compiler.startIndex
+            toExp Index.startIndex
     in
     Internal.Write.writeExpression expresh.expression
 
@@ -415,13 +417,13 @@ value details =
                 -- literally what the dev gives us, because we are trying
                 -- to refer to something that already exists.
                 Exp.FunctionOrValue details.importFrom
-                    (Compiler.sanitize details.name)
+                    (Format.sanitize details.name)
             , annotation =
                 case details.annotation of
                     Nothing ->
                         let
                             typename =
-                                Compiler.protectTypeName details.name index
+                                Index.protectTypeName details.name index
                         in
                         Ok
                             { type_ =
@@ -897,7 +899,7 @@ updateRecord fields recordExpression =
                             (\( fieldNameUnformatted, fieldExp ) ( currentIndex, fieldAnnotationResult, items ) ->
                                 let
                                     fieldName =
-                                        Compiler.formatValue fieldNameUnformatted
+                                        Format.formatValue fieldNameUnformatted
 
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails currentIndex fieldExp
@@ -944,7 +946,7 @@ updateRecord fields recordExpression =
                     _ ->
                         let
                             name =
-                                "record" ++ Compiler.indexToString fieldIndex
+                                "record" ++ Index.indexToString fieldIndex
                         in
                         Exp.LetExpression
                             { declarations =
@@ -1052,7 +1054,7 @@ record fields =
                                         Compiler.toExpressionDetails found.index fieldExpression
 
                                     fieldName =
-                                        Compiler.formatValue unformattedFieldName
+                                        Format.formatValue unformattedFieldName
                                 in
                                 { index = newIndex
                                 , fields =
@@ -1080,7 +1082,7 @@ record fields =
                                             found.fieldAnnotations
 
                                         Ok ann ->
-                                            ( Compiler.formatValue fieldName
+                                            ( Format.formatValue fieldName
                                             , ann
                                             )
                                                 :: found.fieldAnnotations
@@ -1214,7 +1216,7 @@ get unformattedFieldName recordExpression =
         \index ->
             let
                 fieldName =
-                    Compiler.formatValue unformattedFieldName
+                    Format.formatValue unformattedFieldName
 
                 ( _, expr ) =
                     Compiler.toExpressionDetails index recordExpression
@@ -1321,7 +1323,7 @@ customType name variants =
         Nothing
         (Declaration.CustomTypeDeclaration
             { documentation = Nothing
-            , name = Compiler.nodify (Compiler.formatType name)
+            , name = Compiler.nodify (Format.formatType name)
             , generics =
                 List.concatMap
                     (\(Variant _ listAnn) ->
@@ -1334,7 +1336,7 @@ customType name variants =
                 List.map
                     (\(Variant varName vars) ->
                         Compiler.nodify
-                            { name = Compiler.nodify (Compiler.formatType varName)
+                            { name = Compiler.nodify (Format.formatType varName)
                             , arguments =
                                 List.map
                                     (Compiler.getInnerAnnotation
@@ -1393,7 +1395,7 @@ alias name innerAnnotation =
         Nothing
         (Declaration.AliasDeclaration
             { documentation = Nothing
-            , name = Compiler.nodify (Compiler.formatType name)
+            , name = Compiler.nodify (Format.formatType name)
             , generics =
                 Compiler.getGenerics innerAnnotation
                     |> List.map Compiler.nodify
@@ -1530,7 +1532,7 @@ functionReduced argBaseName toExpression =
         \index ->
             let
                 ( arg1Name, newIndex ) =
-                    Compiler.getName argBaseName index
+                    Index.getName argBaseName index
 
                 argType =
                     Elm.Annotation.var arg1Name
@@ -2112,10 +2114,10 @@ declaration : String -> Expression -> Declaration
 declaration nameStr (Compiler.Expression toBody) =
     let
         body =
-            toBody Compiler.startIndex
+            toBody Index.startIndex
 
         name =
-            Compiler.formatDeclarationName nameStr
+            Format.formatDeclarationName nameStr
 
         resolvedType =
             body.annotation
@@ -2275,7 +2277,7 @@ function initialArgList toFullExpression =
                                 (\( nameBase, maybeType ) found ->
                                     let
                                         ( name, newIndex ) =
-                                            Compiler.getName nameBase found.index
+                                            Index.getName nameBase found.index
 
                                         argType =
                                             Maybe.withDefault
@@ -2284,7 +2286,7 @@ function initialArgList toFullExpression =
                                                     , aliases = Compiler.emptyAliases
                                                     , annotation =
                                                         Annotation.GenericType
-                                                            (Compiler.protectTypeName
+                                                            (Index.protectTypeName
                                                                 nameBase
                                                                 found.index
                                                             )

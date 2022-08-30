@@ -72,16 +72,18 @@ import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
 import Internal.Debug as Debug
+import Internal.Format as Format
+import Internal.Index as Index
 
 
 captureCase :
     Compiler.Expression
     -> List String
-    -> Compiler.Index
+    -> Index.Index
     -> List Branch
     ->
         ( Compiler.ExpressionDetails
-        , { index : Compiler.Index
+        , { index : Index.Index
           , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
           , imports : List Compiler.Module
           , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
@@ -126,13 +128,13 @@ captureCaseHelper :
     List String
     -> Branch
     ->
-        { index : Compiler.Index
+        { index : Index.Index
         , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
         , imports : List Compiler.Module
         , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
         }
     ->
-        { index : Compiler.Index
+        { index : Index.Index
         , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
         , imports : List Compiler.Module
         , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
@@ -140,7 +142,7 @@ captureCaseHelper :
 captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
     let
         ( branchIndex, originalPattern, caseExpression ) =
-            toBranch (Compiler.dive accum.index)
+            toBranch (Index.dive accum.index)
 
         pattern =
             case mainCaseExpressionModule of
@@ -293,7 +295,7 @@ tuple mainExpression oneName twoName branches =
                 ( expr, gathered ) =
                     captureCase mainExpression
                         []
-                        (Compiler.dive index)
+                        (Index.dive index)
                         [ Branch
                             (\branchIndex ->
                                 let
@@ -437,7 +439,7 @@ result mainExpression branches =
                 ( expr, gathered ) =
                     captureCase mainExpression
                         []
-                        (Compiler.dive index)
+                        (Index.dive index)
                         [ Branch
                             (\branchIndex ->
                                 case branches.ok of
@@ -518,7 +520,7 @@ string mainExpression branches =
                            ]
 
                 ( expr, gathered ) =
-                    captureCase mainExpression [] (Compiler.dive index) allBranches
+                    captureCase mainExpression [] (Index.dive index) allBranches
             in
             { expression =
                 Exp.CaseExpression
@@ -571,7 +573,7 @@ list mainExpression branches =
                 ( expr, gathered ) =
                     captureCase mainExpression
                         []
-                        (Compiler.dive index)
+                        (Index.dive index)
                         [ Branch
                             (\branchIndex ->
                                 ( branchIndex
@@ -631,7 +633,7 @@ custom mainExpression annotation branches =
                 ( expr, gathered ) =
                     captureCase myMain
                         (Compiler.getTypeModule annotation)
-                        (Compiler.dive index)
+                        (Index.dive index)
                         branches
             in
             { expression =
@@ -652,7 +654,7 @@ custom mainExpression annotation branches =
 
 {-| -}
 type Branch
-    = Branch (Compiler.Index -> ( Compiler.Index, Pattern.Pattern, Expression ))
+    = Branch (Index.Index -> ( Index.Index, Pattern.Pattern, Expression ))
 
 
 {-| -}
@@ -661,7 +663,7 @@ branch0 name exp =
     Branch
         (\index ->
             ( index
-            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name } []
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } []
             , exp
             )
         )
@@ -696,7 +698,7 @@ branch1 name ( argName, argType ) toExp =
             ( var.index
             , Pattern.NamedPattern
                 { moduleName = []
-                , name = Compiler.formatType name
+                , name = Format.formatType name
                 }
                 [ Compiler.nodify (Pattern.VarPattern var.name) ]
             , toExp var.exp
@@ -717,7 +719,7 @@ branch2 name ( oneName, oneType ) ( twoName, twoType ) toExp =
                     Compiler.toVarWithType one.index twoName twoType
             in
             ( two.index
-            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 ]
@@ -748,7 +750,7 @@ branch3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType two.index threeName threeType
             in
             ( three.index
-            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -784,7 +786,7 @@ branch4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType three.index fourName fourType
             in
             ( four.index
-            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -832,7 +834,7 @@ branch5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType four.index fiveName fiveType
             in
             ( five.index
-            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -886,7 +888,7 @@ branch6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType four.index sixName sixType
             in
             ( six.index
-            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -919,8 +921,8 @@ branchWith name arity toExp =
                             )
                         |> List.unzip
             in
-            ( Compiler.next index
-            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name } patterns
+            ( Index.next index
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } patterns
             , toExp args
             )
         )
@@ -948,7 +950,7 @@ branchList arity toExp =
                         )
                         (List.drop 1 (List.range 0 arity))
             in
-            ( Compiler.next index
+            ( Index.next index
             , Pattern.ListPattern (List.reverse pattern)
             , toExp (List.reverse args)
             )
