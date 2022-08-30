@@ -120,7 +120,6 @@ moduleToFile docs =
         , aliases =
             [ ( [ "Elm", "Annotation" ], "Type" )
             ]
-        , inferTypes = True
         }
         (modNameBlock
             :: List.concatMap (generateBlocks sourceModName) blocks
