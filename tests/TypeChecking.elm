@@ -9,13 +9,14 @@ import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Internal.Compiler as Compiler
 import Internal.Debug as Debug
+import Internal.Index as Index
 import Test exposing (..)
 
 
 successfullyInferredType expression =
     let
         ( _, details ) =
-            Compiler.toExpressionDetails Compiler.startIndex expression
+            Compiler.toExpressionDetails Index.startIndex expression
     in
     case details.annotation of
         Ok _ ->
@@ -191,7 +192,7 @@ generatedCode =
                 declarationAs
                     (Elm.declaration "map" myMap2)
                     """
-map : (optional -> fn_result) -> optional -> Optional fn_result
+map : (optional -> fn) -> optional -> Optional fn
 map fn optional =
     Present (fn optional)
 
@@ -203,7 +204,7 @@ map fn optional =
                         |> .signature
                     )
                     (String.trim """
-(a -> fn_result) -> Optional a -> Optional fn_result
+(a -> fn) -> Optional a -> Optional fn
 """)
         , test "Multiply used type variable in record only appears once in signature" <|
             \_ ->

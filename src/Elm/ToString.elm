@@ -23,6 +23,7 @@ import Elm.Annotation exposing (Annotation)
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Writer
+import Internal.Clean as Clean
 import Internal.Compiler as Compiler
 import Internal.Index as Index
 import Internal.Write
@@ -70,7 +71,7 @@ expressionWith options (Compiler.Expression toExp) =
             Ok sig ->
                 case Compiler.resolve Index.startIndex sig.inferences sig.type_ of
                     Ok finalType ->
-                        Internal.Write.writeAnnotationWith options.aliases finalType
+                        Internal.Write.writeAnnotationWith options.aliases (Clean.clean finalType)
 
                     Err errMsg ->
                         errMsg
@@ -136,7 +137,10 @@ declarationWith options decl =
                                 ""
 
                             Just (Node _ sig) ->
-                                Internal.Write.writeSignatureWith options.aliases sig
+                                Internal.Write.writeSignatureWith options.aliases
+                                    { name = sig.name
+                                    , typeAnnotation = Node.map Clean.clean sig.typeAnnotation
+                                    }
 
                     _ ->
                         ""

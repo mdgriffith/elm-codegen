@@ -4,6 +4,7 @@ import Elm
 import Elm.ToString
 import Expect exposing (Expectation)
 import Internal.Compiler as Compiler
+import Internal.Index as Index
 
 
 renderedAs : Elm.Expression -> String -> Expectation
@@ -37,7 +38,7 @@ infersType : Elm.Expression -> Expectation
 infersType expression =
     let
         ( _, details ) =
-            Compiler.toExpressionDetails Compiler.startIndex expression
+            Compiler.toExpressionDetails Index.startIndex expression
     in
     case details.annotation of
         Ok _ ->

@@ -2451,7 +2451,7 @@ addInference key value infs =
                             Just
                                 (Annotation.GenericRecord
                                     (Node.Node range recordName)
-                                    (Node.Node fieldRange (fields ++ existingFields))
+                                    (Node.Node fieldRange (mergeFieldLists fields existingFields))
                                 )
 
                         _ ->
@@ -2462,6 +2462,32 @@ addInference key value infs =
                     Just existing
         )
         infs
+
+
+{-| This is wrong.
+
+It should be able to report the issue if the fields collide.
+
+For now though, it will just merge them
+
+-}
+mergeFieldLists : Annotation.RecordDefinition -> Annotation.RecordDefinition -> Annotation.RecordDefinition
+mergeFieldLists fieldOne fieldTwo =
+    List.foldl
+        (\((Node.Node _ newField) as new) existing ->
+            if List.any (containsFieldByName newField << denode) existing then
+                existing
+
+            else
+                new :: existing
+        )
+        fieldOne
+        fieldTwo
+
+
+containsFieldByName : Annotation.RecordField -> Annotation.RecordField -> Bool
+containsFieldByName ( Node.Node _ oneName, _ ) ( Node.Node _ twoName, _ ) =
+    oneName == twoName
 
 
 inferRecordField : Index -> { nameOfRecord : String, fieldName : String } -> Result (List InferenceError) Inference
