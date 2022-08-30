@@ -67,7 +67,7 @@ expressionWith options (Compiler.Expression toExp) =
     , signature =
         case expresh.annotation of
             Ok sig ->
-                case Compiler.resolve sig.inferences sig.type_ of
+                case Compiler.resolve Compiler.startIndex sig.inferences sig.type_ of
                     Ok finalType ->
                         Internal.Write.writeAnnotationWith options.aliases finalType
 

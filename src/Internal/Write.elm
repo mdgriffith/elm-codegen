@@ -46,7 +46,7 @@ type alias File =
     { moduleDefinition : Module
     , aliases : List ( Util.Module, String )
     , imports : List Import
-    , declarations : List Util.Declaration
+    , declarations : List Util.RenderedDeclaration
     , comments : Maybe (Comments.Comment Comments.FileComment)
     }
 
@@ -168,13 +168,13 @@ writeImports imports =
         |> Pretty.pretty 80
 
 
-writeDeclaration : Util.Declaration -> String
+writeDeclaration : Util.RenderedDeclaration -> String
 writeDeclaration exp =
     prettyDeclaration 80 exp
         |> Pretty.pretty 80
 
 
-writeDeclarationWith : Aliases -> Util.Declaration -> String
+writeDeclarationWith : Aliases -> Util.RenderedDeclaration -> String
 writeDeclarationWith aliases decl =
     prettyDeclarations aliases [ decl ]
         |> Pretty.pretty 80
@@ -385,16 +385,16 @@ prettyTopLevelExpose tlExpose =
 
 {-| Pretty prints a single top-level declaration.
 -}
-prettyDeclaration : Int -> Util.Declaration -> Doc t
+prettyDeclaration : Int -> Util.RenderedDeclaration -> Doc t
 prettyDeclaration width decl =
     case decl of
-        Util.Declaration exp mods _ innerDecl ->
+        Util.RenderedDecl innerDecl ->
             prettyElmSyntaxDeclaration noAliases innerDecl
 
-        Util.Comment content ->
+        Util.RenderedComment content ->
             Pretty.string content
 
-        Util.Block source ->
+        Util.RenderedBlock source ->
             Pretty.string source
 
 
@@ -427,25 +427,25 @@ prettyElmSyntaxDeclaration aliases decl =
             prettyDestructuring aliases (denode pattern) (denode expr)
 
 
-prettyDeclarations : Aliases -> List Util.Declaration -> Doc t
+prettyDeclarations : Aliases -> List Util.RenderedDeclaration -> Doc t
 prettyDeclarations aliases decls =
     List.foldl
         (\decl doc ->
             case decl of
-                Util.Comment content ->
+                Util.RenderedComment content ->
                     doc
                         |> Pretty.a (Pretty.string (content ++ "\n"))
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
 
-                Util.Block source ->
+                Util.RenderedBlock source ->
                     doc
                         |> Pretty.a (Pretty.string source)
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
 
-                Util.Declaration _ _ _ innerDecl ->
+                Util.RenderedDecl innerDecl ->
                     doc
                         |> Pretty.a (prettyElmSyntaxDeclaration aliases innerDecl)
                         |> Pretty.a Pretty.line

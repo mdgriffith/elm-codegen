@@ -116,6 +116,7 @@ import Internal.Debug
 import Internal.Dependencies
 import Internal.Format as Format
 import Internal.Index as Index
+import Internal.Render as Render
 import Internal.Types
 import Internal.Write
 import Set
@@ -150,14 +151,11 @@ toString (Compiler.Expression toExp) =
 -}
 file : List String -> List Declaration -> File
 file mod decs =
-    render renderStandardComment
-        { moduleDefinition = mod
-        , imports =
-            reduceDeclarationImports mod decs ( Set.empty, [] )
-                |> Tuple.second
-        , body = decs
+    Render.render renderStandardComment
+        { moduleName = mod
+        , declarations = decs
         , aliases = []
-        , moduleComment = ""
+        , index = Index.startIndex
         }
 
 
@@ -231,144 +229,21 @@ fileWith :
                 }
             -> List String
         , aliases : List ( List String, String )
+        , inferTypes : Bool
         }
     -> List Declaration
     -> File
 fileWith mod options decs =
-    render options.docs
-        { moduleDefinition = mod
-        , imports =
-            reduceDeclarationImports mod decs ( Set.empty, [] )
-                |> Tuple.second
+    Render.render options.docs
+        { moduleName = mod
         , aliases = options.aliases
-        , body = decs
-        , moduleComment = ""
+        , declarations = decs
+        , index = Index.startChecked options.inferTypes
         }
-
-
-{-| -}
-render :
-    (List
-        { group : Maybe String
-        , members : List String
-        }
-     -> List String
-    )
-    -> FileDetails
-    -> File
-render toDocComment fileDetails =
-    let
-        mod =
-            fileDetails.moduleDefinition
-
-        exposed =
-            Compiler.getExposed fileDetails.body
-
-        exposedGroups =
-            Compiler.getExposedGroups fileDetails.body
-
-        warnings =
-            List.filterMap
-                Compiler.getWarning
-                fileDetails.body
-
-        body =
-            Internal.Write.write
-                { moduleDefinition =
-                    (if Compiler.hasPorts fileDetails.body then
-                        Elm.Syntax.Module.PortModule
-
-                     else
-                        Elm.Syntax.Module.NormalModule
-                    )
-                        { moduleName = Compiler.nodify mod
-                        , exposingList =
-                            case exposed of
-                                [] ->
-                                    Compiler.nodify
-                                        (Expose.All Range.emptyRange)
-
-                                _ ->
-                                    Compiler.nodify
-                                        (Expose.Explicit
-                                            (Compiler.nodifyAll exposed)
-                                        )
-                        }
-                , aliases = fileDetails.aliases
-                , imports =
-                    List.filterMap (Compiler.makeImport fileDetails.aliases) fileDetails.imports
-                , declarations = fileDetails.body
-                , comments =
-                    Just
-                        (Internal.Comments.addPart
-                            Internal.Comments.emptyComment
-                            (Internal.Comments.Markdown
-                                (case exposedGroups of
-                                    [] ->
-                                        ""
-
-                                    _ ->
-                                        "\n"
-                                            ++ (toDocComment exposedGroups
-                                                    |> String.join "\n\n"
-                                               )
-                                )
-                            )
-                        )
-                }
-    in
-    { path =
-        String.join "/" mod ++ ".elm"
-    , contents = body
-    , warnings = warnings
-    }
 
 
 type alias Module =
     List String
-
-
-reduceDeclarationImports : Module -> List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
-reduceDeclarationImports self decs imports =
-    case decs of
-        [] ->
-            imports
-
-        (Compiler.Comment _) :: remain ->
-            reduceDeclarationImports self
-                remain
-                imports
-
-        (Compiler.Block _) :: remain ->
-            reduceDeclarationImports self
-                remain
-                imports
-
-        (Compiler.Declaration _ newImports _ body) :: remain ->
-            reduceDeclarationImports self
-                remain
-                (addImports self newImports imports)
-
-
-addImports : Module -> List Module -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
-addImports self newImports ( set, deduped ) =
-    case newImports of
-        [] ->
-            ( set, deduped )
-
-        new :: remain ->
-            let
-                full =
-                    Compiler.fullModName new
-            in
-            if Set.member full set || full == Compiler.fullModName self then
-                -- skip
-                addImports self remain ( set, deduped )
-
-            else
-                addImports self
-                    remain
-                    ( Set.insert full set, new :: deduped )
 
 
 {-| -}
@@ -1313,41 +1188,49 @@ Will result in
 -}
 customType : String -> List Variant -> Declaration
 customType name variants =
-    Compiler.Declaration Compiler.NotExposed
-        (List.concatMap
-            (\(Variant _ listAnn) ->
-                List.concatMap Compiler.getAnnotationImports listAnn
-            )
-            variants
-        )
-        Nothing
-        (Declaration.CustomTypeDeclaration
-            { documentation = Nothing
-            , name = Compiler.nodify (Format.formatType name)
-            , generics =
-                List.concatMap
-                    (\(Variant _ listAnn) ->
-                        listAnn
-                            |> List.concatMap
-                                (List.map Compiler.nodify << Compiler.getGenerics)
-                    )
-                    variants
-            , constructors =
-                List.map
-                    (\(Variant varName vars) ->
-                        Compiler.nodify
-                            { name = Compiler.nodify (Format.formatType varName)
-                            , arguments =
-                                List.map
-                                    (Compiler.getInnerAnnotation
-                                        >> Compiler.nodify
-                                    )
-                                    vars
-                            }
-                    )
-                    variants
-            }
-        )
+    Compiler.Declaration
+        { name = name
+        , exposed = Compiler.NotExposed
+        , imports =
+            List.concatMap
+                (\(Variant _ listAnn) ->
+                    List.concatMap Compiler.getAnnotationImports listAnn
+                )
+                variants
+        , docs = Nothing
+        , toBody =
+            \index ->
+                { warning = Nothing
+                , additionalImports = []
+                , declaration =
+                    Declaration.CustomTypeDeclaration
+                        { documentation = Nothing
+                        , name = Compiler.nodify (Format.formatType name)
+                        , generics =
+                            List.concatMap
+                                (\(Variant _ listAnn) ->
+                                    listAnn
+                                        |> List.concatMap
+                                            (List.map Compiler.nodify << Compiler.getGenerics)
+                                )
+                                variants
+                        , constructors =
+                            List.map
+                                (\(Variant varName vars) ->
+                                    Compiler.nodify
+                                        { name = Compiler.nodify (Format.formatType varName)
+                                        , arguments =
+                                            List.map
+                                                (Compiler.getInnerAnnotation
+                                                    >> Compiler.nodify
+                                                )
+                                                vars
+                                        }
+                                )
+                                variants
+                        }
+                }
+        }
 
 
 {-| -}
@@ -1390,18 +1273,27 @@ Should result in
 -}
 alias : String -> Elm.Annotation.Annotation -> Declaration
 alias name innerAnnotation =
-    Compiler.Declaration Compiler.NotExposed
-        (Compiler.getAnnotationImports innerAnnotation)
-        Nothing
-        (Declaration.AliasDeclaration
-            { documentation = Nothing
-            , name = Compiler.nodify (Format.formatType name)
-            , generics =
-                Compiler.getGenerics innerAnnotation
-                    |> List.map Compiler.nodify
-            , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
-            }
-        )
+    Compiler.Declaration
+        { name = name
+        , exposed = Compiler.NotExposed
+        , imports =
+            Compiler.getAnnotationImports innerAnnotation
+        , docs = Nothing
+        , toBody =
+            \index ->
+                { warning = Nothing
+                , additionalImports = []
+                , declaration =
+                    Declaration.AliasDeclaration
+                        { documentation = Nothing
+                        , name = Compiler.nodify (Format.formatType name)
+                        , generics =
+                            Compiler.getGenerics innerAnnotation
+                                |> List.map Compiler.nodify
+                        , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
+                        }
+                }
+        }
 
 
 {-| -}
@@ -1424,7 +1316,7 @@ apply fnExp argExpressions =
                         )
                     )
             , annotation =
-                Compiler.applyType fnDetails.annotation args
+                Compiler.applyType index fnDetails.annotation args
             , imports = fnDetails.imports ++ List.concatMap Compiler.getImports args
             }
         )
@@ -2104,91 +1996,114 @@ renderDebugDocumentation resolvedType bodyAnnotation =
 
 renderError : List Compiler.InferenceError -> String
 renderError err =
-    err
-        |> List.map Compiler.inferenceErrorToString
-        |> String.join "\n\n"
+    case err of
+        [] ->
+            ""
+
+        _ ->
+            err
+                |> List.map Compiler.inferenceErrorToString
+                |> String.join "\n\n"
 
 
 {-| -}
 declaration : String -> Expression -> Declaration
 declaration nameStr (Compiler.Expression toBody) =
     let
-        body =
-            toBody Index.startIndex
-
         name =
             Format.formatDeclarationName nameStr
+    in
+    Compiler.Declaration
+        { name = name
+        , exposed = Compiler.NotExposed
+        , imports =
+            []
+        , docs = Nothing
+        , toBody =
+            \index ->
+                let
+                    body =
+                        toBody index
 
-        resolvedType =
-            body.annotation
-                |> Result.mapError
-                    renderError
-                |> Result.andThen
-                    (\sig -> Compiler.resolve sig.inferences sig.type_)
+                    resolvedType =
+                        body.annotation
+                            |> Result.mapError renderError
+                            |> Result.andThen
+                                (\sig -> Compiler.resolve index sig.inferences sig.type_)
 
-        maybeWarning =
-            case resolvedType of
-                Ok sig ->
-                    case body.annotation of
-                        Ok inference ->
+                    maybeWarning =
+                        case resolvedType of
+                            Ok sig ->
+                                case body.annotation of
+                                    Ok inference ->
+                                        Nothing
+
+                                    Err [] ->
+                                        Nothing
+
+                                    Err err ->
+                                        Just
+                                            { declaration = name
+                                            , warning = renderError err
+                                            }
+
+                            Err "" ->
+                                Nothing
+
+                            Err err ->
+                                Just
+                                    { declaration = name
+                                    , warning = err
+                                    }
+                in
+                { warning = maybeWarning
+                , additionalImports = body.imports
+                , declaration =
+                    Declaration.FunctionDeclaration
+                        { documentation =
                             Nothing
 
-                        Err err ->
-                            Just
-                                { declaration = name
-                                , warning = renderError err
-                                }
+                        -- (renderDebugDocumentation resolvedType body.annotation)
+                        , signature =
+                            case body.annotation of
+                                Ok sig ->
+                                    case resolvedType of
+                                        Ok (Annotation.GenericType generic) ->
+                                            -- Top level values can't be lonely generic types.
+                                            Nothing
 
-                Err err ->
-                    Just
-                        { declaration = name
-                        , warning = err
+                                        Ok finalType ->
+                                            Just
+                                                (Compiler.nodify
+                                                    { name = Compiler.nodify name
+                                                    , typeAnnotation =
+                                                        Compiler.nodify (Clean.clean finalType)
+                                                    }
+                                                )
+
+                                        Err errMsg ->
+                                            Nothing
+
+                                Err _ ->
+                                    Nothing
+                        , declaration =
+                            case body.expression of
+                                Exp.LambdaExpression lam ->
+                                    Compiler.nodify
+                                        { name = Compiler.nodify name
+                                        , arguments = lam.args
+                                        , expression = lam.expression
+                                        }
+
+                                _ ->
+                                    Compiler.nodify
+                                        { name = Compiler.nodify name
+                                        , arguments = []
+                                        , expression = Compiler.nodify body.expression
+                                        }
                         }
-    in
-    { documentation =
-        Nothing
-
-    -- (renderDebugDocumentation resolvedType body.annotation)
-    , signature =
-        case body.annotation of
-            Ok sig ->
-                case resolvedType of
-                    Ok (Annotation.GenericType generic) ->
-                        -- Top level values can't be lonely generic types.
-                        Nothing
-
-                    Ok finalType ->
-                        Just
-                            (Compiler.nodify
-                                { name = Compiler.nodify name
-                                , typeAnnotation =
-                                    Compiler.nodify (Clean.clean finalType)
-                                }
-                            )
-
-                    Err errMsg ->
-                        Nothing
-
-            Err _ ->
-                Nothing
-    , declaration =
-        case body.expression of
-            Exp.LambdaExpression lam ->
-                Compiler.nodify
-                    { name = Compiler.nodify name
-                    , arguments = lam.args
-                    , expression = lam.expression
-                    }
-
-            _ ->
-                Compiler.nodify
-                    { name = Compiler.nodify name
-                    , arguments = []
-                    , expression = Compiler.nodify body.expression
-                    }
-    }
-        |> Declaration.FunctionDeclaration
-        |> Compiler.Declaration Compiler.NotExposed body.imports maybeWarning
+                }
+        }
 
 
 {-| For when you want the most control over a function being generated.
@@ -2421,35 +2336,49 @@ This will give you more flexibility in the future and save you having to wire up
 
 -}
 portIncoming : String -> List Elm.Annotation.Annotation -> Declaration
-portIncoming name args =
-    { name = Compiler.nodify name
-    , typeAnnotation =
-        Compiler.nodify
-            (case args of
-                [] ->
-                    Annotation.FunctionTypeAnnotation
-                        (Compiler.nodify (Annotation.GenericType "msg"))
-                        (Compiler.nodify sub)
+portIncoming nameStr args =
+    let
+        name =
+            Format.formatDeclarationName nameStr
+    in
+    Compiler.Declaration
+        { name = name
+        , exposed = Compiler.NotExposed
+        , imports =
+            List.concatMap Compiler.getAnnotationImports args
+        , docs = Nothing
+        , toBody =
+            \index ->
+                { warning = Nothing
+                , additionalImports = []
+                , declaration =
+                    Declaration.PortDeclaration
+                        { name = Compiler.nodify name
+                        , typeAnnotation =
+                            Compiler.nodify
+                                (case args of
+                                    [] ->
+                                        Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify (Annotation.GenericType "msg"))
+                                            (Compiler.nodify sub)
 
-                start :: remain ->
-                    Annotation.FunctionTypeAnnotation
-                        (groupAnn
-                            (Compiler.nodify
-                                (Compiler.getInnerAnnotation
-                                    (Elm.Annotation.function
-                                        args
-                                        (Elm.Annotation.var "msg")
-                                    )
+                                    start :: remain ->
+                                        Annotation.FunctionTypeAnnotation
+                                            (groupAnn
+                                                (Compiler.nodify
+                                                    (Compiler.getInnerAnnotation
+                                                        (Elm.Annotation.function
+                                                            args
+                                                            (Elm.Annotation.var "msg")
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                            (Compiler.nodify sub)
                                 )
-                            )
-                        )
-                        (Compiler.nodify sub)
-            )
-    }
-        |> Declaration.PortDeclaration
-        |> Compiler.Declaration Compiler.NotExposed
-            (List.concatMap Compiler.getAnnotationImports args)
-            Nothing
+                        }
+                }
+        }
 
 
 groupAnn ann =
@@ -2477,17 +2406,33 @@ will generate
 
 -}
 portOutgoing : String -> Elm.Annotation.Annotation -> Declaration
-portOutgoing name arg =
-    { name = Compiler.nodify name
-    , typeAnnotation =
-        Compiler.nodify
-            (Annotation.FunctionTypeAnnotation
-                (Compiler.nodify (Compiler.getInnerAnnotation arg))
-                (Compiler.nodify cmd)
-            )
-    }
-        |> Declaration.PortDeclaration
-        |> Compiler.Declaration Compiler.NotExposed (Compiler.getAnnotationImports arg) Nothing
+portOutgoing nameStr arg =
+    let
+        name =
+            Format.formatDeclarationName nameStr
+    in
+    Compiler.Declaration
+        { name = name
+        , exposed = Compiler.NotExposed
+        , imports =
+            Compiler.getAnnotationImports arg
+        , docs = Nothing
+        , toBody =
+            \index ->
+                { warning = Nothing
+                , additionalImports = []
+                , declaration =
+                    Declaration.PortDeclaration
+                        { name = Compiler.nodify name
+                        , typeAnnotation =
+                            Compiler.nodify
+                                (Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Compiler.getInnerAnnotation arg))
+                                    (Compiler.nodify cmd)
+                                )
+                        }
+                }
+        }
 
 
 cmd : Annotation.TypeAnnotation
@@ -2534,10 +2479,19 @@ parse source =
                             ( Node.range dec
                                 |> (.start >> .row)
                             , Compiler.Declaration
-                                (determineExposure declar exposedList)
-                                []
-                                Nothing
-                                declar
+                                { name = Maybe.withDefault "parsed" (decName declar)
+                                , exposed = determineExposure declar exposedList
+                                , imports =
+                                    []
+                                , docs = Nothing
+                                , toBody =
+                                    \index ->
+                                        { warning = Nothing
+                                        , additionalImports = []
+                                        , declaration =
+                                            declar
+                                        }
+                                }
                             )
                         )
                         parsedFile.declarations
@@ -2560,6 +2514,31 @@ parse source =
                         (declarations ++ comments)
                         |> List.map Tuple.second
                 }
+
+
+decName decBody =
+    case decBody of
+        Declaration.FunctionDeclaration func ->
+            Compiler.denode (.name (Compiler.denode func.declaration))
+                |> Just
+
+        Declaration.AliasDeclaration synonym ->
+            Compiler.denode synonym.name
+                |> Just
+
+        Declaration.CustomTypeDeclaration myType ->
+            Compiler.denode myType.name
+                |> Just
+
+        Declaration.PortDeclaration myPort ->
+            Compiler.denode myPort.name
+                |> Just
+
+        Declaration.InfixDeclaration inf ->
+            Nothing
+
+        Declaration.Destructuring _ _ ->
+            Nothing
 
 
 elmProcessContext : Elm.Processing.ProcessContext

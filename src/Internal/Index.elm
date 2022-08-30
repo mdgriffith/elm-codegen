@@ -1,6 +1,21 @@
-module Internal.Index exposing (Index, dive, getName, indexToString, next, nextN, protectTypeName, startIndex)
+module Internal.Index exposing
+    ( Index, startIndex, startChecked
+    , next, nextN, dive
+    , getName, indexToString, protectTypeName
+    , typecheck
+    )
 
-{-| -}
+{-|
+
+@docs Index, startIndex, startChecked
+
+@docs next, nextN, dive
+
+@docs getName, indexToString, protectTypeName
+
+@docs typecheck
+
+-}
 
 import Internal.Format as Format
 import Set exposing (Set)
@@ -24,7 +39,12 @@ If you're handing an index to a lower lever, use Compiler.dive.
 
 -}
 type Index
-    = Index Int (List Int) Scope
+    = Index Int (List Int) Scope Bool
+
+
+typecheck : Index -> Bool
+typecheck (Index top tail scope check) =
+    check
 
 
 type alias Scope =
@@ -34,32 +54,38 @@ type alias Scope =
 {-| -}
 startIndex : Index
 startIndex =
-    Index 0 [] Set.empty
+    Index 0 [] Set.empty True
+
+
+{-| -}
+startChecked : Bool -> Index
+startChecked checked =
+    Index 0 [] Set.empty checked
 
 
 next : Index -> Index
-next (Index top tail scope) =
-    Index (top + 1) tail scope
+next (Index top tail scope check) =
+    Index (top + 1) tail scope check
 
 
 nextN : Int -> Index -> Index
-nextN n (Index top tail scope) =
-    Index (top + n) tail scope
+nextN n (Index top tail scope check) =
+    Index (top + n) tail scope check
 
 
 dive : Index -> Index
-dive (Index top tail scope) =
-    Index 0 (top :: tail) scope
+dive (Index top tail scope check) =
+    Index 0 (top :: tail) scope check
 
 
 getName : String -> Index -> ( String, Index )
-getName desiredName ((Index top tail scope) as index) =
+getName desiredName ((Index top tail scope check) as index) =
     let
         formattedName =
             Format.formatValue desiredName
     in
     if not (Set.member formattedName scope) then
-        ( formattedName, Index top tail (Set.insert formattedName scope) )
+        ( formattedName, Index top tail (Set.insert formattedName scope) check )
 
     else
         let
@@ -68,7 +94,7 @@ getName desiredName ((Index top tail scope) as index) =
         in
         if not (Set.member protectedName scope) then
             ( protectedName
-            , Index (top + 1) tail (Set.insert protectedName scope)
+            , Index (top + 1) tail (Set.insert protectedName scope) check
             )
 
         else
@@ -77,12 +103,12 @@ getName desiredName ((Index top tail scope) as index) =
                     formattedName ++ indexToString index
             in
             ( protectedNameLevel2
-            , Index (top + 1) tail (Set.insert protectedNameLevel2 scope)
+            , Index (top + 1) tail (Set.insert protectedNameLevel2 scope) check
             )
 
 
 protectTypeName : String -> Index -> String
-protectTypeName base ((Index top tail scope) as index) =
+protectTypeName base ((Index top tail scope check) as index) =
     case tail of
         [] ->
             Format.formatValue base
@@ -93,7 +119,7 @@ protectTypeName base ((Index top tail scope) as index) =
 
 
 indexToString : Index -> String
-indexToString (Index top tail scope) =
+indexToString (Index top tail scope check) =
     (if top == 0 then
         ""
 

@@ -488,7 +488,7 @@ applyPipe (BinOp symbol dir _) infixAnnotation l r =
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
             , annotation =
-                Compiler.applyType
+                Compiler.applyType index
                     (Ok
                         { type_ = infixAnnotation
                         , inferences = Dict.empty
@@ -542,7 +542,7 @@ applyInfix (BinOp symbol dir _) infixAnnotation l r =
                     (Compiler.nodify (Compiler.parens left.expression))
                     (Compiler.nodify (Compiler.parens right.expression))
             , annotation =
-                Compiler.applyType
+                Compiler.applyType index
                     (Ok
                         { type_ = infixAnnotation
                         , inferences = Dict.empty
@@ -581,7 +581,7 @@ applyNumber symbol dir l r =
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
             , annotation =
-                Compiler.applyType
+                Compiler.applyType index
                     (Ok
                         { inferences = Dict.empty
                         , aliases = Compiler.emptyAliases

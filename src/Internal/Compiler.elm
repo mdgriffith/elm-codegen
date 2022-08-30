@@ -38,22 +38,30 @@ getTypeModule (Annotation annotation) =
 
 
 type Declaration
-    = Declaration Expose (List Module) (Maybe Warning) Declaration.Declaration
+    = Declaration DeclarationDetails
     | Comment String
     | Block String
 
 
-getWarning : Declaration -> Maybe Warning
-getWarning decl =
-    case decl of
-        Declaration _ _ warn _ ->
-            warn
+type RenderedDeclaration
+    = RenderedDecl Declaration.Declaration
+    | RenderedComment String
+    | RenderedBlock String
 
-        Comment _ ->
-            Nothing
 
-        Block _ ->
-            Nothing
+type alias DeclarationDetails =
+    { name : String
+    , exposed : Expose
+    , imports : List Module
+    , docs : Maybe String
+    , toBody :
+        Index.Index
+        ->
+            { declaration : Declaration.Declaration
+            , additionalImports : List Module
+            , warning : Maybe Warning
+            }
+    }
 
 
 type alias Warning =
@@ -710,59 +718,17 @@ documentation rawDoc decl =
             Block source ->
                 decl
 
-            Declaration exp imports warnings body ->
-                let
-                    addDocs maybeNodedExistingDocs =
-                        case maybeNodedExistingDocs of
-                            Nothing ->
-                                doc
+            Declaration details ->
+                Declaration
+                    { details
+                        | docs =
+                            case details.docs of
+                                Nothing ->
+                                    Just doc
 
-                            Just (Node.Node range existing) ->
-                                doc ++ "\n\n" ++ existing
-                in
-                case body of
-                    Declaration.FunctionDeclaration func ->
-                        Declaration exp
-                            imports
-                            warnings
-                            (Declaration.FunctionDeclaration
-                                { func
-                                    | documentation =
-                                        Just (nodify (addDocs func.documentation))
-                                }
-                            )
-
-                    Declaration.AliasDeclaration typealias ->
-                        Declaration exp
-                            imports
-                            warnings
-                            (Declaration.AliasDeclaration
-                                { typealias
-                                    | documentation =
-                                        Just (nodify (addDocs typealias.documentation))
-                                }
-                            )
-
-                    Declaration.CustomTypeDeclaration typeDecl ->
-                        Declaration exp
-                            imports
-                            warnings
-                            (Declaration.CustomTypeDeclaration
-                                { typeDecl
-                                    | documentation =
-                                        Just
-                                            (nodify (addDocs typeDecl.documentation))
-                                }
-                            )
-
-                    Declaration.PortDeclaration sig ->
-                        decl
-
-                    Declaration.InfixDeclaration _ ->
-                        decl
-
-                    Declaration.Destructuring _ _ ->
-                        decl
+                                Just existing ->
+                                    Just (doc ++ "\n\n" ++ existing)
+                    }
 
 
 {-| -}
@@ -775,8 +741,8 @@ expose decl =
         Block _ ->
             decl
 
-        Declaration _ imports warnings body ->
-            Declaration (Exposed { group = Nothing, exposeConstructor = False }) imports warnings body
+        Declaration details ->
+            Declaration { details | exposed = Exposed { group = Nothing, exposeConstructor = False } }
 
 
 {-| -}
@@ -789,8 +755,8 @@ exposeWith opts decl =
         Block _ ->
             decl
 
-        Declaration _ imports warnings body ->
-            Declaration (Exposed opts) imports warnings body
+        Declaration details ->
+            Declaration { details | exposed = Exposed opts }
 
 
 type alias Module =
@@ -871,101 +837,6 @@ fullModName name =
     String.join "." name
 
 
-{-| -}
-hasPorts : List Declaration -> Bool
-hasPorts decls =
-    List.any
-        (\decl ->
-            case decl of
-                Comment _ ->
-                    False
-
-                Block _ ->
-                    False
-
-                Declaration exp _ warnings decBody ->
-                    case exp of
-                        NotExposed ->
-                            False
-
-                        Exposed _ ->
-                            case decBody of
-                                Declaration.PortDeclaration myPort ->
-                                    True
-
-                                _ ->
-                                    False
-        )
-        decls
-
-
-getExposed : List Declaration -> List Expose.TopLevelExpose
-getExposed decls =
-    List.filterMap
-        (\decl ->
-            case decl of
-                Comment _ ->
-                    Nothing
-
-                Block source ->
-                    Nothing
-
-                Declaration exp _ warnings decBody ->
-                    case exp of
-                        NotExposed ->
-                            Nothing
-
-                        Exposed details ->
-                            case decBody of
-                                Declaration.FunctionDeclaration fn ->
-                                    let
-                                        fnName =
-                                            denode (.name (denode fn.declaration))
-                                    in
-                                    Expose.FunctionExpose fnName
-                                        |> Just
-
-                                Declaration.AliasDeclaration synonym ->
-                                    let
-                                        aliasName =
-                                            denode synonym.name
-                                    in
-                                    Expose.TypeOrAliasExpose aliasName
-                                        |> Just
-
-                                Declaration.CustomTypeDeclaration myType ->
-                                    let
-                                        typeName =
-                                            denode myType.name
-                                    in
-                                    if details.exposeConstructor then
-                                        Expose.TypeExpose
-                                            { name = typeName
-                                            , open = Just Range.emptyRange
-                                            }
-                                            |> Just
-
-                                    else
-                                        Expose.TypeOrAliasExpose typeName
-                                            |> Just
-
-                                Declaration.PortDeclaration myPort ->
-                                    let
-                                        typeName =
-                                            denode myPort.name
-                                    in
-                                    Expose.FunctionExpose typeName
-                                        |> Just
-
-                                Declaration.InfixDeclaration inf ->
-                                    Nothing
-
-                                Declaration.Destructuring _ _ ->
-                                    Nothing
-        )
-        decls
-
-
 getExposedGroups :
     List Declaration
     -> List { group : Maybe String, members : List String }
@@ -979,18 +850,13 @@ getExposedGroups decls =
                 Block _ ->
                     Nothing
 
-                Declaration exp _ _ _ ->
-                    case exp of
+                Declaration declDetails ->
+                    case declDetails.exposed of
                         NotExposed ->
                             Nothing
 
                         Exposed details ->
-                            case declName decl of
-                                Nothing ->
-                                    Nothing
-
-                                Just name ->
-                                    Just ( details.group, name )
+                            Just ( details.group, declDetails.name )
         )
         decls
         |> List.sortBy
@@ -1045,40 +911,6 @@ groupExposing items =
         )
         []
         items
-
-
-declName : Declaration -> Maybe String
-declName decl =
-    case decl of
-        Comment _ ->
-            Nothing
-
-        Block _ ->
-            Nothing
-
-        Declaration exp _ warnings decBody ->
-            case decBody of
-                Declaration.FunctionDeclaration fn ->
-                    denode (.name (denode fn.declaration))
-                        |> Just
-
-                Declaration.AliasDeclaration synonym ->
-                    denode synonym.name
-                        |> Just
-
-                Declaration.CustomTypeDeclaration myType ->
-                    denode myType.name
-                        |> Just
-
-                Declaration.PortDeclaration myPort ->
-                    denode myPort.name
-                        |> Just
-
-                Declaration.InfixDeclaration inf ->
-                    Nothing
-
-                Declaration.Destructuring _ _ ->
-                    Nothing
 
 
 type Expose
@@ -1173,20 +1005,24 @@ threadHelper index exps rendered =
                 (toExpDetails index :: rendered)
 
 
-resolve : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
-resolve cache annotation =
-    let
-        restrictions =
-            getRestrictions annotation cache
-    in
-    case resolveVariables cache annotation of
-        Ok newAnnotation ->
-            newAnnotation
-                |> rewriteTypeVariables
-                |> checkRestrictions restrictions
+resolve : Index -> VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
+resolve index cache annotation =
+    if Index.typecheck index then
+        let
+            restrictions =
+                getRestrictions annotation cache
+        in
+        case resolveVariables cache annotation of
+            Ok newAnnotation ->
+                newAnnotation
+                    |> rewriteTypeVariables
+                    |> checkRestrictions restrictions
 
-        Err err ->
-            Err err
+            Err err ->
+                Err err
+
+    else
+        Err ""
 
 
 resolveVariables : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
@@ -1657,27 +1493,33 @@ checkRestrictions restrictions type_ =
 
 {-| -}
 applyType :
-    Result
-        (List InferenceError)
-        Inference
+    Index
+    ->
+        Result
+            (List InferenceError)
+            Inference
     -> List ExpressionDetails
     -> Result (List InferenceError) Inference
-applyType annotation args =
+applyType index annotation args =
     case annotation of
         Err err ->
             Err err
 
         Ok fnAnnotation ->
-            case mergeArgInferences args [] fnAnnotation.inferences of
-                Ok mergedArgs ->
-                    applyTypeHelper
-                        fnAnnotation.aliases
-                        mergedArgs.inferences
-                        fnAnnotation.type_
-                        mergedArgs.types
+            if Index.typecheck index then
+                case mergeArgInferences args [] fnAnnotation.inferences of
+                    Ok mergedArgs ->
+                        applyTypeHelper
+                            fnAnnotation.aliases
+                            mergedArgs.inferences
+                            fnAnnotation.type_
+                            mergedArgs.types
 
-                Err err ->
-                    Err err
+                    Err err ->
+                        Err err
+
+            else
+                Err []
 
 
 mergeArgInferences :
@@ -2485,87 +2327,91 @@ unifyComparable vars comparableName two =
 
 
 resolveField index type_ aliases inferences fieldName =
-    case type_ of
-        Annotation.Record fields ->
-            case getFieldFromList fieldName fields of
-                Just ann ->
-                    Ok
-                        { type_ = ann
-                        , inferences = inferences
-                        , aliases = aliases
+    if Index.typecheck index then
+        case type_ of
+            Annotation.Record fields ->
+                case getFieldFromList fieldName fields of
+                    Just ann ->
+                        Ok
+                            { type_ = ann
+                            , inferences = inferences
+                            , aliases = aliases
+                            }
+
+                    Nothing ->
+                        Err
+                            [ CouldNotFindField
+                                { field = fieldName
+                                , existingFields =
+                                    List.map (denode >> Tuple.first >> denode) fields
+                                }
+                            ]
+
+            Annotation.GenericRecord name fields ->
+                case getFieldFromList fieldName (denode fields) of
+                    Just ann ->
+                        Ok
+                            { type_ = ann
+                            , inferences = inferences
+                            , aliases = aliases
+                            }
+
+                    Nothing ->
+                        Err
+                            [ CouldNotFindField
+                                { field = fieldName
+                                , existingFields =
+                                    List.map
+                                        (denode >> Tuple.first >> denode)
+                                        (denode fields)
+                                }
+                            ]
+
+            Annotation.GenericType nameOfRecord ->
+                inferRecordField index
+                    { nameOfRecord = nameOfRecord
+                    , fieldName = fieldName
+                    }
+
+            Annotation.Typed nodedModAndName vars ->
+                case getAlias nodedModAndName aliases of
+                    Nothing ->
+                        Err
+                            [ AttemptingGetOnTypeNameNotAnAlias
+                                { field = fieldName
+                                , on = type_
+                                }
+                            ]
+
+                    Just aliased ->
+                        resolveField index aliased.target aliases inferences fieldName
+
+            Annotation.Tupled _ ->
+                Err
+                    [ AttemptingToGetOnIncorrectType
+                        { field = fieldName
+                        , on = type_
                         }
+                    ]
 
-                Nothing ->
-                    Err
-                        [ CouldNotFindField
-                            { field = fieldName
-                            , existingFields =
-                                List.map (denode >> Tuple.first >> denode) fields
-                            }
-                        ]
-
-        Annotation.GenericRecord name fields ->
-            case getFieldFromList fieldName (denode fields) of
-                Just ann ->
-                    Ok
-                        { type_ = ann
-                        , inferences = inferences
-                        , aliases = aliases
+            Annotation.Unit ->
+                Err
+                    [ AttemptingToGetOnIncorrectType
+                        { field = fieldName
+                        , on = type_
                         }
+                    ]
 
-                Nothing ->
-                    Err
-                        [ CouldNotFindField
-                            { field = fieldName
-                            , existingFields =
-                                List.map
-                                    (denode >> Tuple.first >> denode)
-                                    (denode fields)
-                            }
-                        ]
+            Annotation.FunctionTypeAnnotation _ _ ->
+                Err
+                    [ AttemptingToGetOnIncorrectType
+                        { field = fieldName
+                        , on = type_
+                        }
+                    ]
 
-        Annotation.GenericType nameOfRecord ->
-            inferRecordField index
-                { nameOfRecord = nameOfRecord
-                , fieldName = fieldName
-                }
-
-        Annotation.Typed nodedModAndName vars ->
-            case getAlias nodedModAndName aliases of
-                Nothing ->
-                    Err
-                        [ AttemptingGetOnTypeNameNotAnAlias
-                            { field = fieldName
-                            , on = type_
-                            }
-                        ]
-
-                Just aliased ->
-                    resolveField index aliased.target aliases inferences fieldName
-
-        Annotation.Tupled _ ->
-            Err
-                [ AttemptingToGetOnIncorrectType
-                    { field = fieldName
-                    , on = type_
-                    }
-                ]
-
-        Annotation.Unit ->
-            Err
-                [ AttemptingToGetOnIncorrectType
-                    { field = fieldName
-                    , on = type_
-                    }
-                ]
-
-        Annotation.FunctionTypeAnnotation _ _ ->
-            Err
-                [ AttemptingToGetOnIncorrectType
-                    { field = fieldName
-                    , on = type_
-                    }
-                ]
+    else
+        Err []
 
 
 getFieldFromList :
