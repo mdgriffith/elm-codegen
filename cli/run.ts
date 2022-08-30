@@ -124,7 +124,7 @@ async function run_generator(output_dir: string, moduleName: string, elm_source:
     const error = []
     if (problemCount == 1) {
       error.push(`However, there was a warning.`)
-    } else {
+    } else if (problemCount > 1) {
       error.push(`However, there were ${problemCount} warnings along the way.`)
     }
 
