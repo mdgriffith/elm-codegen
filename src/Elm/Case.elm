@@ -37,6 +37,7 @@ Generates
 ## Case on a Custom Type
 
     Elm.Case.custom maybeString
+        (Elm.Annotation.maybe Elm.Annotation.string)
         [ Elm.Case.branch0 "Nothing"
             (Elm.string "It's nothing, I swear!")
         , Elm.Case.branch1 "Just" ( "val", Elm.Annotation.string ) <|
