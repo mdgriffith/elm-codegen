@@ -1840,14 +1840,18 @@ unifiable aliases vars one two =
                 Just found ->
                     case two of
                         Annotation.GenericType varNameB ->
-                            case Dict.get varNameB vars of
-                                Nothing ->
-                                    ( addInference varNameB found vars
-                                    , Ok two
-                                    )
+                            if varNameB == varName then
+                                ( vars, Ok one )
 
-                                Just foundTwo ->
-                                    unifiable aliases vars found foundTwo
+                            else
+                                case Dict.get varNameB vars of
+                                    Nothing ->
+                                        ( addInference varNameB found vars
+                                        , Ok two
+                                        )
+
+                                    Just foundTwo ->
+                                        unifiable aliases vars found foundTwo
 
                         _ ->
                             unifiable aliases vars found two
