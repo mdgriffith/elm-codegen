@@ -12,7 +12,6 @@ module Elm exposing
     , withDocumentation
     , expose, exposeWith
     , fileWith, docs
-    , fileWithNoTypeInference
     , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
     , customType, Variant, variant, variantWith
     , alias
@@ -65,8 +64,6 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 @docs expose, exposeWith
 
 @docs fileWith, docs
-
-@docs fileWithNoTypeInference
 
 
 ## Functions
@@ -246,35 +243,6 @@ fileWith mod options decs =
         , aliases = options.aliases
         , declarations = decs
         , index = Index.startChecked True
-        }
-
-
-{-| Same as [fileWith](#fileWith), but type inference is disabled.
-
-This means you'll have to add all type signatures manually by using `Elm.withType`.
-
-However, this may be much faster. How much faster is yet to be seen. If it doesn't make much of a difference ,this maybe removed later.
-
--}
-fileWithNoTypeInference :
-    List String
-    ->
-        { docs :
-            List
-                { group : Maybe String
-                , members : List String
-                }
-            -> List String
-        , aliases : List ( List String, String )
-        }
-    -> List Declaration
-    -> File
-fileWithNoTypeInference mod options decs =
-    Render.render options.docs
-        { moduleName = mod
-        , aliases = options.aliases
-        , declarations = decs
-        , index = Index.startChecked False
         }
 
 
