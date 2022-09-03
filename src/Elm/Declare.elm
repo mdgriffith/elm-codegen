@@ -1,4 +1,7 @@
-module Elm.Declare exposing (fn, fn2, fn3, fn4, fn5, fn6)
+module Elm.Declare exposing
+    ( fn, fn2, fn3, fn4, fn5, fn6
+    , function
+    )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
 
@@ -51,6 +54,10 @@ In that case you can do something like this using `callFrom`:
                 (add42.callFrom [ "MyFile" ] (Elm.int 82))
             ]
         ]
+
+@docs fn, fn2, fn3, fn4, fn5, fn6
+
+@docs function
 
 -}
 
@@ -359,6 +366,55 @@ fn6 name one two three four five six toExp =
                                 }
                 )
                 [ argOne, argTwo, argThree, argFour, argFive, argSix ]
+    in
+    { declaration =
+        Elm.declaration name
+            funcExp
+    , call =
+        call []
+    , callFrom =
+        call
+    }
+
+
+{-| -}
+function :
+    String
+    -> List ( String, Maybe Elm.Annotation.Annotation )
+    -> (List Expression -> Expression)
+    ->
+        { declaration : Declaration
+        , call : List Expression -> Expression
+        , callFrom : List String -> List Expression -> Expression
+        }
+function name params toExp =
+    let
+        funcExp =
+            Elm.function params toExp
+
+        call importFrom args =
+            Elm.apply
+                (Compiler.Expression <|
+                    \index ->
+                        case funcExp of
+                            Compiler.Expression toFnExp ->
+                                let
+                                    fnExp =
+                                        toFnExp index
+                                in
+                                { expression =
+                                    -- This *must* be an un-protected name, where we only use
+                                    -- literally what the dev gives us, because we are trying
+                                    -- to refer to something that already exists.
+                                    Exp.FunctionOrValue importFrom
+                                        (Format.sanitize name)
+                                , annotation =
+                                    fnExp.annotation
+                                , imports =
+                                    fnExp.imports
+                                }
+                )
+                args
     in
     { declaration =
         Elm.declaration name
