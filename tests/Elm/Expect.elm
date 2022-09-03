@@ -30,6 +30,7 @@ declarationAs decl str =
     Expect.equal
         (Elm.ToString.declaration decl
             |> .body
+            |> String.trim
         )
         (String.trim str)
 
