@@ -1254,7 +1254,7 @@ variantWith =
     Variant
 
 
-{-| A custom type declaration.
+{-| A type alias declaration.
 
     import Elm.Annotation as Type
 
