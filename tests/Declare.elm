@@ -34,24 +34,22 @@ myFn =
 
 
 declarations =
-    only <|
-        describe "declarations"
-            [ test "Basic function dec" <|
-                \_ ->
-                    Elm.Expect.declarationAs myFn.declaration
-                        """
+    describe "declarations"
+        [ test "Basic function dec" <|
+            \_ ->
+                Elm.Expect.declarationAs myFn.declaration
+                    """
 myFn : Int -> Int
 myFn myInt =
     5 + myInt
-
 """
-            , test "Call correctly" <|
-                \_ ->
-                    Elm.Expect.declarationAs
-                        (Elm.declaration "mySweetNumber"
-                            (myFn.call (Elm.int 82))
-                        )
-                        """
+        , test "Call correctly" <|
+            \_ ->
+                Elm.Expect.declarationAs
+                    (Elm.declaration "mySweetNumber"
+                        (myFn.call (Elm.int 82))
+                    )
+                    """
 mySweetNumber : Int
 mySweetNumber =
     myFn 82
