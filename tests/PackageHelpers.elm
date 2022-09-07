@@ -234,8 +234,5 @@ stringifying =
                         |> Elm.ToString.expression
                         |> .body
                     )
-                    """"Hello"
-    |> one
-    |> two
-"""
+                    """"Hello" |> one |> two 5 "HELLOOOOOOOOOOOOOO\""""
         ]
