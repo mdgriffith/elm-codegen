@@ -16,7 +16,6 @@
     "elm-version": "0.19.0 <= v < 0.20.0",
     "dependencies": {
         "elm/core": "1.0.0 <= v < 2.0.0",
-        "elm/parser": "1.1.0 <= v < 2.0.0",
         "rtfeldman/elm-hex": "1.0.0 <= v < 2.0.0",
         "stil4m/elm-syntax": "7.1.0 <= v < 8.0.0",
         "the-sett/elm-pretty-printer": "3.0.0 <= v < 4.0.0"
