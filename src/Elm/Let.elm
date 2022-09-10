@@ -4,6 +4,7 @@ module Elm.Let exposing
     , record
     , fn, fn2, fn3
     , toExpression
+    , Let
     )
 
 {-| This module is for building `let` expressions.
