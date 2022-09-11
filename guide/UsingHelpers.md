@@ -148,7 +148,7 @@ If you take a peek in `elm.codegen.json`, you'll see something like this.
 
 Notce the `local` field. If you want to generate bindings for other directories, either modify the file or run `elm-codegen install my/dir/`.
 
-Then, when you run `elm-codegen install`, bindings eill be generated for all files within those directories!
+Then, when you run `elm-codegen install`, bindings will be generated for all files within those directories!
 
 ## What's in the box?
 
