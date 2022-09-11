@@ -2,7 +2,6 @@ module Internal.Comments exposing
     ( Comment, CommentPart(..), DocComment, FileComment
     , emptyComment, addPart
     , prettyDocComment, prettyFileComment
-    , docCommentParser, fileCommentParser
     )
 
 {-| A component DSL that helps with building comments.
@@ -25,14 +24,8 @@ can be extracted to order the exposing clause by.
 
 @docs prettyDocComment, prettyFileComment
 
-
-# Parsing of comments into structured comments
-
-@docs docCommentParser, fileCommentParser
-
 -}
 
-import Parser exposing (Parser)
 import Pretty exposing (Doc)
 
 
@@ -209,7 +202,6 @@ prettyMarkdown val =
     Pretty.string val
 
 
-
 prettyCode val =
     Pretty.string val
         |> Pretty.indent 4
@@ -234,18 +226,6 @@ partToStringAndTags width part =
 
         DocTags tags ->
             ( "@doc " ++ String.join ", " tags, tags )
-
-
-docCommentParser : Parser (Comment DocComment)
-docCommentParser =
-    Parser.getSource
-        |> Parser.map (\val -> Comment [ Markdown val ])
-
-
-fileCommentParser : Parser (Comment FileComment)
-fileCommentParser =
-    Parser.getSource
-        |> Parser.map (\val -> Comment [ Markdown val ])
 
 
 delimeters : Doc t -> Doc t
