@@ -99,7 +99,7 @@ div =
         )
 ```
 
-## Local Helpers
+## Local helpers
 
 We also need helpers for local files instead of just published packages!
 
@@ -128,6 +128,27 @@ MyFile.add5 20
 Cool!
 
 **Note!** Any helpers that are in the `helpers` directory will be copied over into your target directory.
+
+## Managing local helpers
+
+If you take a peek in `elm.codegen.json`, you'll see something like this.
+
+```json
+{
+  "elm-codegen-version": "0.1.3",
+  "codegen-helpers": {
+    "packages": {
+      "elm/core": "1.0.5",
+      "elm/json": "1.1.3"
+    },
+    "local": ["codegen/helpers/"]
+  }
+}
+```
+
+Notce the `local` field. If you want to generate bindings for other directories, either modify the file or run `elm-codegen install my/dir/`.
+
+Then, when you run `elm-codegen install`, bindings eill be generated for all files within those directories!
 
 ## What's in the box?
 

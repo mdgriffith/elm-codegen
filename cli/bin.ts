@@ -30,9 +30,11 @@ program
   .command("install")
   .description(
     `
-    Install helpers for an ${chalk.yellow("Elm package")} or a local Elm file.
+    Install helpers for an ${chalk.yellow("Elm package")}
     ${chalk.cyan("elm-codegen install elm/json")}
-    ${chalk.cyan("elm-codegen install codegen/helpers/LocalFile.elm")}
+
+    or a local directory with Elm files in it.
+    ${chalk.cyan("elm-codegen install codegen/helpers/")}
 `
   )
   .argument("[package]")
