@@ -112,4 +112,33 @@ suite =
 
     (Just left) :: (Just right) :: rest ->
         (left ++ right) ++ "And there's more!\""""
+        , test "tuple destructuring" <|
+            \() ->
+                let
+                    expression : Elm.Expression
+                    expression =
+                        Elm.Case.custom
+                            (Elm.tuple
+                                (Elm.just (Elm.int 1))
+                                (Elm.just (Elm.int 2))
+                            )
+                            (Type.maybe Type.int)
+                            [ Elm.Case.tupleNew
+                                (\( left, right ) ->
+                                    Elm.Op.plus left right
+                                )
+                                (Elm.Case.newBranch1 "Just" ( "left", Type.int ))
+                                (Elm.Case.newBranch1 "Just" ( "right", Type.int ))
+                                |> Elm.Case.patternToBranch
+                            , Elm.Case.otherwise (\_ -> Elm.int 0)
+                            ]
+                in
+                Elm.Expect.renderedAs
+                    expression
+                    """case ( Just 1, Just 2 ) of
+    ( Just left, Just right ) ->
+        left + right
+
+    otherwise_1_0 ->
+        0"""
         ]

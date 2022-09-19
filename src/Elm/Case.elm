@@ -3,6 +3,7 @@ module Elm.Case exposing
     , tuple, triple
     , UnconsBranch(..), addUncons, startUncons, toUncons, toListBranch
     , Pattern(..)
+    , tupleNew, patternToBranch
     , newBranch0, newBranch1
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
@@ -42,6 +43,8 @@ Generates
 @docs UnconsBranch, addUncons, startUncons, toUncons, toListBranch
 
 @docs Pattern
+
+@docs tupleNew, patternToBranch
 
 
 ## Temporary
@@ -128,6 +131,18 @@ toUncons restName argType (UnconsBranch patterns toExp) =
                     )
                     restPattern
             , toExp var.exp
+            )
+        )
+
+
+{-| -}
+patternToBranch : Pattern Expression -> Branch
+patternToBranch (Pattern pattern destructure) =
+    Branch
+        (\index ->
+            ( Index.startIndex
+            , pattern
+            , destructure
             )
         )
 
@@ -416,6 +431,22 @@ tuple mainExpression oneName twoName branches =
                         ann
             , imports = expr.imports ++ gathered.imports
             }
+
+
+{-| -}
+tupleNew :
+    (( a, b ) -> c)
+    -> Pattern a
+    -> Pattern b
+    -> Pattern c
+tupleNew combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) =
+    Pattern
+        (Pattern.TuplePattern
+            [ Compiler.nodify pattern1
+            , Compiler.nodify pattern2
+            ]
+        )
+        (combine ( destructured1, destructured2 ))
 
 
 {-|
