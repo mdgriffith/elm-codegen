@@ -4,6 +4,7 @@ import Elm exposing (Expression)
 import Elm.Annotation as Type exposing (Annotation)
 import Elm.Case
 import Elm.Expect
+import Elm.Op
 import Test exposing (Test, describe, test)
 
 
@@ -66,25 +67,37 @@ suite =
                             )
                             Type.unit
                             [ Elm.Case.startUncons
-                                (\_ ->
-                                    Elm.unit
+                                (\a b ->
+                                    a
                                 )
+                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "left", Type.string ) (\left -> left))
                                 |> Elm.Case.addUncons (Elm.Case.branch0 "Nothing" Elm.unit)
                                 |> Elm.Case.toListBranch
                             , Elm.Case.startUncons
-                                (\_ ->
-                                    Elm.unit
+                                (\a b ->
+                                    b
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "foo", Type.string ) (\_ -> Elm.unit))
+                                |> Elm.Case.addUncons (Elm.Case.branch0 "Nothing" Elm.unit)
+                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "right", Type.string ) (\right -> right))
+                                |> Elm.Case.toListBranch
+                            , Elm.Case.startUncons
+                                (\left right ->
+                                    Elm.Op.append left right
+                                )
+                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "left", Type.string ) (\left -> left))
+                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "right", Type.string ) (\right -> right))
                                 |> Elm.Case.toListBranch
                             ]
                 in
                 Elm.Expect.renderedAs
                     expression
                     """case [ Nothing, Just "hello" ] of
-    [ Nothing ] ->
-        ()
+    [ Nothing, (Just left) ] ->
+        left
 
-    [ (Just foo) ] ->
-        ()"""
+    [ (Just right), Nothing ] ->
+        right
+
+    [ (Just right), (Just left) ] ->
+        left ++ right"""
         ]
