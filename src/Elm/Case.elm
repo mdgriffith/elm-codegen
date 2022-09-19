@@ -1,10 +1,12 @@
 module Elm.Case exposing
     ( maybe, result, list, string
     , tuple, triple
+    , UnconsBranch(..), addUncons, startUncons, toUncons
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
     , branchWith
     , branchList
+    , toListBranch
     )
 
 {-| Generate a case expression!
@@ -32,6 +34,11 @@ Generates
 @docs maybe, result, list, string
 
 @docs tuple, triple
+
+
+## Uncons
+
+@docs UnconsBranch, addUncons, startUncons, toUncons
 
 
 ## Case on a Custom Type
@@ -75,6 +82,81 @@ import Internal.Compiler as Compiler
 import Internal.Debug as Debug
 import Internal.Format as Format
 import Internal.Index as Index
+
+
+{-| -}
+type UnconsBranch a
+    = UnconsBranch (List Pattern.Pattern) a
+
+
+{-| -}
+toUncons : String -> Type.Annotation -> UnconsBranch (Expression -> Expression) -> Branch
+toUncons restName argType (UnconsBranch patterns toExp) =
+    Branch
+        (\index ->
+            let
+                var =
+                    --Compiler.toVarWithType index restName argType
+                    Compiler.toVarWithType index restName argType
+
+                restPattern : Pattern.Pattern
+                restPattern =
+                    --Pattern.NamedPattern
+                    --    { moduleName = []
+                    --    , name = Format.formatType restName
+                    --    }
+                    --    [
+                    --Compiler.nodify
+                    Pattern.VarPattern var.name
+
+                --]
+            in
+            ( var.index
+            , --Pattern.UnConsPattern (Compiler.nodify patterns) (Compiler.nodify restPattern)
+              patterns
+                |> List.foldl
+                    (\pattern soFar ->
+                        Pattern.UnConsPattern (Compiler.nodify pattern) (Compiler.nodify soFar)
+                    )
+                    restPattern
+            , toExp var.exp
+            )
+        )
+
+
+{-| -}
+toListBranch : UnconsBranch Expression -> Branch
+toListBranch (UnconsBranch patterns toExp) =
+    Branch
+        (\index ->
+            ( index
+            , patterns
+                |> List.map
+                    (\pattern ->
+                        Compiler.nodify pattern
+                    )
+                |> Pattern.ListPattern
+            , toExp
+            )
+        )
+
+
+{-| -}
+startUncons : a -> UnconsBranch a
+startUncons fn =
+    UnconsBranch [] fn
+
+
+{-| -}
+addUncons : Branch -> UnconsBranch (Expression -> b) -> UnconsBranch b
+addUncons (Branch toPattern) (UnconsBranch patterns builderFn) =
+    let
+        ( _, pattern, expression ) =
+            toPattern Index.startIndex
+    in
+    UnconsBranch
+        (pattern :: patterns)
+        (builderFn expression)
 
 
 captureCase :
