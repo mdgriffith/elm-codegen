@@ -125,6 +125,23 @@ suite =
                             (Type.maybe Type.int)
                             [ Elm.Case.tupleNew
                                 (\( left, right ) ->
+                                    Elm.int (left + right)
+                                )
+                                (Elm.Case.initCustom
+                                    (\literalInt -> literalInt)
+                                    "Just"
+                                    |> Elm.Case.customWithParam (Elm.Case.int 1)
+                                    |> Elm.Case.buildCustom
+                                )
+                                (Elm.Case.initCustom
+                                    (\literalInt -> literalInt)
+                                    "Just"
+                                    |> Elm.Case.customWithParam (Elm.Case.int 2)
+                                    |> Elm.Case.buildCustom
+                                )
+                                |> Elm.Case.patternToBranch
+                            , Elm.Case.tupleNew
+                                (\( left, right ) ->
                                     Elm.Op.plus left right
                                 )
                                 (Elm.Case.newBranch1 "Just" ( "left", Type.int ))
@@ -136,6 +153,9 @@ suite =
                 Elm.Expect.renderedAs
                     expression
                     """case ( Just 1, Just 2 ) of
+    ( Just 1, Just 2 ) ->
+        3
+
     ( Just left, Just right ) ->
         left + right
 

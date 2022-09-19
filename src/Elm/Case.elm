@@ -4,6 +4,8 @@ module Elm.Case exposing
     , UnconsBranch(..), addUncons, startUncons, toUncons, toListBranch
     , Pattern(..)
     , tupleNew, patternToBranch
+    , CustomPattern(..), customWithParam, initCustom, buildCustom
+    , int
     , newBranch0, newBranch1
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
@@ -45,6 +47,16 @@ Generates
 @docs Pattern
 
 @docs tupleNew, patternToBranch
+
+
+## Custom Types
+
+@docs CustomPattern, customWithParam, initCustom, buildCustom
+
+
+## Literals
+
+@docs int
 
 
 ## Temporary
@@ -98,6 +110,42 @@ import Internal.Index as Index
 {-| -}
 type UnconsBranch a
     = UnconsBranch (List Pattern.Pattern) a
+
+
+{-| -}
+type CustomPattern a
+    = CustomPattern String (List Pattern.Pattern) a
+
+
+{-| -}
+initCustom : a -> String -> CustomPattern a
+initCustom a name =
+    CustomPattern name [] a
+
+
+{-| -}
+customWithParam : Pattern a -> CustomPattern (a -> b) -> CustomPattern b
+customWithParam (Pattern pattern destructure) (CustomPattern name patterns destructureSoFar) =
+    CustomPattern name (pattern :: patterns) (destructureSoFar destructure)
+
+
+{-| -}
+buildCustom : CustomPattern a -> Pattern a
+buildCustom (CustomPattern name patterns destructure) =
+    Pattern
+        (Pattern.NamedPattern
+            { moduleName = []
+            , name = Format.formatType name
+            }
+            (patterns |> List.map Compiler.nodify)
+        )
+        destructure
+
+
+{-| -}
+int : Int -> Pattern Int
+int value =
+    Pattern (Pattern.IntPattern value) value
 
 
 {-| -}
