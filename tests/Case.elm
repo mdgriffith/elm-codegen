@@ -34,7 +34,7 @@ suite =
                             (\_ _ ->
                                 Elm.unit
                             )
-                            |> Elm.Case.addUncons (Elm.Case.branch0 "Nothing" Elm.unit)
+                            |> Elm.Case.addUncons (Elm.Case.newBranch0 "Nothing")
                             |> Elm.Case.toUncons "rest" Type.unit
 
                     expression : Elm.Expression
@@ -67,26 +67,35 @@ suite =
                             )
                             Type.unit
                             [ Elm.Case.startUncons
-                                (\a b ->
-                                    a
+                                (\left () ->
+                                    left
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "left", Type.string ) (\left -> left))
-                                |> Elm.Case.addUncons (Elm.Case.branch0 "Nothing" Elm.unit)
+                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "left", Type.string ))
+                                |> Elm.Case.addUncons (Elm.Case.newBranch0 "Nothing")
                                 |> Elm.Case.toListBranch
                             , Elm.Case.startUncons
-                                (\a b ->
-                                    b
+                                (\() right ->
+                                    right
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.branch0 "Nothing" Elm.unit)
-                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "right", Type.string ) (\right -> right))
+                                |> Elm.Case.addUncons (Elm.Case.newBranch0 "Nothing")
+                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "right", Type.string ))
                                 |> Elm.Case.toListBranch
                             , Elm.Case.startUncons
                                 (\left right ->
                                     Elm.Op.append left right
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "left", Type.string ) (\left -> left))
-                                |> Elm.Case.addUncons (Elm.Case.branch1 "Just" ( "right", Type.string ) (\right -> right))
+                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "left", Type.string ))
+                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "right", Type.string ))
                                 |> Elm.Case.toListBranch
+                            , Elm.Case.startUncons
+                                (\left right rest ->
+                                    Elm.Op.append
+                                        (Elm.Op.append left right)
+                                        (Elm.string "And there's more!")
+                                )
+                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "left", Type.string ))
+                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "right", Type.string ))
+                                |> Elm.Case.toUncons "rest" (Type.maybe Type.string)
                             ]
                 in
                 Elm.Expect.renderedAs
@@ -99,5 +108,8 @@ suite =
         right
 
     [ (Just right), (Just left) ] ->
-        left ++ right"""
+        left ++ right
+
+    (Just left) :: (Just right) :: rest ->
+        (left ++ right) ++ "And there's more!\""""
         ]

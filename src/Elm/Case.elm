@@ -1,12 +1,13 @@
 module Elm.Case exposing
     ( maybe, result, list, string
     , tuple, triple
-    , UnconsBranch(..), addUncons, startUncons, toUncons
+    , UnconsBranch(..), addUncons, startUncons, toUncons, toListBranch
+    , Pattern(..)
+    , newBranch0, newBranch1
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
     , branchWith
     , branchList
-    , toListBranch
     )
 
 {-| Generate a case expression!
@@ -38,7 +39,14 @@ Generates
 
 ## Uncons
 
-@docs UnconsBranch, addUncons, startUncons, toUncons
+@docs UnconsBranch, addUncons, startUncons, toUncons, toListBranch
+
+@docs Pattern
+
+
+## Temporary
+
+@docs newBranch0, newBranch1
 
 
 ## Case on a Custom Type
@@ -148,15 +156,11 @@ startUncons fn =
 
 
 {-| -}
-addUncons : Branch -> UnconsBranch (Expression -> b) -> UnconsBranch b
-addUncons (Branch toPattern) (UnconsBranch patterns builderFn) =
-    let
-        ( _, pattern, expression ) =
-            toPattern Index.startIndex
-    in
+addUncons : Pattern a -> UnconsBranch (a -> b) -> UnconsBranch b
+addUncons (Pattern pattern destructured) (UnconsBranch patterns builderFn) =
     UnconsBranch
         (pattern :: patterns)
-        (builderFn expression)
+        (builderFn destructured)
 
 
 captureCase :
@@ -767,6 +771,37 @@ otherwise toExp =
             , toExp otherwiseExp
             )
         )
+
+
+{-| -}
+type Pattern a
+    = Pattern Pattern.Pattern a
+
+
+{-| -}
+newBranch0 : String -> Pattern ()
+newBranch0 name =
+    Pattern
+        (Pattern.NamedPattern { moduleName = [], name = Format.formatType name } [])
+        ()
+
+
+{-| -}
+newBranch1 : String -> ( String, Type.Annotation ) -> Pattern Expression
+newBranch1 name ( argName, argType ) =
+    let
+        var : { name : String, exp : Compiler.Expression, index : Index.Index }
+        var =
+            Compiler.toVarWithType Index.startIndex argName argType
+    in
+    Pattern
+        (Pattern.NamedPattern
+            { moduleName = []
+            , name = Format.formatType name
+            }
+            [ Compiler.nodify (Pattern.VarPattern argName) ]
+        )
+        var.exp
 
 
 {-| -}
