@@ -9,11 +9,11 @@ import Internal.Index as Index
 
 renderedAs : Elm.Expression -> String -> Expectation
 renderedAs expression str =
-    Expect.equal
-        (Elm.ToString.expression expression
-            |> .body
-        )
-        (String.trim str)
+    (Elm.ToString.expression expression
+        |> .body
+    )
+        |> Expect.equal
+            (String.trim str)
 
 
 importAs : Elm.Expression -> String -> Expectation
