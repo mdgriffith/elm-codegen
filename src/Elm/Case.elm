@@ -5,6 +5,7 @@ module Elm.Case exposing
     , Pattern(..)
     , tupleNew, patternToBranch
     , CustomPattern(..), customWithParam, initCustom, buildCustom
+    , varPattern
     , int
     , newBranch0, newBranch1
     , custom
@@ -52,6 +53,11 @@ Generates
 ## Custom Types
 
 @docs CustomPattern, customWithParam, initCustom, buildCustom
+
+
+## Variables
+
+@docs varPattern
 
 
 ## Literals
@@ -146,6 +152,16 @@ buildCustom (CustomPattern name patterns destructure) =
 int : Int -> Pattern Int
 int value =
     Pattern (Pattern.IntPattern value) value
+
+
+{-| -}
+varPattern : String -> Pattern Expression
+varPattern name =
+    let
+        ( _, _, exp ) =
+            Compiler.var Index.startIndex name
+    in
+    Pattern (Pattern.VarPattern name) exp
 
 
 {-| -}

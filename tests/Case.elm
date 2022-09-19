@@ -144,8 +144,18 @@ suite =
                                 (\( left, right ) ->
                                     Elm.Op.plus left right
                                 )
-                                (Elm.Case.newBranch1 "Just" ( "left", Type.int ))
-                                (Elm.Case.newBranch1 "Just" ( "right", Type.int ))
+                                (Elm.Case.initCustom
+                                    (\literalInt -> literalInt)
+                                    "Just"
+                                    |> Elm.Case.customWithParam (Elm.Case.varPattern "left")
+                                    |> Elm.Case.buildCustom
+                                )
+                                (Elm.Case.initCustom
+                                    (\literalInt -> literalInt)
+                                    "Just"
+                                    |> Elm.Case.customWithParam (Elm.Case.varPattern "right")
+                                    |> Elm.Case.buildCustom
+                                )
                                 |> Elm.Case.patternToBranch
                             , Elm.Case.otherwise (\_ -> Elm.int 0)
                             ]
