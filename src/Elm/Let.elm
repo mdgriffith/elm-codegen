@@ -9,7 +9,7 @@ module Elm.Let exposing
 
 {-| This module is for building `let` expressions.
 
-@docs letIn, value
+@docs letIn, value, Let
 
 Here's a brief example to get you started
 
