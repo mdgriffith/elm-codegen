@@ -195,6 +195,30 @@ case foo of
     ( (), name, 123 ) ->
         ()
 """
+        , test "record destructure" <|
+            \() ->
+                Elm.Case.custom
+                    (Elm.record
+                        [ ( "first", Elm.string "Jane" )
+                        , ( "last", Elm.string "Doe" )
+                        ]
+                    )
+                    Type.unit
+                    [ Pattern.initRecordDestructure
+                        (\first last ->
+                            Elm.Op.append first last
+                        )
+                        |> Pattern.withField "first"
+                        |> Pattern.withField "last"
+                        |> Pattern.buildRecordDestructure
+                        |> Elm.Case.patternToBranch identity
+                    ]
+                    |> renderedAs
+                        """
+case { first = "Jane", last = "Doe" } of
+    { first, last } ->
+        first ++ last
+"""
         , describe "literal patterns"
             [ test "unit" <|
                 \() ->

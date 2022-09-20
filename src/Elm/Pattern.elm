@@ -4,9 +4,9 @@ module Elm.Pattern exposing
     , SequencePattern(..), addToSequence, initSequence, toUncons, toListPattern
     , tuple, triple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
+    , Pattern(..), buildRecordDestructure, initRecordDestructure, withField
     , varPattern
     , newBranch0, newBranch1
-    , Pattern(..)
     )
 
 {-|
@@ -26,7 +26,8 @@ module Elm.Pattern exposing
 
 @docs SequencePattern, addToSequence, initSequence, toUncons, toListPattern
 
-@docs Tuples and Triples
+
+## Tuples and Triples
 
 @docs tuple, triple
 
@@ -34,6 +35,11 @@ module Elm.Pattern exposing
 ## Custom Types
 
 @docs CustomPattern, customWithParam, initCustom, buildCustom
+
+
+## Record Destructuring
+
+@docs Pattern, buildRecordDestructure, initRecordDestructure, withField
 
 
 ## Variables
@@ -53,6 +59,7 @@ import Elm.Syntax.Pattern as Pattern
 import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Index as Index
+import Set exposing (Set)
 
 
 {-| -}
@@ -77,6 +84,40 @@ string literalString =
 char : Char -> Pattern Char
 char literalChar =
     Pattern (Pattern.CharPattern literalChar) literalChar
+
+
+{-| -}
+type RecordDestructure a
+    = RecordDestructure (Set String) a
+
+
+{-| -}
+initRecordDestructure : a -> RecordDestructure a
+initRecordDestructure combine =
+    RecordDestructure Set.empty combine
+
+
+{-| -}
+withField : String -> RecordDestructure (Expression -> b) -> RecordDestructure b
+withField newField (RecordDestructure fields combine) =
+    let
+        ( _, _, exp ) =
+            Compiler.var Index.startIndex newField
+    in
+    RecordDestructure (fields |> Set.insert newField) (combine exp)
+
+
+{-| -}
+buildRecordDestructure : RecordDestructure a -> Pattern a
+buildRecordDestructure (RecordDestructure fields destructure) =
+    Pattern
+        (Pattern.RecordPattern
+            (fields
+                |> Set.toList
+                |> List.map Compiler.nodify
+            )
+        )
+        destructure
 
 
 {-| -}
