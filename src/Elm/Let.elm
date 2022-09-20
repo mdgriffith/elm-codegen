@@ -1,10 +1,10 @@
 module Elm.Let exposing
-    ( letIn, value
+    ( letIn, value, Let
+    , destructure
     , tuple
     , record
     , fn, fn2, fn3
     , toExpression
-    , Let
     )
 
 {-| This module is for building `let` expressions.
@@ -34,6 +34,8 @@ Will translate into
 
 
 # Destructing values
+
+@docs destructure
 
 @docs tuple
 
@@ -125,6 +127,7 @@ will generate
 import Dict
 import Elm exposing (Expression)
 import Elm.Annotation
+import Elm.Pattern exposing (Pattern(..))
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
@@ -174,6 +177,30 @@ with (Let toScopeA) (Let toScopeAB) =
             , return = resultB.return resultA.return
             }
         )
+
+
+{-| -}
+destructure : Elm.Pattern.Pattern a -> Expression -> Let (a -> b) -> Let b
+destructure (Pattern pattern toDestructured) valueExpr sourceLet =
+    with
+        (Let
+            (\index ->
+                let
+                    ( finalIndex, details ) =
+                        Compiler.toExpressionDetails index valueExpr
+                in
+                { letDecls =
+                    [ Compiler.nodify <|
+                        Exp.LetDestructuring
+                            (Compiler.nodify pattern)
+                            (Compiler.nodify details.expression)
+                    ]
+                , index = finalIndex
+                , return = toDestructured
+                }
+            )
+        )
+        sourceLet
 
 
 {-| -}

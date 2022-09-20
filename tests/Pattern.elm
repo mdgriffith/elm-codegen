@@ -4,6 +4,7 @@ import Elm exposing (Expression)
 import Elm.Annotation as Type exposing (Annotation)
 import Elm.Case
 import Elm.Expect
+import Elm.Let
 import Elm.Op
 import Elm.Pattern as Pattern
 import Elm.ToString
@@ -219,6 +220,32 @@ case foo of
 case { first = "Jane", last = "Doe" } of
     { first, last } ->
         first ++ last
+"""
+        , test "record in a let binding" <|
+            \() ->
+                Elm.Let.letIn
+                    (\( first, last ) ->
+                        Elm.Op.append first last
+                    )
+                    |> Elm.Let.destructure
+                        (Pattern.initRecordDestructure Tuple.pair
+                            |> Pattern.withField "first"
+                            |> Pattern.withField "last"
+                            |> Pattern.buildRecordDestructure
+                        )
+                        (Elm.record
+                            [ ( "first", Elm.string "Jane" )
+                            , ( "last", Elm.string "Doe" )
+                            ]
+                        )
+                    |> Elm.Let.toExpression
+                    |> renderedAs
+                        """
+let
+    { first, last } =
+        { first = "Jane", last = "Doe" }
+in
+first ++ last
 """
         , test "record destructure with as alias" <|
             \() ->
