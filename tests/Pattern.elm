@@ -1,4 +1,4 @@
-module Case exposing (suite)
+module Pattern exposing (suite)
 
 import Elm exposing (Expression)
 import Elm.Annotation as Type exposing (Annotation)
