@@ -1,5 +1,6 @@
 module Elm.Pattern exposing
-    ( UnconsBranch(..), addUncons, startUncons, toUncons, toListPattern
+    ( unit
+    , UnconsBranch(..), addUncons, startUncons, toUncons, toListPattern
     , Pattern(..)
     , tupleNew
     , CustomPattern(..), customWithParam, initCustom, buildCustom
@@ -9,6 +10,11 @@ module Elm.Pattern exposing
     )
 
 {-|
+
+
+## Exact Matches (No Variables)
+
+@docs unit
 
 
 ## Uncons
@@ -52,6 +58,12 @@ import Internal.Compiler as Compiler
 import Internal.Debug as Debug
 import Internal.Format as Format
 import Internal.Index as Index
+
+
+{-| -}
+unit : Pattern ()
+unit =
+    Pattern Pattern.UnitPattern ()
 
 
 {-| -}

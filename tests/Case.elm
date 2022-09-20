@@ -6,6 +6,8 @@ import Elm.Case
 import Elm.Expect
 import Elm.Op
 import Elm.Pattern as Pattern
+import Elm.ToString
+import Expect
 import Test exposing (Test, describe, test)
 
 
@@ -177,4 +179,31 @@ suite =
 
     otherwise_1_0 ->
         0"""
+        , describe "literal patterns"
+            [ test "unit" <|
+                \() ->
+                    Elm.Case.custom Elm.unit
+                        Type.unit
+                        [ Pattern.unit
+                            |> Elm.Case.patternToBranch2
+                                (\() ->
+                                    Elm.unit
+                                )
+                        ]
+                        |> renderedAs
+                            """
+case () of
+    () ->
+        ()
+"""
+            ]
         ]
+
+
+renderedAs : String -> Expression -> Expect.Expectation
+renderedAs expected actual =
+    (Elm.ToString.expression actual
+        |> .body
+    )
+        |> Expect.equal
+            (String.trim expected)
