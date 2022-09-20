@@ -8,6 +8,7 @@ import Elm.Op
 import Elm.Pattern as Pattern
 import Elm.ToString
 import Expect
+import Gen.String
 import Test exposing (Test, describe, test)
 
 
@@ -218,6 +219,46 @@ case foo of
 case { first = "Jane", last = "Doe" } of
     { first, last } ->
         first ++ last
+"""
+        , test "custom type helpers" <|
+            \() ->
+                Elm.Case.custom
+                    Elm.nothing
+                    Type.unit
+                    [ Pattern.variant1 "Just"
+                        (Pattern.int 1)
+                        |> Elm.Case.patternToBranch
+                            (\_ ->
+                                Elm.string "There is 1 item"
+                            )
+                    , Pattern.variant1 "Just"
+                        (Pattern.varPattern "n")
+                        |> Elm.Case.patternToBranch
+                            (\n ->
+                                Elm.Op.append
+                                    (Elm.Op.append
+                                        (Elm.string "There are ")
+                                        (Gen.String.call_.fromInt n)
+                                    )
+                                    (Elm.string " items")
+                            )
+                    , Pattern.variant0 "Nothing"
+                        |> Elm.Case.patternToBranch
+                            (\() ->
+                                Elm.string "Oh, it's nothing."
+                            )
+                    ]
+                    |> renderedAs
+                        """
+case Nothing of
+    Just 1 ->
+        "There is 1 item"
+
+    Just n ->
+        ("There are " ++ String.fromInt n) ++ " items"
+
+    Nothing ->
+        "Oh, it's nothing."
 """
         , describe "literal patterns"
             [ test "unit" <|
