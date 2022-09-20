@@ -33,11 +33,11 @@ suite =
                 let
                     inner : Elm.Case.Branch
                     inner =
-                        Pattern.startUncons
+                        Pattern.initSequence
                             (\_ _ ->
                                 Elm.unit
                             )
-                            |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
+                            |> Pattern.addToSequence (Pattern.newBranch0 "Nothing")
                             |> Pattern.toUncons "rest" Type.unit
                             |> Elm.Case.patternToBranch identity
 
@@ -70,38 +70,38 @@ suite =
                                 ]
                             )
                             Type.unit
-                            [ Pattern.startUncons
+                            [ Pattern.initSequence
                                 (\left () ->
                                     left
                                 )
-                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
-                                |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
+                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "left", Type.string ))
+                                |> Pattern.addToSequence (Pattern.newBranch0 "Nothing")
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
-                            , Pattern.startUncons
+                            , Pattern.initSequence
                                 (\() right ->
                                     right
                                 )
-                                |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
-                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.addToSequence (Pattern.newBranch0 "Nothing")
+                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "right", Type.string ))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
-                            , Pattern.startUncons
+                            , Pattern.initSequence
                                 (\left right ->
                                     Elm.Op.append left right
                                 )
-                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
-                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "left", Type.string ))
+                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "right", Type.string ))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
-                            , Pattern.startUncons
+                            , Pattern.initSequence
                                 (\left right rest ->
                                     Elm.Op.append
                                         (Elm.Op.append left right)
                                         (Elm.string "And there's more!")
                                 )
-                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
-                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "left", Type.string ))
+                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "right", Type.string ))
                                 |> Pattern.toUncons "rest" (Type.maybe Type.string)
                                 |> Elm.Case.patternToBranch identity
                             ]

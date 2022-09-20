@@ -1,7 +1,7 @@
 module Elm.Pattern exposing
     ( unit, ignore
     , int, string, char
-    , UnconsBranch(..), addUncons, startUncons, toUncons, toListPattern
+    , SequencePattern(..), addToSequence, initSequence, toUncons, toListPattern
     , tuple, triple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
     , varPattern
@@ -22,9 +22,9 @@ module Elm.Pattern exposing
 @docs int, string, char
 
 
-## Uncons
+## Sequences
 
-@docs UnconsBranch, addUncons, startUncons, toUncons, toListPattern
+@docs SequencePattern, addToSequence, initSequence, toUncons, toListPattern
 
 @docs Tuples and Triples
 
@@ -80,8 +80,8 @@ char literalChar =
 
 
 {-| -}
-type UnconsBranch a
-    = UnconsBranch (List Pattern.Pattern) a
+type SequencePattern a
+    = SequencePattern (List Pattern.Pattern) a
 
 
 {-| -}
@@ -131,8 +131,8 @@ varPattern name =
 
 
 {-| -}
-toUncons : String -> Type.Annotation -> UnconsBranch (Expression -> Expression) -> Pattern Expression
-toUncons restName argType (UnconsBranch patterns toExp) =
+toUncons : String -> Type.Annotation -> SequencePattern (Expression -> Expression) -> Pattern Expression
+toUncons restName argType (SequencePattern patterns toExp) =
     let
         var =
             Compiler.toVarWithType Index.startIndex restName argType
@@ -153,8 +153,8 @@ toUncons restName argType (UnconsBranch patterns toExp) =
 
 
 {-| -}
-toListPattern : UnconsBranch a -> Pattern a
-toListPattern (UnconsBranch patterns toExp) =
+toListPattern : SequencePattern a -> Pattern a
+toListPattern (SequencePattern patterns toExp) =
     Pattern
         (patterns
             |> List.map
@@ -167,15 +167,15 @@ toListPattern (UnconsBranch patterns toExp) =
 
 
 {-| -}
-startUncons : a -> UnconsBranch a
-startUncons fn =
-    UnconsBranch [] fn
+initSequence : a -> SequencePattern a
+initSequence fn =
+    SequencePattern [] fn
 
 
 {-| -}
-addUncons : Pattern a -> UnconsBranch (a -> b) -> UnconsBranch b
-addUncons (Pattern pattern destructured) (UnconsBranch patterns builderFn) =
-    UnconsBranch
+addToSequence : Pattern a -> SequencePattern (a -> b) -> SequencePattern b
+addToSequence (Pattern pattern destructured) (SequencePattern patterns builderFn) =
+    SequencePattern
         (pattern :: patterns)
         (builderFn destructured)
 
