@@ -169,18 +169,17 @@ addUncons (Pattern pattern destructured) (UnconsBranch patterns builderFn) =
 
 {-| -}
 tuple :
-    (( a, b ) -> c)
-    -> Pattern a
+    Pattern a
     -> Pattern b
-    -> Pattern c
-tuple combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) =
+    -> Pattern ( a, b )
+tuple (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) =
     Pattern
         (Pattern.TuplePattern
             [ Compiler.nodify pattern1
             , Compiler.nodify pattern2
             ]
         )
-        (combine ( destructured1, destructured2 ))
+        ( destructured1, destructured2 )
 
 
 {-| -}

@@ -132,9 +132,6 @@ suite =
                             )
                             (Type.maybe Type.int)
                             [ Pattern.tuple
-                                (\( left, right ) ->
-                                    Elm.int (left + right)
-                                )
                                 (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
@@ -147,11 +144,11 @@ suite =
                                     |> Pattern.customWithParam (Pattern.int 2)
                                     |> Pattern.buildCustom
                                 )
-                                |> Elm.Case.patternToBranch identity
+                                |> Elm.Case.patternToBranch
+                                    (\( left, right ) ->
+                                        Elm.int (left + right)
+                                    )
                             , Pattern.tuple
-                                (\( left, right ) ->
-                                    Elm.Op.plus left right
-                                )
                                 (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
@@ -164,7 +161,10 @@ suite =
                                     |> Pattern.customWithParam (Pattern.varPattern "right")
                                     |> Pattern.buildCustom
                                 )
-                                |> Elm.Case.patternToBranch identity
+                                |> Elm.Case.patternToBranch
+                                    (\( left, right ) ->
+                                        Elm.Op.plus left right
+                                    )
                             , Elm.Case.otherwise (\_ -> Elm.int 0)
                             ]
                 in
