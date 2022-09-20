@@ -2,7 +2,7 @@ module Elm.Pattern exposing
     ( unit
     , UnconsBranch(..), addUncons, startUncons, toUncons, toListPattern
     , Pattern(..)
-    , tupleNew
+    , tuple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
     , varPattern
     , int
@@ -23,7 +23,7 @@ module Elm.Pattern exposing
 
 @docs Pattern
 
-@docs tupleNew
+@docs tuple
 
 
 ## Custom Types
@@ -168,12 +168,12 @@ addUncons (Pattern pattern destructured) (UnconsBranch patterns builderFn) =
 
 
 {-| -}
-tupleNew :
+tuple :
     (( a, b ) -> c)
     -> Pattern a
     -> Pattern b
     -> Pattern c
-tupleNew combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) =
+tuple combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) =
     Pattern
         (Pattern.TuplePattern
             [ Compiler.nodify pattern1

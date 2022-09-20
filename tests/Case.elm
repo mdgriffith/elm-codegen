@@ -131,7 +131,7 @@ suite =
                                 (Elm.just (Elm.int 2))
                             )
                             (Type.maybe Type.int)
-                            [ Pattern.tupleNew
+                            [ Pattern.tuple
                                 (\( left, right ) ->
                                     Elm.int (left + right)
                                 )
@@ -148,7 +148,7 @@ suite =
                                     |> Pattern.buildCustom
                                 )
                                 |> Elm.Case.patternToBranch identity
-                            , Pattern.tupleNew
+                            , Pattern.tuple
                                 (\( left, right ) ->
                                     Elm.Op.plus left right
                                 )
