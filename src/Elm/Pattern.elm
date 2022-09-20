@@ -47,15 +47,10 @@ module Elm.Pattern exposing
 
 -}
 
-import Dict exposing (Dict)
 import Elm exposing (Expression)
 import Elm.Annotation as Type
-import Elm.Syntax.Expression as Exp
-import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
-import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
-import Internal.Debug as Debug
 import Internal.Format as Format
 import Internal.Index as Index
 
