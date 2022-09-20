@@ -257,10 +257,6 @@ first ++ last
                     )
                     Type.unit
                     [ Pattern.initRecordDestructure Tuple.pair
-                        --(\first last ->
-                        --    --Elm.Op.append first last
-                        --
-                        --)
                         |> Pattern.withField "first"
                         |> Pattern.withField "last"
                         |> Pattern.buildRecordDestructure
