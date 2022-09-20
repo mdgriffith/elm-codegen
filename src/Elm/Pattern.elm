@@ -182,6 +182,7 @@ buildCustom (CustomPattern name patterns destructure) =
         destructure
 
 
+{-| -}
 aliasAs : String -> (Expression -> a -> b) -> Pattern a -> Pattern b
 aliasAs name combine (Pattern pattern destructure) =
     let
