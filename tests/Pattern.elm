@@ -39,7 +39,7 @@ suite =
                             (\_ _ ->
                                 Elm.unit
                             )
-                            |> Pattern.addToSequence (Pattern.newBranch0 "Nothing")
+                            |> Pattern.addToSequence (Pattern.variant0 "Nothing")
                             |> Pattern.toUncons "rest" Type.unit
                             |> Elm.Case.patternToBranch identity
 
@@ -76,24 +76,26 @@ suite =
                                 (\left () ->
                                     left
                                 )
-                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "left", Type.string ))
-                                |> Pattern.addToSequence (Pattern.newBranch0 "Nothing")
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "left"))
+                                |> Pattern.addToSequence (Pattern.variant0 "Nothing")
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
                             , Pattern.initSequence
                                 (\() right ->
                                     right
                                 )
-                                |> Pattern.addToSequence (Pattern.newBranch0 "Nothing")
-                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.addToSequence (Pattern.variant0 "Nothing")
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "right"))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
                             , Pattern.initSequence
                                 (\left right ->
-                                    Elm.Op.append left right
+                                    -- TODO this causes an issue because the `Index.startIndex` is hardcoded
+                                    --    Elm.Op.append left right
+                                    Elm.string "todo"
                                 )
-                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "left", Type.string ))
-                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "left"))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "right"))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
                             , Pattern.initSequence
@@ -102,8 +104,8 @@ suite =
                                         (Elm.Op.append left right)
                                         (Elm.string "And there's more!")
                                 )
-                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "left", Type.string ))
-                                |> Pattern.addToSequence (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "left"))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "right"))
                                 |> Pattern.toUncons "rest" (Type.maybe Type.string)
                                 |> Elm.Case.patternToBranch identity
                             ]
@@ -118,7 +120,7 @@ suite =
         right
 
     [ (Just right), (Just left) ] ->
-        left ++ right
+        "todo"
 
     (Just left) :: (Just right) :: rest ->
         (left ++ right) ++ "And there's more!\""""

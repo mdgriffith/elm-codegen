@@ -8,7 +8,6 @@ module Elm.Pattern exposing
     , Pattern(..), buildRecordDestructure, initRecordDestructure, withField
     , varPattern
     , aliasAs
-    , newBranch0, newBranch1
     )
 
 {-|
@@ -57,11 +56,6 @@ module Elm.Pattern exposing
 ## Alias (`as`)
 
 @docs aliasAs
-
-
-## Temporary
-
-@docs newBranch0, newBranch1
 
 -}
 
@@ -298,29 +292,3 @@ triple (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Patter
 {-| -}
 type Pattern a
     = Pattern Pattern.Pattern a
-
-
-{-| -}
-newBranch0 : String -> Pattern ()
-newBranch0 name =
-    Pattern
-        (Pattern.NamedPattern { moduleName = [], name = Format.formatType name } [])
-        ()
-
-
-{-| -}
-newBranch1 : String -> ( String, Type.Annotation ) -> Pattern Expression
-newBranch1 name ( argName, argType ) =
-    let
-        var : { name : String, exp : Compiler.Expression, index : Index.Index }
-        var =
-            Compiler.toVarWithType Index.startIndex argName argType
-    in
-    Pattern
-        (Pattern.NamedPattern
-            { moduleName = []
-            , name = Format.formatType name
-            }
-            [ Compiler.nodify (Pattern.VarPattern argName) ]
-        )
-        var.exp
