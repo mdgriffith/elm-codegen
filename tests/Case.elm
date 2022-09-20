@@ -179,6 +179,22 @@ suite =
 
     otherwise_1_0 ->
         0"""
+        , test "triple" <|
+            \() ->
+                Elm.Case.custom (Elm.val "foo")
+                    Type.unit
+                    [ Pattern.triple Pattern.unit (Pattern.varPattern "name") (Pattern.int 123)
+                        |> Elm.Case.patternToBranch
+                            (\( (), name, literalInt ) ->
+                                Elm.unit
+                            )
+                    ]
+                    |> renderedAs
+                        """
+case foo of
+    ( (), name, 123 ) ->
+        ()
+"""
         , describe "literal patterns"
             [ test "unit" <|
                 \() ->

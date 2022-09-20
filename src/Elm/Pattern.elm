@@ -1,12 +1,12 @@
 module Elm.Pattern exposing
     ( unit
     , UnconsBranch(..), addUncons, startUncons, toUncons, toListPattern
-    , Pattern(..)
-    , tuple
+    , tuple, triple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
     , varPattern
     , int
     , newBranch0, newBranch1
+    , Pattern(..)
     )
 
 {-|
@@ -21,9 +21,9 @@ module Elm.Pattern exposing
 
 @docs UnconsBranch, addUncons, startUncons, toUncons, toListPattern
 
-@docs Pattern
+@docs Tuples and Triples
 
-@docs tuple
+@docs tuple, triple
 
 
 ## Custom Types
@@ -181,6 +181,23 @@ tuple combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
             ]
         )
         (combine ( destructured1, destructured2 ))
+
+
+{-| -}
+triple :
+    Pattern a
+    -> Pattern b
+    -> Pattern c
+    -> Pattern ( a, b, c )
+triple (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) =
+    Pattern
+        (Pattern.TuplePattern
+            [ Compiler.nodify pattern1
+            , Compiler.nodify pattern2
+            , Compiler.nodify pattern3
+            ]
+        )
+        ( destructured1, destructured2, destructured3 )
 
 
 {-| -}
