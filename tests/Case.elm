@@ -5,6 +5,7 @@ import Elm.Annotation as Type exposing (Annotation)
 import Elm.Case
 import Elm.Expect
 import Elm.Op
+import Elm.Pattern as Pattern
 import Test exposing (Test, describe, test)
 
 
@@ -30,12 +31,13 @@ suite =
                 let
                     inner : Elm.Case.Branch
                     inner =
-                        Elm.Case.startUncons
+                        Pattern.startUncons
                             (\_ _ ->
                                 Elm.unit
                             )
-                            |> Elm.Case.addUncons (Elm.Case.newBranch0 "Nothing")
-                            |> Elm.Case.toUncons "rest" Type.unit
+                            |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
+                            |> Pattern.toUncons "rest" Type.unit
+                            |> Elm.Case.patternToBranch
 
                     expression : Elm.Expression
                     expression =
@@ -66,36 +68,40 @@ suite =
                                 ]
                             )
                             Type.unit
-                            [ Elm.Case.startUncons
+                            [ Pattern.startUncons
                                 (\left () ->
                                     left
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "left", Type.string ))
-                                |> Elm.Case.addUncons (Elm.Case.newBranch0 "Nothing")
-                                |> Elm.Case.toListBranch
-                            , Elm.Case.startUncons
+                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
+                                |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
+                                |> Pattern.toListPattern
+                                |> Elm.Case.patternToBranch
+                            , Pattern.startUncons
                                 (\() right ->
                                     right
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.newBranch0 "Nothing")
-                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "right", Type.string ))
-                                |> Elm.Case.toListBranch
-                            , Elm.Case.startUncons
+                                |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
+                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.toListPattern
+                                |> Elm.Case.patternToBranch
+                            , Pattern.startUncons
                                 (\left right ->
                                     Elm.Op.append left right
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "left", Type.string ))
-                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "right", Type.string ))
-                                |> Elm.Case.toListBranch
-                            , Elm.Case.startUncons
+                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
+                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.toListPattern
+                                |> Elm.Case.patternToBranch
+                            , Pattern.startUncons
                                 (\left right rest ->
                                     Elm.Op.append
                                         (Elm.Op.append left right)
                                         (Elm.string "And there's more!")
                                 )
-                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "left", Type.string ))
-                                |> Elm.Case.addUncons (Elm.Case.newBranch1 "Just" ( "right", Type.string ))
-                                |> Elm.Case.toUncons "rest" (Type.maybe Type.string)
+                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
+                                |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
+                                |> Pattern.toUncons "rest" (Type.maybe Type.string)
+                                |> Elm.Case.patternToBranch
                             ]
                 in
                 Elm.Expect.renderedAs
@@ -123,38 +129,38 @@ suite =
                                 (Elm.just (Elm.int 2))
                             )
                             (Type.maybe Type.int)
-                            [ Elm.Case.tupleNew
+                            [ Pattern.tupleNew
                                 (\( left, right ) ->
                                     Elm.int (left + right)
                                 )
-                                (Elm.Case.initCustom
+                                (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
-                                    |> Elm.Case.customWithParam (Elm.Case.int 1)
-                                    |> Elm.Case.buildCustom
+                                    |> Pattern.customWithParam (Pattern.int 1)
+                                    |> Pattern.buildCustom
                                 )
-                                (Elm.Case.initCustom
+                                (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
-                                    |> Elm.Case.customWithParam (Elm.Case.int 2)
-                                    |> Elm.Case.buildCustom
+                                    |> Pattern.customWithParam (Pattern.int 2)
+                                    |> Pattern.buildCustom
                                 )
                                 |> Elm.Case.patternToBranch
-                            , Elm.Case.tupleNew
+                            , Pattern.tupleNew
                                 (\( left, right ) ->
                                     Elm.Op.plus left right
                                 )
-                                (Elm.Case.initCustom
+                                (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
-                                    |> Elm.Case.customWithParam (Elm.Case.varPattern "left")
-                                    |> Elm.Case.buildCustom
+                                    |> Pattern.customWithParam (Pattern.varPattern "left")
+                                    |> Pattern.buildCustom
                                 )
-                                (Elm.Case.initCustom
+                                (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
-                                    |> Elm.Case.customWithParam (Elm.Case.varPattern "right")
-                                    |> Elm.Case.buildCustom
+                                    |> Pattern.customWithParam (Pattern.varPattern "right")
+                                    |> Pattern.buildCustom
                                 )
                                 |> Elm.Case.patternToBranch
                             , Elm.Case.otherwise (\_ -> Elm.int 0)
