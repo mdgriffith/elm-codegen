@@ -39,7 +39,7 @@ suite =
                             )
                             |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
                             |> Pattern.toUncons "rest" Type.unit
-                            |> Elm.Case.patternToBranch
+                            |> Elm.Case.patternToBranch identity
 
                     expression : Elm.Expression
                     expression =
@@ -77,7 +77,7 @@ suite =
                                 |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
                                 |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
                                 |> Pattern.toListPattern
-                                |> Elm.Case.patternToBranch
+                                |> Elm.Case.patternToBranch identity
                             , Pattern.startUncons
                                 (\() right ->
                                     right
@@ -85,7 +85,7 @@ suite =
                                 |> Pattern.addUncons (Pattern.newBranch0 "Nothing")
                                 |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
                                 |> Pattern.toListPattern
-                                |> Elm.Case.patternToBranch
+                                |> Elm.Case.patternToBranch identity
                             , Pattern.startUncons
                                 (\left right ->
                                     Elm.Op.append left right
@@ -93,7 +93,7 @@ suite =
                                 |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
                                 |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
                                 |> Pattern.toListPattern
-                                |> Elm.Case.patternToBranch
+                                |> Elm.Case.patternToBranch identity
                             , Pattern.startUncons
                                 (\left right rest ->
                                     Elm.Op.append
@@ -103,7 +103,7 @@ suite =
                                 |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "left", Type.string ))
                                 |> Pattern.addUncons (Pattern.newBranch1 "Just" ( "right", Type.string ))
                                 |> Pattern.toUncons "rest" (Type.maybe Type.string)
-                                |> Elm.Case.patternToBranch
+                                |> Elm.Case.patternToBranch identity
                             ]
                 in
                 Elm.Expect.renderedAs
@@ -147,7 +147,7 @@ suite =
                                     |> Pattern.customWithParam (Pattern.int 2)
                                     |> Pattern.buildCustom
                                 )
-                                |> Elm.Case.patternToBranch
+                                |> Elm.Case.patternToBranch identity
                             , Pattern.tupleNew
                                 (\( left, right ) ->
                                     Elm.Op.plus left right
@@ -164,7 +164,7 @@ suite =
                                     |> Pattern.customWithParam (Pattern.varPattern "right")
                                     |> Pattern.buildCustom
                                 )
-                                |> Elm.Case.patternToBranch
+                                |> Elm.Case.patternToBranch identity
                             , Elm.Case.otherwise (\_ -> Elm.int 0)
                             ]
                 in
@@ -185,7 +185,7 @@ suite =
                     Elm.Case.custom Elm.unit
                         Type.unit
                         [ Pattern.unit
-                            |> Elm.Case.patternToBranch2
+                            |> Elm.Case.patternToBranch
                                 (\() ->
                                     Elm.unit
                                 )
