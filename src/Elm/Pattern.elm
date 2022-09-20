@@ -1,16 +1,19 @@
 module Elm.Pattern exposing
-    ( unit, ignore
+    ( Pattern
+    , unit, ignore
     , int, string, char
     , SequencePattern(..), addToSequence, initSequence, toUncons, toListPattern
     , tuple, triple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
     , variant0, variant1
-    , Pattern(..), buildRecordDestructure, initRecordDestructure, withField
+    , buildRecordDestructure, initRecordDestructure, withField
     , varPattern
     , aliasAs
     )
 
 {-|
+
+@docs Pattern
 
 
 ## Exact Matches (No Variables)
@@ -45,7 +48,7 @@ module Elm.Pattern exposing
 
 ## Record Destructuring
 
-@docs Pattern, buildRecordDestructure, initRecordDestructure, withField
+@docs buildRecordDestructure, initRecordDestructure, withField
 
 
 ## Variables
@@ -65,6 +68,7 @@ import Elm.Syntax.Pattern as Pattern
 import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Index as Index
+import Internal.Pattern exposing (Pattern(..))
 import Set exposing (Set)
 
 
@@ -290,5 +294,5 @@ triple (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Patter
 
 
 {-| -}
-type Pattern a
-    = Pattern Pattern.Pattern a
+type alias Pattern a =
+    Internal.Pattern.Pattern a

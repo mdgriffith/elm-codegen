@@ -73,7 +73,7 @@ Generates
 import Dict exposing (Dict)
 import Elm exposing (Expression)
 import Elm.Annotation as Type
-import Elm.Pattern exposing (Pattern(..))
+import Elm.Pattern
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
@@ -82,10 +82,11 @@ import Internal.Compiler as Compiler
 import Internal.Debug as Debug
 import Internal.Format as Format
 import Internal.Index as Index
+import Internal.Pattern exposing (Pattern(..))
 
 
 {-| -}
-patternToBranch : (a -> Expression) -> Pattern a -> Branch
+patternToBranch : (a -> Expression) -> Elm.Pattern.Pattern a -> Branch
 patternToBranch branchBody (Pattern pattern destructure) =
     Branch
         (\index ->

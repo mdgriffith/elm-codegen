@@ -127,7 +127,7 @@ will generate
 import Dict
 import Elm exposing (Expression)
 import Elm.Annotation
-import Elm.Pattern exposing (Pattern(..))
+import Elm.Pattern
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
@@ -135,6 +135,7 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Index as Index
+import Internal.Pattern exposing (Pattern(..))
 
 
 {-| -}
