@@ -236,6 +236,30 @@ case "Hi!" of
     _ ->
         "Excuse me?"
 """
+            , test "char" <|
+                \() ->
+                    Elm.Case.custom (Elm.char 'z')
+                        Type.unit
+                        [ Pattern.char 'z'
+                            |> Elm.Case.patternToBranch
+                                (\_ ->
+                                    Elm.int 26
+                                )
+                        , Pattern.ignore
+                            |> Elm.Case.patternToBranch
+                                (\() ->
+                                    Elm.int 0
+                                )
+                        ]
+                        |> renderedAs
+                            """
+case 'z' of
+    'z' ->
+        26
+
+    _ ->
+        0
+"""
             ]
         ]
 

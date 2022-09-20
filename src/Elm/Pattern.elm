@@ -1,6 +1,6 @@
 module Elm.Pattern exposing
     ( unit, ignore
-    , int, string
+    , int, string, char
     , UnconsBranch(..), addUncons, startUncons, toUncons, toListPattern
     , tuple, triple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
@@ -19,7 +19,7 @@ module Elm.Pattern exposing
 
 ### Literals
 
-@docs int, string
+@docs int, string, char
 
 
 ## Uncons
@@ -71,6 +71,12 @@ ignore =
 string : String -> Pattern String
 string literalString =
     Pattern (Pattern.StringPattern literalString) literalString
+
+
+{-| -}
+char : Char -> Pattern Char
+char literalChar =
+    Pattern (Pattern.CharPattern literalChar) literalChar
 
 
 {-| -}
