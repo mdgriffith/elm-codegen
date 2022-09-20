@@ -220,6 +220,36 @@ case { first = "Jane", last = "Doe" } of
     { first, last } ->
         first ++ last
 """
+        , test "record destructure with as alias" <|
+            \() ->
+                Elm.Case.custom
+                    (Elm.record
+                        [ ( "first", Elm.string "Jane" )
+                        , ( "last", Elm.string "Doe" )
+                        ]
+                    )
+                    Type.unit
+                    [ Pattern.initRecordDestructure Tuple.pair
+                        --(\first last ->
+                        --    --Elm.Op.append first last
+                        --
+                        --)
+                        |> Pattern.withField "first"
+                        |> Pattern.withField "last"
+                        |> Pattern.buildRecordDestructure
+                        |> Pattern.aliasAs "record"
+                            (\record ( first, last ) ->
+                                Elm.tuple record
+                                    (Elm.Op.append first last)
+                            )
+                        |> Elm.Case.patternToBranch identity
+                    ]
+                    |> renderedAs
+                        """
+case { first = "Jane", last = "Doe" } of
+    { first, last } as record ->
+        ( record, first ++ last )
+"""
         , test "custom type helpers" <|
             \() ->
                 Elm.Case.custom

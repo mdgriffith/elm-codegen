@@ -7,6 +7,7 @@ module Elm.Pattern exposing
     , variant0, variant1
     , Pattern(..), buildRecordDestructure, initRecordDestructure, withField
     , varPattern
+    , aliasAs
     , newBranch0, newBranch1
     )
 
@@ -51,6 +52,11 @@ module Elm.Pattern exposing
 ## Variables
 
 @docs varPattern
+
+
+## Alias (`as`)
+
+@docs aliasAs
 
 
 ## Temporary
@@ -174,6 +180,20 @@ buildCustom (CustomPattern name patterns destructure) =
             (patterns |> List.map Compiler.nodify)
         )
         destructure
+
+
+aliasAs : String -> (Expression -> a -> b) -> Pattern a -> Pattern b
+aliasAs name combine (Pattern pattern destructure) =
+    let
+        ( _, _, exp ) =
+            Compiler.var Index.startIndex name
+    in
+    Pattern
+        (Pattern.AsPattern
+            (Compiler.nodify pattern)
+            (Compiler.nodify name)
+        )
+        (combine exp destructure)
 
 
 {-| -}
