@@ -1,10 +1,10 @@
 module Elm.Pattern exposing
-    ( unit
+    ( unit, ignore
+    , int, string
     , UnconsBranch(..), addUncons, startUncons, toUncons, toListPattern
     , tuple, triple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
     , varPattern
-    , int
     , newBranch0, newBranch1
     , Pattern(..)
     )
@@ -14,7 +14,12 @@ module Elm.Pattern exposing
 
 ## Exact Matches (No Variables)
 
-@docs unit
+@docs unit, ignore
+
+
+### Literals
+
+@docs int, string
 
 
 ## Uncons
@@ -34,11 +39,6 @@ module Elm.Pattern exposing
 ## Variables
 
 @docs varPattern
-
-
-## Literals
-
-@docs int
 
 
 ## Temporary
@@ -64,6 +64,18 @@ import Internal.Index as Index
 unit : Pattern ()
 unit =
     Pattern Pattern.UnitPattern ()
+
+
+{-| -}
+ignore : Pattern ()
+ignore =
+    Pattern Pattern.AllPattern ()
+
+
+{-| -}
+string : String -> Pattern String
+string literalString =
+    Pattern (Pattern.StringPattern literalString) literalString
 
 
 {-| -}

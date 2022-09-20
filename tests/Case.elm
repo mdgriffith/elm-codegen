@@ -212,6 +212,30 @@ case () of
     () ->
         ()
 """
+            , test "string" <|
+                \() ->
+                    Elm.Case.custom (Elm.string "Hi!")
+                        Type.unit
+                        [ Pattern.string "Hi!"
+                            |> Elm.Case.patternToBranch
+                                (\_ ->
+                                    Elm.string "Hello to you!"
+                                )
+                        , Pattern.ignore
+                            |> Elm.Case.patternToBranch
+                                (\() ->
+                                    Elm.string "Excuse me?"
+                                )
+                        ]
+                        |> renderedAs
+                            """
+case "Hi!" of
+    "Hi!" ->
+        "Hello to you!"
+
+    _ ->
+        "Excuse me?"
+"""
             ]
         ]
 
