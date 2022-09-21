@@ -7,6 +7,7 @@ module Elm.Pattern exposing
     , tuple, triple
     , CustomPattern(..), customWithParam, initCustom, buildCustom
     , variant0, variant1
+    , RecordDestructure
     , buildRecordDestructure, initRecordDestructure, withField
     , var
     , aliasAs
@@ -50,6 +51,8 @@ module Elm.Pattern exposing
 
 
 ## Record Destructuring
+
+@docs RecordDestructure
 
 @docs buildRecordDestructure, initRecordDestructure, withField
 
