@@ -8,7 +8,7 @@ module Elm.Pattern exposing
     , CustomPattern(..), customWithParam, initCustom, buildCustom
     , variant0, variant1
     , buildRecordDestructure, initRecordDestructure, withField
-    , varPattern
+    , var
     , aliasAs
     )
 
@@ -56,7 +56,7 @@ module Elm.Pattern exposing
 
 ## Variables
 
-@docs varPattern
+@docs var
 
 
 ## Alias (`as`)
@@ -205,8 +205,8 @@ int value =
 
 
 {-| -}
-varPattern : String -> Pattern Expression
-varPattern name =
+var : String -> Pattern Expression
+var name =
     let
         ( _, _, exp ) =
             Compiler.var Index.startIndex name

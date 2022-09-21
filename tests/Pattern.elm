@@ -40,7 +40,7 @@ suite =
                                 Elm.unit
                             )
                             |> Pattern.addToSequence (Pattern.variant0 "Nothing")
-                            |> Pattern.toUncons (Pattern.varPattern "rest") Type.unit
+                            |> Pattern.toUncons (Pattern.var "rest") Type.unit
                             |> Elm.Case.patternToBranch identity
 
                     expression : Elm.Expression
@@ -76,7 +76,7 @@ suite =
                                 (\left () ->
                                     left
                                 )
-                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "left"))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "left"))
                                 |> Pattern.addToSequence (Pattern.variant0 "Nothing")
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
@@ -85,7 +85,7 @@ suite =
                                     right
                                 )
                                 |> Pattern.addToSequence (Pattern.variant0 "Nothing")
-                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "right"))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
                             , Pattern.initSequence
@@ -94,8 +94,8 @@ suite =
                                     --    Elm.Op.append left right
                                     Elm.string "todo"
                                 )
-                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "left"))
-                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "right"))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "left"))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
                             , Pattern.initSequence
@@ -104,9 +104,9 @@ suite =
                                         (Elm.Op.append left right)
                                         (Elm.string "And there's more!")
                                 )
-                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "left"))
-                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "right"))
-                                |> Pattern.toUncons (Pattern.varPattern "rest") (Type.maybe Type.string)
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "left"))
+                                |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
+                                |> Pattern.toUncons (Pattern.var "rest") (Type.maybe Type.string)
                                 |> Elm.Case.patternToBranch identity
                             ]
                 in
@@ -156,13 +156,13 @@ suite =
                                 (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
-                                    |> Pattern.customWithParam (Pattern.varPattern "left")
+                                    |> Pattern.customWithParam (Pattern.var "left")
                                     |> Pattern.buildCustom
                                 )
                                 (Pattern.initCustom
                                     (\literalInt -> literalInt)
                                     "Just"
-                                    |> Pattern.customWithParam (Pattern.varPattern "right")
+                                    |> Pattern.customWithParam (Pattern.var "right")
                                     |> Pattern.buildCustom
                                 )
                                 |> Elm.Case.patternToBranch
@@ -187,7 +187,7 @@ suite =
             \() ->
                 Elm.Case.custom (Elm.val "foo")
                     Type.unit
-                    [ Pattern.triple Pattern.unit (Pattern.varPattern "name") (Pattern.int 123)
+                    [ Pattern.triple Pattern.unit (Pattern.var "name") (Pattern.int 123)
                         |> Elm.Case.patternToBranch
                             (\( (), name, literalInt ) ->
                                 Elm.unit
@@ -287,7 +287,7 @@ case { first = "Jane", last = "Doe" } of
                                 Elm.string "There is 1 item"
                             )
                     , Pattern.variant1 "Just"
-                        (Pattern.varPattern "n")
+                        (Pattern.var "n")
                         |> Elm.Case.patternToBranch
                             (\n ->
                                 Elm.Op.append
