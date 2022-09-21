@@ -1,5 +1,6 @@
 module Elm.Pattern exposing
     ( Pattern
+    , map
     , unit, ignore
     , int, string, char
     , SequencePattern(..), addToSequence, initSequence, toUncons, toListPattern
@@ -14,6 +15,8 @@ module Elm.Pattern exposing
 {-|
 
 @docs Pattern
+
+@docs map
 
 
 ## Exact Matches (No Variables)
@@ -212,16 +215,14 @@ varPattern name =
 
 
 {-| -}
-toUncons : String -> Type.Annotation -> SequencePattern (Expression -> Expression) -> Pattern Expression
-toUncons restName argType (SequencePattern patterns toExp) =
-    let
-        var =
-            Compiler.toVarWithType Index.startIndex restName argType
+map : (a -> b) -> Pattern a -> Pattern b
+map mapFn (Pattern patterns destructure) =
+    Pattern patterns (mapFn destructure)
 
-        restPattern : Pattern.Pattern
-        restPattern =
-            Pattern.VarPattern var.name
-    in
+
+{-| -}
+toUncons : Pattern rest -> Type.Annotation -> SequencePattern (rest -> combined) -> Pattern combined
+toUncons (Pattern restPattern destructureRest) argType (SequencePattern patterns toExp) =
     Pattern
         (patterns
             |> List.foldl
@@ -230,7 +231,7 @@ toUncons restName argType (SequencePattern patterns toExp) =
                 )
                 restPattern
         )
-        (toExp var.exp)
+        (toExp destructureRest)
 
 
 {-| -}

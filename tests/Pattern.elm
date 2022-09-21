@@ -40,7 +40,7 @@ suite =
                                 Elm.unit
                             )
                             |> Pattern.addToSequence (Pattern.variant0 "Nothing")
-                            |> Pattern.toUncons "rest" Type.unit
+                            |> Pattern.toUncons (Pattern.varPattern "rest") Type.unit
                             |> Elm.Case.patternToBranch identity
 
                     expression : Elm.Expression
@@ -106,7 +106,7 @@ suite =
                                 )
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "left"))
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.varPattern "right"))
-                                |> Pattern.toUncons "rest" (Type.maybe Type.string)
+                                |> Pattern.toUncons (Pattern.varPattern "rest") (Type.maybe Type.string)
                                 |> Elm.Case.patternToBranch identity
                             ]
                 in
