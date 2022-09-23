@@ -9,7 +9,11 @@ import Elm.Op
 import Elm.Pattern as Pattern
 import Elm.ToString
 import Expect
+import Gen.Maybe
 import Gen.String
+import Internal.Compiler as Compiler
+import Internal.Index as Index
+import Set
 import Test exposing (Test, describe, test)
 
 
@@ -381,7 +385,55 @@ case 'z' of
         0
 """
             ]
+        , describe "imports"
+            [ test "let destructure" <|
+                \() ->
+                    Elm.Let.letIn (\myThing -> myThing)
+                        |> Elm.Let.destructure (Pattern.var "myThing")
+                            (Elm.record
+                                [ ( "foo"
+                                  , Elm.string "foo" |> Elm.just |> Gen.Maybe.map fromString
+                                  )
+                                ]
+                            )
+                        |> Elm.Let.toExpression
+                        |> expectImports
+                            [ [ "Maybe" ]
+                            , [ "QueryParams" ]
+                            ]
+            ]
         ]
+
+
+expectImports :
+    List (List String)
+    -> Compiler.Expression
+    -> Expect.Expectation
+expectImports expectedImports expression =
+    expression
+        |> Compiler.toExpressionDetails Index.startIndex
+        |> Tuple.second
+        |> Compiler.getImports
+        |> List.filter (not << List.isEmpty)
+        |> Set.fromList
+        |> Expect.equal (Set.fromList expectedImports)
+
+
+fromString =
+    \fromStringArg ->
+        Elm.apply
+            (Elm.value
+                { importFrom = [ "QueryParams" ]
+                , name = "fromString"
+                , annotation =
+                    Just
+                        (Type.function
+                            [ Type.string ]
+                            (Type.namedWith [] "QueryParams" [])
+                        )
+                }
+            )
+            [ fromStringArg ]
 
 
 renderedAs : String -> Expression -> Expect.Expectation
