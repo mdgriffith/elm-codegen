@@ -209,7 +209,6 @@ prettyMarkdown val =
     Pretty.string val
 
 
-
 prettyCode val =
     Pretty.string val
         |> Pretty.indent 4
