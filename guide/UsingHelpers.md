@@ -99,15 +99,32 @@ div =
         )
 ```
 
-## Local helpers
+## Local bindings
 
-We also need helpers for local files instead of just published packages!
+We may also need bindings for local files instead of just published packages!
 
-These helpers will be generated for all files within `./codegen/helpers/*.elm` when you run `elm-codegen install`
+You can specify directories that you want to generate bindings for under the `local` field of your `elm.codegen.json`, and generate them by running `elm-codegen install`.
 
-So, if you have a file `./codegen/helpers/MyFile.elm` which has a function in it called `addFive : Int -> Int`.
+But what the heck does that mean?
 
-In `codegen/Generate.elm`, you could write
+Let's say you if you have a file `./src/MyFile.elm` which has a function in it called `addFive : Int -> Int`, and you'd like to generate some code that _calls that function_.
+
+You could add `src/` to your `elm.codegen.json`
+
+```json
+{
+  "elm-codegen-version": "0.1.3",
+  "codegen-helpers": {
+    "packages": {
+      "elm/core": "1.0.5",
+      "elm/json": "1.1.3"
+    },
+    "local": ["src/"]
+  }
+}
+```
+
+Run `elm-codegen install`, and now in `codegen/Generate.elm`, you could write
 
 ```elm
 import Gen.MyFile
@@ -126,29 +143,6 @@ MyFile.add5 20
 ```
 
 Cool!
-
-**Note!** Any helpers that are in the `helpers` directory will be copied over into your target directory.
-
-## Managing local helpers
-
-If you take a peek in `elm.codegen.json`, you'll see something like this.
-
-```json
-{
-  "elm-codegen-version": "0.1.3",
-  "codegen-helpers": {
-    "packages": {
-      "elm/core": "1.0.5",
-      "elm/json": "1.1.3"
-    },
-    "local": ["codegen/helpers/"]
-  }
-}
-```
-
-Notice the `local` field? If you want to generate bindings for other directories, either modify the file or run `elm-codegen install my/dir/`.
-
-Then, when you run `elm-codegen install`, bindings will be generated for all files within those directories!
 
 ## What's in the box?
 
