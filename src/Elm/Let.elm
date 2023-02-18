@@ -1,15 +1,14 @@
 module Elm.Let exposing
-    ( letIn, value
+    ( letIn, value, Let
     , tuple
     , record
     , fn, fn2, fn3
     , toExpression
-    , Let
     )
 
 {-| This module is for building `let` expressions.
 
-@docs letIn, value
+@docs letIn, value, Let
 
 Here's a brief example to get you started
 
