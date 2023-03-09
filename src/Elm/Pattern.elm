@@ -3,9 +3,9 @@ module Elm.Pattern exposing
     , map
     , unit, ignore
     , int, string, char
-    , SequencePattern(..), addToSequence, initSequence, toUncons, toListPattern
+    , SequencePattern, addToSequence, initSequence, toUncons, toListPattern
     , tuple, triple
-    , CustomPattern(..), customWithParam, initCustom, buildCustom
+    , CustomPattern, customWithParam, initCustom, buildCustom
     , variant0, variant1
     , RecordDestructure
     , buildRecordDestructure, initRecordDestructure, withField
