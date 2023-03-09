@@ -212,13 +212,13 @@ case foo of
                         ]
                     )
                     Type.unit
-                    [ Pattern.initRecordDestructure
+                    [ Pattern.record
                         (\first last ->
                             Elm.Op.append first last
                         )
                         |> Pattern.withField "first"
                         |> Pattern.withField "last"
-                        |> Pattern.buildRecordDestructure
+                        |> Pattern.buildRecord
                         |> Elm.Case.patternToBranch identity
                     ]
                     |> renderedAs
@@ -234,10 +234,10 @@ case { first = "Jane", last = "Doe" } of
                         Elm.Op.append first last
                     )
                     |> Elm.Let.destructure
-                        (Pattern.initRecordDestructure Tuple.pair
+                        (Pattern.record Tuple.pair
                             |> Pattern.withField "first"
                             |> Pattern.withField "last"
-                            |> Pattern.buildRecordDestructure
+                            |> Pattern.buildRecord
                         )
                         (Elm.record
                             [ ( "first", Elm.string "Jane" )
@@ -262,10 +262,10 @@ first ++ last
                         ]
                     )
                     Type.unit
-                    [ Pattern.initRecordDestructure Tuple.pair
+                    [ Pattern.record Tuple.pair
                         |> Pattern.withField "first"
                         |> Pattern.withField "last"
-                        |> Pattern.buildRecordDestructure
+                        |> Pattern.buildRecord
                         |> Pattern.aliasAs "record"
                             (\record ( first, last ) ->
                                 Elm.tuple record

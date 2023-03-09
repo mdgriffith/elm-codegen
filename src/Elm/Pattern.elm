@@ -7,8 +7,8 @@ module Elm.Pattern exposing
     , tuple, triple
     , CustomType, withVariantParam, customType, buildCustomType
     , variant0, variant1
-    , RecordDestructure
-    , buildRecordDestructure, initRecordDestructure, withField
+    , Record
+    , buildRecord, record, withField
     , var
     , aliasAs
     )
@@ -52,9 +52,9 @@ module Elm.Pattern exposing
 
 ## Record Destructuring
 
-@docs RecordDestructure
+@docs Record
 
-@docs buildRecordDestructure, initRecordDestructure, withField
+@docs buildRecord, record, withField
 
 
 ## Variables
@@ -103,24 +103,24 @@ char literalChar =
 
 
 {-| -}
-type RecordDestructure a
-    = RecordDestructure (Set String) a
+type Record a
+    = Record (Set String) a
 
 
 {-| -}
-initRecordDestructure : a -> RecordDestructure a
-initRecordDestructure combine =
-    RecordDestructure Set.empty combine
+record : a -> Record a
+record combine =
+    Record Set.empty combine
 
 
 {-| -}
-withField : String -> RecordDestructure (Expression -> b) -> RecordDestructure b
-withField newField (RecordDestructure fields combine) =
+withField : String -> Record (Expression -> b) -> Record b
+withField newField (Record fields combine) =
     let
         ( _, _, exp ) =
             Compiler.var Index.startIndex newField
     in
-    RecordDestructure (fields |> Set.insert newField) (combine exp)
+    Record (fields |> Set.insert newField) (combine exp)
 
 
 {-| -}
@@ -139,8 +139,8 @@ variant1 variantName pattern =
 
 
 {-| -}
-buildRecordDestructure : RecordDestructure a -> Pattern a
-buildRecordDestructure (RecordDestructure fields destructure) =
+buildRecord : Record a -> Pattern a
+buildRecord (Record fields destructure) =
     Pattern
         (Pattern.RecordPattern
             (fields
