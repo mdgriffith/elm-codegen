@@ -144,13 +144,13 @@ suite =
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.int 1)
-                                    |> Pattern.buildCustom
+                                    |> Pattern.buildCustomType
                                 )
                                 (Pattern.customType
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.int 2)
-                                    |> Pattern.buildCustom
+                                    |> Pattern.buildCustomType
                                 )
                                 |> Elm.Case.patternToBranch
                                     (\( left, right ) ->
@@ -161,13 +161,13 @@ suite =
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.var "left")
-                                    |> Pattern.buildCustom
+                                    |> Pattern.buildCustomType
                                 )
                                 (Pattern.customType
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.var "right")
-                                    |> Pattern.buildCustom
+                                    |> Pattern.buildCustomType
                                 )
                                 |> Elm.Case.patternToBranch
                                     (\( left, right ) ->
