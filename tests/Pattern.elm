@@ -39,7 +39,7 @@ suite =
                 let
                     inner : Elm.Case.Branch
                     inner =
-                        Pattern.initSequence
+                        Pattern.sequence
                             (\_ _ ->
                                 Elm.unit
                             )
@@ -76,7 +76,7 @@ suite =
                                 ]
                             )
                             Type.unit
-                            [ Pattern.initSequence
+                            [ Pattern.sequence
                                 (\left () ->
                                     left
                                 )
@@ -84,7 +84,7 @@ suite =
                                 |> Pattern.addToSequence (Pattern.variant0 "Nothing")
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
-                            , Pattern.initSequence
+                            , Pattern.sequence
                                 (\() right ->
                                     right
                                 )
@@ -92,7 +92,7 @@ suite =
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
-                            , Pattern.initSequence
+                            , Pattern.sequence
                                 (\left right ->
                                     -- TODO this causes an issue because the `Index.startIndex` is hardcoded
                                     --    Elm.Op.append left right
@@ -102,7 +102,7 @@ suite =
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
                                 |> Pattern.toListPattern
                                 |> Elm.Case.patternToBranch identity
-                            , Pattern.initSequence
+                            , Pattern.sequence
                                 (\left right rest ->
                                     Elm.Op.append
                                         (Elm.Op.append left right)

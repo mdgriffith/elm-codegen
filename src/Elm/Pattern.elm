@@ -3,7 +3,7 @@ module Elm.Pattern exposing
     , map
     , unit, ignore
     , int, string, char
-    , Sequence, addToSequence, initSequence, toUncons, toListPattern
+    , Sequence, addToSequence, sequence, toUncons, toListPattern
     , tuple, triple
     , CustomType, withVariantParam, customType, buildCustomType
     , variant0, variant1
@@ -32,7 +32,7 @@ module Elm.Pattern exposing
 
 ## Sequences
 
-@docs Sequence, addToSequence, initSequence, toUncons, toListPattern
+@docs Sequence, addToSequence, sequence, toUncons, toListPattern
 
 
 ## Tuples and Triples
@@ -252,8 +252,8 @@ toListPattern (Sequence patterns toExp) =
 
 
 {-| -}
-initSequence : a -> Sequence a
-initSequence fn =
+sequence : a -> Sequence a
+sequence fn =
     Sequence [] fn
 
 
