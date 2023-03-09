@@ -140,13 +140,13 @@ suite =
                             )
                             (Type.maybe Type.int)
                             [ Pattern.tuple
-                                (Pattern.initCustom
+                                (Pattern.customType
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.int 1)
                                     |> Pattern.buildCustom
                                 )
-                                (Pattern.initCustom
+                                (Pattern.customType
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.int 2)
@@ -157,13 +157,13 @@ suite =
                                         Elm.int (left + right)
                                     )
                             , Pattern.tuple
-                                (Pattern.initCustom
+                                (Pattern.customType
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.var "left")
                                     |> Pattern.buildCustom
                                 )
-                                (Pattern.initCustom
+                                (Pattern.customType
                                     (\literalInt -> literalInt)
                                     "Just"
                                     |> Pattern.customWithParam (Pattern.var "right")

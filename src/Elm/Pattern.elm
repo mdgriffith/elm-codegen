@@ -5,7 +5,7 @@ module Elm.Pattern exposing
     , int, string, char
     , SequencePattern, addToSequence, initSequence, toUncons, toListPattern
     , tuple, triple
-    , CustomPattern, customWithParam, initCustom, buildCustom
+    , CustomPattern, customWithParam, customType, buildCustom
     , variant0, variant1
     , RecordDestructure
     , buildRecordDestructure, initRecordDestructure, withField
@@ -42,7 +42,7 @@ module Elm.Pattern exposing
 
 ## Custom Types
 
-@docs CustomPattern, customWithParam, initCustom, buildCustom
+@docs CustomPattern, customWithParam, customType, buildCustom
 
 
 ## Variant Helpers
@@ -126,14 +126,14 @@ withField newField (RecordDestructure fields combine) =
 {-| -}
 variant0 : String -> Pattern ()
 variant0 variantName =
-    initCustom () variantName
+    customType () variantName
         |> buildCustom
 
 
 {-| -}
 variant1 : String -> Pattern a -> Pattern a
 variant1 variantName pattern =
-    initCustom (\a -> a) variantName
+    customType (\a -> a) variantName
         |> customWithParam pattern
         |> buildCustom
 
@@ -162,8 +162,8 @@ type CustomPattern a
 
 
 {-| -}
-initCustom : a -> String -> CustomPattern a
-initCustom a name =
+customType : a -> String -> CustomPattern a
+customType a name =
     CustomPattern name [] a
 
 
