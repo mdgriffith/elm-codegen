@@ -5,7 +5,7 @@ module Elm.Pattern exposing
     , int, string, char
     , SequencePattern, addToSequence, initSequence, toUncons, toListPattern
     , tuple, triple
-    , CustomPattern, customWithParam, customType, buildCustom
+    , CustomType, customWithParam, customType, buildCustom
     , variant0, variant1
     , RecordDestructure
     , buildRecordDestructure, initRecordDestructure, withField
@@ -42,7 +42,7 @@ module Elm.Pattern exposing
 
 ## Custom Types
 
-@docs CustomPattern, customWithParam, customType, buildCustom
+@docs CustomType, customWithParam, customType, buildCustom
 
 
 ## Variant Helpers
@@ -157,25 +157,25 @@ type SequencePattern a
 
 
 {-| -}
-type CustomPattern a
-    = CustomPattern String (List Pattern.Pattern) a
+type CustomType a
+    = CustomType String (List Pattern.Pattern) a
 
 
 {-| -}
-customType : a -> String -> CustomPattern a
+customType : a -> String -> CustomType a
 customType a name =
-    CustomPattern name [] a
+    CustomType name [] a
 
 
 {-| -}
-customWithParam : Pattern a -> CustomPattern (a -> b) -> CustomPattern b
-customWithParam (Pattern pattern destructure) (CustomPattern name patterns destructureSoFar) =
-    CustomPattern name (pattern :: patterns) (destructureSoFar destructure)
+customWithParam : Pattern a -> CustomType (a -> b) -> CustomType b
+customWithParam (Pattern pattern destructure) (CustomType name patterns destructureSoFar) =
+    CustomType name (pattern :: patterns) (destructureSoFar destructure)
 
 
 {-| -}
-buildCustom : CustomPattern a -> Pattern a
-buildCustom (CustomPattern name patterns destructure) =
+buildCustom : CustomType a -> Pattern a
+buildCustom (CustomType name patterns destructure) =
     Pattern
         (Pattern.NamedPattern
             { moduleName = []
