@@ -3,7 +3,7 @@ module Elm.Pattern exposing
     , map
     , unit, ignore
     , int, string, char
-    , SequencePattern, addToSequence, initSequence, toUncons, toListPattern
+    , Sequence, addToSequence, initSequence, toUncons, toListPattern
     , tuple, triple
     , CustomType, withVariantParam, customType, buildCustomType
     , variant0, variant1
@@ -32,7 +32,7 @@ module Elm.Pattern exposing
 
 ## Sequences
 
-@docs SequencePattern, addToSequence, initSequence, toUncons, toListPattern
+@docs Sequence, addToSequence, initSequence, toUncons, toListPattern
 
 
 ## Tuples and Triples
@@ -152,8 +152,8 @@ buildRecord (Record fields destructure) =
 
 
 {-| -}
-type SequencePattern a
-    = SequencePattern (List Pattern.Pattern) a
+type Sequence a
+    = Sequence (List Pattern.Pattern) a
 
 
 {-| -}
@@ -224,8 +224,8 @@ map mapFn (Pattern patterns destructure) =
 
 
 {-| -}
-toUncons : Pattern rest -> Type.Annotation -> SequencePattern (rest -> combined) -> Pattern combined
-toUncons (Pattern restPattern destructureRest) argType (SequencePattern patterns toExp) =
+toUncons : Pattern rest -> Type.Annotation -> Sequence (rest -> combined) -> Pattern combined
+toUncons (Pattern restPattern destructureRest) argType (Sequence patterns toExp) =
     Pattern
         (patterns
             |> List.foldl
@@ -238,8 +238,8 @@ toUncons (Pattern restPattern destructureRest) argType (SequencePattern patterns
 
 
 {-| -}
-toListPattern : SequencePattern a -> Pattern a
-toListPattern (SequencePattern patterns toExp) =
+toListPattern : Sequence a -> Pattern a
+toListPattern (Sequence patterns toExp) =
     Pattern
         (patterns
             |> List.map
@@ -252,15 +252,15 @@ toListPattern (SequencePattern patterns toExp) =
 
 
 {-| -}
-initSequence : a -> SequencePattern a
+initSequence : a -> Sequence a
 initSequence fn =
-    SequencePattern [] fn
+    Sequence [] fn
 
 
 {-| -}
-addToSequence : Pattern a -> SequencePattern (a -> b) -> SequencePattern b
-addToSequence (Pattern pattern destructured) (SequencePattern patterns builderFn) =
-    SequencePattern
+addToSequence : Pattern a -> Sequence (a -> b) -> Sequence b
+addToSequence (Pattern pattern destructured) (Sequence patterns builderFn) =
+    Sequence
         (pattern :: patterns)
         (builderFn destructured)
 
