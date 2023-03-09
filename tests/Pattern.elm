@@ -45,7 +45,7 @@ suite =
                             )
                             |> Pattern.addToSequence (Pattern.variant0 "Nothing")
                             |> Pattern.toUncons (Pattern.var "rest") Type.unit
-                            |> Elm.Case.patternToBranch identity
+                            |> Elm.Case.fromPattern
 
                     expression : Elm.Expression
                     expression =
@@ -83,7 +83,7 @@ suite =
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "left"))
                                 |> Pattern.addToSequence (Pattern.variant0 "Nothing")
                                 |> Pattern.toListPattern
-                                |> Elm.Case.patternToBranch identity
+                                |> Elm.Case.fromPattern
                             , Pattern.sequence
                                 (\() right ->
                                     right
@@ -91,7 +91,7 @@ suite =
                                 |> Pattern.addToSequence (Pattern.variant0 "Nothing")
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
                                 |> Pattern.toListPattern
-                                |> Elm.Case.patternToBranch identity
+                                |> Elm.Case.fromPattern
                             , Pattern.sequence
                                 (\left right ->
                                     -- TODO this causes an issue because the `Index.startIndex` is hardcoded
@@ -101,7 +101,7 @@ suite =
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "left"))
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
                                 |> Pattern.toListPattern
-                                |> Elm.Case.patternToBranch identity
+                                |> Elm.Case.fromPattern
                             , Pattern.sequence
                                 (\left right rest ->
                                     Elm.Op.append
@@ -111,7 +111,7 @@ suite =
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "left"))
                                 |> Pattern.addToSequence (Pattern.variant1 "Just" (Pattern.var "right"))
                                 |> Pattern.toUncons (Pattern.var "rest") (Type.maybe Type.string)
-                                |> Elm.Case.patternToBranch identity
+                                |> Elm.Case.fromPattern
                             ]
                 in
                 Elm.Expect.renderedAs
@@ -152,10 +152,11 @@ suite =
                                     |> Pattern.withVariantParam (Pattern.int 2)
                                     |> Pattern.buildCustomType
                                 )
-                                |> Elm.Case.patternToBranch
+                                |> Pattern.map
                                     (\( left, right ) ->
                                         Elm.int (left + right)
                                     )
+                                |> Elm.Case.fromPattern
                             , Pattern.tuple
                                 (Pattern.customType
                                     (\literalInt -> literalInt)
@@ -169,10 +170,11 @@ suite =
                                     |> Pattern.withVariantParam (Pattern.var "right")
                                     |> Pattern.buildCustomType
                                 )
-                                |> Elm.Case.patternToBranch
+                                |> Pattern.map
                                     (\( left, right ) ->
                                         Elm.Op.plus left right
                                     )
+                                |> Elm.Case.fromPattern
                             , Elm.Case.otherwise (\_ -> Elm.int 0)
                             ]
                 in
@@ -192,10 +194,11 @@ suite =
                 Elm.Case.custom (Elm.val "foo")
                     Type.unit
                     [ Pattern.triple Pattern.unit (Pattern.var "name") (Pattern.int 123)
-                        |> Elm.Case.patternToBranch
+                        |> Pattern.map
                             (\( (), name, literalInt ) ->
                                 Elm.unit
                             )
+                        |> Elm.Case.fromPattern
                     ]
                     |> renderedAs
                         """
@@ -219,7 +222,7 @@ case foo of
                         |> Pattern.withField "first"
                         |> Pattern.withField "last"
                         |> Pattern.buildRecord
-                        |> Elm.Case.patternToBranch identity
+                        |> Elm.Case.fromPattern
                     ]
                     |> renderedAs
                         """
@@ -271,7 +274,7 @@ first ++ last
                                 Elm.tuple record
                                     (Elm.Op.append first last)
                             )
-                        |> Elm.Case.patternToBranch identity
+                        |> Elm.Case.fromPattern
                     ]
                     |> renderedAs
                         """
@@ -286,13 +289,14 @@ case { first = "Jane", last = "Doe" } of
                     Type.unit
                     [ Pattern.variant1 "Just"
                         (Pattern.int 1)
-                        |> Elm.Case.patternToBranch
+                        |> Pattern.map
                             (\_ ->
                                 Elm.string "There is 1 item"
                             )
+                        |> Elm.Case.fromPattern
                     , Pattern.variant1 "Just"
                         (Pattern.var "n")
-                        |> Elm.Case.patternToBranch
+                        |> Pattern.map
                             (\n ->
                                 Elm.Op.append
                                     (Elm.Op.append
@@ -301,11 +305,13 @@ case { first = "Jane", last = "Doe" } of
                                     )
                                     (Elm.string " items")
                             )
+                        |> Elm.Case.fromPattern
                     , Pattern.variant0 "Nothing"
-                        |> Elm.Case.patternToBranch
+                        |> Pattern.map
                             (\() ->
                                 Elm.string "Oh, it's nothing."
                             )
+                        |> Elm.Case.fromPattern
                     ]
                     |> renderedAs
                         """
@@ -325,10 +331,11 @@ case Nothing of
                     Elm.Case.custom Elm.unit
                         Type.unit
                         [ Pattern.unit
-                            |> Elm.Case.patternToBranch
+                            |> Pattern.map
                                 (\() ->
                                     Elm.unit
                                 )
+                            |> Elm.Case.fromPattern
                         ]
                         |> renderedAs
                             """
@@ -341,15 +348,17 @@ case () of
                     Elm.Case.custom (Elm.string "Hi!")
                         Type.unit
                         [ Pattern.string "Hi!"
-                            |> Elm.Case.patternToBranch
+                            |> Pattern.map
                                 (\_ ->
                                     Elm.string "Hello to you!"
                                 )
+                            |> Elm.Case.fromPattern
                         , Pattern.ignore
-                            |> Elm.Case.patternToBranch
+                            |> Pattern.map
                                 (\() ->
                                     Elm.string "Excuse me?"
                                 )
+                            |> Elm.Case.fromPattern
                         ]
                         |> renderedAs
                             """
@@ -365,15 +374,17 @@ case "Hi!" of
                     Elm.Case.custom (Elm.char 'z')
                         Type.unit
                         [ Pattern.char 'z'
-                            |> Elm.Case.patternToBranch
+                            |> Pattern.map
                                 (\_ ->
                                     Elm.int 26
                                 )
+                            |> Elm.Case.fromPattern
                         , Pattern.ignore
-                            |> Elm.Case.patternToBranch
+                            |> Pattern.map
                                 (\() ->
                                     Elm.int 0
                                 )
+                            |> Elm.Case.fromPattern
                         ]
                         |> renderedAs
                             """

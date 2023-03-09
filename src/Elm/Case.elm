@@ -1,7 +1,7 @@
 module Elm.Case exposing
     ( maybe, result, list, string
     , tuple, triple
-    , patternToBranch
+    , fromPattern
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
     , branchWith
@@ -37,7 +37,7 @@ Generates
 
 ## Patterns
 
-@docs patternToBranch
+@docs fromPattern
 
 
 ## Case on a Custom Type
@@ -86,13 +86,13 @@ import Internal.Pattern exposing (Pattern(..))
 
 
 {-| -}
-patternToBranch : (a -> Expression) -> Elm.Pattern.Pattern a -> Branch
-patternToBranch branchBody (Pattern pattern destructure) =
+fromPattern : Elm.Pattern.Pattern Expression -> Branch
+fromPattern (Pattern pattern destructure) =
     Branch
         (\index ->
             ( Index.startIndex
             , pattern
-            , branchBody destructure
+            , destructure
             )
         )
 

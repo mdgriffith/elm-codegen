@@ -257,6 +257,19 @@ sequence fn =
     Sequence [] fn
 
 
+
+--list0 : Pattern ()
+--list0 =
+--    Sequence [] ()
+--        |> toListPattern
+--
+--
+--list1 : Pattern a -> Pattern a
+--list1 ((Pattern pattern destructured) as pattern1) =
+--    toListPattern (sequence identity |> addToSequence pattern1)
+--        destructured
+
+
 {-| -}
 addToSequence : Pattern a -> Sequence (a -> b) -> Sequence b
 addToSequence (Pattern pattern destructured) (Sequence patterns builderFn) =
