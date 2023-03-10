@@ -4,6 +4,7 @@ module Elm.Pattern exposing
     , unit, ignore
     , int, string, char
     , tuple, triple
+    , err, ok
     , record1, record2, record3, record4, record5, record6, record7, record8, record9
     , map
     , variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
@@ -38,6 +39,11 @@ module Elm.Pattern exposing
 ## Tuples and Triples
 
 @docs tuple, triple
+
+
+## Ok and Err
+
+@docs err, ok
 
 
 ## Record Destructuring
@@ -827,6 +833,20 @@ addToSequence (Pattern pattern destructured) (Sequence patterns builderFn) =
     Sequence
         (pattern :: patterns)
         (builderFn destructured)
+
+
+{-| `Ok` variant. A simple helper of `variant1 "Ok"`.
+-}
+ok : Pattern a -> Pattern a
+ok =
+    variant1 "Ok"
+
+
+{-| `Err` variant. A simple helper of `variant1 "Err"`.
+-}
+err : Pattern a -> Pattern a
+err =
+    variant1 "Err"
 
 
 {-| -}
