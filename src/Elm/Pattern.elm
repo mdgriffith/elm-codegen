@@ -3,12 +3,12 @@ module Elm.Pattern exposing
     , var
     , unit, ignore
     , int, string, char
-    , list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+    , tuple, triple
     , record1, record2, record3, record4, record5, record6, record7, record8, record9
     , map
-    , Sequence, addToSequence, sequence, toUncons, toListPattern
-    , tuple, triple
     , variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
+    , list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+    , Sequence, sequence, addToSequence, toUncons, toListPattern
     , CustomType, withVariantParam, customType, buildCustomType
     , Record
     , buildRecord, record, withField
@@ -35,9 +35,9 @@ module Elm.Pattern exposing
 @docs int, string, char
 
 
-## Lists
+## Tuples and Triples
 
-@docs list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+@docs tuple, triple
 
 
 ## Record Destructuring
@@ -50,19 +50,23 @@ module Elm.Pattern exposing
 @docs map
 
 
-## Sequences
-
-@docs Sequence, addToSequence, sequence, toUncons, toListPattern
-
-
-## Tuples and Triples
-
-@docs tuple, triple
-
-
 ## Custom Types
 
 @docs variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
+
+
+## Lists
+
+@docs list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+
+
+## Sequence Builder
+
+The `list0` through `list9` helpers are the easiest way to define a list pattern. Sometimes you want to pattern match
+using the cons operator (`::`). List pattern matches allow you to match an exact number of list items, whereas uncons
+pattern matches allow you to match a list with `n` or more items.
+
+@docs Sequence, sequence, addToSequence, toUncons, toListPattern
 
 
 ## Custom Type Builder
@@ -857,6 +861,30 @@ triple (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Patter
         ( destructured1, destructured2, destructured3 )
 
 
-{-| -}
+{-| A Pattern in Elm is an expression that lets you pattern match.
+
+Pattern matching is used for both control flow and for defining variables. For example, in the case where you have an `Admin` user
+you might want to use the `id` field from a record in the `Admin` variant:
+
+    type User
+        = Admin { id : AdminId, name : String }
+        | Guest
+        | RegularUser { id : Id, name : String }
+
+    maybeAdminId user =
+        case user of
+            Admin { id } ->
+                Just id
+
+            _ ->
+                Nothing
+
+The `Pattern` type represents one of these expressions. In Elm's syntax, patterns can be used in 3 places:
+
+  - Case expressions ([`Elm.Case.fromPattern`](Elm-Case#fromPattern))
+  - Let expressions ([`Elm.Let.destructure`](Elm-Let#destructure))
+  - Function parameters (can't currently use `Elm.Pattern.Pattern`'s for function parameters in `elm-codegen`)
+
+-}
 type alias Pattern a =
     Internal.Pattern.Pattern a
