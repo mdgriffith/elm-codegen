@@ -692,7 +692,7 @@ list0 combine =
 
 
 {-| -}
-list1 : (a -> value) -> Pattern a -> Pattern value
+list1 : (a -> combined) -> Pattern a -> Pattern combined
 list1 combine (Pattern pattern destructured) =
     Sequence
         [ pattern
@@ -702,7 +702,7 @@ list1 combine (Pattern pattern destructured) =
 
 
 {-| -}
-list2 : (a1 -> a2 -> value) -> Pattern a1 -> Pattern a2 -> Pattern value
+list2 : (value1 -> value2 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern combined
 list2 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) =
     Sequence
         [ pattern1
@@ -713,7 +713,7 @@ list2 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
 
 
 {-| -}
-list3 : (a1 -> a2 -> a3 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern value
+list3 : (value1 -> value2 -> value3 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern value3 -> Pattern combined
 list3 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) =
     Sequence
         [ pattern1
@@ -725,7 +725,7 @@ list3 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
 
 
 {-| -}
-list4 : (a1 -> a2 -> a3 -> a4 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern value
+list4 : (value1 -> value2 -> value3 -> value4 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern value3 -> Pattern value4 -> Pattern combined
 list4 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) =
     Sequence
         [ pattern1
@@ -738,7 +738,7 @@ list4 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
 
 
 {-| -}
-list5 : (a1 -> a2 -> a3 -> a4 -> a5 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern value
+list5 : (value1 -> value2 -> value3 -> value4 -> value5 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern value3 -> Pattern value4 -> Pattern value5 -> Pattern combined
 list5 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) =
     Sequence
         [ pattern1
@@ -752,7 +752,7 @@ list5 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
 
 
 {-| -}
-list6 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern value
+list6 : (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern value3 -> Pattern value4 -> Pattern value5 -> Pattern value6 -> Pattern combined
 list6 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) =
     Sequence
         [ pattern1
@@ -767,7 +767,7 @@ list6 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
 
 
 {-| -}
-list7 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern a7 -> Pattern value
+list7 : (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern value3 -> Pattern value4 -> Pattern value5 -> Pattern value6 -> Pattern value7 -> Pattern combined
 list7 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) (Pattern pattern7 destructured7) =
     Sequence
         [ pattern1
@@ -783,7 +783,7 @@ list7 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
 
 
 {-| -}
-list8 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern a7 -> Pattern a8 -> Pattern value
+list8 : (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> value8 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern value3 -> Pattern value4 -> Pattern value5 -> Pattern value6 -> Pattern value7 -> Pattern value8 -> Pattern combined
 list8 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) (Pattern pattern7 destructured7) (Pattern pattern8 destructured8) =
     Sequence
         [ pattern1
@@ -800,7 +800,7 @@ list8 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) 
 
 
 {-| -}
-list9 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8 -> a9 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern a7 -> Pattern a8 -> Pattern a9 -> Pattern value
+list9 : (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> value8 -> value9 -> combined) -> Pattern value1 -> Pattern value2 -> Pattern value3 -> Pattern value4 -> Pattern value5 -> Pattern value6 -> Pattern value7 -> Pattern value8 -> Pattern value9 -> Pattern combined
 list9 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) (Pattern pattern7 destructured7) (Pattern pattern8 destructured8) (Pattern pattern9 destructured9) =
     Sequence
         [ pattern1
