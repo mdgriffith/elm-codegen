@@ -6,8 +6,8 @@ module Elm.Pattern exposing
     , int, string, char
     , Sequence, addToSequence, sequence, toUncons, toListPattern
     , tuple, triple
+    , variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
     , CustomType, withVariantParam, customType, buildCustomType
-    , variant0, variant1
     , Record
     , buildRecord, record, withField
     , var
@@ -48,12 +48,12 @@ module Elm.Pattern exposing
 
 ## Custom Types
 
+@docs variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
+
+
+## Custom Type Builder
+
 @docs CustomType, withVariantParam, customType, buildCustomType
-
-
-## Variant Helpers
-
-@docs variant0, variant1
 
 
 ## Record Destructuring
@@ -141,6 +141,174 @@ variant1 : String -> Pattern a -> Pattern a
 variant1 variantName pattern =
     customType (\a -> a) variantName
         |> withVariantParam pattern
+        |> buildCustomType
+
+
+{-| -}
+variant2 :
+    (value1 -> value2 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern combined
+variant2 combine variantName pattern1 pattern2 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> buildCustomType
+
+
+{-| -}
+variant3 :
+    (value1 -> value2 -> value3 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern value3
+    -> Pattern combined
+variant3 combine variantName pattern1 pattern2 pattern3 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> withVariantParam pattern3
+        |> buildCustomType
+
+
+{-| -}
+variant4 :
+    (value1 -> value2 -> value3 -> value4 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern value3
+    -> Pattern value4
+    -> Pattern combined
+variant4 combine variantName pattern1 pattern2 pattern3 pattern4 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> withVariantParam pattern3
+        |> withVariantParam pattern4
+        |> buildCustomType
+
+
+{-| -}
+variant5 :
+    (value1 -> value2 -> value3 -> value4 -> value5 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern value3
+    -> Pattern value4
+    -> Pattern value5
+    -> Pattern combined
+variant5 combine variantName pattern1 pattern2 pattern3 pattern4 pattern5 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> withVariantParam pattern3
+        |> withVariantParam pattern4
+        |> withVariantParam pattern5
+        |> buildCustomType
+
+
+{-| -}
+variant6 :
+    (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern value3
+    -> Pattern value4
+    -> Pattern value5
+    -> Pattern value6
+    -> Pattern combined
+variant6 combine variantName pattern1 pattern2 pattern3 pattern4 pattern5 pattern6 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> withVariantParam pattern3
+        |> withVariantParam pattern4
+        |> withVariantParam pattern5
+        |> withVariantParam pattern6
+        |> buildCustomType
+
+
+{-| -}
+variant7 :
+    (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern value3
+    -> Pattern value4
+    -> Pattern value5
+    -> Pattern value6
+    -> Pattern value7
+    -> Pattern combined
+variant7 combine variantName pattern1 pattern2 pattern3 pattern4 pattern5 pattern6 pattern7 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> withVariantParam pattern3
+        |> withVariantParam pattern4
+        |> withVariantParam pattern5
+        |> withVariantParam pattern6
+        |> withVariantParam pattern7
+        |> buildCustomType
+
+
+{-| -}
+variant8 :
+    (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> value8 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern value3
+    -> Pattern value4
+    -> Pattern value5
+    -> Pattern value6
+    -> Pattern value7
+    -> Pattern value8
+    -> Pattern combined
+variant8 combine variantName pattern1 pattern2 pattern3 pattern4 pattern5 pattern6 pattern7 pattern8 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> withVariantParam pattern3
+        |> withVariantParam pattern4
+        |> withVariantParam pattern5
+        |> withVariantParam pattern6
+        |> withVariantParam pattern7
+        |> withVariantParam pattern8
+        |> buildCustomType
+
+
+{-| -}
+variant9 :
+    (value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> value8 -> value9 -> combined)
+    -> String
+    -> Pattern value1
+    -> Pattern value2
+    -> Pattern value3
+    -> Pattern value4
+    -> Pattern value5
+    -> Pattern value6
+    -> Pattern value7
+    -> Pattern value8
+    -> Pattern value9
+    -> Pattern combined
+variant9 combine variantName pattern1 pattern2 pattern3 pattern4 pattern5 pattern6 pattern7 pattern8 pattern9 =
+    customType combine variantName
+        |> withVariantParam pattern1
+        |> withVariantParam pattern2
+        |> withVariantParam pattern3
+        |> withVariantParam pattern4
+        |> withVariantParam pattern5
+        |> withVariantParam pattern6
+        |> withVariantParam pattern7
+        |> withVariantParam pattern8
+        |> withVariantParam pattern9
         |> buildCustomType
 
 
