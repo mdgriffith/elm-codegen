@@ -1,16 +1,16 @@
 module Elm.Pattern exposing
     ( Pattern
-    , map
+    , var
     , unit, ignore
-    , list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
     , int, string, char
+    , list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+    , map
     , Sequence, addToSequence, sequence, toUncons, toListPattern
     , tuple, triple
     , variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
     , CustomType, withVariantParam, customType, buildCustomType
     , Record
     , buildRecord, record, withField
-    , var
     , aliasAs
     )
 
@@ -18,7 +18,10 @@ module Elm.Pattern exposing
 
 @docs Pattern
 
-@docs map
+
+## Variables
+
+@docs var
 
 
 ## Exact Matches (No Variables)
@@ -26,14 +29,19 @@ module Elm.Pattern exposing
 @docs unit, ignore
 
 
+### Literals
+
+@docs int, string, char
+
+
 ## Lists
 
 @docs list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
 
 
-### Literals
+## Mapping
 
-@docs int, string, char
+@docs map
 
 
 ## Sequences
@@ -53,6 +61,8 @@ module Elm.Pattern exposing
 
 ## Custom Type Builder
 
+These helpers let you define a Custom Type pattern with a builder.
+
 @docs CustomType, withVariantParam, customType, buildCustomType
 
 
@@ -61,11 +71,6 @@ module Elm.Pattern exposing
 @docs Record
 
 @docs buildRecord, record, withField
-
-
-## Variables
-
-@docs var
 
 
 ## Alias (`as`)
@@ -96,13 +101,30 @@ ignore =
     Pattern Pattern.AllPattern ()
 
 
-{-| -}
+{-| Matches a literal String.
+
+    example =
+        Pattern.variant1 "Just" (Pattern.string "admin")
+            |> Pattern.map
+                (\kind ->
+                    Elm.string "This user is an admin!"
+                )
+            |> Elm.Case.fromPattern
+
+Results in
+
+    case user.kind of
+        Just "admin" ->
+            "This user is an admin!"
+
+-}
 string : String -> Pattern String
 string literalString =
     Pattern (Pattern.StringPattern literalString) literalString
 
 
-{-| -}
+{-| Matches a literal Char.
+-}
 char : Char -> Pattern Char
 char literalChar =
     Pattern (Pattern.CharPattern literalChar) literalChar
@@ -375,13 +397,37 @@ aliasAs name combine (Pattern pattern destructure) =
         (combine exp destructure)
 
 
-{-| -}
+{-| Pattern match with a literal Int.
+
+    example =
+        Pattern.variant1 "Just" (Pattern.int 2)
+
+Results in
+
+    case value of
+        Just 2 ->
+            2
+
+-}
 int : Int -> Pattern Int
 int value =
     Pattern (Pattern.IntPattern value) value
 
 
-{-| -}
+{-| This is the most basic kind of pattern - it matches anything and gives it a variable name.
+
+    example =
+        Pattern.variant1 "Username"
+            (Pattern.var "username")
+            |> Pattern.map
+                (\username ->
+                    Elm.Op.append
+                        (Elm.string "Hello ")
+                        username
+                )
+            |> Elm.Case.fromPattern
+
+-}
 var : String -> Pattern Expression
 var name =
     let
@@ -431,7 +477,19 @@ sequence fn =
     Sequence [] fn
 
 
-{-| -}
+{-| Matches an empty List.
+
+    example =
+        Pattern.list0
+            (Elm.string "Zero")
+            |> Elm.Case.fromPattern
+
+Results in
+
+    case value of
+        [] -> "Zero
+
+-}
 list0 : value -> Pattern value
 list0 combine =
     Sequence [] combine

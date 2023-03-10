@@ -146,12 +146,7 @@ suite =
                                     |> Pattern.withVariantParam (Pattern.int 1)
                                     |> Pattern.buildCustomType
                                 )
-                                (Pattern.customType
-                                    (\literalInt -> literalInt)
-                                    "Just"
-                                    |> Pattern.withVariantParam (Pattern.int 2)
-                                    |> Pattern.buildCustomType
-                                )
+                                (Pattern.variant1 "Just" (Pattern.int 2))
                                 |> Pattern.map
                                     (\( left, right ) ->
                                         Elm.int (left + right)
