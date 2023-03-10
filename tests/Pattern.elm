@@ -210,13 +210,12 @@ case foo of
                         ]
                     )
                     Type.unit
-                    [ Pattern.record
+                    [ Pattern.record2
                         (\first last ->
                             Elm.Op.append first last
                         )
-                        |> Pattern.withField "first"
-                        |> Pattern.withField "last"
-                        |> Pattern.buildRecord
+                        "first"
+                        "last"
                         |> Elm.Case.fromPattern
                     ]
                     |> renderedAs

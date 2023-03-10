@@ -4,6 +4,7 @@ module Elm.Pattern exposing
     , unit, ignore
     , int, string, char
     , list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+    , record1, record2, record3, record4, record5, record6, record7, record8, record9
     , map
     , Sequence, addToSequence, sequence, toUncons, toListPattern
     , tuple, triple
@@ -39,6 +40,11 @@ module Elm.Pattern exposing
 @docs list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
 
 
+## Record Destructuring
+
+@docs record1, record2, record3, record4, record5, record6, record7, record8, record9
+
+
 ## Mapping
 
 @docs map
@@ -66,7 +72,7 @@ These helpers let you define a Custom Type pattern with a builder.
 @docs CustomType, withVariantParam, customType, buildCustomType
 
 
-## Record Destructuring
+## Record Builder
 
 @docs Record
 
@@ -133,6 +139,195 @@ char literalChar =
 {-| -}
 type Record a
     = Record (Set String) a
+
+
+{-| -}
+record1 :
+    (Expression -> combined)
+    -> String
+    -> Pattern combined
+record1 combine field1 =
+    record combine
+        |> withField field1
+        |> buildRecord
+
+
+{-|
+
+    example =
+        Pattern.record2
+            (\first last ->
+                Elm.Op.append first last
+            )
+            "first"
+            "last"
+            |> Elm.Case.fromPattern
+
+Results in
+
+    result =
+        case { first = "Jane", last = "Doe" } of
+            { first, last } ->
+                first ++ last
+
+-}
+record2 :
+    (Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> Pattern combined
+record2 combine field1 field2 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> buildRecord
+
+
+{-| -}
+record3 :
+    (Expression -> Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> String
+    -> Pattern combined
+record3 combine field1 field2 field3 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> withField field3
+        |> buildRecord
+
+
+{-| -}
+record4 :
+    (Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> String
+    -> String
+    -> Pattern combined
+record4 combine field1 field2 field3 field4 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> withField field3
+        |> withField field4
+        |> buildRecord
+
+
+{-| -}
+record5 :
+    (Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> Pattern combined
+record5 combine field1 field2 field3 field4 field5 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> withField field3
+        |> withField field4
+        |> withField field5
+        |> buildRecord
+
+
+{-| -}
+record6 :
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> Pattern combined
+record6 combine field1 field2 field3 field4 field5 field6 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> withField field3
+        |> withField field4
+        |> withField field5
+        |> withField field6
+        |> buildRecord
+
+
+{-| -}
+record7 :
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> Pattern combined
+record7 combine field1 field2 field3 field4 field5 field6 field7 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> withField field3
+        |> withField field4
+        |> withField field5
+        |> withField field6
+        |> withField field7
+        |> buildRecord
+
+
+{-| -}
+record8 :
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> Pattern combined
+record8 combine field1 field2 field3 field4 field5 field6 field7 field8 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> withField field3
+        |> withField field4
+        |> withField field5
+        |> withField field6
+        |> withField field7
+        |> withField field8
+        |> buildRecord
+
+
+{-| -}
+record9 :
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> Pattern combined
+record9 combine field1 field2 field3 field4 field5 field6 field7 field8 field9 =
+    record combine
+        |> withField field1
+        |> withField field2
+        |> withField field3
+        |> withField field4
+        |> withField field5
+        |> withField field6
+        |> withField field7
+        |> withField field8
+        |> withField field9
+        |> buildRecord
 
 
 {-| -}
