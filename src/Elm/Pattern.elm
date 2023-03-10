@@ -2,6 +2,7 @@ module Elm.Pattern exposing
     ( Pattern
     , map
     , unit, ignore
+    , list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
     , int, string, char
     , Sequence, addToSequence, sequence, toUncons, toListPattern
     , tuple, triple
@@ -23,6 +24,11 @@ module Elm.Pattern exposing
 ## Exact Matches (No Variables)
 
 @docs unit, ignore
+
+
+## Lists
+
+@docs list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
 
 
 ### Literals
@@ -257,17 +263,137 @@ sequence fn =
     Sequence [] fn
 
 
+{-| -}
+list0 : value -> Pattern value
+list0 combine =
+    Sequence [] combine
+        |> toListPattern
 
---list0 : Pattern ()
---list0 =
---    Sequence [] ()
---        |> toListPattern
---
---
---list1 : Pattern a -> Pattern a
---list1 ((Pattern pattern destructured) as pattern1) =
---    toListPattern (sequence identity |> addToSequence pattern1)
---        destructured
+
+{-| -}
+list1 : (a -> value) -> Pattern a -> Pattern value
+list1 combine (Pattern pattern destructured) =
+    Sequence
+        [ pattern
+        ]
+        (combine destructured)
+        |> toListPattern
+
+
+{-| -}
+list2 : (a1 -> a2 -> value) -> Pattern a1 -> Pattern a2 -> Pattern value
+list2 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) =
+    Sequence
+        [ pattern1
+        , pattern2
+        ]
+        (combine destructured1 destructured2)
+        |> toListPattern
+
+
+{-| -}
+list3 : (a1 -> a2 -> a3 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern value
+list3 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) =
+    Sequence
+        [ pattern1
+        , pattern2
+        , pattern3
+        ]
+        (combine destructured1 destructured2 destructured3)
+        |> toListPattern
+
+
+{-| -}
+list4 : (a1 -> a2 -> a3 -> a4 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern value
+list4 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) =
+    Sequence
+        [ pattern1
+        , pattern2
+        , pattern3
+        , pattern4
+        ]
+        (combine destructured1 destructured2 destructured3 destructured4)
+        |> toListPattern
+
+
+{-| -}
+list5 : (a1 -> a2 -> a3 -> a4 -> a5 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern value
+list5 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) =
+    Sequence
+        [ pattern1
+        , pattern2
+        , pattern3
+        , pattern4
+        , pattern5
+        ]
+        (combine destructured1 destructured2 destructured3 destructured4 destructured5)
+        |> toListPattern
+
+
+{-| -}
+list6 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern value
+list6 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) =
+    Sequence
+        [ pattern1
+        , pattern2
+        , pattern3
+        , pattern4
+        , pattern5
+        , pattern6
+        ]
+        (combine destructured1 destructured2 destructured3 destructured4 destructured5 destructured6)
+        |> toListPattern
+
+
+{-| -}
+list7 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern a7 -> Pattern value
+list7 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) (Pattern pattern7 destructured7) =
+    Sequence
+        [ pattern1
+        , pattern2
+        , pattern3
+        , pattern4
+        , pattern5
+        , pattern6
+        , pattern7
+        ]
+        (combine destructured1 destructured2 destructured3 destructured4 destructured5 destructured6 destructured7)
+        |> toListPattern
+
+
+{-| -}
+list8 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern a7 -> Pattern a8 -> Pattern value
+list8 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) (Pattern pattern7 destructured7) (Pattern pattern8 destructured8) =
+    Sequence
+        [ pattern1
+        , pattern2
+        , pattern3
+        , pattern4
+        , pattern5
+        , pattern6
+        , pattern7
+        , pattern8
+        ]
+        (combine destructured1 destructured2 destructured3 destructured4 destructured5 destructured6 destructured7 destructured8)
+        |> toListPattern
+
+
+{-| -}
+list9 : (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8 -> a9 -> value) -> Pattern a1 -> Pattern a2 -> Pattern a3 -> Pattern a4 -> Pattern a5 -> Pattern a6 -> Pattern a7 -> Pattern a8 -> Pattern a9 -> Pattern value
+list9 combine (Pattern pattern1 destructured1) (Pattern pattern2 destructured2) (Pattern pattern3 destructured3) (Pattern pattern4 destructured4) (Pattern pattern5 destructured5) (Pattern pattern6 destructured6) (Pattern pattern7 destructured7) (Pattern pattern8 destructured8) (Pattern pattern9 destructured9) =
+    Sequence
+        [ pattern1
+        , pattern2
+        , pattern3
+        , pattern4
+        , pattern5
+        , pattern6
+        , pattern7
+        , pattern8
+        , pattern9
+        ]
+        (combine destructured1 destructured2 destructured3 destructured4 destructured5 destructured6 destructured7 destructured8 destructured9)
+        |> toListPattern
 
 
 {-| -}

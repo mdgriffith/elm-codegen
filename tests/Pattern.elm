@@ -395,6 +395,45 @@ case 'z' of
     _ ->
         0
 """
+            , test "list pattern helpers" <|
+                \() ->
+                    Elm.Case.custom (Elm.list [])
+                        Type.unit
+                        [ Pattern.list0
+                            (Elm.string "Zero")
+                            |> Elm.Case.fromPattern
+                        , Pattern.list1 (\item -> item)
+                            (Pattern.var "item")
+                            |> Elm.Case.fromPattern
+                        , Pattern.list2
+                            (\item1 item2 ->
+                                Elm.Op.append item1 item2
+                            )
+                            (Pattern.var "item1")
+                            (Pattern.var "item2")
+                            |> Elm.Case.fromPattern
+                        , Pattern.ignore
+                            |> Pattern.map
+                                (\() ->
+                                    Elm.string "Other"
+                                )
+                            |> Elm.Case.fromPattern
+                        ]
+                        |> renderedAs
+                            """
+case [] of
+    [] ->
+        "Zero"
+
+    [ item ] ->
+        item
+
+    [ item1, item2 ] ->
+        item1 ++ item2
+
+    _ ->
+        "Other"
+"""
             ]
         , describe "imports"
             [ test "let destructure" <|
