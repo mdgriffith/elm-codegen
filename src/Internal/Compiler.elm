@@ -770,7 +770,7 @@ makeImport :
         Maybe
             { moduleName : Node ModuleName.ModuleName
             , moduleAlias : Maybe (Node (List String))
-            , exposingList : Maybe a
+            , exposingList : Maybe (Node Expose.Exposing)
             }
 makeImport aliases name =
     case name of
@@ -787,7 +787,27 @@ makeImport aliases name =
                         Just
                             { moduleName = nodify name
                             , moduleAlias = Nothing
-                            , exposingList = Nothing
+                            , exposingList =
+                                if isUrlParser name then
+                                    Just
+                                        (nodify <|
+                                            Expose.Explicit
+                                                [ nodify (Expose.InfixExpose "</>")
+                                                , nodify (Expose.InfixExpose "<?>")
+                                                ]
+                                        )
+
+                                else if isParser name then
+                                    Just
+                                        (nodify <|
+                                            Expose.Explicit
+                                                [ nodify (Expose.InfixExpose "|=")
+                                                , nodify (Expose.InfixExpose "|.")
+                                                ]
+                                        )
+
+                                else
+                                    Nothing
                             }
 
                 Just alias ->
@@ -795,7 +815,27 @@ makeImport aliases name =
                         { moduleName = nodify name
                         , moduleAlias =
                             Just (nodify [ alias ])
-                        , exposingList = Nothing
+                        , exposingList =
+                            if isUrlParser name then
+                                Just
+                                    (nodify <|
+                                        Expose.Explicit
+                                            [ nodify (Expose.InfixExpose "</>")
+                                            , nodify (Expose.InfixExpose "<?>")
+                                            ]
+                                    )
+
+                            else if isParser name then
+                                Just
+                                    (nodify <|
+                                        Expose.Explicit
+                                            [ nodify (Expose.InfixExpose "|=")
+                                            , nodify (Expose.InfixExpose "|.")
+                                            ]
+                                    )
+
+                            else
+                                Nothing
                         }
 
 
@@ -811,6 +851,29 @@ findAlias modName aliases =
 
             else
                 findAlias modName remain
+
+
+isUrlParser : List String -> Bool
+isUrlParser name =
+    case name of
+        [ "Url", "Parser" ] ->
+            True
+
+        _ ->
+            False
+
+
+isParser : List String -> Bool
+isParser name =
+    case name of
+        [ "Parser" ] ->
+            True
+
+        [ "Parser", "Advanced" ] ->
+            True
+
+        _ ->
+            False
 
 
 {-| Here are the default imports:
