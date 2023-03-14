@@ -41,6 +41,7 @@ anExample =
 - [Getting started](https://github.com/mdgriffith/elm-codegen/tree/main/guide/GettingStarted.md)
 - [Writing a generator](https://github.com/mdgriffith/elm-codegen/tree/main/guide/WritingAGenerator.md)
 - [Using packages/helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md)
+- [Running via TypeScript](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingElmCodeGenInTypeScript.md)
 
 And finally, the [elm-codegen package documentation](https://package.elm-lang.org/packages/mdgriffith/elm-codegen/latest/).
 

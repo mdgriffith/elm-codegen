@@ -770,7 +770,7 @@ makeImport :
         Maybe
             { moduleName : Node ModuleName.ModuleName
             , moduleAlias : Maybe (Node (List String))
-            , exposingList : Maybe a
+            , exposingList : Maybe (Node Expose.Exposing)
             }
 makeImport aliases name =
     case name of
@@ -787,7 +787,27 @@ makeImport aliases name =
                         Just
                             { moduleName = nodify name
                             , moduleAlias = Nothing
-                            , exposingList = Nothing
+                            , exposingList =
+                                if isUrlParser name then
+                                    Just
+                                        (nodify <|
+                                            Expose.Explicit
+                                                [ nodify (Expose.InfixExpose "</>")
+                                                , nodify (Expose.InfixExpose "<?>")
+                                                ]
+                                        )
+
+                                else if isParser name then
+                                    Just
+                                        (nodify <|
+                                            Expose.Explicit
+                                                [ nodify (Expose.InfixExpose "|=")
+                                                , nodify (Expose.InfixExpose "|.")
+                                                ]
+                                        )
+
+                                else
+                                    Nothing
                             }
 
                 Just alias ->
@@ -795,7 +815,27 @@ makeImport aliases name =
                         { moduleName = nodify name
                         , moduleAlias =
                             Just (nodify [ alias ])
-                        , exposingList = Nothing
+                        , exposingList =
+                            if isUrlParser name then
+                                Just
+                                    (nodify <|
+                                        Expose.Explicit
+                                            [ nodify (Expose.InfixExpose "</>")
+                                            , nodify (Expose.InfixExpose "<?>")
+                                            ]
+                                    )
+
+                            else if isParser name then
+                                Just
+                                    (nodify <|
+                                        Expose.Explicit
+                                            [ nodify (Expose.InfixExpose "|=")
+                                            , nodify (Expose.InfixExpose "|.")
+                                            ]
+                                    )
+
+                            else
+                                Nothing
                         }
 
 
@@ -813,6 +853,49 @@ findAlias modName aliases =
                 findAlias modName remain
 
 
+isUrlParser : List String -> Bool
+isUrlParser name =
+    case name of
+        [ "Url", "Parser" ] ->
+            True
+
+        _ ->
+            False
+
+
+isParser : List String -> Bool
+isParser name =
+    case name of
+        [ "Parser" ] ->
+            True
+
+        [ "Parser", "Advanced" ] ->
+            True
+
+        _ ->
+            False
+
+
+{-| Here are the default imports:
+<https://package.elm-lang.org/packages/elm/core/latest/#default-imports>
+
+Which is:
+
+    import Basics exposing (..)
+    import List exposing (List, (::))
+    import Maybe exposing (Maybe(..))
+    import Result exposing (Result(..))
+    import String exposing (String)
+    import Char exposing (Char)
+    import Tuple
+
+    import Debug
+
+    import Platform exposing ( Program )
+    import Platform.Cmd as Cmd exposing ( Cmd )
+    import Platform.Sub as Sub exposing ( Sub )
+
+-}
 builtIn : List String -> Bool
 builtIn name =
     case name of
@@ -826,6 +909,38 @@ builtIn name =
             True
 
         [ "Basics" ] ->
+            True
+
+        [ "Char" ] ->
+            True
+
+        [ "Debug" ] ->
+            True
+
+        [ "Tuple" ] ->
+            True
+
+        [ "Result" ] ->
+            True
+
+        [ "Platform" ] ->
+            True
+
+        [ "Platform", "Sub" ] ->
+            True
+
+        [ "Platform", "Cmd" ] ->
+            True
+
+        [ "Sub" ] ->
+            -- We specify Sub and Cmd here
+            -- Because of the workaround we use in order to make sure
+            -- Platform.Sub and Platform.Cmd are imported aliased.
+            --  Search for SUB/CMD WORKAROUND to see the workaround
+            -- it involves faking the module name when generating helpers for those modules
+            True
+
+        [ "Cmd" ] ->
             True
 
         _ ->

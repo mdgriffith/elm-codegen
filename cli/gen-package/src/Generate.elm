@@ -103,10 +103,22 @@ moduleToFile docs =
             Elm.Docs.toBlocks docs
 
         sourceModName =
-            String.split "." docs.name
+            -- Platform.Sub and Platform.Cmd are always imported aliased as Sub and Cmd
+            -- Which makes things kinda awkward.
+            -- So, we just pretend that they have those names.
+            -- SUB/CMD WORKAROUND
+            case docs.name of
+                "Platform.Sub" ->
+                    [ "Sub" ]
+
+                "Platform.Cmd" ->
+                    [ "Cmd" ]
+
+                _ ->
+                    String.split "." docs.name
 
         modName =
-            "Gen" :: sourceModName
+            "Gen" :: String.split "." docs.name
 
         modNameBlock =
             Elm.declaration "moduleName_"
