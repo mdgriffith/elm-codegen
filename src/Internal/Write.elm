@@ -429,31 +429,27 @@ prettyElmSyntaxDeclaration aliases decl =
 
 prettyDeclarations : Aliases -> List Util.RenderedDeclaration -> Doc t
 prettyDeclarations aliases decls =
-    List.foldl
-        (\decl doc ->
-            case decl of
-                Util.RenderedComment content ->
-                    doc
-                        |> Pretty.a (Pretty.string (content ++ "\n"))
-                        |> Pretty.a Pretty.line
-                        |> Pretty.a Pretty.line
+    decls
+        |> List.concatMap
+            (\decl ->
+                case decl of
+                    Util.RenderedComment content ->
+                        [ Pretty.a (Pretty.string (content ++ "\n"))
+                        , Pretty.a Pretty.line >> Pretty.a Pretty.line
+                        ]
 
-                Util.RenderedBlock source ->
-                    doc
-                        |> Pretty.a (Pretty.string source)
-                        |> Pretty.a Pretty.line
-                        |> Pretty.a Pretty.line
-                        |> Pretty.a Pretty.line
+                    Util.RenderedBlock source ->
+                        [ Pretty.a (Pretty.string source)
+                        , Pretty.a Pretty.line >> Pretty.a Pretty.line >> Pretty.a Pretty.line
+                        ]
 
-                Util.RenderedDecl innerDecl ->
-                    doc
-                        |> Pretty.a (prettyElmSyntaxDeclaration aliases innerDecl)
-                        |> Pretty.a Pretty.line
-                        |> Pretty.a Pretty.line
-                        |> Pretty.a Pretty.line
-        )
-        Pretty.empty
-        decls
+                    Util.RenderedDecl innerDecl ->
+                        [ Pretty.a (prettyElmSyntaxDeclaration aliases innerDecl)
+                        , Pretty.a Pretty.line >> Pretty.a Pretty.line >> Pretty.a Pretty.line
+                        ]
+            )
+        |> (List.reverse >> List.drop 1 >> List.reverse)
+        |> List.foldl (<|) Pretty.empty
 
 
 {-| Pretty prints an Elm function, which may include documentation and a signature too.
