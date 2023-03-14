@@ -1,6 +1,6 @@
 module Elm.Declare exposing
     ( fn, fn2, fn3, fn4, fn5, fn6
-    , topLevelValue
+    , value
     , function
     )
 
@@ -58,7 +58,7 @@ In that case you can do something like this using `callFrom`:
 
 @docs fn, fn2, fn3, fn4, fn5, fn6
 
-@docs topLevelValue
+@docs value
 
 @docs function
 
@@ -87,7 +87,7 @@ fn name one toExp =
         funcExp =
             Elm.fn one toExp
 
-        value importFrom =
+        valueFrom importFrom =
             Compiler.Expression <|
                 \index ->
                     case funcExp of
@@ -110,7 +110,7 @@ fn name one toExp =
 
         call importFrom argOne =
             Elm.apply
-                (value importFrom)
+                (valueFrom importFrom)
                 [ argOne ]
     in
     { declaration =
@@ -121,7 +121,7 @@ fn name one toExp =
     , callFrom =
         call
     , value =
-        value
+        valueFrom
     }
 
 
@@ -142,7 +142,7 @@ fn2 name one two toExp =
         funcExp =
             Elm.fn2 one two toExp
 
-        value importFrom =
+        valueFrom importFrom =
             Compiler.Expression <|
                 \index ->
                     case funcExp of
@@ -165,7 +165,7 @@ fn2 name one two toExp =
 
         call importFrom argOne argTwo =
             Elm.apply
-                (value importFrom)
+                (valueFrom importFrom)
                 [ argOne, argTwo ]
     in
     { declaration =
@@ -176,7 +176,7 @@ fn2 name one two toExp =
     , callFrom =
         call
     , value =
-        value
+        valueFrom
     }
 
 
@@ -198,7 +198,7 @@ fn3 name one two three toExp =
         funcExp =
             Elm.fn3 one two three toExp
 
-        value importFrom =
+        valueFrom importFrom =
             Compiler.Expression <|
                 \index ->
                     case funcExp of
@@ -221,7 +221,7 @@ fn3 name one two three toExp =
 
         call importFrom argOne argTwo argThree =
             Elm.apply
-                (value importFrom)
+                (valueFrom importFrom)
                 [ argOne, argTwo, argThree ]
     in
     { declaration =
@@ -232,7 +232,7 @@ fn3 name one two three toExp =
     , callFrom =
         call
     , value =
-        value
+        valueFrom
     }
 
 
@@ -255,7 +255,7 @@ fn4 name one two three four toExp =
         funcExp =
             Elm.fn4 one two three four toExp
 
-        value importFrom =
+        valueFrom importFrom =
             Compiler.Expression <|
                 \index ->
                     case funcExp of
@@ -278,7 +278,7 @@ fn4 name one two three four toExp =
 
         call importFrom argOne argTwo argThree argFour =
             Elm.apply
-                (value importFrom)
+                (valueFrom importFrom)
                 [ argOne, argTwo, argThree, argFour ]
     in
     { declaration =
@@ -289,7 +289,7 @@ fn4 name one two three four toExp =
     , callFrom =
         call
     , value =
-        value
+        valueFrom
     }
 
 
@@ -313,7 +313,7 @@ fn5 name one two three four five toExp =
         funcExp =
             Elm.fn5 one two three four five toExp
 
-        value importFrom =
+        valueFrom importFrom =
             Compiler.Expression <|
                 \index ->
                     case funcExp of
@@ -336,7 +336,7 @@ fn5 name one two three four five toExp =
 
         call importFrom argOne argTwo argThree argFour argFive =
             Elm.apply
-                (value importFrom)
+                (valueFrom importFrom)
                 [ argOne, argTwo, argThree, argFour, argFive ]
     in
     { declaration =
@@ -347,7 +347,7 @@ fn5 name one two three four five toExp =
     , callFrom =
         call
     , value =
-        value
+        valueFrom
     }
 
 
@@ -372,7 +372,7 @@ fn6 name one two three four five six toExp =
         funcExp =
             Elm.fn6 one two three four five six toExp
 
-        value importFrom =
+        valueFrom importFrom =
             Compiler.Expression <|
                 \index ->
                     case funcExp of
@@ -395,7 +395,7 @@ fn6 name one two three four five six toExp =
 
         call importFrom argOne argTwo argThree argFour argFive argSix =
             Elm.apply
-                (value importFrom)
+                (valueFrom importFrom)
                 [ argOne, argTwo, argThree, argFour, argFive, argSix ]
     in
     { declaration =
@@ -406,12 +406,12 @@ fn6 name one two three four five six toExp =
     , callFrom =
         call
     , value =
-        value
+        valueFrom
     }
 
 
 {-| -}
-topLevelValue :
+value :
     String
     -> Elm.Expression
     ->
@@ -419,7 +419,7 @@ topLevelValue :
         , value : Elm.Expression
         , valueFrom : List String -> Elm.Expression
         }
-topLevelValue name expression =
+value name expression =
     let
         declaration_ :
             { declaration : Elm.Declaration
@@ -452,7 +452,7 @@ function name params toExp =
         funcExp =
             Elm.function params toExp
 
-        value importFrom =
+        valueFrom importFrom =
             Compiler.Expression <|
                 \index ->
                     case funcExp of
@@ -474,7 +474,7 @@ function name params toExp =
                             }
 
         call importFrom args =
-            Elm.apply (value importFrom) args
+            Elm.apply (valueFrom importFrom) args
     in
     { declaration =
         Elm.declaration name
@@ -484,5 +484,5 @@ function name params toExp =
     , callFrom =
         call
     , value =
-        value
+        valueFrom
     }
