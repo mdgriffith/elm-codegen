@@ -1,5 +1,6 @@
 module Elm.Declare exposing
     ( fn, fn2, fn3, fn4, fn5, fn6
+    , topLevelValue
     , function
     )
 
@@ -56,6 +57,8 @@ In that case you can do something like this using `callFrom`:
         ]
 
 @docs fn, fn2, fn3, fn4, fn5, fn6
+
+@docs topLevelValue
 
 @docs function
 
@@ -404,6 +407,32 @@ fn6 name one two three four five six toExp =
         call
     , value =
         value
+    }
+
+
+{-| -}
+topLevelValue :
+    String
+    -> Elm.Expression
+    ->
+        { declaration : Elm.Declaration
+        , value : Elm.Expression
+        , valueFrom : List String -> Elm.Expression
+        }
+topLevelValue name expression =
+    let
+        declaration_ :
+            { declaration : Elm.Declaration
+            , call : List Elm.Expression -> Elm.Expression
+            , callFrom : List String -> List Elm.Expression -> Elm.Expression
+            , value : List String -> Elm.Expression
+            }
+        declaration_ =
+            function name [] (\_ -> expression)
+    in
+    { declaration = declaration_.declaration
+    , value = declaration_.call []
+    , valueFrom = \from -> declaration_.callFrom from []
     }
 
 
