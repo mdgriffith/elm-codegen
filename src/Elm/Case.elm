@@ -1,6 +1,7 @@
 module Elm.Case exposing
     ( maybe, result, list, string
     , tuple, triple
+    , fromPattern
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
     , branchWith
@@ -32,6 +33,11 @@ Generates
 @docs maybe, result, list, string
 
 @docs tuple, triple
+
+
+## Patterns
+
+@docs fromPattern
 
 
 ## Case on a Custom Type
@@ -67,6 +73,7 @@ Generates
 import Dict exposing (Dict)
 import Elm exposing (Expression)
 import Elm.Annotation as Type
+import Elm.Pattern
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
@@ -75,6 +82,19 @@ import Internal.Compiler as Compiler
 import Internal.Debug as Debug
 import Internal.Format as Format
 import Internal.Index as Index
+import Internal.Pattern exposing (Pattern(..))
+
+
+{-| -}
+fromPattern : Elm.Pattern.Pattern Expression -> Branch
+fromPattern (Pattern pattern destructure) =
+    Branch
+        (\index ->
+            ( Index.startIndex
+            , pattern
+            , destructure
+            )
+        )
 
 
 captureCase :

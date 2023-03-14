@@ -10,6 +10,7 @@
         "Elm.Annotation",
         "Elm.Declare",
         "Elm.Case",
+        "Elm.Pattern",
         "Elm.Let",
         "Elm.ToString"
     ],

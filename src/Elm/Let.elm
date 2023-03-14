@@ -1,5 +1,6 @@
 module Elm.Let exposing
     ( letIn, value, Let
+    , destructure
     , tuple
     , record
     , fn, fn2, fn3
@@ -33,6 +34,8 @@ Will translate into
 
 
 # Destructing values
+
+@docs destructure
 
 @docs tuple
 
@@ -124,13 +127,15 @@ will generate
 import Dict
 import Elm exposing (Expression)
 import Elm.Annotation
+import Elm.Pattern
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Compiler as Compiler
+import Internal.Compiler as Compiler exposing (Module)
 import Internal.Format as Format
 import Internal.Index as Index
+import Internal.Pattern exposing (Pattern(..))
 
 
 {-| -}
@@ -141,6 +146,7 @@ type Let a
             { letDecls : List (Node.Node Exp.LetDeclaration)
             , index : Index.Index
             , return : a
+            , imports : List Module
             }
         )
 
@@ -153,6 +159,7 @@ letIn return =
             { letDecls = []
             , index = index
             , return = return
+            , imports = []
             }
         )
 
@@ -171,8 +178,34 @@ with (Let toScopeA) (Let toScopeAB) =
             { letDecls = resultA.letDecls ++ resultB.letDecls
             , index = resultB.index
             , return = resultB.return resultA.return
+            , imports = resultA.imports ++ resultB.imports
             }
         )
+
+
+{-| -}
+destructure : Elm.Pattern.Pattern a -> Expression -> Let (a -> b) -> Let b
+destructure (Pattern pattern toDestructured) valueExpr sourceLet =
+    with
+        (Let
+            (\index ->
+                let
+                    ( finalIndex, details ) =
+                        Compiler.toExpressionDetails index valueExpr
+                in
+                { letDecls =
+                    [ Compiler.nodify <|
+                        Exp.LetDestructuring
+                            (Compiler.nodify pattern)
+                            (Compiler.nodify details.expression)
+                    ]
+                , index = finalIndex
+                , return = toDestructured
+                , imports = details.imports
+                }
+            )
+        )
+        sourceLet
 
 
 {-| -}
@@ -223,6 +256,7 @@ value desiredName valueExpr sourceLet =
                                         name
                             }
                         )
+                , imports = []
                 }
             )
         )
@@ -276,6 +310,7 @@ fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
                             }
                     ]
                 , index = finalIndex
+                , imports = []
                 , return =
                     \callerArg ->
                         Elm.apply
@@ -356,6 +391,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                             }
                     ]
                 , index = finalIndex
+                , imports = []
                 , return =
                     \oneIncoming twoIncoming ->
                         Elm.apply
@@ -450,6 +486,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                             }
                     ]
                 , index = finalIndex
+                , imports = []
                 , return =
                     \oneIncoming twoIncoming threeIncoming ->
                         Elm.apply
@@ -502,6 +539,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
                                 (Compiler.nodify sourceDetails.expression)
                         ]
                     , index = newIndex
+                    , imports = []
                     , return =
                         ( Compiler.Expression <|
                             \_ ->
@@ -613,6 +651,7 @@ record fields recordExp sourceLet =
                     , index = finalIndex
                     , return =
                         List.reverse unpackedfields
+                    , imports = []
                     }
                 )
             )
@@ -646,7 +685,7 @@ toExpression (Let toScope) =
                             { declarations = List.reverse scope.letDecls
                             , expression = Compiler.nodify return.expression
                             }
-            , imports = return.imports
+            , imports = return.imports ++ scope.imports
             , annotation =
                 return.annotation
             }
