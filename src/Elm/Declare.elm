@@ -77,34 +77,37 @@ fn :
         { declaration : Declaration
         , call : Expression -> Expression
         , callFrom : List String -> Expression -> Expression
+        , value : List String -> Expression
         }
 fn name one toExp =
     let
         funcExp =
             Elm.fn one toExp
 
+        value importFrom =
+            Compiler.Expression <|
+                \index ->
+                    case funcExp of
+                        Compiler.Expression toFnExp ->
+                            let
+                                fnExp =
+                                    toFnExp index
+                            in
+                            { expression =
+                                -- This *must* be an un-protected name, where we only use
+                                -- literally what the dev gives us, because we are trying
+                                -- to refer to something that already exists.
+                                Exp.FunctionOrValue importFrom
+                                    (Format.sanitize name)
+                            , annotation =
+                                fnExp.annotation
+                            , imports =
+                                fnExp.imports
+                            }
+
         call importFrom argOne =
             Elm.apply
-                (Compiler.Expression <|
-                    \index ->
-                        case funcExp of
-                            Compiler.Expression toFnExp ->
-                                let
-                                    fnExp =
-                                        toFnExp index
-                                in
-                                { expression =
-                                    -- This *must* be an un-protected name, where we only use
-                                    -- literally what the dev gives us, because we are trying
-                                    -- to refer to something that already exists.
-                                    Exp.FunctionOrValue importFrom
-                                        (Format.sanitize name)
-                                , annotation =
-                                    fnExp.annotation
-                                , imports =
-                                    fnExp.imports
-                                }
-                )
+                (value importFrom)
                 [ argOne ]
     in
     { declaration =
@@ -114,6 +117,8 @@ fn name one toExp =
         call []
     , callFrom =
         call
+    , value =
+        value
     }
 
 
@@ -127,34 +132,37 @@ fn2 :
         { declaration : Declaration
         , call : Expression -> Expression -> Expression
         , callFrom : List String -> Expression -> Expression -> Expression
+        , value : List String -> Expression
         }
 fn2 name one two toExp =
     let
         funcExp =
             Elm.fn2 one two toExp
 
+        value importFrom =
+            Compiler.Expression <|
+                \index ->
+                    case funcExp of
+                        Compiler.Expression toFnExp ->
+                            let
+                                fnExp =
+                                    toFnExp index
+                            in
+                            { expression =
+                                -- This *must* be an un-protected name, where we only use
+                                -- literally what the dev gives us, because we are trying
+                                -- to refer to something that already exists.
+                                Exp.FunctionOrValue importFrom
+                                    (Format.sanitize name)
+                            , annotation =
+                                fnExp.annotation
+                            , imports =
+                                fnExp.imports
+                            }
+
         call importFrom argOne argTwo =
             Elm.apply
-                (Compiler.Expression <|
-                    \index ->
-                        case funcExp of
-                            Compiler.Expression toFnExp ->
-                                let
-                                    fnExp =
-                                        toFnExp index
-                                in
-                                { expression =
-                                    -- This *must* be an un-protected name, where we only use
-                                    -- literally what the dev gives us, because we are trying
-                                    -- to refer to something that already exists.
-                                    Exp.FunctionOrValue importFrom
-                                        (Format.sanitize name)
-                                , annotation =
-                                    fnExp.annotation
-                                , imports =
-                                    fnExp.imports
-                                }
-                )
+                (value importFrom)
                 [ argOne, argTwo ]
     in
     { declaration =
@@ -164,6 +172,8 @@ fn2 name one two toExp =
         call []
     , callFrom =
         call
+    , value =
+        value
     }
 
 
@@ -178,34 +188,37 @@ fn3 :
         { declaration : Declaration
         , call : Expression -> Expression -> Expression -> Expression
         , callFrom : List String -> Expression -> Expression -> Expression -> Expression
+        , value : List String -> Expression
         }
 fn3 name one two three toExp =
     let
         funcExp =
             Elm.fn3 one two three toExp
 
+        value importFrom =
+            Compiler.Expression <|
+                \index ->
+                    case funcExp of
+                        Compiler.Expression toFnExp ->
+                            let
+                                fnExp =
+                                    toFnExp index
+                            in
+                            { expression =
+                                -- This *must* be an un-protected name, where we only use
+                                -- literally what the dev gives us, because we are trying
+                                -- to refer to something that already exists.
+                                Exp.FunctionOrValue importFrom
+                                    (Format.sanitize name)
+                            , annotation =
+                                fnExp.annotation
+                            , imports =
+                                fnExp.imports
+                            }
+
         call importFrom argOne argTwo argThree =
             Elm.apply
-                (Compiler.Expression <|
-                    \index ->
-                        case funcExp of
-                            Compiler.Expression toFnExp ->
-                                let
-                                    fnExp =
-                                        toFnExp index
-                                in
-                                { expression =
-                                    -- This *must* be an un-protected name, where we only use
-                                    -- literally what the dev gives us, because we are trying
-                                    -- to refer to something that already exists.
-                                    Exp.FunctionOrValue importFrom
-                                        (Format.sanitize name)
-                                , annotation =
-                                    fnExp.annotation
-                                , imports =
-                                    fnExp.imports
-                                }
-                )
+                (value importFrom)
                 [ argOne, argTwo, argThree ]
     in
     { declaration =
@@ -215,6 +228,8 @@ fn3 name one two three toExp =
         call []
     , callFrom =
         call
+    , value =
+        value
     }
 
 
@@ -230,34 +245,37 @@ fn4 :
         { declaration : Declaration
         , call : Expression -> Expression -> Expression -> Expression -> Expression
         , callFrom : List String -> Expression -> Expression -> Expression -> Expression -> Expression
+        , value : List String -> Expression
         }
 fn4 name one two three four toExp =
     let
         funcExp =
             Elm.fn4 one two three four toExp
 
+        value importFrom =
+            Compiler.Expression <|
+                \index ->
+                    case funcExp of
+                        Compiler.Expression toFnExp ->
+                            let
+                                fnExp =
+                                    toFnExp index
+                            in
+                            { expression =
+                                -- This *must* be an un-protected name, where we only use
+                                -- literally what the dev gives us, because we are trying
+                                -- to refer to something that already exists.
+                                Exp.FunctionOrValue importFrom
+                                    (Format.sanitize name)
+                            , annotation =
+                                fnExp.annotation
+                            , imports =
+                                fnExp.imports
+                            }
+
         call importFrom argOne argTwo argThree argFour =
             Elm.apply
-                (Compiler.Expression <|
-                    \index ->
-                        case funcExp of
-                            Compiler.Expression toFnExp ->
-                                let
-                                    fnExp =
-                                        toFnExp index
-                                in
-                                { expression =
-                                    -- This *must* be an un-protected name, where we only use
-                                    -- literally what the dev gives us, because we are trying
-                                    -- to refer to something that already exists.
-                                    Exp.FunctionOrValue importFrom
-                                        (Format.sanitize name)
-                                , annotation =
-                                    fnExp.annotation
-                                , imports =
-                                    fnExp.imports
-                                }
-                )
+                (value importFrom)
                 [ argOne, argTwo, argThree, argFour ]
     in
     { declaration =
@@ -267,6 +285,8 @@ fn4 name one two three four toExp =
         call []
     , callFrom =
         call
+    , value =
+        value
     }
 
 
@@ -283,34 +303,37 @@ fn5 :
         { declaration : Declaration
         , call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression
         , callFrom : List String -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
+        , value : List String -> Expression
         }
 fn5 name one two three four five toExp =
     let
         funcExp =
             Elm.fn5 one two three four five toExp
 
+        value importFrom =
+            Compiler.Expression <|
+                \index ->
+                    case funcExp of
+                        Compiler.Expression toFnExp ->
+                            let
+                                fnExp =
+                                    toFnExp index
+                            in
+                            { expression =
+                                -- This *must* be an un-protected name, where we only use
+                                -- literally what the dev gives us, because we are trying
+                                -- to refer to something that already exists.
+                                Exp.FunctionOrValue importFrom
+                                    (Format.sanitize name)
+                            , annotation =
+                                fnExp.annotation
+                            , imports =
+                                fnExp.imports
+                            }
+
         call importFrom argOne argTwo argThree argFour argFive =
             Elm.apply
-                (Compiler.Expression <|
-                    \index ->
-                        case funcExp of
-                            Compiler.Expression toFnExp ->
-                                let
-                                    fnExp =
-                                        toFnExp index
-                                in
-                                { expression =
-                                    -- This *must* be an un-protected name, where we only use
-                                    -- literally what the dev gives us, because we are trying
-                                    -- to refer to something that already exists.
-                                    Exp.FunctionOrValue importFrom
-                                        (Format.sanitize name)
-                                , annotation =
-                                    fnExp.annotation
-                                , imports =
-                                    fnExp.imports
-                                }
-                )
+                (value importFrom)
                 [ argOne, argTwo, argThree, argFour, argFive ]
     in
     { declaration =
@@ -320,6 +343,8 @@ fn5 name one two three four five toExp =
         call []
     , callFrom =
         call
+    , value =
+        value
     }
 
 
@@ -337,34 +362,37 @@ fn6 :
         { declaration : Declaration
         , call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
         , callFrom : List String -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
+        , value : List String -> Expression
         }
 fn6 name one two three four five six toExp =
     let
         funcExp =
             Elm.fn6 one two three four five six toExp
 
+        value importFrom =
+            Compiler.Expression <|
+                \index ->
+                    case funcExp of
+                        Compiler.Expression toFnExp ->
+                            let
+                                fnExp =
+                                    toFnExp index
+                            in
+                            { expression =
+                                -- This *must* be an un-protected name, where we only use
+                                -- literally what the dev gives us, because we are trying
+                                -- to refer to something that already exists.
+                                Exp.FunctionOrValue importFrom
+                                    (Format.sanitize name)
+                            , annotation =
+                                fnExp.annotation
+                            , imports =
+                                fnExp.imports
+                            }
+
         call importFrom argOne argTwo argThree argFour argFive argSix =
             Elm.apply
-                (Compiler.Expression <|
-                    \index ->
-                        case funcExp of
-                            Compiler.Expression toFnExp ->
-                                let
-                                    fnExp =
-                                        toFnExp index
-                                in
-                                { expression =
-                                    -- This *must* be an un-protected name, where we only use
-                                    -- literally what the dev gives us, because we are trying
-                                    -- to refer to something that already exists.
-                                    Exp.FunctionOrValue importFrom
-                                        (Format.sanitize name)
-                                , annotation =
-                                    fnExp.annotation
-                                , imports =
-                                    fnExp.imports
-                                }
-                )
+                (value importFrom)
                 [ argOne, argTwo, argThree, argFour, argFive, argSix ]
     in
     { declaration =
@@ -374,6 +402,8 @@ fn6 name one two three four five six toExp =
         call []
     , callFrom =
         call
+    , value =
+        value
     }
 
 
@@ -386,35 +416,36 @@ function :
         { declaration : Declaration
         , call : List Expression -> Expression
         , callFrom : List String -> List Expression -> Expression
+        , value : List String -> Expression
         }
 function name params toExp =
     let
         funcExp =
             Elm.function params toExp
 
+        value importFrom =
+            Compiler.Expression <|
+                \index ->
+                    case funcExp of
+                        Compiler.Expression toFnExp ->
+                            let
+                                fnExp =
+                                    toFnExp index
+                            in
+                            { expression =
+                                -- This *must* be an un-protected name, where we only use
+                                -- literally what the dev gives us, because we are trying
+                                -- to refer to something that already exists.
+                                Exp.FunctionOrValue importFrom
+                                    (Format.sanitize name)
+                            , annotation =
+                                fnExp.annotation
+                            , imports =
+                                fnExp.imports
+                            }
+
         call importFrom args =
-            Elm.apply
-                (Compiler.Expression <|
-                    \index ->
-                        case funcExp of
-                            Compiler.Expression toFnExp ->
-                                let
-                                    fnExp =
-                                        toFnExp index
-                                in
-                                { expression =
-                                    -- This *must* be an un-protected name, where we only use
-                                    -- literally what the dev gives us, because we are trying
-                                    -- to refer to something that already exists.
-                                    Exp.FunctionOrValue importFrom
-                                        (Format.sanitize name)
-                                , annotation =
-                                    fnExp.annotation
-                                , imports =
-                                    fnExp.imports
-                                }
-                )
-                args
+            Elm.apply (value importFrom) args
     in
     { declaration =
         Elm.declaration name
@@ -423,4 +454,6 @@ function name params toExp =
         call []
     , callFrom =
         call
+    , value =
+        value
     }
