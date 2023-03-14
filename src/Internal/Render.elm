@@ -136,16 +136,16 @@ render toDocComment fileDetails =
                 , declarations =
                     List.reverse rendered.declarations
                 , comments =
-                    Just
-                        (Internal.Comments.addPart
-                            Internal.Comments.emptyComment
-                            (Internal.Comments.Markdown
-                                (case rendered.exposedGroups of
-                                    [] ->
-                                        ""
+                    case rendered.exposedGroups of
+                        [] ->
+                            Nothing
 
-                                    _ ->
-                                        "\n"
+                        _ ->
+                            Just
+                                (Internal.Comments.addPart
+                                    Internal.Comments.emptyComment
+                                    (Internal.Comments.Markdown
+                                        ("\n"
                                             ++ (rendered.exposedGroups
                                                     |> List.sortBy
                                                         (\( group, _ ) ->
@@ -160,9 +160,9 @@ render toDocComment fileDetails =
                                                     |> toDocComment
                                                     |> String.join "\n\n"
                                                )
+                                        )
+                                    )
                                 )
-                            )
-                        )
                 }
     in
     { path =
@@ -289,24 +289,25 @@ addExposed exposed declaration otherExposes =
 
 groupExposing : List ( Maybe String, String ) -> List { group : Maybe String, members : List String }
 groupExposing items =
-    List.foldr
-        (\( maybeGroup, name ) acc ->
-            case acc of
-                [] ->
-                    [ { group = maybeGroup, members = [ name ] } ]
+    items
+        |> List.foldr
+            (\( maybeGroup, name ) acc ->
+                case acc of
+                    [] ->
+                        [ { group = maybeGroup, members = [ name ] } ]
 
-                top :: groups ->
-                    if matchName maybeGroup top.group then
-                        { group = top.group
-                        , members = name :: top.members
-                        }
-                            :: groups
+                    top :: groups ->
+                        if matchName maybeGroup top.group then
+                            { group = top.group
+                            , members = name :: top.members
+                            }
+                                :: groups
 
-                    else
-                        { group = maybeGroup, members = [ name ] } :: acc
-        )
-        []
-        items
+                        else
+                            { group = maybeGroup, members = [ name ] } :: acc
+            )
+            []
+        |> List.map (\doc -> { doc | members = List.reverse doc.members })
 
 
 matchName : Maybe a -> Maybe a -> Bool

@@ -1211,13 +1211,15 @@ customType name variants =
                         { documentation = Nothing
                         , name = Compiler.nodify (Format.formatType name)
                         , generics =
-                            List.concatMap
-                                (\(Variant _ listAnn) ->
-                                    listAnn
-                                        |> List.concatMap
-                                            (List.map Compiler.nodify << Compiler.getGenerics)
-                                )
-                                variants
+                            variants
+                                |> List.concatMap
+                                    (\(Variant _ listAnn) ->
+                                        listAnn
+                                            |> List.concatMap
+                                                Compiler.getGenerics
+                                    )
+                                |> deduplicate
+                                |> List.map Compiler.nodify
                         , constructors =
                             List.map
                                 (\(Variant varName vars) ->
@@ -1235,6 +1237,26 @@ customType name variants =
                         }
                 }
         }
+
+
+deduplicate : List comparable -> List comparable
+deduplicate listToDeduplicate =
+    List.foldl
+        (\item (( set, innerList ) as untouched) ->
+            if Set.member item set then
+                untouched
+
+            else
+                ( Set.insert item set
+                , item :: innerList
+                )
+        )
+        ( Set.empty
+        , []
+        )
+        listToDeduplicate
+        |> Tuple.second
+        |> List.reverse
 
 
 {-| -}

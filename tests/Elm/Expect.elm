@@ -1,4 +1,4 @@
-module Elm.Expect exposing (declarationAs, equal, importAs, infersType, renderedAs)
+module Elm.Expect exposing (declarationAs, equal, fileContentAs, importAs, infersType, renderedAs)
 
 import Elm
 import Elm.ToString
@@ -30,6 +30,16 @@ declarationAs decl str =
     Expect.equal
         (Elm.ToString.declaration decl
             |> .body
+            |> String.trim
+        )
+        (String.trim str)
+
+
+fileContentAs : Elm.File -> String -> Expectation
+fileContentAs file str =
+    Expect.equal
+        (file
+            |> .contents
             |> String.trim
         )
         (String.trim str)

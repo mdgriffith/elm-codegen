@@ -121,7 +121,8 @@ type BinOp
 -}
 equal : Expression -> Expression -> Expression
 equal =
-    applyInfix (BinOp "==" Infix.Left 4)
+    applyInfix []
+        (BinOp "==" Infix.Left 4)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.var "a"
@@ -134,7 +135,8 @@ equal =
 -}
 notEqual : Expression -> Expression -> Expression
 notEqual =
-    applyInfix (BinOp "/=" Infix.Left 4)
+    applyInfix []
+        (BinOp "/=" Infix.Left 4)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.var "a"
@@ -147,7 +149,8 @@ notEqual =
 -}
 lt : Expression -> Expression -> Expression
 lt =
-    applyInfix (BinOp "<" Infix.Non 4)
+    applyInfix []
+        (BinOp "<" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -160,7 +163,8 @@ lt =
 -}
 gt : Expression -> Expression -> Expression
 gt =
-    applyInfix (BinOp ">" Infix.Non 4)
+    applyInfix []
+        (BinOp ">" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -173,7 +177,8 @@ gt =
 -}
 lte : Expression -> Expression -> Expression
 lte =
-    applyInfix (BinOp "<=" Infix.Non 4)
+    applyInfix []
+        (BinOp "<=" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -186,7 +191,8 @@ lte =
 -}
 gte : Expression -> Expression -> Expression
 gte =
-    applyInfix (BinOp ">=" Infix.Non 4)
+    applyInfix []
+        (BinOp ">=" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.comparable
             , Internal.Types.comparable
@@ -199,7 +205,8 @@ gte =
 -}
 and : Expression -> Expression -> Expression
 and =
-    applyInfix (BinOp "&&" Infix.Right 3)
+    applyInfix []
+        (BinOp "&&" Infix.Right 3)
         (Internal.Types.function
             [ Internal.Types.bool
             , Internal.Types.bool
@@ -212,7 +219,8 @@ and =
 -}
 or : Expression -> Expression -> Expression
 or =
-    applyInfix (BinOp "||" Infix.Right 2)
+    applyInfix []
+        (BinOp "||" Infix.Right 2)
         (Internal.Types.function
             [ Internal.Types.bool
             , Internal.Types.bool
@@ -239,7 +247,8 @@ multiply =
 -}
 divide : Expression -> Expression -> Expression
 divide =
-    applyInfix (BinOp "/" Infix.Left 7)
+    applyInfix []
+        (BinOp "/" Infix.Left 7)
         (Internal.Types.function
             [ Internal.Types.float
             , Internal.Types.float
@@ -252,7 +261,8 @@ divide =
 -}
 intDivide : Expression -> Expression -> Expression
 intDivide =
-    applyInfix (BinOp "//" Infix.Left 7)
+    applyInfix []
+        (BinOp "//" Infix.Left 7)
         (Internal.Types.function
             [ Internal.Types.int
             , Internal.Types.int
@@ -279,7 +289,8 @@ minus =
 -}
 cons : Expression -> Expression -> Expression
 cons =
-    applyInfix (BinOp "::" Infix.Right 5)
+    applyInfix []
+        (BinOp "::" Infix.Right 5)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.list (Internal.Types.var "a")
@@ -292,7 +303,7 @@ cons =
 -}
 append : Expression -> Expression -> Expression
 append =
-    applyInfix
+    applyInfix []
         (BinOp "++" Infix.Right 5)
         (Internal.Types.function
             [ Internal.Types.appendable
@@ -309,7 +320,8 @@ append =
 -}
 keep : Expression -> Expression -> Expression
 keep =
-    applyInfix (BinOp "|=" Infix.Left 5)
+    applyInfix []
+        (BinOp "|=" Infix.Left 5)
         -- Parser (a -> b) -> Parser a -> Parser b
         (Internal.Types.function
             [ Internal.Types.custom [ "Parser" ]
@@ -334,7 +346,8 @@ keep =
 -}
 skip : Expression -> Expression -> Expression
 skip =
-    applyInfix (BinOp "|." Infix.Left 6)
+    applyInfix []
+        (BinOp "|." Infix.Left 6)
         (Internal.Types.function
             [ Internal.Types.custom [ "Parser" ]
                 "Parser"
@@ -357,7 +370,8 @@ skip =
 -}
 slash : Expression -> Expression -> Expression
 slash =
-    applyInfix (BinOp "</>" Infix.Right 7)
+    applyInfix [ [ "Url", "Parser" ] ]
+        (BinOp "</>" Infix.Right 7)
         --  Parser a b -> Parser b c -> Parser a c
         (Internal.Types.function
             [ Internal.Types.custom [ "Url", "Parser" ]
@@ -384,7 +398,8 @@ slash =
 -}
 query : Expression -> Expression -> Expression
 query =
-    applyInfix (BinOp "<?>" Infix.Left 8)
+    applyInfix [ [ "Url", "Parser" ] ]
+        (BinOp "<?>" Infix.Left 8)
         -- Parser a (query -> b) -> Parser query -> Parser a b
         (Internal.Types.function
             [ Internal.Types.custom [ "Url", "Parser" ]
@@ -523,8 +538,8 @@ parens (Compiler.Expression toExp) =
         )
 
 
-applyInfix : BinOp -> Annotation.TypeAnnotation -> Expression -> Expression -> Expression
-applyInfix (BinOp symbol dir _) infixAnnotation l r =
+applyInfix : List Compiler.Module -> BinOp -> Annotation.TypeAnnotation -> Expression -> Expression -> Expression
+applyInfix extraImports (BinOp symbol dir _) infixAnnotation l r =
     Compiler.Expression <|
         \index ->
             let
@@ -553,7 +568,7 @@ applyInfix (BinOp symbol dir _) infixAnnotation l r =
                     [ left
                     , right
                     ]
-            , imports = left.imports ++ right.imports
+            , imports = extraImports ++ left.imports ++ right.imports
             }
 
 

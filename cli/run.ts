@@ -26,7 +26,6 @@ import { XMLHttpRequest } from "./run/vendor/XMLHttpRequest"
 import * as Chokidar from "chokidar"
 import chalk from "chalk"
 import templates from "./templates"
-import Elm from "./templates/Elm.json"
 const gen_package = require("./gen-package")
 
 // We have to stub this in the allow Elm the ability to make http requests.
@@ -399,22 +398,11 @@ export async function init(desiredInstallDir: string | null) {
   fs.mkdirSync(base)
   fs.mkdirSync(path.join(base, "Gen"))
   fs.mkdirSync(path.join(base, "Gen", "CodeGen"))
-  fs.mkdirSync(path.join(base, "helpers"))
 
   fs.writeFileSync(path.join(base, "elm.json"), templates.init.elmJson())
   fs.writeFileSync(path.join(base, "Generate.elm"), templates.init.starter())
   fs.writeFileSync(path.join(base, "Gen", "CodeGen", "Generate.elm"), templates.init.codegenProgram())
-  fs.writeFileSync(path.join(base, "helpers", "Helper.elm"), templates.init.helper())
   const updatedCodeGenJson = await install_package("elm/core", install_dir, null, codeGenJson)
-
-  let helperPath = path.join(base, "helpers") + path.sep
-  // install local helpers
-  let elmSources: string[] = []
-  getFilesWithin(helperPath, ".elm").forEach((elmPath) => {
-    elmSources.push(fs.readFileSync(elmPath).toString())
-  })
-  run_package_generator(install_dir, { elmSource: elmSources })
-  updatedCodeGenJson.dependencies.local.push(helperPath)
 
   fs.writeFileSync(path.join(base, "elm.codegen.json"), codeGenJsonToString(updatedCodeGenJson))
 
@@ -489,29 +477,6 @@ function isLocal(pkg: string) {
   return pkg.endsWith(".json") || pkg.endsWith(path.sep) || pkg.endsWith(".elm")
 }
 
-function copyHelpers(codeGenJson: CodeGenJson, options: Options) {
-  // create output directory if it doesn't exist
-  fs.mkdirSync(options.output, { recursive: true })
-  // copy over all local dependencies
-  for (const item of codeGenJson.dependencies.local) {
-    if (item.endsWith(".elm")) {
-      fs.writeFileSync(path.join(options.output, item), fs.readFileSync(item).toString())
-    } else if (item.endsWith(path.sep)) {
-      if (fs.existsSync(item)) {
-        getFilesWithin(item, ".elm").forEach((elmPath) => {
-          const relative = path.relative(item, elmPath)
-          const targetFilePath = path.join(options.output, relative)
-          const targetDir = path.dirname(targetFilePath)
-          if (!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir, { recursive: true })
-          }
-          fs.writeFileSync(targetFilePath, fs.readFileSync(elmPath).toString())
-        })
-      }
-    }
-  }
-}
-
 export async function run_install(pkg: string, version: string | null) {
   const install_dir = getCodeGenJsonDir()
   let codeGenJson = getCodeGenJson(install_dir)
@@ -581,7 +546,6 @@ export async function run(elmFile: string, options: Options) {
   const moduleName = path.parse(elmFile).name
   const install_dir = getCodeGenJsonDir()
   let codeGenJson = getCodeGenJson(install_dir)
-  copyHelpers(codeGenJson, options)
   generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags)
 }
 
@@ -683,16 +647,6 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
   }
 
   const moduleName = path.parse(elmFile).name
-
-  // Copy locally installed helpers
-  const install_dir = getCodeGenJsonDir()
-  let codeGenJson = getCodeGenJson(install_dir)
-  copyHelpers(codeGenJson, {
-    debug: options.debug,
-    output: options.output,
-    flags: flags,
-    cwd: null,
-  })
 
   if (options.watch) {
     //         clear(output)
