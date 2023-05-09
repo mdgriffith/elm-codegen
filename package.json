@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "description": "Codegen for Elm",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
     "elm-codegen": "./bin/elm-codegen"
   },
