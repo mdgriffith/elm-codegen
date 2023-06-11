@@ -12,7 +12,7 @@ module Elm exposing
     , withDocumentation
     , expose, exposeWith
     , fileWith, docs
-    , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
+    , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
     , customType, Variant, variant, variantWith
     , alias
     , portIncoming, portOutgoing
@@ -68,7 +68,7 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 ## Functions
 
-@docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
+@docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
 
 
 ## Custom Types
