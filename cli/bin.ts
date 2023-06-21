@@ -13,7 +13,7 @@ Make sure to check out the ${chalk.yellow("guides")}:
     https://github.com/mdgriffith/elm-codegen#check-out-the-guide
 `
 
-program.version("0.3.0").name("elm-codegen").addHelpText("before", helpText)
+program.version("0.4.0").name("elm-codegen").addHelpText("before", helpText)
 
 program
   .command("init")
