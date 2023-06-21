@@ -271,8 +271,6 @@ async function install_package(
 
   const docs = await get_docs(pkg, version)
 
-  // let codeGenJson = getCodeGenJson(install_dir)
-
   if (codeGenJson.version != currentVersion) {
     console.log(
       chalk.cyan("elm.codegen.json") +
