@@ -39,6 +39,7 @@ program
   )
   .argument("[package]")
   .argument("[version]")
+  .option("--cwd <dir>", "The directory where your elm.codegen.json lives should go.", ".")
   .action(Run.run_install)
 
 program
@@ -55,6 +56,7 @@ program
   .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
   .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)
   .option("--output <dir>", "The directory where your generated files should go.", "generated")
+  .option("--cwd <dir>", "The base directory where the elm.json lives for your generator.", ".")
   .option(
     "--flags-from <file>",
     "The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json."

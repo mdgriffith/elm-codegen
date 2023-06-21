@@ -314,11 +314,11 @@ type CodeGenJson = {
   dependencies: { packages: { [key: string]: string }; local: string[] }
 }
 
-function getCodeGenJsonDir(): string {
-  if (fs.existsSync("elm.codegen.json")) {
-    return "."
-  } else if (fs.existsSync("codegen/elm.codegen.json")) {
-    return "codegen"
+function getCodeGenJsonDir(cwd: string): string {
+  if (fs.existsSync(path.join(cwd, "elm.codegen.json"))) {
+    return cwd
+  } else if (fs.existsSync(path.join(cwd, "codegen", "elm.codegen.json"))) {
+    return path.join(cwd, "codegen")
   }
 
   console.log(
@@ -477,8 +477,12 @@ function isLocal(pkg: string) {
   return pkg.endsWith(".json") || pkg.endsWith(path.sep) || pkg.endsWith(".elm")
 }
 
-export async function run_install(pkg: string, version: string | null) {
-  const install_dir = getCodeGenJsonDir()
+export type InstallOptions = {
+  cwd: string
+}
+
+export async function run_install(pkg: string, version: string | null, options: InstallOptions) {
+  const install_dir = getCodeGenJsonDir(options.cwd)
   let codeGenJson = getCodeGenJson(install_dir)
   const codeGenJsonPath = path.join(install_dir, "elm.codegen.json")
   if (!!pkg) {
@@ -539,13 +543,11 @@ export type Options = {
   debug: boolean
   output: string
   flags: unknown
-  cwd: string | null
+  cwd: string
 }
 
 export async function run(elmFile: string, options: Options) {
   const moduleName = path.parse(elmFile).name
-  const install_dir = getCodeGenJsonDir()
-  let codeGenJson = getCodeGenJson(install_dir)
   generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags)
 }
 
