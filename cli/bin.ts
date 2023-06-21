@@ -39,7 +39,7 @@ program
   )
   .argument("[package]")
   .argument("[version]")
-  .option("--cwd <dir>", "The directory where your elm.codegen.json lives should go.", ".")
+  .option("--cwd <dir>", "The directory where your elm.codegen.json lives.", ".")
   .action(Run.run_install)
 
 program
