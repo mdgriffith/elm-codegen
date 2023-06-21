@@ -209,7 +209,7 @@ Each exposed item is grouped based on the string used in [exposeWith](#exposeWit
 **aliases** allow you to specify a module alias to be used.
 
     Elm.fileWith [ "MyModule" ]
-        { docs = Elm.docs
+        { docs = List.map Elm.docs
         , aliases =
             [ ( [ "Json", "Encode" ], "Encode" )
             ]
