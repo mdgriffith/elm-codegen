@@ -6,14 +6,14 @@ module Elm.Pattern exposing
     , tuple, triple
     , err, ok
     , record1, record2, record3, record4, record5, record6, record7, record8, record9
-    , map
     , variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
-    , list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+    , emptyList, list1, list2, list3, list4, list5, list6, list7, list8, list9
     , Sequence, sequence, addToSequence, toUncons, toListPattern
     , CustomType, withVariantParam, customType, buildCustomType
     , Record
-    , buildRecord, record, withField
+    , record, withField, buildRecord
     , aliasAs
+    , map
     )
 
 {-|
@@ -51,11 +51,6 @@ module Elm.Pattern exposing
 @docs record1, record2, record3, record4, record5, record6, record7, record8, record9
 
 
-## Mapping
-
-@docs map
-
-
 ## Custom Types
 
 @docs variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, variant9
@@ -63,12 +58,12 @@ module Elm.Pattern exposing
 
 ## Lists
 
-@docs list0, list1, list2, list3, list4, list5, list6, list7, list8, list9
+@docs emptyList, list1, list2, list3, list4, list5, list6, list7, list8, list9
 
 
 ## Sequence Builder
 
-The `list0` through `list9` helpers are the easiest way to define a list pattern. Sometimes you want to pattern match
+The `emptyList` through `list9` helpers are the easiest way to define a list pattern. Sometimes you want to pattern match
 using the cons operator (`::`). List pattern matches allow you to match an exact number of list items, whereas uncons
 pattern matches allow you to match a list with `n` or more items.
 
@@ -86,12 +81,17 @@ These helpers let you define a Custom Type pattern with a builder.
 
 @docs Record
 
-@docs buildRecord, record, withField
+@docs record, withField, buildRecord
 
 
 ## Alias (`as`)
 
 @docs aliasAs
+
+
+## Mapping
+
+@docs map
 
 -}
 
@@ -685,7 +685,7 @@ sequence fn =
 {-| Matches an empty List.
 
     example =
-        Pattern.list0
+        Pattern.emptyList
             (Elm.string "Zero")
             |> Elm.Case.fromPattern
 
@@ -695,8 +695,8 @@ Results in
         [] -> "Zero
 
 -}
-list0 : value -> Pattern value
-list0 combine =
+emptyList : value -> Pattern value
+emptyList combine =
     Sequence [] combine
         |> toListPattern
 
