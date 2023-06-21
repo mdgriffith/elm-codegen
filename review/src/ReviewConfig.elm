@@ -44,7 +44,7 @@ config =
     --    { document = onlyExposed
     --    , from = exposedModules
     --    }
-    --, Docs.ReviewLinksAndSections.rule
+    , Docs.ReviewLinksAndSections.rule
     --, Docs.ReviewAtDocs.rule
     --, Docs.UpToDateReadmeLinks.rule
     --, NoDebug.Log.rule
