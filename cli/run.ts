@@ -421,6 +421,11 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
 
   const emptyCodeGenJson = codeGenJsonDefault()
 
+  // Make sure ./Gen exists
+  fs.mkdirSync(path.join(install_dir, "Gen"), { recursive: true })
+  // Remove everything from it if there is anything
+  clear(path.join(install_dir, "Gen"))
+
   for (let [key, version] of Object.entries(codeGenJson.dependencies.packages)) {
     // `version` is a string
     // install_package returns a new CodeGenJson,
@@ -429,11 +434,6 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
     // @ts-ignore
     await install_package(key, install_dir, version, emptyCodeGenJson)
   }
-
-  // Make sure ./Gen exists
-  fs.mkdirSync(path.join(install_dir, "Gen"), { recursive: true })
-  // Remove everything from it if there is anything
-  clear(path.join(install_dir, "Gen"))
 
   // Add the runner helper file
   const genFolderPath = path.join(install_dir, "Gen", "CodeGen")
