@@ -1,6 +1,5 @@
 module Elm.Let exposing
     ( letIn, value, Let
-    , destructure
     , tuple
     , record
     , fn, fn2, fn3
@@ -34,8 +33,6 @@ Will translate into
 
 
 # Destructing values
-
-@docs destructure
 
 @docs tuple
 
@@ -600,7 +597,7 @@ record :
     List String
     -> Expression
     -> Let (List Expression -> a)
-    -> Let a --Let (List Expression)
+    -> Let a
 record fields recordExp sourceLet =
     -- Note, we can't actually guard the field names against collision here
     -- They have to be the actual field names in the record, duh.

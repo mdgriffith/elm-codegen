@@ -1,7 +1,6 @@
 module Elm.Case exposing
     ( maybe, result, list, string
     , tuple, triple
-    , fromPattern
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
     , branchWith
@@ -33,11 +32,6 @@ Generates
 @docs maybe, result, list, string
 
 @docs tuple, triple
-
-
-## Patterns
-
-@docs fromPattern
 
 
 ## Case on a Custom Type
