@@ -424,7 +424,7 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
   // Make sure ./Gen exists
   fs.mkdirSync(path.join(install_dir, "Gen"), { recursive: true })
   // Remove everything from it if there is anything
-  clear(path.join(install_dir, "Gen"))
+  // clear(path.join(install_dir, "Gen"))
 
   for (let [key, version] of Object.entries(codeGenJson.dependencies.packages)) {
     // `version` is a string
