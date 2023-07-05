@@ -32,7 +32,8 @@
     "play:install-list": "(npm run build; cd play; node ../bin/elm-codegen install elm-community/list-extra)",
     "play:install-css": "(npm run build; cd play; node ../bin/elm-codegen install rtfeldman/elm-css)",
     "play:install-browser": "(npm run build; cd play; node ../bin/elm-codegen install elm/browser)",
-    "play-watch": "(npm run build; cd play; node ../bin/elm-codegen run --debug --watch)"
+    "play-watch": "(npm run build; cd play; node ../bin/elm-codegen run --debug --watch)",
+    "review": "elm-review"
   },
   "files": [
     "dist",
