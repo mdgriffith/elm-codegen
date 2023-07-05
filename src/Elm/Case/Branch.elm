@@ -31,8 +31,8 @@ The general usage looks something like this
             , Branch.variant1 "FormSubmitted" (Branch.record2 Tuple.pair "id" "isValid") <|
                 \( id, isValid ) ->
                     Elm.ifThen isValue
-                        (Elm.string "ID is valid")
-                        (Elm.string "ID is NOT valid")
+                        (Elm.string "Form is valid")
+                        (Elm.string "Form is NOT valid")
             ]
 
 Which generates
@@ -41,12 +41,12 @@ Which generates
         ButtonClicked id ->
             "Button " ++ id ++ " was clicked!"
 
-        ButtonClicked { id, isValid } ->
+        FormSubmitted { id, isValid } ->
             if isValid then
-                "ID is valid"
+                "Form is valid"
 
             else
-                "ID is NOT valid"
+                "Form is NOT valid"
 
 @docs Branch, Pattern, map
 
@@ -56,7 +56,7 @@ Which generates
 @docs var
 
 
-## Exact Matches (No Variables)
+## Exact Matches
 
 @docs unit, ignore
 
@@ -702,14 +702,14 @@ aliasAs name combine (Branch.Branch branch) =
 
 {-| Pattern match with a literal Int.
 
-    example =
-        Elm.Case.Branch.variant1 "Just" (Elm.Case.Branch.int 2)
+    import Elm.Case.Branch as Branch
+
+    Branch.just (Branch.int 2 (Elm.int 5))
 
 Results in
 
-    case value of
-        Just 2 ->
-            2
+    Just 2 ->
+        5
 
 -}
 int : Int -> value -> Pattern value
@@ -719,15 +719,19 @@ int i value =
 
 {-| This is the most basic kind of pattern - it matches anything and gives it a variable name.
 
-    example =
-        Elm.Case.Branch.variant1 "Username"
-            (Elm.Case.Branch.var "username")
-            |> Elm.Case.Branch.map
-                (\username ->
-                    Elm.Op.append
-                        (Elm.string "Hello ")
-                        username
-                )
+    import Elm.Case.Branch as Branch
+
+
+    Branch.variant1 "Username" (Branch.var "username") <|
+        \username ->
+            Elm.Op.append
+                (Elm.string "Hello ")
+                username
+
+Results in
+
+    Username username ->
+        "Hello " ++ username
 
 -}
 var : String -> Pattern Expression
@@ -885,14 +889,14 @@ listWithRemaining { patterns, gather, startWith, remaining, finally } =
         )
 
 
-{-| `Ok` variant. A simple helper of `variant1 "Ok"`.
+{-| The `Ok` value for a `Result`
 -}
 ok : Pattern ok -> Pattern ok
 ok pattern =
     variant1 "Ok" pattern identity
 
 
-{-| `Err` variant. A simple helper of `variant1 "Err"`.
+{-| The `Err` value of a result.
 -}
 err : Pattern err -> Pattern err
 err pattern =
