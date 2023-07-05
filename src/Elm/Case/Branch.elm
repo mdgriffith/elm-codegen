@@ -13,7 +13,38 @@ module Elm.Case.Branch exposing
     , aliasAs
     )
 
-{-|
+{-| This module is for creating more advanced pattern matches in your case expressions.
+
+The general usage looks something like this
+
+    import Elm.Case as Case
+    import Elm.Case.Branch as Branch
+
+    example =
+        Case.custom myValue
+            (Elm.Annotation.named [] "Msg")
+            -- Define all the branches in your case
+            [ Branch.variant1 "ButtonClicked" (Branch.var "id") <|
+                \id -> Elm.string ("Button " ++ id ++ " was clicked!")
+            , Branch.variant1 "FormSubmitted" (Branch.record2 "id" "isValid" Tuple.pair) <|
+                \( id, isValid ) ->
+                    Elm.ifThen isValue
+                        (Elm.string (id ++ " is valid"))
+                        (Elm.string (id ++ " is NOT valid"))
+            ]
+
+Which generates
+
+    case myValue of
+        ButtonClicked id ->
+            "Button " ++ id ++ " was clicked!"
+
+        ButtonClicked { id, isValid } ->
+            if isValid then
+                id ++ " is valid"
+
+            else
+                id ++ " is NOT valid"
 
 @docs Branch, Pattern, map
 
@@ -112,12 +143,11 @@ ignore =
 {-| Matches a literal String.
 
     example =
-        Pattern.variant1 "Just" (Pattern.string "admin")
-            |> Pattern.map
-                (\kind ->
+        Branch.just (Branch.string "admin")
+            |> Branch.map
+                (\str ->
                     Elm.string "This user is an admin!"
                 )
-            |> Elm.Case.fromPattern
 
 Results in
 
@@ -152,10 +182,10 @@ record0 value =
 
 {-| -}
 record1 :
-    (Expression -> record)
-    -> String
+    String
+    -> (Expression -> record)
     -> Pattern record
-record1 combine field1 =
+record1 field1 combine =
     record combine
         |> withField field1
         |> buildRecord
@@ -462,9 +492,9 @@ variant0 variantName value =
 
 
 {-| -}
-variant1 : String -> Pattern a -> Pattern a
-variant1 variantName pattern =
-    customType variantName (\a -> a)
+variant1 : String -> Pattern value -> (value -> result) -> Pattern result
+variant1 variantName pattern mapper =
+    customType variantName mapper
         |> withParam pattern
         |> toPattern
 
@@ -827,22 +857,22 @@ listWithRemaining gather start patterns (Branch toRemaining) =
 {-| `Ok` variant. A simple helper of `variant1 "Ok"`.
 -}
 ok : Pattern ok -> Pattern ok
-ok =
-    variant1 "Ok"
+ok pattern =
+    variant1 "Ok" pattern identity
 
 
 {-| `Err` variant. A simple helper of `variant1 "Err"`.
 -}
 err : Pattern err -> Pattern err
-err =
-    variant1 "Err"
+err pattern =
+    variant1 "Err" pattern identity
 
 
 {-| `Just` variant.
 -}
 just : Pattern just -> Pattern just
-just =
-    variant1 "Ok"
+just pattern =
+    variant1 "Just" pattern identity
 
 
 {-| `Err` variant. A simple helper of `variant1 "Err"`.
