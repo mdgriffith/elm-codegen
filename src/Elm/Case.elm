@@ -67,28 +67,15 @@ Generates
 import Dict exposing (Dict)
 import Elm exposing (Expression)
 import Elm.Annotation as Type
-import Elm.Pattern
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
+import Internal.Branch exposing (Branch, Pattern(..))
 import Internal.Compiler as Compiler
 import Internal.Debug as Debug
 import Internal.Format as Format
 import Internal.Index as Index
-import Internal.Pattern exposing (Pattern(..))
-
-
-{-| -}
-fromPattern : Elm.Pattern.Pattern Expression -> Branch
-fromPattern (Pattern pattern destructure) =
-    Branch
-        (\index ->
-            ( Index.startIndex
-            , pattern
-            , destructure
-            )
-        )
 
 
 captureCase :
