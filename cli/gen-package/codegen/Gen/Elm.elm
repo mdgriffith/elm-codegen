@@ -1,13 +1,12 @@
-module Gen.Elm exposing (alias, annotation_, apply, bool, call_, char, comment, customType, declaration, docs, expose, exposeWith, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, hex, ifThen, int, just, list, make_, maybe, moduleName_, nothing, parse, portIncoming, portOutgoing, record, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, value, values_, variant, variantWith, withDocumentation, withType)
+module Gen.Elm exposing (alias, annotation_, apply, bool, call_, char, comment, customType, declaration, docs, expose, exposeWith, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, hex, ifThen, int, just, list, make_, maybe, moduleName_, nothing, parse, portIncoming, portOutgoing, record, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, val, value, values_, variant, variantWith, withDocumentation, withType)
 
 {-| 
-@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, portIncoming, portOutgoing, parse, unsafe, apply, value, unwrap, unwrapper, annotation_, make_, call_, values_
+@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 
 
 import Elm
 import Elm.Annotation as Type
-import Tuple
 
 
 {-| The name of this module. -}
@@ -610,8 +609,13 @@ Each exposed item is grouped based on the string used in [exposeWith](#exposeWit
 
 **aliases** allow you to specify a module alias to be used.
 
-    aliases =
-        [ ( [ "Json", "Encode" ], "Encode" )
+    Elm.fileWith [ "MyModule" ]
+        { docs = List.map Elm.docs
+        , aliases =
+            [ ( [ "Json", "Encode" ], "Encode" )
+            ]
+        }
+        [-- whatever declarations you desire.
         ]
 
 would make an import statement like
@@ -1476,7 +1480,7 @@ variantWith variantWithArg variantWithArg0 =
         [ Elm.string variantWithArg, Elm.list variantWithArg0 ]
 
 
-{-| A custom type declaration.
+{-| A type alias declaration.
 
     import Elm.Annotation as Type
 
@@ -1671,6 +1675,24 @@ apply applyArg applyArg0 =
         [ applyArg, Elm.list applyArg0 ]
 
 
+{-| val: String -> Elm.Expression -}
+val : String -> Elm.Expression
+val valArg =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "val"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+        )
+        [ Elm.string valArg ]
+
+
 {-| value: 
     { importFrom : List String
     , name : String
@@ -1796,7 +1818,17 @@ annotation_ =
             "File"
             []
             (Type.record
-                [ ( "path", Type.string ), ( "contents", Type.string ) ]
+                [ ( "path", Type.string )
+                , ( "contents", Type.string )
+                , ( "warnings"
+                  , Type.list
+                        (Type.record
+                            [ ( "declaration", Type.string )
+                            , ( "warning", Type.string )
+                            ]
+                        )
+                  )
+                ]
             )
     , expression =
         Type.alias
@@ -1816,7 +1848,11 @@ annotation_ =
 
 make_ :
     { file :
-        { path : Elm.Expression, contents : Elm.Expression } -> Elm.Expression
+        { path : Elm.Expression
+        , contents : Elm.Expression
+        , warnings : Elm.Expression
+        }
+        -> Elm.Expression
     }
 make_ =
     { file =
@@ -1827,12 +1863,23 @@ make_ =
                     "File"
                     []
                     (Type.record
-                        [ ( "path", Type.string ), ( "contents", Type.string ) ]
+                        [ ( "path", Type.string )
+                        , ( "contents", Type.string )
+                        , ( "warnings"
+                          , Type.list
+                                (Type.record
+                                    [ ( "declaration", Type.string )
+                                    , ( "warning", Type.string )
+                                    ]
+                                )
+                          )
+                        ]
                     )
                 )
                 (Elm.record
                     [ Tuple.pair "path" file_args.path
                     , Tuple.pair "contents" file_args.contents
+                    , Tuple.pair "warnings" file_args.warnings
                     ]
                 )
     }
@@ -1910,6 +1957,7 @@ call_ :
     , parse : Elm.Expression -> Elm.Expression
     , unsafe : Elm.Expression -> Elm.Expression
     , apply : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , val : Elm.Expression -> Elm.Expression
     , value : Elm.Expression -> Elm.Expression
     , unwrap :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -2923,6 +2971,21 @@ call_ =
                     }
                 )
                 [ applyArg, applyArg0 ]
+    , val =
+        \valArg ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm" ]
+                    , name = "val"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.string ]
+                                (Type.namedWith [ "Elm" ] "Expression" [])
+                            )
+                    }
+                )
+                [ valArg ]
     , value =
         \valueArg ->
             Elm.apply
@@ -3031,6 +3094,7 @@ values_ :
     , parse : Elm.Expression
     , unsafe : Elm.Expression
     , apply : Elm.Expression
+    , val : Elm.Expression
     , value : Elm.Expression
     , unwrap : Elm.Expression
     , unwrapper : Elm.Expression
@@ -3859,6 +3923,17 @@ values_ =
                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
+    , val =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "val"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
     , value =
         Elm.value
             { importFrom = [ "Elm" ]
@@ -3908,5 +3983,3 @@ values_ =
                     )
             }
     }
-
-

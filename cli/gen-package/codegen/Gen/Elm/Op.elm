@@ -386,8 +386,8 @@ gte gteArg gteArg0 =
 {-| `|>`
 
     Elm.value "thang"
-        |> Elm.pipe (Elm.value "thang2")
-        |> Elm.pipe (Elm.value "thang3")
+        |> Elm.Op.pipe (Elm.value "thang2")
+        |> Elm.Op.pipe (Elm.value "thang3")
 
 Results in
 
@@ -1243,5 +1243,3 @@ values_ =
                     )
             }
     }
-
-

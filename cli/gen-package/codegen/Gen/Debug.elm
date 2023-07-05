@@ -194,5 +194,3 @@ values_ =
             , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
             }
     }
-
-

@@ -7,7 +7,6 @@ module Gen.Platform exposing (annotation_, call_, moduleName_, sendToApp, sendTo
 
 import Elm
 import Elm.Annotation as Type
-import Tuple
 
 
 {-| The name of this module. -}
@@ -420,5 +419,3 @@ values_ =
                     )
             }
     }
-
-

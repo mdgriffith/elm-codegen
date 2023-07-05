@@ -7,7 +7,6 @@ module Gen.Elm.Case exposing (annotation_, branch0, branch1, branch2, branch3, b
 
 import Elm
 import Elm.Annotation as Type
-import Tuple
 
 
 {-| The name of this module. -}
@@ -1066,7 +1065,13 @@ branchList branchListArg branchListArg0 =
 
 annotation_ : { branch : Type.Annotation }
 annotation_ =
-    { branch = Type.namedWith [ "Elm", "Case" ] "Branch" [] }
+    { branch =
+        Type.alias
+            moduleName_
+            "Branch"
+            []
+            (Type.namedWith [ "Internal", "Branch" ] "Branch" [])
+    }
 
 
 call_ :
@@ -2291,5 +2296,3 @@ values_ =
                     )
             }
     }
-
-

@@ -1,7 +1,7 @@
-module Gen.Elm.Annotation exposing (alias, annotation_, bool, call_, char, dict, extensible, float, function, int, list, maybe, moduleName_, named, namedWith, record, result, set, string, toString, triple, tuple, unit, values_, var)
+module Gen.Elm.Annotation exposing (alias, annotation_, bool, call_, char, cmd, dict, extensible, float, function, int, list, maybe, moduleName_, named, namedWith, record, result, set, string, sub, toString, triple, tuple, unit, values_, var)
 
 {-| 
-@docs moduleName_, var, bool, int, float, string, char, unit, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, alias, function, toString, annotation_, call_, values_
+@docs moduleName_, var, bool, int, float, string, char, unit, cmd, sub, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, alias, function, toString, annotation_, call_, values_
 -}
 
 
@@ -100,6 +100,44 @@ unit =
         , annotation =
             Just (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
         }
+
+
+{-| cmd: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
+cmd : Elm.Expression -> Elm.Expression
+cmd cmdArg =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "cmd"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
+            }
+        )
+        [ cmdArg ]
+
+
+{-| sub: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
+sub : Elm.Expression -> Elm.Expression
+sub subArg =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "sub"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
+            }
+        )
+        [ subArg ]
 
 
 {-| named: List String -> String -> Elm.Annotation.Annotation -}
@@ -486,6 +524,8 @@ annotation_ =
 
 call_ :
     { var : Elm.Expression -> Elm.Expression
+    , cmd : Elm.Expression -> Elm.Expression
+    , sub : Elm.Expression -> Elm.Expression
     , named : Elm.Expression -> Elm.Expression -> Elm.Expression
     , namedWith :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -528,6 +568,52 @@ call_ =
                     }
                 )
                 [ varArg ]
+    , cmd =
+        \cmdArg ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm", "Annotation" ]
+                    , name = "cmd"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
+                                ]
+                                (Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
+                                )
+                            )
+                    }
+                )
+                [ cmdArg ]
+    , sub =
+        \subArg ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm", "Annotation" ]
+                    , name = "sub"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
+                                ]
+                                (Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
+                                )
+                            )
+                    }
+                )
+                [ subArg ]
     , named =
         \namedArg namedArg0 ->
             Elm.apply
@@ -902,6 +988,8 @@ values_ :
     , string : Elm.Expression
     , char : Elm.Expression
     , unit : Elm.Expression
+    , cmd : Elm.Expression
+    , sub : Elm.Expression
     , named : Elm.Expression
     , namedWith : Elm.Expression
     , maybe : Elm.Expression
@@ -970,6 +1058,30 @@ values_ =
             , name = "unit"
             , annotation =
                 Just (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            }
+    , cmd =
+        Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "cmd"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
+            }
+    , sub =
+        Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "sub"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
             }
     , named =
         Elm.value
@@ -1182,5 +1294,3 @@ values_ =
                     )
             }
     }
-
-

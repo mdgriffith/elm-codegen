@@ -12,7 +12,7 @@ import Elm.Annotation as Type
 {-| The name of this module. -}
 moduleName_ : List String
 moduleName_ =
-    [ "Platform", "Cmd" ]
+    [ "Cmd" ]
 
 
 {-| Tell the runtime that there are no commands.
@@ -22,7 +22,7 @@ none: Platform.Cmd.Cmd msg
 none : Elm.Expression
 none =
     Elm.value
-        { importFrom = [ "Platform", "Cmd" ]
+        { importFrom = [ "Cmd" ]
         , name = "none"
         , annotation = Just (Type.namedWith [] "Cmd" [ Type.var "msg" ])
         }
@@ -42,7 +42,7 @@ batch : List Elm.Expression -> Elm.Expression
 batch batchArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
+            { importFrom = [ "Cmd" ]
             , name = "batch"
             , annotation =
                 Just
@@ -70,7 +70,7 @@ map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map mapArg mapArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
+            { importFrom = [ "Cmd" ]
             , name = "map"
             , annotation =
                 Just
@@ -87,7 +87,7 @@ map mapArg mapArg0 =
 
 annotation_ : { cmd : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { cmd = \cmdArg0 -> Type.namedWith [] "Cmd" [ cmdArg0 ] }
+    { cmd = \cmdArg0 -> Type.namedWith [ "Cmd" ] "Cmd" [ cmdArg0 ] }
 
 
 call_ :
@@ -99,7 +99,7 @@ call_ =
         \batchArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Platform", "Cmd" ]
+                    { importFrom = [ "Cmd" ]
                     , name = "batch"
                     , annotation =
                         Just
@@ -116,7 +116,7 @@ call_ =
         \mapArg mapArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Platform", "Cmd" ]
+                    { importFrom = [ "Cmd" ]
                     , name = "map"
                     , annotation =
                         Just
@@ -139,13 +139,13 @@ values_ :
 values_ =
     { none =
         Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
+            { importFrom = [ "Cmd" ]
             , name = "none"
             , annotation = Just (Type.namedWith [] "Cmd" [ Type.var "msg" ])
             }
     , batch =
         Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
+            { importFrom = [ "Cmd" ]
             , name = "batch"
             , annotation =
                 Just
@@ -157,7 +157,7 @@ values_ =
             }
     , map =
         Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
+            { importFrom = [ "Cmd" ]
             , name = "map"
             , annotation =
                 Just
@@ -169,5 +169,3 @@ values_ =
                     )
             }
     }
-
-

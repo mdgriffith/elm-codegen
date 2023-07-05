@@ -294,5 +294,3 @@ values_ =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
     }
-
-

@@ -1,7 +1,7 @@
-module Gen.Elm.Let exposing (call_, fn, fn2, fn3, letIn, moduleName_, record, toExpression, tuple, value, values_)
+module Gen.Elm.Let exposing (annotation_, call_, fn, fn2, fn3, letIn, moduleName_, record, toExpression, tuple, value, values_)
 
 {-| 
-@docs moduleName_, letIn, value, tuple, record, fn, fn2, fn3, toExpression, call_, values_
+@docs moduleName_, letIn, value, tuple, record, fn, fn2, fn3, toExpression, annotation_, call_, values_
 -}
 
 
@@ -385,6 +385,11 @@ toExpression toExpressionArg =
             }
         )
         [ toExpressionArg ]
+
+
+annotation_ : { let_ : Type.Annotation -> Type.Annotation }
+annotation_ =
+    { let_ = \letArg0 -> Type.namedWith [ "Elm", "Let" ] "Let" [ letArg0 ] }
 
 
 call_ :
@@ -1007,5 +1012,3 @@ values_ =
                     )
             }
     }
-
-
