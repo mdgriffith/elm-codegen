@@ -655,8 +655,8 @@ custom mainExpression annotation branches =
 
 
 {-| -}
-type Branch
-    = Branch (Index.Index -> ( Index.Index, Pattern.Pattern, Expression ))
+type alias Branch =
+    Internal.Branch.Branch
 
 
 {-| -}

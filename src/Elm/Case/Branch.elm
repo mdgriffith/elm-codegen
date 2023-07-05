@@ -25,7 +25,7 @@ The general usage looks something like this
             (Elm.Annotation.named [] "Msg")
             -- Define all the branches in your case
             [ Branch.variant1 "ButtonClicked" (Branch.var "id") <|
-                \id -> Elm.string ("Button " ++ id ++ " was clicked!")
+                \id -> Elm.Op.append id (Elm.string " was clicked!")
 
             -- A branch which also destructures a record
             , Branch.variant1 "FormSubmitted" (Branch.record2 Tuple.pair "id" "isValid") <|
@@ -87,6 +87,29 @@ Which generates
 
 
 ## Records
+
+This will help destructure record fields if you know what fields you want.
+
+Here's an example using an intermediate record to help us out!
+
+    {-| We define a record to help us out!
+    -}
+    type alias Details =
+        { id : Elm.Expression
+        , name : Elm.Expression
+        }
+
+    Case.custom (Elm.val "msg") (Type.named [] "Msg")
+        [ Branch.variant1 "ButtonClicked" (Branch.record2 Details "id" "name") <|
+            \{ id, name } ->
+               Elm.tuple id name
+        ]
+
+Which generates
+
+    case msg of
+        ButtonClicked { id, name } ->
+            ( id, name )
 
 @docs record0, record1, record2, record3, record4, record5, record6, record7, record8, record9
 
@@ -175,7 +198,8 @@ type Record a
     = Record (Index.Index -> ( Index.Index, Set String, a ))
 
 
-{-| -}
+{-| An empty record pattern!
+-}
 record0 : record -> Pattern record
 record0 value =
     record value
@@ -184,36 +208,22 @@ record0 value =
 
 {-| -}
 record1 :
-    String
-    -> (Expression -> record)
+    (Expression -> record)
+    -> String
     -> Pattern record
-record1 field1 combine =
+record1 combine field1 =
     record combine
         |> withField field1
         |> buildRecord
 
 
-{-|
-
-    example =
-        Elm.Case.Branch.record2 "first" "last" <|
-            \first last ->
-                Elm.Op.append first last
-
-Results in
-
-    result =
-        case { first = "Jane", last = "Doe" } of
-            { first, last } ->
-                first ++ last
-
--}
+{-| -}
 record2 :
-    String
+    (Expression -> Expression -> combined)
     -> String
-    -> (Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record2 field1 field2 combine =
+record2 combine field1 field2 =
     record combine
         |> withField field1
         |> withField field2
@@ -222,12 +232,12 @@ record2 field1 field2 combine =
 
 {-| -}
 record3 :
-    String
+    (Expression -> Expression -> Expression -> combined)
     -> String
     -> String
-    -> (Expression -> Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record3 field1 field2 field3 combine =
+record3 combine field1 field2 field3 =
     record combine
         |> withField field1
         |> withField field2
@@ -237,13 +247,13 @@ record3 field1 field2 field3 combine =
 
 {-| -}
 record4 :
-    String
+    (Expression -> Expression -> Expression -> Expression -> combined)
     -> String
     -> String
     -> String
-    -> (Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record4 field1 field2 field3 field4 combine =
+record4 combine field1 field2 field3 field4 =
     record combine
         |> withField field1
         |> withField field2
@@ -254,14 +264,14 @@ record4 field1 field2 field3 field4 combine =
 
 {-| -}
 record5 :
-    String
+    (Expression -> Expression -> Expression -> Expression -> Expression -> combined)
     -> String
     -> String
     -> String
     -> String
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record5 field1 field2 field3 field4 field5 combine =
+record5 combine field1 field2 field3 field4 field5 =
     record combine
         |> withField field1
         |> withField field2
@@ -273,15 +283,15 @@ record5 field1 field2 field3 field4 field5 combine =
 
 {-| -}
 record6 :
-    String
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
     -> String
     -> String
     -> String
     -> String
     -> String
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record6 field1 field2 field3 field4 field5 field6 combine =
+record6 combine field1 field2 field3 field4 field5 field6 =
     record combine
         |> withField field1
         |> withField field2
@@ -294,16 +304,16 @@ record6 field1 field2 field3 field4 field5 field6 combine =
 
 {-| -}
 record7 :
-    String
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
     -> String
     -> String
     -> String
     -> String
     -> String
     -> String
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record7 field1 field2 field3 field4 field5 field6 field7 combine =
+record7 combine field1 field2 field3 field4 field5 field6 field7 =
     record combine
         |> withField field1
         |> withField field2
@@ -317,7 +327,7 @@ record7 field1 field2 field3 field4 field5 field6 field7 combine =
 
 {-| -}
 record8 :
-    String
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
     -> String
     -> String
     -> String
@@ -325,9 +335,9 @@ record8 :
     -> String
     -> String
     -> String
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record8 field1 field2 field3 field4 field5 field6 field7 field8 combine =
+record8 combine field1 field2 field3 field4 field5 field6 field7 field8 =
     record combine
         |> withField field1
         |> withField field2
@@ -342,7 +352,7 @@ record8 field1 field2 field3 field4 field5 field6 field7 field8 combine =
 
 {-| -}
 record9 :
-    String
+    (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
     -> String
     -> String
     -> String
@@ -351,9 +361,9 @@ record9 :
     -> String
     -> String
     -> String
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> combined)
+    -> String
     -> Pattern combined
-record9 field1 field2 field3 field4 field5 field6 field7 field8 field9 combine =
+record9 combine field1 field2 field3 field4 field5 field6 field7 field8 field9 =
     record combine
         |> withField field1
         |> withField field2
@@ -749,17 +759,24 @@ map mapFn pattern =
 Could be represented like
 
     Branch.list
-        (\string gathered ->
-            string ++ gathered
-        )
-        [ Branch.string "first"
-        , Branch.string "second"
-        ]
-        |> Branch.map Elm.string
+        { patterns =
+            [ Branch.string "first"
+            , Branch.string "second"
+            ]
+        , gather = \item gathered -> item :: gathered
+        , startWith = []
+        , finally = Elm.string
+        }
 
 -}
-list : (item -> gathered -> gathered) -> gathered -> List (Pattern item) -> Pattern gathered
-list gather start patterns =
+list :
+    { patterns : List (Pattern item)
+    , gather : item -> gathered -> gathered
+    , startWith : gathered
+    , finally : gathered -> list
+    }
+    -> Pattern list
+list { patterns, gather, startWith, finally } =
     Branch.Branch
         (\startIndex ->
             let
@@ -775,7 +792,7 @@ list gather start patterns =
                             , gather value gathered
                             )
                         )
-                        ( startIndex, [], start )
+                        ( startIndex, [], startWith )
                         patterns
             in
             ( finalIndex
@@ -786,6 +803,7 @@ list gather start patterns =
             , finalGathered
             )
         )
+        |> map finally
 
 
 reverseAndNodify : List Pattern.Pattern -> List (Node Pattern.Pattern)
@@ -803,29 +821,39 @@ reverseAndNodify items =
 So, something like this:
 
     "first" :: "second" :: remaining ->
-        "firstsecond"
+        remaining
 
 Could be represented like
 
     Branch.listWithRemaining
-        (\string gathered ->
-            string ++ gathered
-        )
-        [ Branch.string "first"
-        , Branch.string "second"
-        ]
-        (Branch.var "remaining")
-        |> Branch.map
-            (\( string, remaining ) ->
-                Elm.string string
-            )
+        { patterns =
+            [ Branch.string "first"
+            , Branch.string "second"
+            ]
+        , remaining = Branch.var "remaining"
+        , gather = \item gathered -> item :: gathered
+        , startWith = []
+        , finally =
+            \gathered remaining ->
+                remaining
+        }
 
 -}
-listWithRemaining : (item -> gathered -> gathered) -> gathered -> List (Pattern item) -> Pattern remaining -> Pattern ( gathered, remaining )
-listWithRemaining gather start patterns (Branch toRemaining) =
+listWithRemaining :
+    { patterns : List (Pattern item)
+    , remaining : Pattern remaining
+    , gather : item -> gathered -> gathered
+    , startWith : gathered
+    , finally : gathered -> remaining -> list
+    }
+    -> Pattern list
+listWithRemaining { patterns, gather, startWith, remaining, finally } =
     Branch.Branch
         (\startIndex ->
             let
+                (Branch toRemaining) =
+                    remaining
+
                 ( restIndex, restPattern, remainingValue ) =
                     toRemaining startIndex
 
@@ -841,7 +869,7 @@ listWithRemaining gather start patterns (Branch toRemaining) =
                             , gather value gathered
                             )
                         )
-                        ( startIndex, [], start )
+                        ( startIndex, [], startWith )
                         patterns
             in
             ( finalIndex
@@ -852,9 +880,7 @@ listWithRemaining gather start patterns (Branch toRemaining) =
                 )
                 restPattern
                 itemPatterns
-            , ( finalGathered
-              , remainingValue
-              )
+            , finally finalGathered remainingValue
             )
         )
 
