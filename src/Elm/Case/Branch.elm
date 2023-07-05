@@ -28,11 +28,11 @@ The general usage looks something like this
                 \id -> Elm.string ("Button " ++ id ++ " was clicked!")
 
             -- A branch which also destructures a record
-            , Branch.variant1 "FormSubmitted" (Branch.record2 "id" "isValid" Tuple.pair) <|
+            , Branch.variant1 "FormSubmitted" (Branch.record2 Tuple.pair "id" "isValid") <|
                 \( id, isValid ) ->
                     Elm.ifThen isValue
-                        (Elm.string (id ++ " is valid"))
-                        (Elm.string (id ++ " is NOT valid"))
+                        (Elm.string "ID is valid")
+                        (Elm.string "ID is NOT valid")
             ]
 
 Which generates
@@ -43,10 +43,10 @@ Which generates
 
         ButtonClicked { id, isValid } ->
             if isValid then
-                id ++ " is valid"
+                "ID is valid"
 
             else
-                id ++ " is NOT valid"
+                "ID is NOT valid"
 
 @docs Branch, Pattern, map
 
@@ -678,14 +678,14 @@ aliasAs name combine (Branch.Branch branch) =
                 ( newIndex, pattern, destructured ) =
                     branch index
 
-                ( finalIndex, finalName, nameExpression ) =
-                    Compiler.var newIndex name
+                aliased =
+                    Compiler.toVarMaybeType newIndex name Nothing
             in
-            ( finalIndex
+            ( aliased.index
             , Pattern.AsPattern
                 (Compiler.nodify pattern)
-                (Compiler.nodify finalName)
-            , combine nameExpression destructured
+                (Compiler.nodify aliased.name)
+            , combine aliased.val destructured
             )
         )
 
@@ -725,10 +725,13 @@ var name =
     Branch.Branch
         (\index ->
             let
-                ( newIndex, sanitizedName, exp ) =
-                    Compiler.var Index.startIndex name
+                variable =
+                    Compiler.toVarMaybeType index name Nothing
             in
-            ( newIndex, Pattern.VarPattern sanitizedName, exp )
+            ( variable.index
+            , Pattern.VarPattern variable.name
+            , variable.val
+            )
         )
 
 
@@ -870,15 +873,13 @@ err pattern =
     variant1 "Err" pattern identity
 
 
-{-| `Just` variant.
--}
+{-| -}
 just : Pattern just -> Pattern just
 just pattern =
     variant1 "Just" pattern identity
 
 
-{-| `Err` variant. A simple helper of `variant1 "Err"`.
--}
+{-| -}
 nothing : value -> Pattern value
 nothing value =
     variant0 "Nothing" value

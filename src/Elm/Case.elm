@@ -237,16 +237,16 @@ maybe mainExpression branches =
                                 case branches.just of
                                     ( justVarName, toReturn ) ->
                                         let
-                                            ( justIndex, justName, justExp ) =
-                                                Compiler.var branchIndex justVarName
+                                            just =
+                                                Compiler.toVarMaybeType branchIndex justVarName Nothing
                                         in
-                                        ( justIndex
+                                        ( just.index
                                         , Pattern.NamedPattern
                                             { moduleName = []
                                             , name = "Just"
                                             }
-                                            [ Compiler.nodify (Pattern.VarPattern justName) ]
-                                        , toReturn justExp
+                                            [ Compiler.nodify (Pattern.VarPattern just.name) ]
+                                        , toReturn just.val
                                         )
                             )
                         ]
@@ -301,18 +301,18 @@ tuple mainExpression oneName twoName branches =
                         [ Branch
                             (\branchIndex ->
                                 let
-                                    ( firstIndex, firstName, firstExp ) =
-                                        Compiler.var branchIndex oneName
+                                    first =
+                                        Compiler.toVarMaybeType branchIndex oneName Nothing
 
-                                    ( secondIndex, secondName, secondExp ) =
-                                        Compiler.var firstIndex twoName
+                                    second =
+                                        Compiler.toVarMaybeType first.index twoName Nothing
                                 in
-                                ( secondIndex
+                                ( second.index
                                 , Pattern.TuplePattern
-                                    [ Compiler.nodify (Pattern.VarPattern firstName)
-                                    , Compiler.nodify (Pattern.VarPattern secondName)
+                                    [ Compiler.nodify (Pattern.VarPattern first.name)
+                                    , Compiler.nodify (Pattern.VarPattern second.name)
                                     ]
-                                , branches firstExp secondExp
+                                , branches first.val second.val
                                 )
                             )
                         ]
@@ -368,22 +368,22 @@ triple mainExpression one two three branches =
                         [ Branch
                             (\branchIndex ->
                                 let
-                                    ( firstIndex, firstName, firstExp ) =
-                                        Compiler.var branchIndex one
+                                    first =
+                                        Compiler.toVarMaybeType branchIndex one Nothing
 
-                                    ( secondIndex, secondName, secondExp ) =
-                                        Compiler.var firstIndex two
+                                    second =
+                                        Compiler.toVarMaybeType first.index two Nothing
 
-                                    ( thirdIndex, thirdName, thirdExp ) =
-                                        Compiler.var secondIndex three
+                                    third =
+                                        Compiler.toVarMaybeType second.index three Nothing
                                 in
-                                ( thirdIndex
+                                ( third.index
                                 , Pattern.TuplePattern
-                                    [ Compiler.nodify (Pattern.VarPattern firstName)
-                                    , Compiler.nodify (Pattern.VarPattern secondName)
-                                    , Compiler.nodify (Pattern.VarPattern thirdName)
+                                    [ Compiler.nodify (Pattern.VarPattern first.name)
+                                    , Compiler.nodify (Pattern.VarPattern second.name)
+                                    , Compiler.nodify (Pattern.VarPattern third.name)
                                     ]
-                                , branches firstExp secondExp thirdExp
+                                , branches first.val second.val third.val
                                 )
                             )
                         ]
@@ -447,13 +447,13 @@ result mainExpression branches =
                                 case branches.ok of
                                     ( okNameStr, toOk ) ->
                                         let
-                                            ( okIndex, okName, okExp ) =
-                                                Compiler.var branchIndex okNameStr
+                                            ok =
+                                                Compiler.toVarMaybeType branchIndex okNameStr Nothing
                                         in
-                                        ( okIndex
+                                        ( ok.index
                                         , Pattern.NamedPattern { moduleName = [], name = "Ok" }
-                                            [ Compiler.nodify (Pattern.VarPattern okName) ]
-                                        , toOk okExp
+                                            [ Compiler.nodify (Pattern.VarPattern ok.name) ]
+                                        , toOk ok.val
                                         )
                             )
                         , Branch
@@ -461,13 +461,13 @@ result mainExpression branches =
                                 case branches.err of
                                     ( errNameStr, toErr ) ->
                                         let
-                                            ( errIndex, errName, errExp ) =
-                                                Compiler.var branchIndex errNameStr
+                                            err =
+                                                Compiler.toVarMaybeType branchIndex errNameStr Nothing
                                         in
-                                        ( errIndex
+                                        ( err.index
                                         , Pattern.NamedPattern { moduleName = [], name = "Err" }
-                                            [ Compiler.nodify (Pattern.VarPattern errName) ]
-                                        , toErr errExp
+                                            [ Compiler.nodify (Pattern.VarPattern err.name) ]
+                                        , toErr err.val
                                         )
                             )
                         ]
@@ -586,19 +586,19 @@ list mainExpression branches =
                         , Branch
                             (\branchIndex ->
                                 let
-                                    ( topIndex, topName, topExp ) =
-                                        Compiler.var branchIndex "top"
+                                    top =
+                                        Compiler.toVarMaybeType branchIndex "top" Nothing
 
-                                    ( remainIndex, remainName, remainExp ) =
-                                        Compiler.var topIndex "remaining"
+                                    remaining =
+                                        Compiler.toVarMaybeType branchIndex "remaining" Nothing
                                 in
-                                ( remainIndex
+                                ( remaining.index
                                 , Pattern.UnConsPattern
-                                    (Compiler.nodify (Pattern.VarPattern topName))
-                                    (Compiler.nodify (Pattern.VarPattern remainName))
+                                    (Compiler.nodify (Pattern.VarPattern top.name))
+                                    (Compiler.nodify (Pattern.VarPattern remaining.name))
                                 , branches.nonEmpty
-                                    topExp
-                                    remainExp
+                                    top.val
+                                    remaining.val
                                 )
                             )
                         ]
@@ -678,12 +678,12 @@ otherwise toExp =
     Branch
         (\index ->
             let
-                ( otherwiseIndex, otherwiseName, otherwiseExp ) =
-                    Compiler.var index "otherwise"
+                other =
+                    Compiler.toVarMaybeType index "otherwise" Nothing
             in
-            ( otherwiseIndex
-            , Pattern.VarPattern otherwiseName
-            , toExp otherwiseExp
+            ( other.index
+            , Pattern.VarPattern other.name
+            , toExp other.val
             )
         )
 
@@ -914,11 +914,11 @@ branchWith name arity toExp =
                         |> List.map
                             (\i ->
                                 let
-                                    ( _, varName, varExp ) =
-                                        Compiler.var index <| "arg" ++ String.fromInt i
+                                    var =
+                                        Compiler.toVarMaybeType index ("arg" ++ String.fromInt i) Nothing
                                 in
-                                ( Compiler.nodify (Pattern.VarPattern varName)
-                                , varExp
+                                ( Compiler.nodify (Pattern.VarPattern var.name)
+                                , var.val
                                 )
                             )
                         |> List.unzip
@@ -940,11 +940,11 @@ branchList arity toExp =
                     List.foldl
                         (\i ( listPattern, currentArgs ) ->
                             let
-                                ( _, varName, varExp ) =
-                                    Compiler.var index <| "arg" ++ String.fromInt i
+                                var =
+                                    Compiler.toVarMaybeType index ("arg" ++ String.fromInt i) Nothing
                             in
-                            ( Compiler.nodify (Pattern.VarPattern varName) :: listPattern
-                            , varExp :: currentArgs
+                            ( Compiler.nodify (Pattern.VarPattern var.name) :: listPattern
+                            , var.val :: currentArgs
                             )
                         )
                         ( []

@@ -438,38 +438,6 @@ toVarWithType index desiredName (Annotation ann) =
     }
 
 
-var : Index -> String -> ( Index, String, Expression )
-var index name =
-    let
-        protectedName =
-            Format.sanitize (name ++ Index.indexToString index)
-    in
-    ( Index.next index
-    , protectedName
-    , Expression
-        (\existingIndex_ ->
-            -- we ignore the given index because we are basing the name on the provided one.
-            { expression =
-                Exp.FunctionOrValue []
-                    protectedName
-            , annotation =
-                Ok
-                    { type_ =
-                        Annotation.GenericType
-                            (Format.formatValue
-                                (name ++ Index.indexToString existingIndex_)
-                            )
-                    , inferences = Dict.empty
-                    , aliases =
-                        emptyAliases
-                    }
-            , imports =
-                []
-            }
-        )
-    )
-
-
 mergeInferences :
     Dict String Annotation.TypeAnnotation
     -> Dict String Annotation.TypeAnnotation
