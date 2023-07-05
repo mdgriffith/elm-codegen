@@ -71,7 +71,7 @@ import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Branch exposing (Branch, Pattern(..))
+import Internal.Branch as Branch exposing (Branch, Pattern(..))
 import Internal.Compiler as Compiler
 import Internal.Debug as Debug
 import Internal.Format as Format
@@ -656,7 +656,7 @@ custom mainExpression annotation branches =
 
 {-| -}
 type alias Branch =
-    Internal.Branch.Branch
+    Branch.Branch
 
 
 {-| -}
