@@ -32,7 +32,7 @@ suite =
     Nothing ->
         ()
 
-    Just __1 ->
+    Just _ ->
         ()"""
         , test "tuple destructuring" <|
             \() ->
@@ -48,10 +48,10 @@ suite =
                             [ Pattern.tuple
                                 (Pattern.customType "Just"
                                     (\literalInt -> literalInt)
-                                    |> Pattern.withParam (Pattern.int 1)
+                                    |> Pattern.withParam (Pattern.int 1 1)
                                     |> Pattern.toPattern
                                 )
-                                (Pattern.just (Pattern.int 2))
+                                (Pattern.just (Pattern.int 2 2))
                                 |> Pattern.map
                                     (\( left, right ) ->
                                         Elm.int (left + right)
@@ -83,13 +83,13 @@ suite =
     ( Just left, Just right ) ->
         left + right
 
-    otherwise_1_0 ->
+    otherwise ->
         0"""
         , test "triple" <|
             \() ->
                 Elm.Case.custom (Elm.val "foo")
                     Type.unit
-                    [ Pattern.triple (Pattern.unit ()) (Pattern.var "name") (Pattern.int 123)
+                    [ Pattern.triple (Pattern.unit ()) (Pattern.var "name") (Pattern.int 123 (Elm.int 123))
                         |> Pattern.map
                             (\( (), name, literalInt ) ->
                                 Elm.unit
@@ -150,11 +150,7 @@ case { first = "Jane", last = "Doe" } of
                 Elm.Case.custom
                     Elm.nothing
                     Type.unit
-                    [ Pattern.just (Pattern.int 1)
-                        |> Pattern.map
-                            (\_ ->
-                                Elm.string "There is 1 item"
-                            )
+                    [ Pattern.just (Pattern.int 1 (Elm.string "There is 1 item"))
                     , Pattern.just
                         (Pattern.var "n")
                         |> Pattern.map
@@ -213,11 +209,7 @@ case "Hi!" of
                 \() ->
                     Elm.Case.custom (Elm.char 'z')
                         Type.unit
-                        [ Pattern.char 'z'
-                            |> Pattern.map
-                                (\_ ->
-                                    Elm.int 26
-                                )
+                        [ Pattern.char 'z' (Elm.int 26)
                         , Pattern.ignore (Elm.int 0)
                         ]
                         |> renderedAs
