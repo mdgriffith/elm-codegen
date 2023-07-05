@@ -181,16 +181,16 @@ Results in
             "This user is an admin!"
 
 -}
-string : String -> Pattern String
-string literalString =
-    Branch.pattern (Pattern.StringPattern literalString) literalString
+string : String -> value -> Pattern value
+string literalString value =
+    Branch.pattern (Pattern.StringPattern literalString) value
 
 
 {-| Matches a literal Char.
 -}
-char : Char -> Pattern Char
-char literalChar =
-    Branch.pattern (Pattern.CharPattern literalChar) literalChar
+char : Char -> a -> Pattern a
+char literalChar value =
+    Branch.pattern (Pattern.CharPattern literalChar) value
 
 
 {-| -}
@@ -712,9 +712,9 @@ Results in
             2
 
 -}
-int : Int -> Pattern Int
-int value =
-    Branch.pattern (Pattern.IntPattern value) value
+int : Int -> value -> Pattern value
+int i value =
+    Branch.pattern (Pattern.IntPattern i) value
 
 
 {-| This is the most basic kind of pattern - it matches anything and gives it a variable name.
