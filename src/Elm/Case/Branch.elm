@@ -26,6 +26,8 @@ The general usage looks something like this
             -- Define all the branches in your case
             [ Branch.variant1 "ButtonClicked" (Branch.var "id") <|
                 \id -> Elm.string ("Button " ++ id ++ " was clicked!")
+
+            -- A branch which also destructures a record
             , Branch.variant1 "FormSubmitted" (Branch.record2 "id" "isValid" Tuple.pair) <|
                 \( id, isValid ) ->
                     Elm.ifThen isValue
@@ -129,15 +131,15 @@ type alias Pattern a =
 
 
 {-| -}
-unit : Pattern ()
-unit =
-    Branch.pattern Pattern.UnitPattern ()
+unit : value -> Pattern value
+unit val =
+    Branch.pattern Pattern.UnitPattern val
 
 
 {-| -}
-ignore : Pattern ()
-ignore =
-    Branch.pattern Pattern.AllPattern ()
+ignore : value -> Pattern value
+ignore val =
+    Branch.pattern Pattern.AllPattern val
 
 
 {-| Matches a literal String.
