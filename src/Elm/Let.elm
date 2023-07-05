@@ -124,7 +124,6 @@ will generate
 import Dict
 import Elm exposing (Expression)
 import Elm.Annotation
-import Elm.Pattern
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
@@ -132,7 +131,6 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler exposing (Module)
 import Internal.Format as Format
 import Internal.Index as Index
-import Internal.Pattern exposing (Pattern(..))
 
 
 {-| -}
@@ -178,31 +176,6 @@ with (Let toScopeA) (Let toScopeAB) =
             , imports = resultA.imports ++ resultB.imports
             }
         )
-
-
-{-| -}
-destructure : Elm.Pattern.Pattern a -> Expression -> Let (a -> b) -> Let b
-destructure (Pattern pattern toDestructured) valueExpr sourceLet =
-    with
-        (Let
-            (\index ->
-                let
-                    ( finalIndex, details ) =
-                        Compiler.toExpressionDetails index valueExpr
-                in
-                { letDecls =
-                    [ Compiler.nodify <|
-                        Exp.LetDestructuring
-                            (Compiler.nodify pattern)
-                            (Compiler.nodify details.expression)
-                    ]
-                , index = finalIndex
-                , return = toDestructured
-                , imports = details.imports
-                }
-            )
-        )
-        sourceLet
 
 
 {-| -}
