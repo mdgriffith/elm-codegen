@@ -576,6 +576,42 @@ function parseJSONSafe(hopefullyJsonString: string) {
   }
 }
 
+type Tree = { [name: string]: string | Tree }
+
+function directoryToFlags(dirname: string): Tree {
+  const flags: Tree = {}
+  let dirents = fs.readdirSync(dirname, { withFileTypes: true })
+  for (const dirent of dirents) {
+    const filename = dirent.name
+    const fullName = path.resolve(dirname, filename)
+    if (dirent.isDirectory()) {
+      flags[filename] = directoryToFlags(fullName)
+    } else if (dirent.isFile()) {
+      flags[filename] = fs.readFileSync(fullName).toString()
+    }
+  }
+  return flags
+}
+
+function fileToFlags(filename: string) {
+  const flags = fs.readFileSync(filename).toString()
+
+  if (!filename.endsWith(".json")) return flags
+
+  const parsed = parseJSONSafe(flags)
+  if (parsed == null && flags.trim().toLowerCase() != "null") {
+    console.log(
+      format_block([
+        chalk.cyan("elm-codegen") + " was called with " + chalk.cyan("--flags-from"),
+        chalk.yellow(filename) + " which has a .json extension, but I wasn't able to parse it as JSON.",
+        "Is it valid JSON?",
+      ])
+    )
+    process.exit(1)
+  }
+  return parsed
+}
+
 export async function run_generation_from_cli(desiredElmFile: string | null, options: CliOptions) {
   let elmFile = "Generate.elm"
   let cwd = "./codegen"
@@ -637,21 +673,10 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
 
       process.exit(1)
     }
-    flags = fs.readFileSync(options.flagsFrom).toString()
-
-    if (options.flagsFrom.endsWith(".json")) {
-      const parsed = parseJSONSafe(flags)
-      if (parsed == null && flags.trim().toLowerCase() != "null") {
-        console.log(
-          format_block([
-            chalk.cyan("elm-codegen") + " was called with " + chalk.cyan("--flags-from"),
-            chalk.yellow(options.flagsFrom) + " which has a .json extension, but I wasn't able to parse it as JSON.",
-            "Is it valid JSON?",
-          ])
-        )
-        process.exit(1)
-      }
-      flags = parsed
+    if (fs.lstatSync(options.flagsFrom).isDirectory()) {
+      flags = directoryToFlags(path.resolve(options.flagsFrom))
+    } else {
+      flags = fileToFlags(options.flagsFrom)
     }
   } else if (options.flags) {
     flags = parseJSONSafe(options.flags)
