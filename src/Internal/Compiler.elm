@@ -320,6 +320,42 @@ toVar index desiredName =
     }
 
 
+toVarExactName :
+    Index
+    -> String
+    ->
+        { name : String
+        , typename : String
+        , val : Expression
+        , index : Index
+        }
+toVarExactName index name =
+    let
+        typename =
+            Index.protectTypeName name index
+    in
+    { name = name
+    , typename = typename
+    , index = Index.next index
+    , val =
+        Expression <|
+            \ignoredIndex_ ->
+                { expression =
+                    Exp.FunctionOrValue []
+                        name
+                , annotation =
+                    Ok
+                        { type_ =
+                            Annotation.GenericType typename
+                        , inferences = Dict.empty
+                        , aliases = emptyAliases
+                        }
+                , imports =
+                    []
+                }
+    }
+
+
 toVarMaybeType :
     Index
     -> String
