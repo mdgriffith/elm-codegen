@@ -642,13 +642,14 @@ getGenericsHelper ann =
                 recordDefinition
 
         Annotation.GenericRecord recordName recordDefinition ->
-            List.concatMap
-                (\nodedField ->
-                    case denode nodedField of
-                        ( name, field ) ->
-                            getGenericsHelper (denode field)
-                )
-                (denode recordDefinition)
+            denode recordName
+                :: List.concatMap
+                    (\nodedField ->
+                        case denode nodedField of
+                            ( name, field ) ->
+                                getGenericsHelper (denode field)
+                    )
+                    (denode recordDefinition)
 
         Annotation.FunctionTypeAnnotation one two ->
             List.concatMap getGenericsHelper
