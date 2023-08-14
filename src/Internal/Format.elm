@@ -76,4 +76,4 @@ sanitize str =
             "import_"
 
         _ ->
-            str
+            String.replace "." "" str
