@@ -221,6 +221,16 @@ case 'z' of
     _ ->
         0
 """
+            , test "dots in names" <|
+                \() ->
+                    Elm.Case.custom (Elm.char 'z')
+                        Type.unit
+                        [ Pattern.var "a.b" ]
+                        |> renderedAs """
+case 'z' of
+    ab ->
+        ab
+"""
             ]
         ]
 
