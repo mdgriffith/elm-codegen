@@ -198,15 +198,18 @@ prettyCommentPart part =
             prettyTags tags
 
 
+prettyMarkdown : String -> Doc t
 prettyMarkdown val =
     Pretty.string val
 
 
+prettyCode : String -> Doc t
 prettyCode val =
     Pretty.string val
         |> Pretty.indent 4
 
 
+prettyTags : List String -> Doc t
 prettyTags tags =
     [ Pretty.string "@docs"
     , List.map Pretty.string tags
@@ -216,7 +219,7 @@ prettyTags tags =
 
 
 partToStringAndTags : Int -> CommentPart -> ( String, List String )
-partToStringAndTags width part =
+partToStringAndTags _ part =
     case part of
         Markdown val ->
             ( val, [] )

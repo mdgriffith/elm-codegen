@@ -1872,6 +1872,13 @@ unifyOn (Annotation annDetails) res =
                         [ err ]
 
 
+unifyWithAlias :
+    AliasCache
+    -> VariableCache
+    -> Node ( ModuleName.ModuleName, String )
+    -> List (Node Annotation.TypeAnnotation)
+    -> Annotation.TypeAnnotation
+    -> Maybe ( VariableCache, Result error Annotation.TypeAnnotation )
 unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
     case getAlias typename aliases of
         Nothing ->
@@ -2228,6 +2235,17 @@ unifiableFields aliases vars one two unified =
             ( vars, Err MismatchedTypeVariables )
 
 
+getField :
+    String
+    -> Annotation.TypeAnnotation
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    ->
+        Result
+            InferenceError
+            ( Annotation.TypeAnnotation
+            , List (Node ( Node String, Node Annotation.TypeAnnotation ))
+            )
 getField name val fields captured =
     case fields of
         [] ->
@@ -2256,6 +2274,13 @@ getField name val fields captured =
                 getField name val remain (top :: captured)
 
 
+unifiableLists :
+    AliasCache
+    -> VariableCache
+    -> List (Node Annotation.TypeAnnotation)
+    -> List (Node Annotation.TypeAnnotation)
+    -> List Annotation.TypeAnnotation
+    -> ( VariableCache, Result InferenceError (List (Node Annotation.TypeAnnotation)) )
 unifiableLists aliases vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
@@ -2433,6 +2458,19 @@ unifyComparable vars comparableName two =
                 )
 
 
+resolveField :
+    Index
+    -> Annotation.TypeAnnotation
+    -> AliasCache
+    -> VariableCache
+    -> String
+    ->
+        Result
+            (List InferenceError)
+            { type_ : Annotation.TypeAnnotation
+            , inferences : VariableCache
+            , aliases : AliasCache
+            }
 resolveField index type_ aliases inferences fieldName =
     if Index.typecheck index then
         case type_ of
@@ -2639,6 +2677,7 @@ protectInference index infResult =
             Err err
 
 
+protectAnnotation : Index -> Annotation.TypeAnnotation -> Annotation.TypeAnnotation
 protectAnnotation index ann =
     case ann of
         Annotation.GenericType str ->
@@ -2674,6 +2713,7 @@ protectAnnotation index ann =
                 (mapNode (protectAnnotation index) two)
 
 
+protectField : Index -> Node ( a, Node Annotation.TypeAnnotation ) -> Node ( a, Node Annotation.TypeAnnotation )
 protectField index (Node.Node nodeRange ( nodedName, nodedType )) =
     Node.Node nodeRange
         ( nodedName

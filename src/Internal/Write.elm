@@ -382,7 +382,7 @@ prettyTopLevelExpose tlExpose =
 {-| Pretty prints a single top-level declaration.
 -}
 prettyDeclaration : Int -> Util.RenderedDeclaration -> Doc t
-prettyDeclaration width decl =
+prettyDeclaration _ decl =
     case decl of
         Util.RenderedDecl innerDecl ->
             prettyElmSyntaxDeclaration noAliases innerDecl
@@ -759,6 +759,7 @@ type alias Context =
     }
 
 
+topContext : { precedence : number, isTop : Bool, isLeftPipe : Bool }
 topContext =
     { precedence = 11
     , isTop = True
@@ -1015,7 +1016,7 @@ prettyOperatorApplication aliases indent symbol dir exprl exprr =
 
 
 prettyOperatorApplicationLeft : Aliases -> Int -> String -> InfixDirection -> Node Expression -> Node Expression -> ( Doc t, Bool )
-prettyOperatorApplicationLeft aliases indent symbol _ (Node _ exprl) (Node _ exprr) =
+prettyOperatorApplicationLeft aliases _ symbol _ (Node _ exprl) (Node _ exprr) =
     let
         context =
             { precedence = precedence symbol

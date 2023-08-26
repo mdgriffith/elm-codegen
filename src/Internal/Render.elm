@@ -3,6 +3,7 @@ module Internal.Render exposing (render)
 {-| -}
 
 import Elm.Syntax.Declaration
+import Elm.Syntax.Documentation
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Module
 import Elm.Syntax.Range as Range
@@ -194,6 +195,7 @@ dedupImports mods =
         |> List.sortBy Compiler.fullModName
 
 
+addDocs : Maybe Elm.Syntax.Documentation.Documentation -> Elm.Syntax.Declaration.Declaration -> Elm.Syntax.Declaration.Declaration
 addDocs maybeDoc decl =
     case maybeDoc of
         Nothing ->
@@ -233,6 +235,7 @@ addDocs maybeDoc decl =
                     decl
 
 
+addExposed : Compiler.Expose -> Elm.Syntax.Declaration.Declaration -> List Expose.TopLevelExpose -> List Expose.TopLevelExpose
 addExposed exposed declaration otherExposes =
     case exposed of
         Compiler.NotExposed ->

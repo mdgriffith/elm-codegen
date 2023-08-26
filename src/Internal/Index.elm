@@ -43,7 +43,7 @@ type Index
 
 
 typecheck : Index -> Bool
-typecheck (Index top tail scope check) =
+typecheck (Index _ _ _ check) =
     check
 
 
@@ -108,7 +108,7 @@ getName desiredName ((Index top tail scope check) as index) =
 
 
 protectTypeName : String -> Index -> String
-protectTypeName base ((Index top tail scope check) as index) =
+protectTypeName base ((Index _ tail _ _) as index) =
     case tail of
         [] ->
             Format.formatValue base
@@ -119,7 +119,7 @@ protectTypeName base ((Index top tail scope check) as index) =
 
 
 indexToString : Index -> String
-indexToString (Index top tail scope check) =
+indexToString (Index top tail _ _) =
     (if top == 0 then
         ""
 
