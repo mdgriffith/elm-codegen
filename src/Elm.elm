@@ -1597,9 +1597,11 @@ fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
@@ -1609,9 +1611,10 @@ fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        ]
+                        Compiler.nodifyAll
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
@@ -1650,12 +1653,15 @@ fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
@@ -1665,10 +1671,11 @@ fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        ]
+                        Compiler.nodifyAll
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
@@ -1713,15 +1720,19 @@ fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
+                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 four =
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
@@ -1731,11 +1742,12 @@ fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        , Compiler.nodify (Pattern.VarPattern four.name)
-                        ]
+                        Compiler.nodifyAll
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            , Pattern.VarPattern four.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
@@ -1786,18 +1798,23 @@ fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
+                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 four =
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
+                five : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 five =
                     Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
@@ -1807,12 +1824,13 @@ fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        , Compiler.nodify (Pattern.VarPattern four.name)
-                        , Compiler.nodify (Pattern.VarPattern five.name)
-                        ]
+                        Compiler.nodifyAll <|
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            , Pattern.VarPattern four.name
+                            , Pattern.VarPattern five.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
@@ -1869,21 +1887,27 @@ fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
+                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 four =
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
+                five : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 five =
                     Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
+                six : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 six =
                     Compiler.toVarMaybeType five.index sixBaseName maybeSixType
 
@@ -1893,13 +1917,14 @@ fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        , Compiler.nodify (Pattern.VarPattern four.name)
-                        , Compiler.nodify (Pattern.VarPattern five.name)
-                        , Compiler.nodify (Pattern.VarPattern six.name)
-                        ]
+                        Compiler.nodifyAll <|
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            , Pattern.VarPattern four.name
+                            , Pattern.VarPattern five.name
+                            , Pattern.VarPattern six.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
@@ -2034,6 +2059,7 @@ renderError err =
 declaration : String -> Expression -> Declaration
 declaration nameStr (Compiler.Expression toBody) =
     let
+        name : String
         name =
             Format.formatDeclarationName nameStr
     in
@@ -2046,15 +2072,18 @@ declaration nameStr (Compiler.Expression toBody) =
         , toBody =
             \index ->
                 let
+                    body : Compiler.ExpressionDetails
                     body =
                         toBody index
 
+                    resolvedType : Result String Annotation.TypeAnnotation
                     resolvedType =
                         body.annotation
                             |> Result.mapError renderError
                             |> Result.andThen
                                 (\sig -> Compiler.resolve index sig.inferences sig.type_)
 
+                    maybeWarning : Maybe { declaration : String, warning : String }
                     maybeWarning =
                         case resolvedType of
                             Ok _ ->
@@ -2144,6 +2173,7 @@ functionAdvanced args fullExpression =
             Compiler.expression <|
                 \index ->
                     let
+                        expr : Compiler.ExpressionDetails
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
@@ -2206,6 +2236,7 @@ function initialArgList toFullExpression =
             Compiler.expression <|
                 \index ->
                     let
+                        args : { index : Index.Index, args : List Expression, names : List String, types : List Annotation.TypeAnnotation }
                         args =
                             List.foldl
                                 (\( nameBase, maybeType ) found ->
@@ -2213,6 +2244,7 @@ function initialArgList toFullExpression =
                                         ( name, newIndex ) =
                                             Index.getName nameBase found.index
 
+                                        argType : Compiler.Annotation
                                         argType =
                                             Maybe.withDefault
                                                 (Compiler.Annotation
@@ -2228,6 +2260,7 @@ function initialArgList toFullExpression =
                                                 )
                                                 maybeType
 
+                                        arg : Expression
                                         arg =
                                             value
                                                 { importFrom = []
@@ -2248,9 +2281,11 @@ function initialArgList toFullExpression =
                                 }
                                 initialArgList
 
+                        fullExpression : Expression
                         fullExpression =
                             toFullExpression (List.reverse args.args)
 
+                        expr : Compiler.ExpressionDetails
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
@@ -2357,6 +2392,7 @@ This will give you more flexibility in the future and save you having to wire up
 portIncoming : String -> List Elm.Annotation.Annotation -> Declaration
 portIncoming nameStr args =
     let
+        name : String
         name =
             Format.formatDeclarationName nameStr
     in
@@ -2428,6 +2464,7 @@ will generate
 portOutgoing : String -> Elm.Annotation.Annotation -> Declaration
 portOutgoing nameStr arg =
     let
+        name : String
         name =
             Format.formatDeclarationName nameStr
     in
@@ -2491,6 +2528,7 @@ parse source =
                     Compiler.denode parsedFile.moduleDefinition
                         |> Elm.Syntax.Module.exposingList
 
+                declarations : List ( Int, Compiler.Declaration )
                 declarations =
                     List.map
                         (\(Node range declar) ->
@@ -2513,6 +2551,7 @@ parse source =
                         )
                         parsedFile.declarations
 
+                comments : List ( Int, Compiler.Declaration )
                 comments =
                     List.map
                         (\(Node range nodedComment) ->

@@ -97,6 +97,12 @@ captureCase mainExpression mainExpressionTypeModule index branches =
         ( branchIndex, mainExpressionDetails ) =
             Compiler.toExpressionDetails index mainExpression
 
+        caseExp :
+            { index : Index.Index
+            , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
+            , imports : List Compiler.Module
+            , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
+            }
         caseExp =
             List.foldl
                 (captureCaseHelper mainExpressionTypeModule)
@@ -145,6 +151,7 @@ captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
         ( branchIndex, originalPattern, caseExpression ) =
             toBranch (Index.dive accum.index)
 
+        pattern : Pattern.Pattern
         pattern =
             case mainCaseExpressionModule of
                 [] ->
@@ -237,6 +244,7 @@ maybe mainExpression branches =
                                     ( justVarName, toReturn ) =
                                         branches.just
 
+                                    just : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     just =
                                         Compiler.toVarMaybeType branchIndex justVarName Nothing
                                 in
@@ -301,17 +309,20 @@ tuple mainExpression oneName twoName branches =
                         [ Branch
                             (\branchIndex ->
                                 let
+                                    first : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     first =
                                         Compiler.toVarMaybeType branchIndex oneName Nothing
 
+                                    second : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     second =
                                         Compiler.toVarMaybeType first.index twoName Nothing
                                 in
                                 ( second.index
-                                , Pattern.TuplePattern
-                                    [ Compiler.nodify (Pattern.VarPattern first.name)
-                                    , Compiler.nodify (Pattern.VarPattern second.name)
-                                    ]
+                                , Pattern.TuplePattern <|
+                                    Compiler.nodifyAll
+                                        [ Pattern.VarPattern first.name
+                                        , Pattern.VarPattern second.name
+                                        ]
                                 , branches first.val second.val
                                 )
                             )
@@ -368,21 +379,25 @@ triple mainExpression one two three branches =
                         [ Branch
                             (\branchIndex ->
                                 let
+                                    first : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     first =
                                         Compiler.toVarMaybeType branchIndex one Nothing
 
+                                    second : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     second =
                                         Compiler.toVarMaybeType first.index two Nothing
 
+                                    third : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     third =
                                         Compiler.toVarMaybeType second.index three Nothing
                                 in
                                 ( third.index
-                                , Pattern.TuplePattern
-                                    [ Compiler.nodify (Pattern.VarPattern first.name)
-                                    , Compiler.nodify (Pattern.VarPattern second.name)
-                                    , Compiler.nodify (Pattern.VarPattern third.name)
-                                    ]
+                                , Pattern.TuplePattern <|
+                                    Compiler.nodifyAll
+                                        [ Pattern.VarPattern first.name
+                                        , Pattern.VarPattern second.name
+                                        , Pattern.VarPattern third.name
+                                        ]
                                 , branches first.val second.val third.val
                                 )
                             )
@@ -448,6 +463,7 @@ result mainExpression branches =
                                     ( okNameStr, toOk ) =
                                         branches.ok
 
+                                    ok : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     ok =
                                         Compiler.toVarMaybeType branchIndex okNameStr Nothing
                                 in
@@ -463,6 +479,7 @@ result mainExpression branches =
                                     ( errNameStr, toErr ) =
                                         branches.err
 
+                                    err : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     err =
                                         Compiler.toVarMaybeType branchIndex errNameStr Nothing
                                 in
@@ -502,6 +519,7 @@ string mainExpression branches =
     Compiler.Expression <|
         \index ->
             let
+                allBranches : List (Pattern Expression)
                 allBranches =
                     List.map
                         (\( caseString, caseExpression ) ->
@@ -588,9 +606,11 @@ list mainExpression branches =
                         , Branch
                             (\branchIndex ->
                                 let
+                                    top : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     top =
                                         Compiler.toVarMaybeType branchIndex "top" Nothing
 
+                                    remaining : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     remaining =
                                         Compiler.toVarMaybeType branchIndex "remaining" Nothing
                                 in
@@ -631,6 +651,7 @@ custom mainExpression annotation branches =
     Compiler.Expression <|
         \index ->
             let
+                myMain : Expression
                 myMain =
                     mainExpression |> Elm.withType annotation
 
@@ -680,6 +701,7 @@ otherwise toExp =
     Branch
         (\index ->
             let
+                other : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                 other =
                     Compiler.toVarMaybeType index "otherwise" Nothing
             in
@@ -696,16 +718,15 @@ branch1 name ( argName, argType ) toExp =
     Branch
         (\index ->
             let
-                var =
+                one : { name : String, exp : Expression, index : Index.Index }
+                one =
                     Compiler.toVarWithType index argName argType
             in
-            ( var.index
-            , Pattern.NamedPattern
-                { moduleName = []
-                , name = Format.formatType name
-                }
-                [ Compiler.nodify (Pattern.VarPattern var.name) ]
-            , toExp var.exp
+            ( one.index
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } <|
+                Compiler.nodifyAll
+                    [ Pattern.VarPattern one.name ]
+            , toExp one.exp
             )
         )
 
@@ -716,17 +737,20 @@ branch2 name ( oneName, oneType ) ( twoName, twoType ) toExp =
     Branch
         (\index ->
             let
+                one : { name : String, exp : Expression, index : Index.Index }
                 one =
                     Compiler.toVarWithType index oneName oneType
 
+                two : { name : String, exp : Expression, index : Index.Index }
                 two =
                     Compiler.toVarWithType one.index twoName twoType
             in
             ( two.index
-            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
-                [ Compiler.nodify (Pattern.VarPattern one.name)
-                , Compiler.nodify (Pattern.VarPattern two.name)
-                ]
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } <|
+                Compiler.nodifyAll
+                    [ Pattern.VarPattern one.name
+                    , Pattern.VarPattern two.name
+                    ]
             , toExp one.exp two.exp
             )
         )
@@ -744,21 +768,25 @@ branch3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
     Branch
         (\index ->
             let
+                one : { name : String, exp : Expression, index : Index.Index }
                 one =
                     Compiler.toVarWithType index oneName oneType
 
+                two : { name : String, exp : Expression, index : Index.Index }
                 two =
                     Compiler.toVarWithType one.index twoName twoType
 
+                three : { name : String, exp : Expression, index : Index.Index }
                 three =
                     Compiler.toVarWithType two.index threeName threeType
             in
             ( three.index
-            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
-                [ Compiler.nodify (Pattern.VarPattern one.name)
-                , Compiler.nodify (Pattern.VarPattern two.name)
-                , Compiler.nodify (Pattern.VarPattern three.name)
-                ]
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } <|
+                Compiler.nodifyAll
+                    [ Pattern.VarPattern one.name
+                    , Pattern.VarPattern two.name
+                    , Pattern.VarPattern three.name
+                    ]
             , toExp one.exp two.exp three.exp
             )
         )
@@ -777,25 +805,30 @@ branch4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
     Branch
         (\index ->
             let
+                one : { name : String, exp : Expression, index : Index.Index }
                 one =
                     Compiler.toVarWithType index oneName oneType
 
+                two : { name : String, exp : Expression, index : Index.Index }
                 two =
                     Compiler.toVarWithType one.index twoName twoType
 
+                three : { name : String, exp : Expression, index : Index.Index }
                 three =
                     Compiler.toVarWithType two.index threeName threeType
 
+                four : { name : String, exp : Expression, index : Index.Index }
                 four =
                     Compiler.toVarWithType three.index fourName fourType
             in
             ( four.index
-            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
-                [ Compiler.nodify (Pattern.VarPattern one.name)
-                , Compiler.nodify (Pattern.VarPattern two.name)
-                , Compiler.nodify (Pattern.VarPattern three.name)
-                , Compiler.nodify (Pattern.VarPattern four.name)
-                ]
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } <|
+                Compiler.nodifyAll
+                    [ Pattern.VarPattern one.name
+                    , Pattern.VarPattern two.name
+                    , Pattern.VarPattern three.name
+                    , Pattern.VarPattern four.name
+                    ]
             , toExp one.exp two.exp three.exp four.exp
             )
         )
@@ -822,29 +855,35 @@ branch5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
     Branch
         (\index ->
             let
+                one : { name : String, exp : Expression, index : Index.Index }
                 one =
                     Compiler.toVarWithType index oneName oneType
 
+                two : { name : String, exp : Expression, index : Index.Index }
                 two =
                     Compiler.toVarWithType one.index twoName twoType
 
+                three : { name : String, exp : Expression, index : Index.Index }
                 three =
                     Compiler.toVarWithType two.index threeName threeType
 
+                four : { name : String, exp : Expression, index : Index.Index }
                 four =
                     Compiler.toVarWithType three.index fourName fourType
 
+                five : { name : String, exp : Expression, index : Index.Index }
                 five =
                     Compiler.toVarWithType four.index fiveName fiveType
             in
             ( five.index
-            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
-                [ Compiler.nodify (Pattern.VarPattern one.name)
-                , Compiler.nodify (Pattern.VarPattern two.name)
-                , Compiler.nodify (Pattern.VarPattern three.name)
-                , Compiler.nodify (Pattern.VarPattern four.name)
-                , Compiler.nodify (Pattern.VarPattern five.name)
-                ]
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } <|
+                Compiler.nodifyAll
+                    [ Pattern.VarPattern one.name
+                    , Pattern.VarPattern two.name
+                    , Pattern.VarPattern three.name
+                    , Pattern.VarPattern four.name
+                    , Pattern.VarPattern five.name
+                    ]
             , toExp one.exp two.exp three.exp four.exp five.exp
             )
         )
@@ -873,33 +912,40 @@ branch6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
     Branch
         (\index ->
             let
+                one : { name : String, exp : Expression, index : Index.Index }
                 one =
                     Compiler.toVarWithType index oneName oneType
 
+                two : { name : String, exp : Expression, index : Index.Index }
                 two =
                     Compiler.toVarWithType one.index twoName twoType
 
+                three : { name : String, exp : Expression, index : Index.Index }
                 three =
                     Compiler.toVarWithType two.index threeName threeType
 
+                four : { name : String, exp : Expression, index : Index.Index }
                 four =
                     Compiler.toVarWithType three.index fourName fourType
 
+                five : { name : String, exp : Expression, index : Index.Index }
                 five =
                     Compiler.toVarWithType four.index fiveName fiveType
 
+                six : { name : String, exp : Expression, index : Index.Index }
                 six =
                     Compiler.toVarWithType four.index sixName sixType
             in
             ( six.index
-            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name }
-                [ Compiler.nodify (Pattern.VarPattern one.name)
-                , Compiler.nodify (Pattern.VarPattern two.name)
-                , Compiler.nodify (Pattern.VarPattern three.name)
-                , Compiler.nodify (Pattern.VarPattern four.name)
-                , Compiler.nodify (Pattern.VarPattern five.name)
-                , Compiler.nodify (Pattern.VarPattern six.name)
-                ]
+            , Pattern.NamedPattern { moduleName = [], name = Format.formatType name } <|
+                Compiler.nodifyAll
+                    [ Pattern.VarPattern one.name
+                    , Pattern.VarPattern two.name
+                    , Pattern.VarPattern three.name
+                    , Pattern.VarPattern four.name
+                    , Pattern.VarPattern five.name
+                    , Pattern.VarPattern six.name
+                    ]
             , toExp one.exp two.exp three.exp four.exp five.exp six.exp
             )
         )
@@ -916,6 +962,7 @@ branchWith name arity toExp =
                         |> List.map
                             (\i ->
                                 let
+                                    var : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                     var =
                                         Compiler.toVarMaybeType index ("arg" ++ String.fromInt i) Nothing
                                 in
@@ -942,6 +989,7 @@ branchList arity toExp =
                     List.foldl
                         (\i ( listPattern, currentArgs ) ->
                             let
+                                var : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                                 var =
                                     Compiler.toVarMaybeType index ("arg" ++ String.fromInt i) Nothing
                             in
