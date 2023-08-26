@@ -247,21 +247,21 @@ expectImports expectedImports expression =
         |> Expect.equal (Set.fromList expectedImports)
 
 
-fromString =
-    \fromStringArg ->
-        Elm.apply
-            (Elm.value
-                { importFrom = [ "QueryParams" ]
-                , name = "fromString"
-                , annotation =
-                    Just
-                        (Type.function
-                            [ Type.string ]
-                            (Type.namedWith [] "QueryParams" [])
-                        )
-                }
-            )
-            [ fromStringArg ]
+fromString : Expression -> Expression
+fromString fromStringArg =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "QueryParams" ]
+            , name = "fromString"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string ]
+                        (Type.namedWith [] "QueryParams" [])
+                    )
+            }
+        )
+        [ fromStringArg ]
 
 
 renderedAs : String -> Expression -> Expect.Expectation

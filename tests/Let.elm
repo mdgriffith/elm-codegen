@@ -5,7 +5,7 @@ import Elm.Annotation as Type
 import Elm.Expect
 import Elm.Let
 import Elm.Op
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
 suite : Test

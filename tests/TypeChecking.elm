@@ -8,9 +8,10 @@ import Elm.ToString
 import Expect
 import Internal.Compiler as Compiler
 import Internal.Index as Index
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
+successfullyInferredType : Compiler.Expression -> Expect.Expectation
 successfullyInferredType expression =
     let
         ( _, details ) =
@@ -28,6 +29,7 @@ successfullyInferredType expression =
                 )
 
 
+renderedAs : Elm.Expression -> String -> Expect.Expectation
 renderedAs expression str =
     Expect.equal
         (Elm.ToString.expression expression
@@ -36,6 +38,7 @@ renderedAs expression str =
         str
 
 
+declarationAs : Elm.Declaration -> String -> Expect.Expectation
 declarationAs decl str =
     Expect.equal
         (Elm.ToString.declaration decl
@@ -218,6 +221,7 @@ map fn optional =
         ]
 
 
+myMap2 : Elm.Expression
 myMap2 =
     Elm.fn2
         ( "fn", Nothing )
@@ -227,6 +231,7 @@ myMap2 =
         )
 
 
+myMap : Elm.Expression
 myMap =
     Elm.fn2
         ( "fn", Nothing )

@@ -1,18 +1,20 @@
 module PackageHelpers exposing (suite)
 
-import Dict
+import Dict exposing (Dict)
 import Elm
 import Elm.Expect
 import Elm.Op
+import Elm.Syntax.TypeAnnotation exposing (TypeAnnotation)
 import Elm.ToString
 import Expect
 import Gen.Element
 import Gen.Maybe
 import Internal.Compiler as Compiler
 import Internal.Write
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
+detectCycles : List ( String, TypeAnnotation ) -> List Bool
 detectCycles list =
     let
         dict =
@@ -27,6 +29,7 @@ detectCycles list =
             )
 
 
+countCycles : List ( String, TypeAnnotation ) -> List number
 countCycles list =
     let
         dict =
@@ -41,6 +44,7 @@ countCycles list =
             )
 
 
+hasCycles : Dict String TypeAnnotation -> String -> List String -> Bool
 hasCycles dict key found =
     case Dict.get key dict of
         Nothing ->
@@ -58,6 +62,7 @@ hasCycles dict key found =
                 hasCycles dict val (val :: found)
 
 
+findDepth : Dict String TypeAnnotation -> String -> List String -> number -> number
 findDepth dict key found depth =
     case Dict.get key dict of
         Nothing ->
