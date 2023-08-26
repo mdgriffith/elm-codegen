@@ -1,15 +1,13 @@
 module Pattern exposing (suite)
 
 import Elm exposing (Expression)
-import Elm.Annotation as Type exposing (Annotation)
+import Elm.Annotation as Type
 import Elm.Case
 import Elm.Case.Branch as Pattern
 import Elm.Expect
-import Elm.Let
 import Elm.Op
 import Elm.ToString
 import Expect
-import Gen.Maybe
 import Gen.String
 import Internal.Compiler as Compiler
 import Internal.Index as Index

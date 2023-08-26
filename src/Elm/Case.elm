@@ -444,31 +444,33 @@ result mainExpression branches =
                         (Index.dive index)
                         [ Branch
                             (\branchIndex ->
-                                case branches.ok of
-                                    ( okNameStr, toOk ) ->
-                                        let
-                                            ok =
-                                                Compiler.toVarMaybeType branchIndex okNameStr Nothing
-                                        in
-                                        ( ok.index
-                                        , Pattern.NamedPattern { moduleName = [], name = "Ok" }
-                                            [ Compiler.nodify (Pattern.VarPattern ok.name) ]
-                                        , toOk ok.val
-                                        )
+                                let
+                                    ( okNameStr, toOk ) =
+                                        branches.ok
+
+                                    ok =
+                                        Compiler.toVarMaybeType branchIndex okNameStr Nothing
+                                in
+                                ( ok.index
+                                , Pattern.NamedPattern { moduleName = [], name = "Ok" }
+                                    [ Compiler.nodify (Pattern.VarPattern ok.name) ]
+                                , toOk ok.val
+                                )
                             )
                         , Branch
                             (\branchIndex ->
-                                case branches.err of
-                                    ( errNameStr, toErr ) ->
-                                        let
-                                            err =
-                                                Compiler.toVarMaybeType branchIndex errNameStr Nothing
-                                        in
-                                        ( err.index
-                                        , Pattern.NamedPattern { moduleName = [], name = "Err" }
-                                            [ Compiler.nodify (Pattern.VarPattern err.name) ]
-                                        , toErr err.val
-                                        )
+                                let
+                                    ( errNameStr, toErr ) =
+                                        branches.err
+
+                                    err =
+                                        Compiler.toVarMaybeType branchIndex errNameStr Nothing
+                                in
+                                ( err.index
+                                , Pattern.NamedPattern { moduleName = [], name = "Err" }
+                                    [ Compiler.nodify (Pattern.VarPattern err.name) ]
+                                , toErr err.val
+                                )
                             )
                         ]
             in

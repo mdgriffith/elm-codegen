@@ -240,12 +240,8 @@ myMap =
                     "Present"
                     ( "present", Type.var "a" )
                     (\a ->
-                        let
-                            result =
-                                present []
-                                    (Elm.apply fn [ a ])
-                        in
-                        result
+                        present []
+                            (Elm.apply fn [ a ])
                     )
                 , Elm.Case.branch0 "Null" (null [])
                 , Elm.Case.branch0 "Absent" (absent [])
@@ -255,22 +251,18 @@ myMap =
 
 present : List String -> Elm.Expression -> Elm.Expression
 present optionalModuleName a =
-    let
-        val =
-            Elm.apply
-                (Elm.value
-                    { importFrom = optionalModuleName
-                    , name = "Present"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.var "a2" ] (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ]))
+    Elm.apply
+        (Elm.value
+            { importFrom = optionalModuleName
+            , name = "Present"
+            , annotation =
+                Just
+                    (Type.function [ Type.var "a2" ] (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ]))
 
-                    -- Nothing
-                    }
-                )
-                [ a ]
-    in
-    val
+            -- Nothing
+            }
+        )
+        [ a ]
 
 
 null : List String -> Elm.Expression

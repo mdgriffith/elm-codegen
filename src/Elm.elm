@@ -1165,11 +1165,8 @@ presentAndMatching fieldName fieldInference existingFields =
             if gathered then
                 gathered
 
-            else if fieldName == existingFieldName then
-                True
-
             else
-                False
+                fieldName == existingFieldName
         )
         False
         existingFields
@@ -2584,36 +2581,43 @@ determineExposure dec exposedDec =
         Expose.Explicit nodes ->
             case dec of
                 Declaration.FunctionDeclaration myFn ->
-                    case Compiler.denode myFn.declaration of
-                        implementation ->
-                            case Compiler.denode implementation.name of
-                                name ->
-                                    if List.any (valueIsExposed name) nodes then
-                                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                    let
+                        implementation =
+                            Compiler.denode myFn.declaration
 
-                                    else
-                                        Compiler.NotExposed
+                        name =
+                            Compiler.denode implementation.name
+                    in
+                    if List.any (valueIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+
+                    else
+                        Compiler.NotExposed
 
                 Declaration.AliasDeclaration typeAlias ->
-                    case Compiler.denode typeAlias.name of
-                        name ->
-                            if List.any (typeIsExposed name) nodes then
-                                Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                    let
+                        name =
+                            Compiler.denode typeAlias.name
+                    in
+                    if List.any (typeIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
 
-                            else
-                                Compiler.NotExposed
+                    else
+                        Compiler.NotExposed
 
                 Declaration.CustomTypeDeclaration type_ ->
-                    case Compiler.denode type_.name of
-                        name ->
-                            if List.any (typeIsExposed name) nodes then
-                                Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                    let
+                        name =
+                            Compiler.denode type_.name
+                    in
+                    if List.any (typeIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
 
-                            else if List.any (typeConstructorIsExposed name) nodes then
-                                Compiler.Exposed { group = Nothing, exposeConstructor = True }
+                    else if List.any (typeConstructorIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = True }
 
-                            else
-                                Compiler.NotExposed
+                    else
+                        Compiler.NotExposed
 
                 Declaration.PortDeclaration sig ->
                     Compiler.NotExposed
