@@ -35,7 +35,7 @@ import Elm.Syntax.TypeAlias exposing (TypeAlias)
 import Elm.Syntax.TypeAnnotation exposing (RecordDefinition, RecordField, TypeAnnotation(..))
 import Hex
 import Internal.Comments as Comments
-import Internal.Compiler as Util exposing (denode, denodeAll, denodeMaybe, nodify, nodifyAll, nodifyMaybe)
+import Internal.Compiler as Util exposing (denode, denodeAll, denodeMaybe, nodify)
 import Internal.ImportsAndExposing as ImportsAndExposing
 import Pretty exposing (Doc)
 

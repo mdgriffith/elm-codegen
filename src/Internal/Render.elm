@@ -10,7 +10,7 @@ import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Index as Index
 import Internal.Write
-import Set exposing (Set)
+import Set
 
 
 {-| -}

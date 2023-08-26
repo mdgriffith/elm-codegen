@@ -219,7 +219,7 @@ value desiredName valueExpr sourceLet =
                 , index = finalIndex
                 , return =
                     Compiler.Expression
-                        (\i ->
+                        (\_ ->
                             { details
                                 | expression =
                                     Exp.FunctionOrValue []
@@ -285,7 +285,7 @@ fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
                     \callerArg ->
                         Elm.apply
                             (Compiler.Expression
-                                (\i ->
+                                (\_ ->
                                     { innerFnDetails
                                         | expression =
                                             Exp.FunctionOrValue []
@@ -366,7 +366,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                     \oneIncoming twoIncoming ->
                         Elm.apply
                             (Compiler.Expression
-                                (\i ->
+                                (\_ ->
                                     { innerFnDetails
                                         | expression =
                                             Exp.FunctionOrValue []
@@ -461,7 +461,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                     \oneIncoming twoIncoming threeIncoming ->
                         Elm.apply
                             (Compiler.Expression
-                                (\i ->
+                                (\_ ->
                                     { innerFnDetails
                                         | expression =
                                             Exp.FunctionOrValue []
@@ -584,7 +584,7 @@ record fields recordExp sourceLet =
 
                         ( finalIndex, unpackedfields ) =
                             List.foldl
-                                (\fieldName ( i, gathered ) ->
+                                (\fieldName ( _, gathered ) ->
                                     let
                                         ( gotIndex, got ) =
                                             Elm.get fieldName recordExp

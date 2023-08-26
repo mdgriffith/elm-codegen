@@ -133,7 +133,6 @@ These helpers let you define a Custom Type pattern with a builder.
 -}
 
 import Elm exposing (Expression)
-import Elm.Annotation as Type
 import Elm.Syntax.Node exposing (Node)
 import Elm.Syntax.Pattern as Pattern
 import Internal.Branch as Branch exposing (Pattern(..))
@@ -786,7 +785,7 @@ list { patterns, gather, startWith, finally } =
             let
                 ( finalIndex, itemPatterns, finalGathered ) =
                     List.foldl
-                        (\((Branch toBranch) as branch) ( index, patternList, gathered ) ->
+                        (\(Branch toBranch) ( index, patternList, gathered ) ->
                             let
                                 ( newIndex, pattern, value ) =
                                     toBranch index
@@ -863,7 +862,7 @@ listWithRemaining { patterns, gather, startWith, remaining, finally } =
 
                 ( finalIndex, itemPatterns, finalGathered ) =
                     List.foldl
-                        (\((Branch toBranch) as branch) ( index, patternList, gathered ) ->
+                        (\(Branch toBranch) ( index, patternList, gathered ) ->
                             let
                                 ( newIndex, pattern, value ) =
                                     toBranch index

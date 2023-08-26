@@ -57,25 +57,12 @@ Would generate
 
 import Dict
 import Elm exposing (Expression)
-import Elm.Annotation
-import Elm.Parser
-import Elm.Processing
-import Elm.Syntax.Declaration as Declaration exposing (Declaration(..))
-import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Infix as Infix
-import Elm.Syntax.Module
-import Elm.Syntax.Node as Node
-import Elm.Syntax.Pattern as Pattern
-import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Comments
 import Internal.Compiler as Compiler
-import Internal.Debug
 import Internal.Index as Index
 import Internal.Types
-import Internal.Write
-import Set
 
 
 
@@ -494,9 +481,6 @@ applyPipe (BinOp symbol dir _) infixAnnotation l r =
 
                 ( rightIndex, right ) =
                     Compiler.toExpressionDetails leftIndex r
-
-                annotationIndex =
-                    Index.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol
@@ -548,9 +532,6 @@ applyInfix extraImports (BinOp symbol dir _) infixAnnotation l r =
 
                 ( rightIndex, right ) =
                     Compiler.toExpressionDetails leftIndex r
-
-                annotationIndex =
-                    Index.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol

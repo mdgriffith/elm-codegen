@@ -994,14 +994,14 @@ record fields =
                                     |> Annotation.Record
                             , inferences =
                                 List.foldl
-                                    (\( name, ann ) gathered ->
+                                    (\( _, ann ) gathered ->
                                         Compiler.mergeInferences ann.inferences gathered
                                     )
                                     Dict.empty
                                     unified.fieldAnnotations
                             , aliases =
                                 List.foldl
-                                    (\( name, ann ) gathered ->
+                                    (\( _, ann ) gathered ->
                                         Compiler.mergeAliases ann.aliases gathered
                                     )
                                     Compiler.emptyAliases
@@ -1157,7 +1157,7 @@ verifyFieldsHelper existingFields updatedFields =
 
 presentAndMatching fieldName fieldInference existingFields =
     List.foldl
-        (\(Node.Node _ ( Node.Node _ existingFieldName, Node.Node _ existingFieldType )) gathered ->
+        (\(Node.Node _ ( Node.Node _ existingFieldName, Node.Node _ _ )) gathered ->
             if gathered then
                 gathered
 
@@ -1196,7 +1196,7 @@ customType name variants =
                 variants
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -1299,7 +1299,7 @@ alias name innerAnnotation =
             Compiler.getAnnotationImports innerAnnotation
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -2084,26 +2084,21 @@ declaration nameStr (Compiler.Expression toBody) =
 
                         -- (renderDebugDocumentation resolvedType body.annotation)
                         , signature =
-                            case body.annotation of
-                                Ok sig ->
-                                    case resolvedType of
-                                        Ok (Annotation.GenericType generic) ->
-                                            -- Top level values can't be lonely generic types.
-                                            Nothing
+                            case ( body.annotation, resolvedType ) of
+                                ( Ok _, Ok (Annotation.GenericType _) ) ->
+                                    -- Top level values can't be lonely generic types.
+                                    Nothing
 
-                                        Ok finalType ->
-                                            Just
-                                                (Compiler.nodify
-                                                    { name = Compiler.nodify name
-                                                    , typeAnnotation =
-                                                        Compiler.nodify (Clean.clean finalType)
-                                                    }
-                                                )
+                                ( Ok _, Ok finalType ) ->
+                                    Just
+                                        (Compiler.nodify
+                                            { name = Compiler.nodify name
+                                            , typeAnnotation =
+                                                Compiler.nodify (Clean.clean finalType)
+                                            }
+                                        )
 
-                                        Err errMsg ->
-                                            Nothing
-
-                                Err _ ->
+                                _ ->
                                     Nothing
                         , declaration =
                             case body.expression of
@@ -2153,7 +2148,7 @@ functionAdvanced args fullExpression =
                         Exp.LambdaExpression
                             { args =
                                 List.map
-                                    (\( name, ann ) -> Compiler.nodify (Pattern.VarPattern name))
+                                    (\( name, _ ) -> Compiler.nodify (Pattern.VarPattern name))
                                     args
                             , expression = Compiler.nodify expr.expression
                             }
@@ -2166,7 +2161,7 @@ functionAdvanced args fullExpression =
                                 Ok
                                     { type_ =
                                         List.foldr
-                                            (\( name, Compiler.Annotation ann ) fnbody ->
+                                            (\( _, Compiler.Annotation ann ) fnbody ->
                                                 Annotation.FunctionTypeAnnotation
                                                     (Compiler.nodify ann.annotation)
                                                     (Compiler.nodify fnbody)
@@ -2367,7 +2362,7 @@ portIncoming nameStr args =
             List.concatMap Compiler.getAnnotationImports args
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -2437,7 +2432,7 @@ portOutgoing nameStr arg =
             Compiler.getAnnotationImports arg
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -2504,7 +2499,7 @@ parse source =
                                     []
                                 , docs = Nothing
                                 , toBody =
-                                    \index ->
+                                    \_ ->
                                         { warning = Nothing
                                         , additionalImports = []
                                         , declaration =
@@ -2663,7 +2658,7 @@ typeConstructorIsExposed name node =
         Expose.InfixExpose _ ->
             False
 
-        Expose.FunctionExpose fnName ->
+        Expose.FunctionExpose _ ->
             False
 
         Expose.TypeOrAliasExpose typeName ->

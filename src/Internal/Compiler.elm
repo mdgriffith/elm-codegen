@@ -1,4 +1,4 @@
-module Internal.Compiler exposing (AliasCache, Annotation(..), AnnotationDetails, Declaration(..), DeclarationDetails, Expose(..), Expression(..), ExpressionDetails, Inference, InferenceError(..), Module, RenderedDeclaration(..), Restrictions(..), VariableCache, Visited, Warning, addAlias, addInference, applyType, denode, denodeAll, denodeMaybe, documentation, emptyAliases, expose, exposeWith, expression, facts, findAlias, fullModName, getAliases, getAnnotation, getAnnotationImports, getGenerics, getImports, getInnerAnnotation, getInnerInference, getTypeModule, importInferences, inference, inferenceErrorToString, makeImport, mergeAliases, mergeInferences, noImports, nodify, nodifyAll, nodifyMaybe, parens, resolve, resolveField, thread, toExpressionDetails, toVar, toVarExactName, toVarMaybeType, toVarWithType, unify, unifyOn)
+module Internal.Compiler exposing (AliasCache, Annotation(..), AnnotationDetails, Declaration(..), DeclarationDetails, Expose(..), Expression(..), ExpressionDetails, Inference, InferenceError(..), Module, RenderedDeclaration(..), Restrictions(..), VariableCache, Visited, Warning, addAlias, addInference, applyType, denode, denodeAll, denodeMaybe, documentation, emptyAliases, expose, exposeWith, expression, facts, findAlias, fullModName, getAliases, getAnnotation, getAnnotationImports, getGenerics, getImports, getInnerAnnotation, getInnerInference, getTypeModule, importInferences, inference, inferenceErrorToString, makeImport, mergeAliases, mergeInferences, noImports, nodify, nodifyAll, parens, resolve, resolveField, thread, toExpressionDetails, toVar, toVarExactName, toVarMaybeType, toVarWithType, unify, unifyOn)
 
 import Dict exposing (Dict)
 import Elm.Syntax.Declaration as Declaration
@@ -6,10 +6,9 @@ import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node exposing (Node(..))
-import Elm.Syntax.Range as Range exposing (emptyRange)
+import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
-import Error.Format
 import Internal.Format as Format
 import Internal.Index as Index exposing (Index)
 import Set exposing (Set)
@@ -303,7 +302,7 @@ toVar index desiredName =
     , index = newIndex
     , val =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -339,7 +338,7 @@ toVarExactName index name =
     , index = Index.next index
     , val =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -387,7 +386,7 @@ toVarMaybeType index desiredName maybeAnnotation =
     , index = newIndex
     , val =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -422,7 +421,7 @@ toVarWithType index desiredName (Annotation ann) =
     , index = newIndex
     , exp =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -1237,10 +1236,6 @@ resolveVariables visited cache annotation =
                                             Err err
 
                                         Ok resolvedField ->
-                                            let
-                                                restrictions =
-                                                    getRestrictions annotation cache
-                                            in
                                             Ok
                                                 (Node fieldRange
                                                     ( name, Node fieldTypeRange resolvedField )

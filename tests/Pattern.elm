@@ -89,7 +89,7 @@ suite =
                     Type.unit
                     [ Pattern.triple (Pattern.unit ()) (Pattern.var "name") (Pattern.int 123 (Elm.int 123))
                         |> Pattern.map
-                            (\( (), name, literalInt ) ->
+                            (\( (), _, _ ) ->
                                 Elm.unit
                             )
                     ]

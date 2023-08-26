@@ -1,9 +1,8 @@
 module Internal.Types exposing (appendable, bool, char, comparable, custom, float, function, int, list, string, var)
 
-import Elm.Syntax.Node as Node exposing (Node(..))
+import Elm.Syntax.Node exposing (Node(..))
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Compiler exposing (Annotation)
 import Internal.Format as Format
 
 

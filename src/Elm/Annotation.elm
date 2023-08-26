@@ -223,8 +223,7 @@ alias mod name vars target =
                     List.concatMap Compiler.getAnnotationImports vars
 
                 _ ->
-                    [ mod ]
-                        ++ List.concatMap Compiler.getAnnotationImports vars
+                    mod :: List.concatMap Compiler.getAnnotationImports vars
         , aliases =
             List.foldl
                 (\ann aliases ->

@@ -22,7 +22,6 @@ import Elm exposing (Declaration, Expression)
 import Elm.Annotation exposing (Annotation)
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Node as Node exposing (Node(..))
-import Elm.Writer
 import Internal.Clean as Clean
 import Internal.Compiler as Compiler
 import Internal.Index as Index
