@@ -103,6 +103,7 @@ import Elm.Processing
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
+import Elm.Syntax.File
 import Elm.Syntax.Module
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Pattern as Pattern
@@ -131,6 +132,7 @@ type alias Expression =
 toString : Expression -> String
 toString (Compiler.Expression toExp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             toExp Index.startIndex
     in
@@ -297,13 +299,12 @@ value details =
                 case details.annotation of
                     Nothing ->
                         let
+                            typename : String
                             typename =
                                 Index.protectTypeName details.name index
                         in
                         Ok
-                            { type_ =
-                                Annotation.GenericType
-                                    typename
+                            { type_ = Annotation.GenericType typename
                             , inferences = Dict.empty
                             , aliases = Compiler.emptyAliases
                             }
@@ -345,6 +346,7 @@ withType ((Compiler.Annotation annDetails) as ann) (Compiler.Expression toExp) =
     Compiler.Expression <|
         \index ->
             let
+                exp : Compiler.ExpressionDetails
                 exp =
                     toExp index
             in
@@ -387,9 +389,11 @@ unwrapper modName typename =
     Compiler.Expression <|
         \index ->
             let
+                arg : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
                 arg =
                     Compiler.toVar index "val"
 
+                return : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
                 return =
                     Compiler.toVar arg.index "unwrapped"
             in
@@ -727,6 +731,7 @@ list exprs =
     Compiler.expression <|
         \index ->
             let
+                exprDetails : List Compiler.ExpressionDetails
                 exprDetails =
                     Compiler.thread index exprs
             in
@@ -773,12 +778,14 @@ updateRecord fields recordExpression =
                         |> List.foldl
                             (\( fieldNameUnformatted, fieldExp ) ( currentIndex, fieldAnnotationResult, items ) ->
                                 let
+                                    fieldName : String
                                     fieldName =
                                         Format.formatValue fieldNameUnformatted
 
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails currentIndex fieldExp
 
+                                    currentFieldAnnotations : Result (List Compiler.InferenceError) (List ( String, Compiler.Inference ))
                                     currentFieldAnnotations =
                                         case fieldAnnotationResult of
                                             Ok fieldAnns ->
@@ -820,6 +827,7 @@ updateRecord fields recordExpression =
 
                     _ ->
                         let
+                            name : String
                             name =
                                 "record" ++ Index.indexToString fieldIndex
                         in
@@ -920,6 +928,7 @@ record fields =
     Compiler.expression <|
         \index ->
             let
+                unified : { index : Index.Index, fields : List ( Node String, Node Exp.Expression ), passed : Set.Set String, errors : List Compiler.InferenceError, fieldAnnotations : List ( String, Compiler.Inference ), imports : List Compiler.Module }
                 unified =
                     fields
                         |> List.foldl
@@ -928,6 +937,7 @@ record fields =
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails found.index fieldExpression
 
+                                    fieldName : String
                                     fieldName =
                                         Format.formatValue unformattedFieldName
                                 in
@@ -1090,6 +1100,7 @@ get unformattedFieldName recordExpression =
     Compiler.Expression <|
         \index ->
             let
+                fieldName : String
                 fieldName =
                     Format.formatValue unformattedFieldName
 
@@ -1148,23 +1159,16 @@ verifyFieldsHelper existingFields updatedFields =
             True
 
         ( fieldName, fieldInference ) :: remain ->
-            if presentAndMatching fieldName fieldInference existingFields then
-                verifyFieldsHelper existingFields remain
-
-            else
-                False
+            presentAndMatching fieldName fieldInference existingFields
+                && verifyFieldsHelper existingFields remain
 
 
-presentAndMatching fieldName fieldInference existingFields =
-    List.foldl
-        (\(Node.Node _ ( Node.Node _ existingFieldName, _ )) gathered ->
-            if gathered then
-                gathered
-
-            else
-                fieldName == existingFieldName
+presentAndMatching : String -> Compiler.Inference -> List (Node Annotation.RecordField) -> Bool
+presentAndMatching fieldName _ existingFields =
+    List.any
+        (\(Node.Node _ ( Node.Node _ existingFieldName, _ )) ->
+            fieldName == existingFieldName
         )
-        False
         existingFields
 
 
@@ -1324,6 +1328,7 @@ apply fnExp argExpressions =
                 ( annotationIndex, fnDetails ) =
                     Compiler.toExpressionDetails index fnExp
 
+                args : List Compiler.ExpressionDetails
                 args =
                     Compiler.thread annotationIndex argExpressions
             in
@@ -1390,12 +1395,14 @@ fn ( oneBaseName, maybeAnnotation ) toExpression =
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeAnnotation
 
                 (Compiler.Expression toExpr) =
                     toExpression one.val
 
+                return : Compiler.ExpressionDetails
                 return =
                     toExpr one.index
             in
@@ -1445,9 +1452,11 @@ functionReduced argBaseName toExpression =
                 ( arg1Name, newIndex ) =
                     Index.getName argBaseName index
 
+                argType : Elm.Annotation.Annotation
                 argType =
                     Elm.Annotation.var arg1Name
 
+                arg1 : Expression
                 arg1 =
                     value
                         { importFrom = []
@@ -1458,6 +1467,7 @@ functionReduced argBaseName toExpression =
                 (Compiler.Expression toExpr) =
                     toExpression arg1
 
+                return : Compiler.ExpressionDetails
                 return =
                     toExpr newIndex
             in
@@ -1504,6 +1514,7 @@ popLastAndDenodeLast lst =
 betaReduce : Exp.Expression -> Exp.Expression
 betaReduce e =
     let
+        extractLastArg : Exp.Expression -> Maybe String
         extractLastArg arg =
             case arg of
                 Exp.FunctionOrValue [] n ->
@@ -1982,6 +1993,7 @@ sep =
     "\n----\n"
 
 
+renderDebugDocumentation : Result String value -> Result (List Compiler.InferenceError) Compiler.Inference -> Maybe String
 renderDebugDocumentation resolvedType bodyAnnotation =
     case resolvedType of
         Ok _ ->
@@ -2388,6 +2400,7 @@ portIncoming nameStr args =
         }
 
 
+groupAnn : Node Annotation.TypeAnnotation -> Node Annotation.TypeAnnotation
 groupAnn ann =
     Annotation.Tupled
         [ ann ]
@@ -2468,10 +2481,12 @@ parse source =
 
         Ok raw ->
             let
+                parsedFile : Elm.Syntax.File.File
                 parsedFile =
                     Elm.Processing.process elmProcessContext
                         raw
 
+                exposedList : Expose.Exposing
                 exposedList =
                     Compiler.denode parsedFile.moduleDefinition
                         |> Elm.Syntax.Module.exposingList
@@ -2516,6 +2531,7 @@ parse source =
                 }
 
 
+decName : Declaration.Declaration -> Maybe String
 decName decBody =
     case decBody of
         Declaration.FunctionDeclaration func ->
@@ -2559,9 +2575,11 @@ determineExposure dec exposedDec =
             case dec of
                 Declaration.FunctionDeclaration myFn ->
                     let
+                        implementation : Exp.FunctionImplementation
                         implementation =
                             Compiler.denode myFn.declaration
 
+                        name : String
                         name =
                             Compiler.denode implementation.name
                     in
@@ -2573,6 +2591,7 @@ determineExposure dec exposedDec =
 
                 Declaration.AliasDeclaration typeAlias ->
                     let
+                        name : String
                         name =
                             Compiler.denode typeAlias.name
                     in
@@ -2584,6 +2603,7 @@ determineExposure dec exposedDec =
 
                 Declaration.CustomTypeDeclaration type_ ->
                     let
+                        name : String
                         name =
                             Compiler.denode type_.name
                     in
