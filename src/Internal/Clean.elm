@@ -20,6 +20,7 @@ import Set exposing (Set)
 clean : Type.TypeAnnotation -> Type.TypeAnnotation
 clean ann =
     let
+        renames : Dict String String
         renames =
             prepareRename ann Set.empty
                 |> verify
@@ -33,6 +34,7 @@ verify set =
     Set.foldl
         (\name gathered ->
             let
+                newName : String
                 newName =
                     findClean 0 (sanitized name) set
             in
@@ -45,6 +47,7 @@ verify set =
 findClean : Int -> String -> Set String -> String
 findClean i name set =
     let
+        newName : String
         newName =
             if i == 0 then
                 name

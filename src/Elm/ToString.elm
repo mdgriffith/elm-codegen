@@ -56,6 +56,7 @@ expressionWith :
         }
 expressionWith options (Compiler.Expression toExp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             toExp Index.startIndex
     in
@@ -110,6 +111,11 @@ declarationWith options decl =
     case decl of
         Compiler.Declaration { imports, docs, toBody } ->
             let
+                rendered :
+                    { declaration : Declaration.Declaration
+                    , additionalImports : List Compiler.Module
+                    , warning : Maybe Compiler.Warning
+                    }
                 rendered =
                     toBody Index.startIndex
             in

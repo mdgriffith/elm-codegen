@@ -164,9 +164,11 @@ with (Let toScopeA) (Let toScopeAB) =
     Let
         (\index ->
             let
+                resultA : { letDecls : List (Node.Node Exp.LetDeclaration), index : Index.Index, return : a, imports : List Module }
                 resultA =
                     toScopeA index
 
+                resultB : { letDecls : List (Node.Node Exp.LetDeclaration), index : Index.Index, return : a -> b, imports : List Module }
                 resultB =
                     toScopeAB resultA.index
             in
@@ -251,6 +253,7 @@ fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
                     ( argName, thirdIndex ) =
                         Index.getName desiredArg secondIndex
 
+                    arg : Expression
                     arg =
                         Elm.value
                             { importFrom = []
@@ -323,6 +326,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                     ( twoName, fourIndex ) =
                         Index.getName twoDesiredArg thirdIndex
 
+                    one : Expression
                     one =
                         Elm.value
                             { importFrom = []
@@ -330,6 +334,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                             , name = oneName
                             }
 
+                    two : Expression
                     two =
                         Elm.value
                             { importFrom = []
@@ -409,6 +414,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                     ( threeName, fifthIndex ) =
                         Index.getName threeDesiredArg fourIndex
 
+                    one : Expression
                     one =
                         Elm.value
                             { importFrom = []
@@ -416,6 +422,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                             , name = oneName
                             }
 
+                    two : Expression
                     two =
                         Elm.value
                             { importFrom = []
@@ -423,6 +430,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                             , name = twoName
                             }
 
+                    three : Expression
                     three =
                         Elm.value
                             { importFrom = []
@@ -633,6 +641,7 @@ toExpression (Let toScope) =
     Compiler.Expression <|
         \index ->
             let
+                scope : { letDecls : List (Node.Node Exp.LetDeclaration), index : Index.Index, return : Expression, imports : List Module }
                 scope =
                     toScope index
 

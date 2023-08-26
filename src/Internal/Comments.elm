@@ -106,6 +106,7 @@ layoutTags width parts =
             case part of
                 DocTags tags ->
                     let
+                        splits : List (List String)
                         splits =
                             fitAndSplit width tags
                     in

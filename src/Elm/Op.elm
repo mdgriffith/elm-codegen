@@ -513,6 +513,7 @@ parens (Compiler.Expression toExp) =
     Compiler.Expression
         (\index ->
             let
+                exp : Compiler.ExpressionDetails
                 exp =
                     toExp index
             in
@@ -565,9 +566,11 @@ applyNumber symbol dir l r =
                 ( rightIndex, right ) =
                     Compiler.toExpressionDetails leftIndex r
 
+                annotationIndex : Index.Index
                 annotationIndex =
                     Index.next rightIndex
 
+                numberTypeName : String
                 numberTypeName =
                     Index.protectTypeName
                         "number"

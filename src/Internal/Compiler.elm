@@ -230,6 +230,7 @@ parens expr =
 facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
 facts (Expression exp) =
     let
+        expresh : ExpressionDetails
         expresh =
             exp Index.startIndex
     in
@@ -252,25 +253,21 @@ unique [ 0, 1, 1, 0, 1 ]
 -}
 unique : List a -> List a
 unique list =
-    uniqueHelp identity [] list []
+    uniqueHelp list []
 
 
-uniqueHelp : (a -> b) -> List b -> List a -> List a -> List a
-uniqueHelp f existing remaining accumulator =
+uniqueHelp : List a -> List a -> List a
+uniqueHelp remaining accumulator =
     case remaining of
         [] ->
             List.reverse accumulator
 
         first :: rest ->
-            let
-                computedFirst =
-                    f first
-            in
-            if List.member computedFirst existing then
-                uniqueHelp f existing rest accumulator
+            if List.member first accumulator then
+                uniqueHelp rest accumulator
 
             else
-                uniqueHelp f (computedFirst :: existing) rest (first :: accumulator)
+                uniqueHelp rest (first :: accumulator)
 
 
 toVar :
@@ -287,6 +284,7 @@ toVar index desiredName =
         ( name, newIndex ) =
             Index.getName desiredName index
 
+        typename : String
         typename =
             Index.protectTypeName desiredName index
     in
@@ -323,6 +321,7 @@ toVarExactName :
         }
 toVarExactName index name =
     let
+        typename : String
         typename =
             Index.protectTypeName name index
     in
