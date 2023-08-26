@@ -170,6 +170,7 @@ generatedCode =
         , test "Function, arg order isn't reversed" <|
             \_ ->
                 let
+                    exp : Elm.Expression
                     exp =
                         Elm.function
                             [ ( "str", Just Type.string )

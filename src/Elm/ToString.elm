@@ -76,17 +76,10 @@ expressionWith options (Compiler.Expression toExp) =
                         errMsg
 
             Err inferenceError ->
-                List.foldl
-                    (\err str ->
-                        case str of
-                            "" ->
-                                Compiler.inferenceErrorToString err
-
-                            _ ->
-                                str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                    )
-                    "Err: "
-                    inferenceError
+                "Err: "
+                    ++ String.join
+                        "\n\n"
+                        (List.map Compiler.inferenceErrorToString inferenceError)
     }
 
 

@@ -239,17 +239,9 @@ facts (Expression exp) =
                 |> Ok
 
         Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ inferenceErrorToString err
-                )
-                ""
-                inferenceError
+            inferenceError
+                |> List.map inferenceErrorToString
+                |> String.join "\n\n"
                 |> Err
 
 
@@ -1500,25 +1492,10 @@ rewriteTypeVariablesHelper existing renames type_ =
 {-| -}
 simplify : String -> String
 simplify fullStr =
-    String.split "_" fullStr
-        |> List.foldl
-            (\piece str ->
-                let
-                    isDigit =
-                        String.all Char.isDigit piece
-                in
-                if isDigit then
-                    str
-
-                else
-                    case str of
-                        "" ->
-                            piece
-
-                        _ ->
-                            str ++ "_" ++ piece
-            )
-            ""
+    fullStr
+        |> String.split "_"
+        |> List.filter (\piece -> not <| String.all Char.isDigit piece)
+        |> String.join "_"
 
 
 checkRestrictions : Restrictions -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation

@@ -17,9 +17,9 @@ import Test exposing (Test, describe, test)
 detectCycles : List ( String, TypeAnnotation ) -> List Bool
 detectCycles list =
     let
+        dict : Dict String TypeAnnotation
         dict =
-            list
-                |> Dict.fromList
+            Dict.fromList list
     in
     dict
         |> Dict.keys
@@ -32,9 +32,9 @@ detectCycles list =
 countCycles : List ( String, TypeAnnotation ) -> List number
 countCycles list =
     let
+        dict : Dict String TypeAnnotation
         dict =
-            list
-                |> Dict.fromList
+            Dict.fromList list
     in
     dict
         |> Dict.keys
@@ -52,14 +52,12 @@ hasCycles dict key found =
 
         Just type_ ->
             let
+                val : String
                 val =
                     Internal.Write.writeAnnotation type_
             in
-            if List.member val found then
-                True
-
-            else
-                hasCycles dict val (val :: found)
+            List.member val found
+                || hasCycles dict val (val :: found)
 
 
 findDepth : Dict String TypeAnnotation -> String -> List String -> number -> number
@@ -70,6 +68,7 @@ findDepth dict key found depth =
 
         Just type_ ->
             let
+                val : String
                 val =
                     Internal.Write.writeAnnotation type_
             in
@@ -99,10 +98,12 @@ packageHelpers =
         , test "typechecking an Element.row doesn't hang forever" <|
             \_ ->
                 let
+                    myRow : Elm.Expression
                     myRow =
                         Gen.Element.row [ Gen.Element.spacing 5 ]
                             [ Gen.Element.none ]
 
+                    layout : Elm.Expression
                     layout =
                         Gen.Element.layout []
                             (Gen.Element.column [ Gen.Element.spacing 24 ]
@@ -112,6 +113,7 @@ packageHelpers =
                                 ]
                             )
 
+                    cycles : Bool
                     cycles =
                         layout
                             |> Compiler.facts

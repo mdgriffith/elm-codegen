@@ -28,17 +28,9 @@ facts (Compiler.Expression exp) =
                 |> Ok
 
         Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            Compiler.inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                )
-                ""
-                inferenceError
+            inferenceError
+                |> List.map Compiler.inferenceErrorToString
+                |> String.join "\n\n"
                 |> Err
 
 
@@ -162,15 +154,7 @@ annotation ann =
                 }
 
         Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            Compiler.inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                )
-                ""
-                inferenceError
+            inferenceError
+                |> List.map Compiler.inferenceErrorToString
+                |> String.join "\n\n"
                 |> Err
