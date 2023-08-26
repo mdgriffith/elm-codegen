@@ -1068,18 +1068,19 @@ prettyOperatorApplicationRight aliases indent symbol _ exprl exprr =
                 innerIndent =
                     decrementIndent 4 (String.length symbol + 1)
 
-                leftIndent =
-                    if isTop then
-                        indent
-
-                    else
-                        innerIndent
-
                 rightSide =
                     denode right |> expandExpr innerIndent context
             in
             case rightSide of
                 ( hdExpr, hdBreak ) :: tl ->
+                    let
+                        leftIndent =
+                            if isTop then
+                                indent
+
+                            else
+                                innerIndent
+                    in
                     List.append (denode left |> expandExpr leftIndent context)
                         (( Pretty.string sym |> Pretty.a Pretty.space |> Pretty.a hdExpr, hdBreak ) :: tl)
 
@@ -1183,19 +1184,18 @@ prettyLiteral val =
 
 prettyTupledExpression : Aliases -> Int -> List (Node Expression) -> ( Doc t, Bool )
 prettyTupledExpression aliases indent exprs =
-    let
-        open =
-            Pretty.a Pretty.space (Pretty.string "(")
-
-        close =
-            Pretty.a (Pretty.string ")") Pretty.line
-    in
     case exprs of
         [] ->
             ( Pretty.string "()", False )
 
         _ ->
             let
+                open =
+                    Pretty.a Pretty.space (Pretty.string "(")
+
+                close =
+                    Pretty.a (Pretty.string ")") Pretty.line
+
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettyExpressionInner aliases topContext (decrementIndent indent 2)) (denodeAll exprs)
                         |> List.unzip
@@ -1323,20 +1323,19 @@ prettyLambdaExpression aliases indent lambda =
 
 prettyRecordExpr : Aliases -> List (Node RecordSetter) -> ( Doc t, Bool )
 prettyRecordExpr aliases setters =
-    let
-        open =
-            Pretty.a Pretty.space (Pretty.string "{")
-
-        close =
-            Pretty.a (Pretty.string "}")
-                Pretty.line
-    in
     case setters of
         [] ->
             ( Pretty.string "{}", False )
 
         _ ->
             let
+                open =
+                    Pretty.a Pretty.space (Pretty.string "{")
+
+                close =
+                    Pretty.a (Pretty.string "}")
+                        Pretty.line
+
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettySetter aliases) (denodeAll setters)
                         |> List.unzip
@@ -1372,19 +1371,18 @@ prettySetter aliases ( fld, val ) =
 
 prettyList : Aliases -> Int -> List (Node Expression) -> ( Doc t, Bool )
 prettyList aliases indent exprs =
-    let
-        open =
-            Pretty.a Pretty.space (Pretty.string "[")
-
-        close =
-            Pretty.a (Pretty.string "]") Pretty.line
-    in
     case exprs of
         [] ->
             ( Pretty.string "[]", False )
 
         _ ->
             let
+                open =
+                    Pretty.a Pretty.space (Pretty.string "[")
+
+                close =
+                    Pretty.a (Pretty.string "]") Pretty.line
+
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettyExpressionInner aliases topContext (decrementIndent indent 2)) (denodeAll exprs)
                         |> List.unzip
@@ -1415,17 +1413,6 @@ prettyRecordAccess aliases expr field =
 prettyRecordUpdateExpression : Aliases -> Int -> Node String -> List (Node RecordSetter) -> ( Doc t, Bool )
 prettyRecordUpdateExpression aliases indent var setters =
     let
-        open =
-            [ Pretty.string "{"
-            , Pretty.string (denode var)
-            ]
-                |> Pretty.words
-                |> Pretty.a Pretty.line
-
-        close =
-            Pretty.a (Pretty.string "}")
-                Pretty.line
-
         addBarToFirst exprs =
             case exprs of
                 [] ->
@@ -1440,6 +1427,17 @@ prettyRecordUpdateExpression aliases indent var setters =
 
         _ ->
             let
+                open =
+                    [ Pretty.string "{"
+                    , Pretty.string (denode var)
+                    ]
+                        |> Pretty.words
+                        |> Pretty.a Pretty.line
+
+                close =
+                    Pretty.a (Pretty.string "}")
+                        Pretty.line
+
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettySetter aliases) (denodeAll setters)
                         |> List.unzip
@@ -1532,18 +1530,18 @@ prettyTypeAnnotationParens aliases typeAnn =
 
 prettyRecord : Aliases -> List RecordField -> Doc t
 prettyRecord aliases fields =
-    let
-        open =
-            Pretty.a Pretty.space (Pretty.string "{")
-
-        close =
-            Pretty.a (Pretty.string "}") Pretty.line
-    in
     case fields of
         [] ->
             Pretty.string "{}"
 
         _ ->
+            let
+                open =
+                    Pretty.a Pretty.space (Pretty.string "{")
+
+                close =
+                    Pretty.a (Pretty.string "}") Pretty.line
+            in
             fields
                 |> List.map (Tuple.mapBoth denode denode)
                 |> List.map (prettyFieldTypeAnn aliases)
@@ -1555,17 +1553,6 @@ prettyRecord aliases fields =
 prettyGenericRecord : Aliases -> String -> List RecordField -> Doc t
 prettyGenericRecord aliases paramName fields =
     let
-        open =
-            [ Pretty.string "{"
-            , Pretty.string paramName
-            ]
-                |> Pretty.words
-                |> Pretty.a Pretty.line
-
-        close =
-            Pretty.a (Pretty.string "}")
-                Pretty.line
-
         addBarToFirst exprs =
             case exprs of
                 [] ->
@@ -1579,6 +1566,18 @@ prettyGenericRecord aliases paramName fields =
             Pretty.string "{}"
 
         _ ->
+            let
+                open =
+                    [ Pretty.string "{"
+                    , Pretty.string paramName
+                    ]
+                        |> Pretty.words
+                        |> Pretty.a Pretty.line
+
+                close =
+                    Pretty.a (Pretty.string "}")
+                        Pretty.line
+            in
             open
                 |> Pretty.a
                     (fields

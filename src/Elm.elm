@@ -1520,11 +1520,8 @@ betaReduce e =
             case popLastAndDenodeLast args of
                 Just ( initLambdaArgs, Pattern.VarPattern lastLambdaArg ) ->
                     case Compiler.denode expression of
-                        Exp.RecordAccess argNode fieldNode ->
+                        Exp.RecordAccess argNode (Node.Node _ fieldName) ->
                             let
-                                fieldName =
-                                    Compiler.denode fieldNode
-
                                 arg =
                                     Compiler.denode argNode
                             in

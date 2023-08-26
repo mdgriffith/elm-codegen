@@ -1131,12 +1131,12 @@ threadHelper index exps rendered =
 resolve : Index -> VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
 resolve index cache annotation =
     if Index.typecheck index then
-        let
-            restrictions =
-                getRestrictions annotation cache
-        in
         case resolveVariables Set.empty cache annotation of
             Ok newAnnotation ->
+                let
+                    restrictions =
+                        getRestrictions annotation cache
+                in
                 newAnnotation
                     |> rewriteTypeVariables
                     |> checkRestrictions restrictions
@@ -2263,14 +2263,11 @@ getField name val fields captured =
 
         top :: remain ->
             let
-                ( topFieldName, topFieldVal ) =
+                ( topFieldName, Node _ topVal ) =
                     denode top
 
                 topName =
                     denode topFieldName
-
-                topVal =
-                    denode topFieldVal
             in
             if topName == name then
                 Ok
