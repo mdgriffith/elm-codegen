@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "automatically created by": "elm-review suppress",
+  "learn more": "elm-review suppress --help",
+  "suppressions": [
+    { "count": 59, "filePath": "src/Elm.elm" },
+    { "count": 49, "filePath": "src/Internal/Write.elm" },
+    { "count": 38, "filePath": "src/Elm/Case.elm" },
+    { "count": 28, "filePath": "src/Elm/Declare.elm" },
+    { "count": 15, "filePath": "src/Internal/Compiler.elm" },
+    { "count": 9, "filePath": "src/Elm/Let.elm" },
+    { "count": 8, "filePath": "src/Internal/Render.elm" },
+    { "count": 7, "filePath": "tests/PackageHelpers.elm" },
+    { "count": 5, "filePath": "src/Elm/Case/Branch.elm" },
+    { "count": 5, "filePath": "src/Internal/Debug.elm" },
+    { "count": 4, "filePath": "src/Internal/ImportsAndExposing.elm" },
+    { "count": 3, "filePath": "src/Elm/Op.elm" },
+    { "count": 3, "filePath": "src/Internal/Clean.elm" },
+    { "count": 3, "filePath": "src/Internal/Index.elm" },
+    { "count": 2, "filePath": "src/Elm/ToString.elm" },
+    { "count": 1, "filePath": "src/Error/Format.elm" },
+    { "count": 1, "filePath": "src/Internal/Comments.elm" },
+    { "count": 1, "filePath": "src/Internal/Format.elm" },
+    { "count": 1, "filePath": "src/Internal/Types.elm" },
+    { "count": 1, "filePath": "tests/TypeChecking.elm" }
+  ]
+}
