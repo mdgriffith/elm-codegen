@@ -19,6 +19,7 @@ nodify exp =
 formatValue : String -> String
 formatValue str =
     let
+        formatted : String
         formatted =
             if String.toUpper str == str then
                 String.toLower str

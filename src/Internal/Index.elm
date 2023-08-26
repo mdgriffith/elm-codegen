@@ -81,6 +81,7 @@ dive (Index top tail scope check) =
 getName : String -> Index -> ( String, Index )
 getName desiredName ((Index top tail scope check) as index) =
     let
+        formattedName : String
         formattedName =
             Format.formatValue desiredName
     in
@@ -89,6 +90,7 @@ getName desiredName ((Index top tail scope check) as index) =
 
     else
         let
+            protectedName : String
             protectedName =
                 formattedName ++ String.fromInt top
         in
@@ -99,6 +101,7 @@ getName desiredName ((Index top tail scope check) as index) =
 
         else
             let
+                protectedNameLevel2 : String
                 protectedNameLevel2 =
                     formattedName ++ indexToString index
             in

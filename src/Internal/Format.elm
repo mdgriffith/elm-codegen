@@ -10,6 +10,7 @@ module Internal.Format exposing (formatDeclarationName, formatType, formatValue,
 formatValue : String -> String
 formatValue str =
     let
+        formatted : String
         formatted =
             String.toLower (String.left 1 str) ++ String.dropLeft 1 str
     in

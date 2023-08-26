@@ -11,6 +11,7 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
 import Internal.Format as Format
 import Internal.Index as Index exposing (Index)
+import Result.Extra
 import Set exposing (Set)
 
 
@@ -696,6 +697,7 @@ getAnnotation exp =
 documentation : String -> Declaration -> Declaration
 documentation rawDoc decl =
     let
+        doc : String
         doc =
             String.trim rawDoc
     in
@@ -980,22 +982,7 @@ getExposedGroups decls =
 
 matchName : Maybe a -> Maybe a -> Bool
 matchName one two =
-    case one of
-        Nothing ->
-            case two of
-                Nothing ->
-                    True
-
-                _ ->
-                    False
-
-        Just oneName ->
-            case two of
-                Nothing ->
-                    False
-
-                Just twoName ->
-                    oneName == twoName
+    one == two
 
 
 groupExposing : List ( Maybe String, String ) -> List { group : Maybe String, members : List String }
@@ -1118,6 +1105,7 @@ resolve index cache annotation =
         case resolveVariables Set.empty cache annotation of
             Ok newAnnotation ->
                 let
+                    restrictions : Restrictions
                     restrictions =
                         getRestrictions annotation cache
                 in
@@ -1172,71 +1160,45 @@ resolveVariables visited cache annotation =
             Result.map Annotation.Tupled (resolveVariableList visited cache nodes [])
 
         Annotation.Record fields ->
-            Result.map (Annotation.Record << List.reverse)
-                (List.foldl
-                    (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) found ->
-                        case found of
-                            Err err ->
-                                Err err
-
-                            Ok processedFields ->
-                                case resolveVariables visited cache fieldType of
-                                    Err err ->
-                                        Err err
-
-                                    Ok resolvedField ->
-                                        let
-                                            restrictions =
-                                                getRestrictions annotation cache
-                                        in
-                                        case checkRestrictions restrictions resolvedField of
-                                            Ok _ ->
-                                                Ok
-                                                    (Node fieldRange
-                                                        ( name, Node fieldTypeRange resolvedField )
-                                                        :: processedFields
-                                                    )
-
-                                            Err err ->
-                                                -- Note, this error probably need
-                                                Err err
-                    )
-                    (Ok [])
-                    fields
+            Result.Extra.combineMap
+                (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
+                    resolveVariables visited cache fieldType
+                        |> Result.andThen
+                            (\resolvedField ->
+                                let
+                                    restrictions : Restrictions
+                                    restrictions =
+                                        getRestrictions annotation cache
+                                in
+                                Result.map
+                                    (\_ ->
+                                        Node fieldRange
+                                            ( name, Node fieldTypeRange resolvedField )
+                                    )
+                                    (checkRestrictions restrictions resolvedField)
+                            )
                 )
+                fields
+                |> Result.map Annotation.Record
 
         Annotation.GenericRecord baseName (Node recordNode fields) ->
-            let
-                newFieldResult =
-                    List.foldl
-                        (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) found ->
-                            case found of
-                                Err err ->
-                                    Err err
-
-                                Ok processedFields ->
-                                    case resolveVariables visited cache fieldType of
-                                        Err err ->
-                                            Err err
-
-                                        Ok resolvedField ->
-                                            Ok
-                                                (Node fieldRange
-                                                    ( name, Node fieldTypeRange resolvedField )
-                                                    :: processedFields
-                                                )
+            Result.Extra.combineMap
+                (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
+                    Result.map
+                        (\resolvedField ->
+                            Node fieldRange
+                                ( name, Node fieldTypeRange resolvedField )
                         )
-                        (Ok [])
-                        fields
-            in
-            Result.map
-                (\newFields ->
-                    Annotation.GenericRecord baseName
-                        (Node recordNode
-                            (List.reverse newFields)
-                        )
+                        (resolveVariables visited cache fieldType)
                 )
-                newFieldResult
+                fields
+                |> Result.map
+                    (\newFields ->
+                        Annotation.GenericRecord baseName
+                            (Node recordNode
+                                newFields
+                            )
+                    )
 
 
 resolveVariableList :
@@ -1417,6 +1379,7 @@ getRestrictionsHelper existingRestrictions notation cache =
 rewriteTypeVariables : Annotation.TypeAnnotation -> Annotation.TypeAnnotation
 rewriteTypeVariables type_ =
     let
+        existing : Set String
         existing =
             getGenericsHelper type_
                 |> Set.fromList
@@ -1431,6 +1394,7 @@ rewriteTypeVariablesHelper existing renames type_ =
             case Dict.get varName renames of
                 Nothing ->
                     let
+                        simplified : String
                         simplified =
                             simplify varName
                     in
@@ -1689,6 +1653,7 @@ applyTypeHelper aliases cache fn args =
 
                 _ ->
                     let
+                        resultType : Annotation.TypeAnnotation
                         resultType =
                             Annotation.GenericType (varName ++ "_result")
                     in
@@ -1863,6 +1828,7 @@ unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
 
         Just foundAlias ->
             let
+                fullAliasedType : Annotation.TypeAnnotation
                 fullAliasedType =
                     case foundAlias.variables of
                         [] ->
@@ -1870,6 +1836,7 @@ unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
 
                         _ ->
                             let
+                                makeAliasVarCache : a -> Node b -> ( a, b )
                                 makeAliasVarCache varName (Node.Node _ varType) =
                                     ( varName, varType )
                             in
@@ -2613,6 +2580,7 @@ containsFieldByName ( Node.Node _ oneName, _ ) ( Node.Node _ twoName, _ ) =
 inferRecordField : Index -> { nameOfRecord : String, fieldName : String } -> Result (List InferenceError) Inference
 inferRecordField index { nameOfRecord, fieldName } =
     let
+        fieldType : Annotation.TypeAnnotation
         fieldType =
             Annotation.GenericType
                 (Format.formatValue

@@ -14,6 +14,7 @@ import Internal.Write
 facts : Compiler.Expression -> Result String (List ( String, String ))
 facts (Compiler.Expression exp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             exp Index.startIndex
     in
@@ -40,6 +41,7 @@ everythingFormatted :
     -> List String
 everythingFormatted log exp =
     let
+        every : Result String { facts : List ( String, String ), signature : String, aliases : List ( String, String ) }
         every =
             everything exp
 
@@ -74,6 +76,7 @@ annotationFormatted :
     -> List String
 annotationFormatted log ann =
     let
+        every : Result String { facts : List ( String, String ), signature : String, aliases : List ( String, String ) }
         every =
             annotation ann
 
@@ -111,6 +114,7 @@ everything :
             }
 everything (Compiler.Expression exp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             exp Index.startIndex
     in
@@ -133,6 +137,7 @@ annotation ann =
     case ann of
         Ok sig ->
             let
+                allFacts : List ( String, String )
                 allFacts =
                     sig.inferences
                         |> Dict.toList
