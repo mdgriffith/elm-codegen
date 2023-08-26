@@ -162,7 +162,7 @@ captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
                         _ ->
                             originalPattern
 
-        ( newIndex, exp ) =
+        ( _, exp ) =
             Compiler.toExpressionDetails branchIndex caseExpression
     in
     { index = accum.index

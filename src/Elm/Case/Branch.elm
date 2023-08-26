@@ -857,7 +857,7 @@ listWithRemaining { patterns, gather, startWith, remaining, finally } =
                 (Branch toRemaining) =
                     remaining
 
-                ( restIndex, restPattern, remainingValue ) =
+                ( _, restPattern, remainingValue ) =
                     toRemaining startIndex
 
                 ( finalIndex, itemPatterns, finalGathered ) =

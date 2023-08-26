@@ -363,7 +363,7 @@ withType ((Compiler.Annotation annDetails) as ann) (Compiler.Expression toExp) =
                                         , aliases = expressionAnnotation.aliases
                                         }
 
-                                Err err ->
+                                Err _ ->
                                     Ok
                                         { type_ = annDetails.annotation
                                         , inferences = Dict.empty
@@ -581,7 +581,7 @@ tuple oneExp twoExp =
                 ( oneIndex, one ) =
                     Compiler.toExpressionDetails index oneExp
 
-                ( twoIndex, two ) =
+                ( _, two ) =
                     Compiler.toExpressionDetails oneIndex twoExp
             in
             { expression =
@@ -623,7 +623,7 @@ triple oneExp twoExp threeExp =
                 ( twoIndex, two ) =
                     Compiler.toExpressionDetails oneIndex twoExp
 
-                ( threeIndex, three ) =
+                ( _, three ) =
                     Compiler.toExpressionDetails twoIndex threeExp
             in
             { expression =
@@ -889,7 +889,7 @@ updateRecord fields recordExpression =
                                                         )
                                             }
 
-                                    otherwise ->
+                                    _ ->
                                         recordExp.annotation
 
                             otherwise ->
@@ -949,11 +949,11 @@ record fields =
                                             Err errs ->
                                                 errs ++ found.errors
 
-                                            Ok ann ->
+                                            Ok _ ->
                                                 found.errors
                                 , fieldAnnotations =
                                     case exp.annotation of
-                                        Err err ->
+                                        Err _ ->
                                             found.fieldAnnotations
 
                                         Ok ann ->
@@ -1061,7 +1061,7 @@ ifThen condition thenBranch elseBranch =
                 ( thenIndex, thenB ) =
                     Compiler.toExpressionDetails condIndex thenBranch
 
-                ( finalIndex, elseB ) =
+                ( _, elseB ) =
                     Compiler.toExpressionDetails thenIndex elseBranch
             in
             { expression =
@@ -1157,7 +1157,7 @@ verifyFieldsHelper existingFields updatedFields =
 
 presentAndMatching fieldName fieldInference existingFields =
     List.foldl
-        (\(Node.Node _ ( Node.Node _ existingFieldName, Node.Node _ _ )) gathered ->
+        (\(Node.Node _ ( Node.Node _ existingFieldName, _ )) gathered ->
             if gathered then
                 gathered
 
@@ -1406,7 +1406,7 @@ fn ( oneBaseName, maybeAnnotation ) toExpression =
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1469,7 +1469,7 @@ functionReduced argBaseName toExpression =
                         }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1599,7 +1599,7 @@ fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
-                ( newIndex_, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails two.index (toExpression one.val two.val)
             in
             { expression =
@@ -1612,7 +1612,7 @@ fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1655,7 +1655,7 @@ fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails three.index (toExpression one.val two.val three.val)
             in
             { expression =
@@ -1669,7 +1669,7 @@ fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1721,7 +1721,7 @@ fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                 four =
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails four.index (toExpression one.val two.val three.val four.val)
             in
             { expression =
@@ -1736,7 +1736,7 @@ fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1797,7 +1797,7 @@ fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                 five =
                     Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val)
             in
             { expression =
@@ -1813,7 +1813,7 @@ fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1883,7 +1883,7 @@ fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                 six =
                     Compiler.toVarMaybeType five.index sixBaseName maybeSixType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val six.val)
             in
             { expression =
@@ -1900,7 +1900,7 @@ fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1970,9 +1970,9 @@ renderDocumentation :
     -> Maybe String
 renderDocumentation resolvedType bodyAnnotation =
     case resolvedType of
-        Ok sig ->
+        Ok _ ->
             case bodyAnnotation of
-                Ok inference ->
+                Ok _ ->
                     Nothing
 
                 Err err ->
@@ -1991,7 +1991,7 @@ sep =
 
 renderDebugDocumentation resolvedType bodyAnnotation =
     case resolvedType of
-        Ok sig ->
+        Ok _ ->
             case bodyAnnotation of
                 Ok inference ->
                     Just (Internal.Write.writeInference inference)
@@ -2052,9 +2052,9 @@ declaration nameStr (Compiler.Expression toBody) =
 
                     maybeWarning =
                         case resolvedType of
-                            Ok sig ->
+                            Ok _ ->
                                 case body.annotation of
-                                    Ok inference ->
+                                    Ok _ ->
                                         Nothing
 
                                     Err [] ->
@@ -2376,7 +2376,7 @@ portIncoming nameStr args =
                                             (Compiler.nodify (Annotation.GenericType "msg"))
                                             (Compiler.nodify sub)
 
-                                    start :: remain ->
+                                    _ :: _ ->
                                         Annotation.FunctionTypeAnnotation
                                             (groupAnn
                                                 (Compiler.nodify
@@ -2470,7 +2470,7 @@ unsafe source =
 parse : String -> Result String { declarations : List Declaration }
 parse source =
     case Elm.Parser.parse source of
-        Err deadends ->
+        Err _ ->
             Err "Uh oh"
 
         Ok raw ->
@@ -2548,7 +2548,7 @@ decName decBody =
             Compiler.denode myPort.name
                 |> Just
 
-        Declaration.InfixDeclaration inf ->
+        Declaration.InfixDeclaration _ ->
             Nothing
 
         Declaration.Destructuring _ _ ->
@@ -2610,13 +2610,13 @@ determineExposure dec exposedDec =
                     else
                         Compiler.NotExposed
 
-                Declaration.PortDeclaration sig ->
+                Declaration.PortDeclaration _ ->
                     Compiler.NotExposed
 
-                Declaration.InfixDeclaration infixDec ->
+                Declaration.InfixDeclaration _ ->
                     Compiler.NotExposed
 
-                Declaration.Destructuring pattern exp ->
+                Declaration.Destructuring _ _ ->
                     Compiler.NotExposed
 
 
@@ -2642,7 +2642,7 @@ typeIsExposed name node =
         Expose.InfixExpose _ ->
             False
 
-        Expose.FunctionExpose fnName ->
+        Expose.FunctionExpose _ ->
             False
 
         Expose.TypeOrAliasExpose typeName ->

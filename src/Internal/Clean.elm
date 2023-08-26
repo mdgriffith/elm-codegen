@@ -65,7 +65,7 @@ sanitized str =
         [] ->
             str
 
-        top :: remain ->
+        top :: _ ->
             top
 
 
@@ -75,7 +75,7 @@ prepareRename ann dict =
         Type.GenericType generic ->
             dict |> Set.insert generic
 
-        Type.Typed name nodedVars ->
+        Type.Typed _ nodedVars ->
             List.foldl (\(Node.Node _ tipe) d -> prepareRename tipe d) dict nodedVars
 
         Type.Unit ->
@@ -87,7 +87,7 @@ prepareRename ann dict =
         Type.Record record ->
             List.foldl (\(Node.Node _ ( _, Node.Node _ field )) d -> prepareRename field d) dict record
 
-        Type.GenericRecord name (Node.Node range record) ->
+        Type.GenericRecord _ (Node.Node _ record) ->
             List.foldl (\(Node.Node _ ( _, Node.Node _ field )) d -> prepareRename field d) dict record
 
         Type.FunctionTypeAnnotation (Node.Node _ one) (Node.Node _ two) ->

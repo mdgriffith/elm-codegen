@@ -29,7 +29,7 @@ topLevelExposeOrder tlel tler =
         ( _, InfixExpose _ ) ->
             GT
 
-        ( _, _ ) ->
+        _ ->
             compare (topLevelExposeName tlel) (topLevelExposeName tler)
 
 
@@ -102,7 +102,7 @@ combineTopLevelExposes exposes =
                                 _ ->
                                     exp
 
-                        ( _, _ ) ->
+                        _ ->
                             result
                 )
                 hd

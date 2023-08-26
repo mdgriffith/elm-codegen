@@ -19,20 +19,18 @@ Thank you Rupert!
 import Dict
 import Elm.Syntax.Declaration
 import Elm.Syntax.Documentation exposing (Documentation)
-import Elm.Syntax.Exposing exposing (ExposedType, Exposing(..), TopLevelExpose(..))
-import Elm.Syntax.Expression exposing (Case, CaseBlock, Expression(..), Function, FunctionImplementation, Lambda, LetBlock, LetDeclaration(..), RecordSetter)
-import Elm.Syntax.File
+import Elm.Syntax.Exposing exposing (Exposing(..), TopLevelExpose(..))
+import Elm.Syntax.Expression exposing (CaseBlock, Expression(..), Function, FunctionImplementation, Lambda, LetBlock, LetDeclaration(..), RecordSetter)
 import Elm.Syntax.Import exposing (Import)
 import Elm.Syntax.Infix exposing (Infix, InfixDirection(..))
 import Elm.Syntax.Module exposing (DefaultModuleData, EffectModuleData, Module(..))
 import Elm.Syntax.ModuleName exposing (ModuleName)
-import Elm.Syntax.Node as Node exposing (Node(..))
-import Elm.Syntax.Pattern exposing (Pattern(..), QualifiedNameRef)
-import Elm.Syntax.Range exposing (Location, Range, emptyRange)
+import Elm.Syntax.Node exposing (Node)
+import Elm.Syntax.Pattern exposing (Pattern(..))
 import Elm.Syntax.Signature exposing (Signature)
 import Elm.Syntax.Type exposing (Type, ValueConstructor)
 import Elm.Syntax.TypeAlias exposing (TypeAlias)
-import Elm.Syntax.TypeAnnotation exposing (RecordDefinition, RecordField, TypeAnnotation(..))
+import Elm.Syntax.TypeAnnotation exposing (RecordField, TypeAnnotation(..))
 import Hex
 import Internal.Comments as Comments
 import Internal.Compiler as Util exposing (denode, denodeAll, denodeMaybe, nodify)
@@ -72,7 +70,7 @@ prepareLayout width file =
 
                     Just fileComment ->
                         let
-                            ( fileCommentStr, innerTags ) =
+                            ( fileCommentStr, _ ) =
                                 Comments.prettyFileComment width fileComment
                         in
                         doc
@@ -633,7 +631,7 @@ adjustPatternParentheses isTop pattern =
                 ( False, AsPattern _ _ ) ->
                     nodify pat |> ParenthesizedPattern
 
-                ( _, _ ) ->
+                _ ->
                     pat
 
         removeParens pat =
@@ -657,7 +655,7 @@ adjustPatternParentheses isTop pattern =
                 ( _, AsPattern _ _ ) ->
                     False
 
-                ( _, _ ) ->
+                _ ->
                     isTop
     in
     removeParens pattern
@@ -786,7 +784,7 @@ adjustExpressionParentheses context expression =
                 ( False, False, IfBlock _ _ _ ) ->
                     nodify expr |> ParenthesizedExpression
 
-                ( _, _, _ ) ->
+                _ ->
                     expr
 
         removeParens expr =
@@ -852,7 +850,7 @@ adjustExpressionParentheses context expression =
                 ( False, _, RecordUpdateExpression _ _ ) ->
                     True
 
-                ( _, _, _ ) ->
+                _ ->
                     False
     in
     removeParens expression
@@ -968,7 +966,7 @@ prettyExpressionInner aliases context indent expression =
         RecordUpdateExpression var setters ->
             prettyRecordUpdateExpression aliases indent var setters
 
-        GLSLExpression val ->
+        GLSLExpression _ ->
             ( Pretty.string "glsl"
             , True
             )
@@ -1107,12 +1105,9 @@ prettyIfBlock aliases indent exprBool exprTrue exprFalse =
         innerIfBlock : Node Expression -> Node Expression -> Node Expression -> List (Doc t)
         innerIfBlock innerExprBool innerExprTrue innerExprFalse =
             let
-                context =
-                    topContext
-
                 ifPart =
                     let
-                        ( prettyBoolExpr, alwaysBreak ) =
+                        ( _, alwaysBreak ) =
                             prettyExpressionInner aliases topContext 4 (denode innerExprBool)
                     in
                     [ [ Pretty.string "if"
@@ -1664,7 +1659,7 @@ isNakedCompound typeAnn =
         Typed _ [] ->
             False
 
-        Typed _ args ->
+        Typed _ _ ->
             True
 
         FunctionTypeAnnotation _ _ ->

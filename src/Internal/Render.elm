@@ -223,7 +223,7 @@ addDocs maybeDoc decl =
                                     (Compiler.nodify doc)
                         }
 
-                Elm.Syntax.Declaration.PortDeclaration sig ->
+                Elm.Syntax.Declaration.PortDeclaration _ ->
                     decl
 
                 Elm.Syntax.Declaration.InfixDeclaration _ ->
@@ -280,7 +280,7 @@ addExposed exposed declaration otherExposes =
                     Expose.FunctionExpose typeName
                         :: otherExposes
 
-                Elm.Syntax.Declaration.InfixDeclaration inf ->
+                Elm.Syntax.Declaration.InfixDeclaration _ ->
                     otherExposes
 
                 Elm.Syntax.Declaration.Destructuring _ _ ->

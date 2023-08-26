@@ -5,10 +5,8 @@ import Elm.Annotation as Type
 import Elm.Case
 import Elm.Op
 import Elm.ToString
-import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
+import Expect
 import Internal.Compiler as Compiler
-import Internal.Debug as Debug
 import Internal.Index as Index
 import Test exposing (..)
 

@@ -523,7 +523,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
 
                                         Ok inference ->
                                             case inference.type_ of
-                                                Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType ] ->
+                                                Annotation.Tupled [ Node.Node _ oneType, _ ] ->
                                                     Ok
                                                         { type_ = oneType
                                                         , inferences = Dict.empty
@@ -547,7 +547,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
 
                                         Ok inference ->
                                             case inference.type_ of
-                                                Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType ] ->
+                                                Annotation.Tupled [ _, Node.Node _ twoType ] ->
                                                     Ok
                                                         { type_ = twoType
                                                         , inferences = Dict.empty
@@ -636,7 +636,7 @@ toExpression (Let toScope) =
                 scope =
                     toScope index
 
-                ( returnIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails scope.index scope.return
             in
             { expression =

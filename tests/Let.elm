@@ -1,19 +1,10 @@
 module Let exposing (suite)
 
-import Dict
 import Elm
 import Elm.Annotation as Type
 import Elm.Expect
 import Elm.Let
 import Elm.Op
-import Elm.ToString
-import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
-import Gen.Element
-import Gen.Maybe
-import Internal.Compiler as Compiler
-import Internal.Debug
-import Internal.Write
 import Test exposing (..)
 
 

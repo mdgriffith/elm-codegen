@@ -479,7 +479,7 @@ applyPipe (BinOp symbol dir _) infixAnnotation l r =
                 ( leftIndex, left ) =
                     Compiler.toExpressionDetails index l
 
-                ( rightIndex, right ) =
+                ( _, right ) =
                     Compiler.toExpressionDetails leftIndex r
             in
             { expression =
@@ -530,7 +530,7 @@ applyInfix extraImports (BinOp symbol dir _) infixAnnotation l r =
                 ( leftIndex, left ) =
                     Compiler.toExpressionDetails index l
 
-                ( rightIndex, right ) =
+                ( _, right ) =
                     Compiler.toExpressionDetails leftIndex r
             in
             { expression =
