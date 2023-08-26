@@ -1,6 +1,6 @@
 module Internal.Index exposing
     ( Index, startIndex, startChecked
-    , next, nextN, dive
+    , next, dive
     , getName, indexToString, protectTypeName
     , typecheck
     )
@@ -9,7 +9,7 @@ module Internal.Index exposing
 
 @docs Index, startIndex, startChecked
 
-@docs next, nextN, dive
+@docs next, dive
 
 @docs getName, indexToString, protectTypeName
 

@@ -64,7 +64,7 @@ Generates
 
 -}
 
-import Dict exposing (Dict)
+import Dict
 import Elm exposing (Expression)
 import Elm.Annotation as Type
 import Elm.Syntax.Expression as Exp
@@ -73,7 +73,6 @@ import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Branch as Branch exposing (Branch, Pattern(..))
 import Internal.Compiler as Compiler
-import Internal.Debug as Debug
 import Internal.Format as Format
 import Internal.Index as Index
 
@@ -234,20 +233,21 @@ maybe mainExpression branches =
                             )
                         , Branch
                             (\branchIndex ->
-                                case branches.just of
-                                    ( justVarName, toReturn ) ->
-                                        let
-                                            just =
-                                                Compiler.toVarMaybeType branchIndex justVarName Nothing
-                                        in
-                                        ( just.index
-                                        , Pattern.NamedPattern
-                                            { moduleName = []
-                                            , name = "Just"
-                                            }
-                                            [ Compiler.nodify (Pattern.VarPattern just.name) ]
-                                        , toReturn just.val
-                                        )
+                                let
+                                    ( justVarName, toReturn ) =
+                                        branches.just
+
+                                    just =
+                                        Compiler.toVarMaybeType branchIndex justVarName Nothing
+                                in
+                                ( just.index
+                                , Pattern.NamedPattern
+                                    { moduleName = []
+                                    , name = "Just"
+                                    }
+                                    [ Compiler.nodify (Pattern.VarPattern just.name) ]
+                                , toReturn just.val
+                                )
                             )
                         ]
             in

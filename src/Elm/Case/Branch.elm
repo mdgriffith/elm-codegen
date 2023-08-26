@@ -134,7 +134,7 @@ These helpers let you define a Custom Type pattern with a builder.
 
 import Elm exposing (Expression)
 import Elm.Annotation as Type
-import Elm.Syntax.Node as Node exposing (Node(..))
+import Elm.Syntax.Node exposing (Node)
 import Elm.Syntax.Pattern as Pattern
 import Internal.Branch as Branch exposing (Pattern(..))
 import Internal.Compiler as Compiler

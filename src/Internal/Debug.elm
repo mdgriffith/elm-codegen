@@ -1,4 +1,4 @@
-module Internal.Debug exposing (annotationFormatted, everything, everythingFormatted, facts)
+module Internal.Debug exposing (facts)
 
 import Dict
 import Internal.Compiler as Compiler
@@ -59,8 +59,7 @@ everythingFormatted log exp =
             [ err ]
 
         Ok e ->
-            List.concatMap
-                identity
+            List.concat
                 [ [ "Signature"
                   , "  " ++ e.signature
                   ]
@@ -94,8 +93,7 @@ annotationFormatted log ann =
             [ err ]
 
         Ok e ->
-            List.concatMap
-                identity
+            List.concat
                 [ [ "Signature"
                   , "  " ++ e.signature
                   ]

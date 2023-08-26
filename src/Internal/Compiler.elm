@@ -635,9 +635,11 @@ getGenericsHelper ann =
         Annotation.Record recordDefinition ->
             List.concatMap
                 (\nodedField ->
-                    case denode nodedField of
-                        ( name, field ) ->
-                            getGenericsHelper (denode field)
+                    let
+                        ( name, field ) =
+                            denode nodedField
+                    in
+                    getGenericsHelper (denode field)
                 )
                 recordDefinition
 
@@ -645,9 +647,11 @@ getGenericsHelper ann =
             denode recordName
                 :: List.concatMap
                     (\nodedField ->
-                        case denode nodedField of
-                            ( name, field ) ->
-                                getGenericsHelper (denode field)
+                        let
+                            ( name, field ) =
+                                denode nodedField
+                        in
+                        getGenericsHelper (denode field)
                     )
                     (denode recordDefinition)
 
@@ -2558,13 +2562,15 @@ getFieldFromList selector fields =
             Nothing
 
         nodifiedTop :: remain ->
-            case denode nodifiedTop of
-                ( fieldname, contents ) ->
-                    if denode fieldname == selector then
-                        Just (denode contents)
+            let
+                ( fieldname, contents ) =
+                    denode nodifiedTop
+            in
+            if denode fieldname == selector then
+                Just (denode contents)
 
-                    else
-                        getFieldFromList selector remain
+            else
+                getFieldFromList selector remain
 
 
 addInference :

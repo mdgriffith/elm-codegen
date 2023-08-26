@@ -2,13 +2,11 @@ module Internal.Write exposing
     ( write
     , writeAnnotation
     , writeAnnotationWith
-    , writeDeclaration
     , writeDeclarationWith
     , writeExpression
     , writeExpressionWith
     , writeImports
     , writeInference
-    , writeSignature
     , writeSignatureWith
     )
 
@@ -813,11 +811,7 @@ adjustExpressionParentheses context expression =
                     True
 
                 ( False, _, Application _ ) ->
-                    if context.precedence < 11 then
-                        True
-
-                    else
-                        False
+                    context.precedence < 11
 
                 ( False, _, FunctionOrValue _ _ ) ->
                     True

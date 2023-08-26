@@ -1,7 +1,7 @@
 module Internal.Comments exposing
     ( Comment, CommentPart(..), DocComment, FileComment
     , emptyComment, addPart
-    , prettyDocComment, prettyFileComment
+    , prettyFileComment
     )
 
 {-| A component DSL that helps with building comments.
@@ -22,7 +22,7 @@ can be extracted to order the exposing clause by.
 
 # Pretty printing of comments
 
-@docs prettyDocComment, prettyFileComment
+@docs prettyFileComment
 
 -}
 
