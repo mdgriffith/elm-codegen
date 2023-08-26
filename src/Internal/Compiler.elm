@@ -1,4 +1,4 @@
-module Internal.Compiler exposing (..)
+module Internal.Compiler exposing (AliasCache, Annotation(..), AnnotationDetails, Declaration(..), DeclarationDetails, Expose(..), Expression(..), ExpressionDetails, Inference, InferenceError(..), Module, RenderedDeclaration(..), Restrictions(..), VariableCache, Visited, Warning, addAlias, addInference, applyType, denode, denodeAll, denodeMaybe, documentation, emptyAliases, expose, exposeWith, expression, facts, findAlias, fullModName, getAliases, getAnnotation, getAnnotationImports, getGenerics, getImports, getInnerAnnotation, getInnerInference, getTypeModule, importInferences, inference, inferenceErrorToString, makeImport, mergeAliases, mergeInferences, noImports, nodify, nodifyAll, nodifyMaybe, parens, resolve, resolveField, thread, toExpressionDetails, toVar, toVarExactName, toVarMaybeType, toVarWithType, unify, unifyOn)
 
 import Dict exposing (Dict)
 import Elm.Syntax.Declaration as Declaration
