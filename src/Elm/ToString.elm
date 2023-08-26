@@ -22,7 +22,6 @@ import Elm exposing (Declaration, Expression)
 import Elm.Annotation exposing (Annotation)
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Node as Node exposing (Node(..))
-import Elm.Writer
 import Internal.Clean as Clean
 import Internal.Compiler as Compiler
 import Internal.Index as Index
@@ -57,6 +56,7 @@ expressionWith :
         }
 expressionWith options (Compiler.Expression toExp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             toExp Index.startIndex
     in
@@ -77,17 +77,10 @@ expressionWith options (Compiler.Expression toExp) =
                         errMsg
 
             Err inferenceError ->
-                List.foldl
-                    (\err str ->
-                        case str of
-                            "" ->
-                                Compiler.inferenceErrorToString err
-
-                            _ ->
-                                str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                    )
-                    "Err: "
-                    inferenceError
+                "Err: "
+                    ++ String.join
+                        "\n\n"
+                        (List.map Compiler.inferenceErrorToString inferenceError)
     }
 
 
@@ -118,6 +111,11 @@ declarationWith options decl =
     case decl of
         Compiler.Declaration { imports, docs, toBody } ->
             let
+                rendered :
+                    { declaration : Declaration.Declaration
+                    , additionalImports : List Compiler.Module
+                    , warning : Maybe Compiler.Warning
+                    }
                 rendered =
                     toBody Index.startIndex
             in

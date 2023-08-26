@@ -1,4 +1,4 @@
-module Elm.Expect exposing (declarationAs, equal, fileContentAs, importAs, infersType, renderedAs)
+module Elm.Expect exposing (declarationAs, equal, fileContentAs, importAs, renderedAs)
 
 import Elm
 import Elm.ToString

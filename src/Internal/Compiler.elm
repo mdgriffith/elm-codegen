@@ -1,4 +1,4 @@
-module Internal.Compiler exposing (..)
+module Internal.Compiler exposing (AliasCache, Annotation(..), AnnotationDetails, Declaration(..), DeclarationDetails, Expose(..), Expression(..), ExpressionDetails, Inference, InferenceError(..), Module, RenderedDeclaration(..), Restrictions(..), VariableCache, Visited, Warning, addAlias, addInference, applyType, denode, denodeAll, denodeMaybe, documentation, emptyAliases, expose, exposeWith, expression, facts, findAlias, fullModName, getAliases, getAnnotation, getAnnotationImports, getGenerics, getImports, getInnerAnnotation, getInnerInference, getTypeModule, importInferences, inference, inferenceErrorToString, makeImport, mergeAliases, mergeInferences, noImports, nodify, nodifyAll, parens, resolve, resolveField, thread, toExpressionDetails, toVar, toVarExactName, toVarMaybeType, toVarWithType, unify, unifyOn)
 
 import Dict exposing (Dict)
 import Elm.Syntax.Declaration as Declaration
@@ -6,12 +6,12 @@ import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node exposing (Node(..))
-import Elm.Syntax.Range as Range exposing (emptyRange)
+import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
-import Error.Format
 import Internal.Format as Format
 import Internal.Index as Index exposing (Index)
+import Result.Extra
 import Set exposing (Set)
 
 
@@ -30,7 +30,7 @@ type alias AnnotationDetails =
 getTypeModule : Annotation -> List String
 getTypeModule (Annotation annotation) =
     case annotation.annotation of
-        Annotation.Typed (Node _ ( mod, typeName )) _ ->
+        Annotation.Typed (Node _ ( mod, _ )) _ ->
             mod
 
         _ ->
@@ -183,7 +183,7 @@ parens expr =
         Exp.UnitExpr ->
             expr
 
-        Exp.Integer i ->
+        Exp.Integer _ ->
             expr
 
         Exp.Literal _ ->
@@ -230,6 +230,7 @@ parens expr =
 facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
 facts (Expression exp) =
     let
+        expresh : ExpressionDetails
         expresh =
             exp Index.startIndex
     in
@@ -240,17 +241,9 @@ facts (Expression exp) =
                 |> Ok
 
         Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ inferenceErrorToString err
-                )
-                ""
-                inferenceError
+            inferenceError
+                |> List.map inferenceErrorToString
+                |> String.join "\n\n"
                 |> Err
 
 
@@ -260,25 +253,21 @@ unique [ 0, 1, 1, 0, 1 ]
 -}
 unique : List a -> List a
 unique list =
-    uniqueHelp identity [] list []
+    uniqueHelp list []
 
 
-uniqueHelp : (a -> b) -> List b -> List a -> List a -> List a
-uniqueHelp f existing remaining accumulator =
+uniqueHelp : List a -> List a -> List a
+uniqueHelp remaining accumulator =
     case remaining of
         [] ->
             List.reverse accumulator
 
         first :: rest ->
-            let
-                computedFirst =
-                    f first
-            in
-            if List.member computedFirst existing then
-                uniqueHelp f existing rest accumulator
+            if List.member first accumulator then
+                uniqueHelp rest accumulator
 
             else
-                uniqueHelp f (computedFirst :: existing) rest (first :: accumulator)
+                uniqueHelp rest (first :: accumulator)
 
 
 toVar :
@@ -295,6 +284,7 @@ toVar index desiredName =
         ( name, newIndex ) =
             Index.getName desiredName index
 
+        typename : String
         typename =
             Index.protectTypeName desiredName index
     in
@@ -303,7 +293,7 @@ toVar index desiredName =
     , index = newIndex
     , val =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -331,6 +321,7 @@ toVarExactName :
         }
 toVarExactName index name =
     let
+        typename : String
         typename =
             Index.protectTypeName name index
     in
@@ -339,7 +330,7 @@ toVarExactName index name =
     , index = Index.next index
     , val =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -387,7 +378,7 @@ toVarMaybeType index desiredName maybeAnnotation =
     , index = newIndex
     , val =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -422,7 +413,7 @@ toVarWithType index desiredName (Annotation ann) =
     , index = newIndex
     , exp =
         Expression <|
-            \ignoredIndex_ ->
+            \_ ->
                 { expression =
                     Exp.FunctionOrValue []
                         name
@@ -449,7 +440,7 @@ mergeInferences one two =
             case oneVal of
                 Annotation.GenericRecord recordName (Node.Node oneRange recordDefinition) ->
                     case twoVal of
-                        Annotation.GenericRecord twoRecordName (Node.Node twoRange twoRecordDefinition) ->
+                        Annotation.GenericRecord _ (Node.Node _ twoRecordDefinition) ->
                             Dict.insert key
                                 (Annotation.GenericRecord recordName
                                     (Node.Node oneRange (recordDefinition ++ twoRecordDefinition))
@@ -531,7 +522,7 @@ inferenceErrorToString inf =
                         |> Elm.Writer.write
                    )
 
-        RecordUpdateIncorrectFields details ->
+        RecordUpdateIncorrectFields _ ->
             "Mismatched record update"
 
         EmptyCaseStatement ->
@@ -623,7 +614,7 @@ getGenericsHelper ann =
         Annotation.GenericType str ->
             [ str ]
 
-        Annotation.Typed modName anns ->
+        Annotation.Typed _ anns ->
             List.concatMap (getGenericsHelper << denode) anns
 
         Annotation.Unit ->
@@ -634,27 +625,23 @@ getGenericsHelper ann =
 
         Annotation.Record recordDefinition ->
             List.concatMap
-                (\nodedField ->
-                    case denode nodedField of
-                        ( name, field ) ->
-                            getGenericsHelper (denode field)
+                (\(Node _ ( _, Node _ field )) ->
+                    getGenericsHelper field
                 )
                 recordDefinition
 
-        Annotation.GenericRecord recordName recordDefinition ->
-            denode recordName
+        Annotation.GenericRecord (Node _ recordName) (Node _ recordDefinition) ->
+            recordName
                 :: List.concatMap
-                    (\nodedField ->
-                        case denode nodedField of
-                            ( name, field ) ->
-                                getGenericsHelper (denode field)
+                    (\(Node _ ( _, Node _ field )) ->
+                        getGenericsHelper field
                     )
-                    (denode recordDefinition)
+                    recordDefinition
 
-        Annotation.FunctionTypeAnnotation one two ->
+        Annotation.FunctionTypeAnnotation (Node _ one) (Node _ two) ->
             List.concatMap getGenericsHelper
-                [ denode one
-                , denode two
+                [ one
+                , two
                 ]
 
 
@@ -709,6 +696,7 @@ getAnnotation exp =
 documentation : String -> Declaration -> Declaration
 documentation rawDoc decl =
     let
+        doc : String
         doc =
             String.trim rawDoc
     in
@@ -720,7 +708,7 @@ documentation rawDoc decl =
             Comment _ ->
                 decl
 
-            Block source ->
+            Block _ ->
                 decl
 
             Declaration details ->
@@ -993,22 +981,7 @@ getExposedGroups decls =
 
 matchName : Maybe a -> Maybe a -> Bool
 matchName one two =
-    case one of
-        Nothing ->
-            case two of
-                Nothing ->
-                    True
-
-                _ ->
-                    False
-
-        Just oneName ->
-            case two of
-                Nothing ->
-                    False
-
-                Just twoName ->
-                    oneName == twoName
+    one == two
 
 
 groupExposing : List ( Maybe String, String ) -> List { group : Maybe String, members : List String }
@@ -1128,12 +1101,13 @@ threadHelper index exps rendered =
 resolve : Index -> VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
 resolve index cache annotation =
     if Index.typecheck index then
-        let
-            restrictions =
-                getRestrictions annotation cache
-        in
         case resolveVariables Set.empty cache annotation of
             Ok newAnnotation ->
+                let
+                    restrictions : Restrictions
+                    restrictions =
+                        getRestrictions annotation cache
+                in
                 newAnnotation
                     |> rewriteTypeVariables
                     |> checkRestrictions restrictions
@@ -1185,75 +1159,45 @@ resolveVariables visited cache annotation =
             Result.map Annotation.Tupled (resolveVariableList visited cache nodes [])
 
         Annotation.Record fields ->
-            Result.map (Annotation.Record << List.reverse)
-                (List.foldl
-                    (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) found ->
-                        case found of
-                            Err err ->
-                                Err err
-
-                            Ok processedFields ->
-                                case resolveVariables visited cache fieldType of
-                                    Err err ->
-                                        Err err
-
-                                    Ok resolvedField ->
-                                        let
-                                            restrictions =
-                                                getRestrictions annotation cache
-                                        in
-                                        case checkRestrictions restrictions resolvedField of
-                                            Ok _ ->
-                                                Ok
-                                                    (Node fieldRange
-                                                        ( name, Node fieldTypeRange resolvedField )
-                                                        :: processedFields
-                                                    )
-
-                                            Err err ->
-                                                -- Note, this error probably need
-                                                Err err
-                    )
-                    (Ok [])
-                    fields
+            Result.Extra.combineMap
+                (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
+                    resolveVariables visited cache fieldType
+                        |> Result.andThen
+                            (\resolvedField ->
+                                let
+                                    restrictions : Restrictions
+                                    restrictions =
+                                        getRestrictions annotation cache
+                                in
+                                Result.map
+                                    (\_ ->
+                                        Node fieldRange
+                                            ( name, Node fieldTypeRange resolvedField )
+                                    )
+                                    (checkRestrictions restrictions resolvedField)
+                            )
                 )
+                fields
+                |> Result.map Annotation.Record
 
         Annotation.GenericRecord baseName (Node recordNode fields) ->
-            let
-                newFieldResult =
-                    List.foldl
-                        (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) found ->
-                            case found of
-                                Err err ->
-                                    Err err
-
-                                Ok processedFields ->
-                                    case resolveVariables visited cache fieldType of
-                                        Err err ->
-                                            Err err
-
-                                        Ok resolvedField ->
-                                            let
-                                                restrictions =
-                                                    getRestrictions annotation cache
-                                            in
-                                            Ok
-                                                (Node fieldRange
-                                                    ( name, Node fieldTypeRange resolvedField )
-                                                    :: processedFields
-                                                )
+            Result.Extra.combineMap
+                (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
+                    Result.map
+                        (\resolvedField ->
+                            Node fieldRange
+                                ( name, Node fieldTypeRange resolvedField )
                         )
-                        (Ok [])
-                        fields
-            in
-            Result.map
-                (\newFields ->
-                    Annotation.GenericRecord baseName
-                        (Node recordNode
-                            (List.reverse newFields)
-                        )
+                        (resolveVariables visited cache fieldType)
                 )
-                newFieldResult
+                fields
+                |> Result.map
+                    (\newFields ->
+                        Annotation.GenericRecord baseName
+                            (Node recordNode
+                                newFields
+                            )
+                    )
 
 
 resolveVariableList :
@@ -1404,7 +1348,7 @@ getRestrictionsHelper :
     -> Restrictions
 getRestrictionsHelper existingRestrictions notation cache =
     case notation of
-        Annotation.FunctionTypeAnnotation (Node.Node oneCoords one) (Node.Node twoCoords two) ->
+        Annotation.FunctionTypeAnnotation _ _ ->
             existingRestrictions
 
         Annotation.GenericType name ->
@@ -1415,25 +1359,26 @@ getRestrictionsHelper existingRestrictions notation cache =
                 )
                 cache
 
-        Annotation.Typed nodedModuleName vars ->
+        Annotation.Typed _ _ ->
             existingRestrictions
 
         Annotation.Unit ->
             existingRestrictions
 
-        Annotation.Tupled nodes ->
+        Annotation.Tupled _ ->
             existingRestrictions
 
-        Annotation.Record fields ->
+        Annotation.Record _ ->
             existingRestrictions
 
-        Annotation.GenericRecord baseName (Node recordNode fields) ->
+        Annotation.GenericRecord _ _ ->
             existingRestrictions
 
 
 rewriteTypeVariables : Annotation.TypeAnnotation -> Annotation.TypeAnnotation
 rewriteTypeVariables type_ =
     let
+        existing : Set String
         existing =
             getGenericsHelper type_
                 |> Set.fromList
@@ -1448,6 +1393,7 @@ rewriteTypeVariablesHelper existing renames type_ =
             case Dict.get varName renames of
                 Nothing ->
                     let
+                        simplified : String
                         simplified =
                             simplify varName
                     in
@@ -1466,10 +1412,10 @@ rewriteTypeVariablesHelper existing renames type_ =
                 ( newUsed, newVars ) =
                     vars
                         |> List.foldl
-                            (\typevar ( varUsed, varList ) ->
+                            (\(Node _ typevar) ( varUsed, varList ) ->
                                 let
                                     ( oneUsed, oneType ) =
-                                        rewriteTypeVariablesHelper existing varUsed (denode typevar)
+                                        rewriteTypeVariablesHelper existing varUsed typevar
                                 in
                                 ( oneUsed, nodify oneType :: varList )
                             )
@@ -1482,22 +1428,22 @@ rewriteTypeVariablesHelper existing renames type_ =
         Annotation.Unit ->
             ( renames, type_ )
 
-        Annotation.Tupled valsA ->
+        Annotation.Tupled _ ->
             ( renames, type_ )
 
-        Annotation.Record fieldsA ->
+        Annotation.Record _ ->
             ( renames, type_ )
 
-        Annotation.GenericRecord (Node.Node _ reVarName) (Node.Node fieldsARange fieldsA) ->
+        Annotation.GenericRecord _ _ ->
             ( renames, type_ )
 
-        Annotation.FunctionTypeAnnotation one two ->
+        Annotation.FunctionTypeAnnotation (Node _ one) (Node _ two) ->
             let
                 ( oneUsed, oneType ) =
-                    rewriteTypeVariablesHelper existing renames (denode one)
+                    rewriteTypeVariablesHelper existing renames one
 
                 ( twoUsed, twoType ) =
-                    rewriteTypeVariablesHelper existing oneUsed (denode two)
+                    rewriteTypeVariablesHelper existing oneUsed two
             in
             ( twoUsed
             , Annotation.FunctionTypeAnnotation
@@ -1509,25 +1455,10 @@ rewriteTypeVariablesHelper existing renames type_ =
 {-| -}
 simplify : String -> String
 simplify fullStr =
-    String.split "_" fullStr
-        |> List.foldl
-            (\piece str ->
-                let
-                    isDigit =
-                        String.all Char.isDigit piece
-                in
-                if isDigit then
-                    str
-
-                else
-                    case str of
-                        "" ->
-                            piece
-
-                        _ ->
-                            str ++ "_" ++ piece
-            )
-            ""
+    fullStr
+        |> String.split "_"
+        |> List.filter (\piece -> not <| String.all Char.isDigit piece)
+        |> String.join "_"
 
 
 checkRestrictions : Restrictions -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
@@ -1689,7 +1620,7 @@ applyTypeHelper :
     -> Result (List InferenceError) Inference
 applyTypeHelper aliases cache fn args =
     case fn of
-        Annotation.FunctionTypeAnnotation one two ->
+        Annotation.FunctionTypeAnnotation (Node _ one) (Node _ two) ->
             case args of
                 [] ->
                     Ok
@@ -1699,18 +1630,16 @@ applyTypeHelper aliases cache fn args =
                         }
 
                 top :: rest ->
-                    case unifiable aliases cache (denode one) top of
+                    case unifiable aliases cache one top of
                         ( variableCache, Ok _ ) ->
                             applyTypeHelper
                                 aliases
                                 variableCache
-                                (denode two)
+                                two
                                 rest
 
-                        ( varCache, Err err ) ->
-                            Err
-                                [ err
-                                ]
+                        ( _, Err err ) ->
+                            Err [ err ]
 
         Annotation.GenericType varName ->
             case args of
@@ -1723,6 +1652,7 @@ applyTypeHelper aliases cache fn args =
 
                 _ ->
                     let
+                        resultType : Annotation.TypeAnnotation
                         resultType =
                             Annotation.GenericType (varName ++ "_result")
                     in
@@ -1833,7 +1763,7 @@ unifyHelper exps existing =
             case top.annotation of
                 Ok ann ->
                     case unifiable ann.aliases ann.inferences ann.type_ existing.type_ of
-                        ( _, Err err ) ->
+                        ( _, Err _ ) ->
                             Err
                                 [ MismatchedList ann.type_ existing.type_
                                 ]
@@ -1883,6 +1813,13 @@ unifyOn (Annotation annDetails) res =
                         [ err ]
 
 
+unifyWithAlias :
+    AliasCache
+    -> VariableCache
+    -> Node ( ModuleName.ModuleName, String )
+    -> List (Node Annotation.TypeAnnotation)
+    -> Annotation.TypeAnnotation
+    -> Maybe ( VariableCache, Result error Annotation.TypeAnnotation )
 unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
     case getAlias typename aliases of
         Nothing ->
@@ -1890,6 +1827,7 @@ unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
 
         Just foundAlias ->
             let
+                fullAliasedType : Annotation.TypeAnnotation
                 fullAliasedType =
                     case foundAlias.variables of
                         [] ->
@@ -1897,6 +1835,7 @@ unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
 
                         _ ->
                             let
+                                makeAliasVarCache : a -> Node b -> ( a, b )
                                 makeAliasVarCache varName (Node.Node _ varType) =
                                     ( varName, varType )
                             in
@@ -1921,12 +1860,12 @@ unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
                         typeToUnifyWith
             in
             case unifiedResult of
-                Ok finalInference ->
+                Ok _ ->
                     -- We want to maintain the declared alias in the type signature
                     -- So, we are using `unifiable` to check that
                     Just ( returnedVars, Ok fullAliasedType )
 
-                Err err ->
+                Err _ ->
                     Nothing
 
 
@@ -2071,7 +2010,7 @@ unifiable aliases vars one two =
                                 ( newVars, Err err ) ->
                                     ( newVars, Err err )
 
-                        Just knownType ->
+                        Just _ ->
                             -- NOTE: we should probably check knownType in some way?
                             case unifiableFields aliases vars fieldsA fieldsB [] of
                                 ( newVars, Ok unifiedFields ) ->
@@ -2103,7 +2042,7 @@ unifiable aliases vars one two =
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
 
-        Annotation.GenericRecord (Node.Node _ reVarName) (Node.Node fieldsARange fieldsA) ->
+        Annotation.GenericRecord _ (Node.Node _ fieldsA) ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
@@ -2130,7 +2069,7 @@ unifiable aliases vars one two =
                                 ( newVars, Err err ) ->
                                     ( newVars, Err err )
 
-                        Just knownType ->
+                        Just _ ->
                             -- NOTE: we should probably check knownType in some way?
                             case unifiableFields aliases vars fieldsA fieldsB [] of
                                 ( newVars, Ok unifiedFields ) ->
@@ -2162,7 +2101,7 @@ unifiable aliases vars one two =
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
 
-        Annotation.FunctionTypeAnnotation oneA oneB ->
+        Annotation.FunctionTypeAnnotation (Node _ oneA) (Node _ oneB) ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
@@ -2174,10 +2113,10 @@ unifiable aliases vars one two =
                         Just foundTwo ->
                             unifiable aliases vars one foundTwo
 
-                Annotation.FunctionTypeAnnotation twoA twoB ->
-                    case unifiable aliases vars (denode oneA) (denode twoA) of
+                Annotation.FunctionTypeAnnotation (Node _ twoA) (Node _ twoB) ->
+                    case unifiable aliases vars oneA twoA of
                         ( aVars, Ok unifiedA ) ->
-                            case unifiable aliases aVars (denode oneB) (denode twoB) of
+                            case unifiable aliases aVars oneB twoB of
                                 ( bVars, Ok unifiedB ) ->
                                     ( bVars
                                     , Ok
@@ -2214,22 +2153,12 @@ unifiableFields aliases vars one two unified =
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
 
-        ( oneX :: oneRemain, twoFields ) ->
-            let
-                ( oneFieldName, oneFieldVal ) =
-                    denode oneX
-
-                oneName =
-                    denode oneFieldName
-
-                oneVal =
-                    denode oneFieldVal
-            in
-            case getField oneName oneVal twoFields [] of
+        ( (Node _ ( Node _ oneFieldName, Node _ oneFieldVal )) :: oneRemain, twoFields ) ->
+            case getField oneFieldName oneFieldVal twoFields [] of
                 Ok ( matchingFieldVal, remainingTwo ) ->
                     let
                         ( newVars, unifiedFieldResult ) =
-                            unifiable aliases vars oneVal matchingFieldVal
+                            unifiable aliases vars oneFieldVal matchingFieldVal
                     in
                     case unifiedFieldResult of
                         Ok unifiedField ->
@@ -2237,7 +2166,7 @@ unifiableFields aliases vars one two unified =
                                 newVars
                                 oneRemain
                                 remainingTwo
-                                (( nodify oneName, nodify unifiedField ) :: unified)
+                                (( nodify oneFieldName, nodify unifiedField ) :: unified)
 
                         Err err ->
                             ( newVars, Err err )
@@ -2249,6 +2178,17 @@ unifiableFields aliases vars one two unified =
             ( vars, Err MismatchedTypeVariables )
 
 
+getField :
+    String
+    -> Annotation.TypeAnnotation
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    ->
+        Result
+            InferenceError
+            ( Annotation.TypeAnnotation
+            , List (Node ( Node String, Node Annotation.TypeAnnotation ))
+            )
 getField name val fields captured =
     case fields of
         [] ->
@@ -2264,14 +2204,8 @@ getField name val fields captured =
 
         top :: remain ->
             let
-                ( topFieldName, topFieldVal ) =
+                ( Node _ topName, Node _ topVal ) =
                     denode top
-
-                topName =
-                    denode topFieldName
-
-                topVal =
-                    denode topFieldVal
             in
             if topName == name then
                 Ok
@@ -2283,25 +2217,32 @@ getField name val fields captured =
                 getField name val remain (top :: captured)
 
 
+unifiableLists :
+    AliasCache
+    -> VariableCache
+    -> List (Node Annotation.TypeAnnotation)
+    -> List (Node Annotation.TypeAnnotation)
+    -> List Annotation.TypeAnnotation
+    -> ( VariableCache, Result InferenceError (List (Node Annotation.TypeAnnotation)) )
 unifiableLists aliases vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
 
-        ( [ oneX ], [ twoX ] ) ->
-            case unifiable aliases vars (denode oneX) (denode twoX) of
+        ( [ Node _ oneX ], [ Node _ twoX ] ) ->
+            case unifiable aliases vars oneX twoX of
                 ( newVars, Ok un ) ->
                     ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
 
                 ( newVars, Err err ) ->
                     ( newVars, Err err )
 
-        ( oneX :: oneRemain, twoX :: twoRemain ) ->
-            case unifiable aliases vars (denode oneX) (denode twoX) of
+        ( (Node _ oneX) :: oneRemain, (Node _ twoX) :: twoRemain ) ->
+            case unifiable aliases vars oneX twoX of
                 ( newVars, Ok un ) ->
                     unifiableLists aliases newVars oneRemain twoRemain (un :: unified)
 
-                ( newVars, Err err ) ->
+                ( _, Err err ) ->
                     ( vars, Err err )
 
         _ ->
@@ -2325,7 +2266,7 @@ unifyNumber vars numberName two =
             , Ok two
             )
 
-        Annotation.GenericType twoVarName ->
+        Annotation.GenericType _ ->
             -- We don't know how this will resolve
             -- So, for now we say this is fine
             -- and in the resolveVariables step, we need to check that everything works
@@ -2361,7 +2302,7 @@ unifyAppendable vars numberName two =
             , Ok two
             )
 
-        Annotation.GenericType twoVarName ->
+        Annotation.GenericType _ ->
             -- We don't know how this will resolve
             -- So, for now we say this is fine
             -- and in the resolveVariables step, we need to check that everything works
@@ -2399,7 +2340,7 @@ isAppendable annotation =
         Annotation.Typed (Node.Node _ ( [], "String" )) _ ->
             True
 
-        Annotation.Typed (Node.Node _ ( [], "List" )) [ Node.Node _ inner ] ->
+        Annotation.Typed (Node.Node _ ( [], "List" )) [ _ ] ->
             True
 
         _ ->
@@ -2445,7 +2386,7 @@ unifyComparable vars comparableName two =
 
     else
         case two of
-            Annotation.GenericType twoVarName ->
+            Annotation.GenericType _ ->
                 -- We don't know how this will resolve
                 -- So, for now we say this is fine
                 -- and in the resolveVariables step, we need to check that everything works
@@ -2460,6 +2401,19 @@ unifyComparable vars comparableName two =
                 )
 
 
+resolveField :
+    Index
+    -> Annotation.TypeAnnotation
+    -> AliasCache
+    -> VariableCache
+    -> String
+    ->
+        Result
+            (List InferenceError)
+            { type_ : Annotation.TypeAnnotation
+            , inferences : VariableCache
+            , aliases : AliasCache
+            }
 resolveField index type_ aliases inferences fieldName =
     if Index.typecheck index then
         case type_ of
@@ -2481,8 +2435,8 @@ resolveField index type_ aliases inferences fieldName =
                                 }
                             ]
 
-            Annotation.GenericRecord name fields ->
-                case getFieldFromList fieldName (denode fields) of
+            Annotation.GenericRecord _ (Node _ fields) ->
+                case getFieldFromList fieldName fields of
                     Just ann ->
                         Ok
                             { type_ = ann
@@ -2497,7 +2451,7 @@ resolveField index type_ aliases inferences fieldName =
                                 , existingFields =
                                     List.map
                                         (denode >> Tuple.first >> denode)
-                                        (denode fields)
+                                        fields
                                 }
                             ]
 
@@ -2507,7 +2461,7 @@ resolveField index type_ aliases inferences fieldName =
                     , fieldName = fieldName
                     }
 
-            Annotation.Typed nodedModAndName vars ->
+            Annotation.Typed nodedModAndName _ ->
                 case getAlias nodedModAndName aliases of
                     Nothing ->
                         Err
@@ -2557,14 +2511,12 @@ getFieldFromList selector fields =
         [] ->
             Nothing
 
-        nodifiedTop :: remain ->
-            case denode nodifiedTop of
-                ( fieldname, contents ) ->
-                    if denode fieldname == selector then
-                        Just (denode contents)
+        (Node _ ( Node _ fieldname, Node _ contents )) :: remain ->
+            if fieldname == selector then
+                Just contents
 
-                    else
-                        getFieldFromList selector remain
+            else
+                getFieldFromList selector remain
 
 
 addInference :
@@ -2581,7 +2533,7 @@ addInference key value infs =
 
                 Just (Annotation.GenericRecord (Node.Node range recordName) (Node.Node fieldRange fields)) ->
                     case value of
-                        Annotation.GenericRecord (Node.Node existingRange existingRecordName) (Node.Node existingFieldRange existingFields) ->
+                        Annotation.GenericRecord _ (Node.Node _ existingFields) ->
                             Just
                                 (Annotation.GenericRecord
                                     (Node.Node range recordName)
@@ -2627,6 +2579,7 @@ containsFieldByName ( Node.Node _ oneName, _ ) ( Node.Node _ twoName, _ ) =
 inferRecordField : Index -> { nameOfRecord : String, fieldName : String } -> Result (List InferenceError) Inference
 inferRecordField index { nameOfRecord, fieldName } =
     let
+        fieldType : Annotation.TypeAnnotation
         fieldType =
             Annotation.GenericType
                 (Format.formatValue
@@ -2668,6 +2621,7 @@ protectInference index infResult =
             Err err
 
 
+protectAnnotation : Index -> Annotation.TypeAnnotation -> Annotation.TypeAnnotation
 protectAnnotation index ann =
     case ann of
         Annotation.GenericType str ->
@@ -2703,6 +2657,7 @@ protectAnnotation index ann =
                 (mapNode (protectAnnotation index) two)
 
 
+protectField : Index -> Node ( a, Node Annotation.TypeAnnotation ) -> Node ( a, Node Annotation.TypeAnnotation )
 protectField index (Node.Node nodeRange ( nodedName, nodedType )) =
     Node.Node nodeRange
         ( nodedName

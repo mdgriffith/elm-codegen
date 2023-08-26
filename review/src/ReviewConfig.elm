@@ -39,30 +39,29 @@ config : List Rule
 config =
     [ NoMissingTypeExpose.rule
     , NoUnused.Dependencies.rule
-
-    -- , Docs.NoMissing.rule
-    --    { document = onlyExposed
-    --    , from = exposedModules
-    --    }
-    --, Docs.ReviewLinksAndSections.rule
-    --, Docs.ReviewAtDocs.rule
-    --, Docs.UpToDateReadmeLinks.rule
-    --, NoDebug.Log.rule
-    --, NoDebug.TodoOrToString.rule
-    --    |> Rule.ignoreErrorsForDirectories [ "tests/" ]
-    --, NoExposingEverything.rule
-    --, NoImportingEverything.rule []
-    --, NoMissingTypeAnnotation.rule
-    --, NoMissingTypeAnnotationInLetIn.rule
-    --, NoSimpleLetBody.rule
-    --, NoPrematureLetComputation.rule
-    --, NoUnused.CustomTypeConstructors.rule []
-    --, NoUnused.CustomTypeConstructorArgs.rule
-    --, NoUnused.Exports.rule
-    --, NoUnused.Parameters.rule
-    --, NoUnused.Patterns.rule
-    --, NoUnused.Variables.rule
-    --, Simplify.rule Simplify.defaults
+    , Docs.NoMissing.rule
+        { document = onlyExposed
+        , from = exposedModules
+        }
+    , Docs.ReviewLinksAndSections.rule
+    , Docs.ReviewAtDocs.rule
+    , Docs.UpToDateReadmeLinks.rule
+    , NoDebug.Log.rule
+    , NoDebug.TodoOrToString.rule
+        |> Rule.ignoreErrorsForDirectories [ "tests/" ]
+    , NoExposingEverything.rule
+    , NoImportingEverything.rule []
+    , NoMissingTypeAnnotation.rule
+    , NoMissingTypeAnnotationInLetIn.rule
+    , NoSimpleLetBody.rule
+    , NoPrematureLetComputation.rule
+    , NoUnused.CustomTypeConstructors.rule []
+    , NoUnused.CustomTypeConstructorArgs.rule
+    , NoUnused.Exports.rule
+    , NoUnused.Parameters.rule
+    , NoUnused.Patterns.rule
+    , NoUnused.Variables.rule
+    , Simplify.rule Simplify.defaults
     ]
         |> List.map
             (Rule.ignoreErrorsForDirectories

@@ -2,22 +2,11 @@ module Declare exposing (suite)
 
 {-| -}
 
-import Dict
 import Elm
-import Elm.Annotation as Type
 import Elm.Declare
 import Elm.Expect
-import Elm.Let
 import Elm.Op
-import Elm.ToString
-import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
-import Gen.Element
-import Gen.Maybe
-import Internal.Compiler as Compiler
-import Internal.Debug
-import Internal.Write
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
 suite : Test
@@ -27,12 +16,14 @@ suite =
         ]
 
 
+myFn : { declaration : Elm.Declaration, call : Elm.Expression -> Elm.Expression, callFrom : List String -> Elm.Expression -> Elm.Expression, value : List String -> Elm.Expression }
 myFn =
     Elm.Declare.fn "myFn"
         ( "myInt", Nothing )
         (Elm.Op.plus (Elm.int 5))
 
 
+declarations : Test
 declarations =
     describe "declarations"
         [ test "Basic function dec" <|
@@ -55,4 +46,4 @@ mySweetNumber =
     myFn 82
 
 """
-            ]
+        ]

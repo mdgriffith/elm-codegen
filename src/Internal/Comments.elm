@@ -1,7 +1,7 @@
 module Internal.Comments exposing
     ( Comment, CommentPart(..), DocComment, FileComment
     , emptyComment, addPart
-    , prettyDocComment, prettyFileComment
+    , prettyFileComment
     )
 
 {-| A component DSL that helps with building comments.
@@ -22,7 +22,7 @@ can be extracted to order the exposing clause by.
 
 # Pretty printing of comments
 
-@docs prettyDocComment, prettyFileComment
+@docs prettyFileComment
 
 -}
 
@@ -106,6 +106,7 @@ layoutTags width parts =
             case part of
                 DocTags tags ->
                     let
+                        splits : List (List String)
                         splits =
                             fitAndSplit width tags
                     in
@@ -198,15 +199,18 @@ prettyCommentPart part =
             prettyTags tags
 
 
+prettyMarkdown : String -> Doc t
 prettyMarkdown val =
     Pretty.string val
 
 
+prettyCode : String -> Doc t
 prettyCode val =
     Pretty.string val
         |> Pretty.indent 4
 
 
+prettyTags : List String -> Doc t
 prettyTags tags =
     [ Pretty.string "@docs"
     , List.map Pretty.string tags
@@ -216,7 +220,7 @@ prettyTags tags =
 
 
 partToStringAndTags : Int -> CommentPart -> ( String, List String )
-partToStringAndTags width part =
+partToStringAndTags _ part =
     case part of
         Markdown val ->
             ( val, [] )

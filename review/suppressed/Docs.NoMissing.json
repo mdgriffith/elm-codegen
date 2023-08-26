@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "automatically created by": "elm-review suppress",
+  "learn more": "elm-review suppress --help",
+  "suppressions": [
+    { "count": 32, "filePath": "src/Elm/Case/Branch.elm" },
+    { "count": 29, "filePath": "src/Elm.elm" },
+    { "count": 22, "filePath": "src/Elm/Annotation.elm" },
+    { "count": 13, "filePath": "src/Elm/Case.elm" },
+    { "count": 9, "filePath": "src/Elm/Let.elm" },
+    { "count": 8, "filePath": "src/Elm/Declare.elm" },
+    { "count": 6, "filePath": "src/Elm/ToString.elm" }
+  ]
+}

@@ -5,14 +5,13 @@ import Elm.Annotation as Type
 import Elm.Case
 import Elm.Op
 import Elm.ToString
-import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
+import Expect
 import Internal.Compiler as Compiler
-import Internal.Debug as Debug
 import Internal.Index as Index
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
+successfullyInferredType : Compiler.Expression -> Expect.Expectation
 successfullyInferredType expression =
     let
         ( _, details ) =
@@ -30,6 +29,7 @@ successfullyInferredType expression =
                 )
 
 
+renderedAs : Elm.Expression -> String -> Expect.Expectation
 renderedAs expression str =
     Expect.equal
         (Elm.ToString.expression expression
@@ -38,6 +38,7 @@ renderedAs expression str =
         str
 
 
+declarationAs : Elm.Declaration -> String -> Expect.Expectation
 declarationAs decl str =
     Expect.equal
         (Elm.ToString.declaration decl
@@ -169,6 +170,7 @@ generatedCode =
         , test "Function, arg order isn't reversed" <|
             \_ ->
                 let
+                    exp : Elm.Expression
                     exp =
                         Elm.function
                             [ ( "str", Just Type.string )
@@ -220,6 +222,7 @@ map fn optional =
         ]
 
 
+myMap2 : Elm.Expression
 myMap2 =
     Elm.fn2
         ( "fn", Nothing )
@@ -229,6 +232,7 @@ myMap2 =
         )
 
 
+myMap : Elm.Expression
 myMap =
     Elm.fn2
         ( "fn", Nothing )
@@ -240,12 +244,8 @@ myMap =
                     "Present"
                     ( "present", Type.var "a" )
                     (\a ->
-                        let
-                            result =
-                                present []
-                                    (Elm.apply fn [ a ])
-                        in
-                        result
+                        present []
+                            (Elm.apply fn [ a ])
                     )
                 , Elm.Case.branch0 "Null" (null [])
                 , Elm.Case.branch0 "Absent" (absent [])
@@ -255,22 +255,18 @@ myMap =
 
 present : List String -> Elm.Expression -> Elm.Expression
 present optionalModuleName a =
-    let
-        val =
-            Elm.apply
-                (Elm.value
-                    { importFrom = optionalModuleName
-                    , name = "Present"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.var "a2" ] (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ]))
+    Elm.apply
+        (Elm.value
+            { importFrom = optionalModuleName
+            , name = "Present"
+            , annotation =
+                Just
+                    (Type.function [ Type.var "a2" ] (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ]))
 
-                    -- Nothing
-                    }
-                )
-                [ a ]
-    in
-    val
+            -- Nothing
+            }
+        )
+        [ a ]
 
 
 null : List String -> Elm.Expression

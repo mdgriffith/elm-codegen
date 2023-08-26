@@ -1,7 +1,8 @@
 module Internal.ImportsAndExposing exposing (sortAndDedupExposings, sortAndDedupImports)
 
-import Elm.Syntax.Exposing exposing (ExposedType, Exposing(..), TopLevelExpose(..))
+import Elm.Syntax.Exposing exposing (Exposing(..), TopLevelExpose(..))
 import Elm.Syntax.Import exposing (Import)
+import Elm.Syntax.ModuleName
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Range exposing (emptyRange)
 
@@ -29,7 +30,7 @@ topLevelExposeOrder tlel tler =
         ( _, InfixExpose _ ) ->
             GT
 
-        ( _, _ ) ->
+        _ ->
             compare (topLevelExposeName tlel) (topLevelExposeName tler)
 
 
@@ -61,6 +62,7 @@ groupByExposingName innerImports =
                     List.foldl
                         (\exp ( currName, currAccum, accum ) ->
                             let
+                                nextName : String
                                 nextName =
                                     topLevelExposeName exp
                             in
@@ -102,7 +104,7 @@ combineTopLevelExposes exposes =
                                 _ ->
                                     exp
 
-                        ( _, _ ) ->
+                        _ ->
                             result
                 )
                 hd
@@ -161,6 +163,7 @@ sortAndDedupExposing exp =
 sortAndDedupImports : List Import -> List Import
 sortAndDedupImports imports =
     let
+        impName : Import -> Elm.Syntax.ModuleName.ModuleName
         impName imp =
             denode imp.moduleName
     in
@@ -181,6 +184,7 @@ groupByModuleName innerImports =
                     List.foldl
                         (\imp ( currName, currAccum, accum ) ->
                             let
+                                nextName : Elm.Syntax.ModuleName.ModuleName
                                 nextName =
                                     denode imp.moduleName
                             in
@@ -207,6 +211,7 @@ combineImports innerImports =
 
         hd :: tl ->
             let
+                combinedImports : Import
                 combinedImports =
                     List.foldl
                         (\imp result ->

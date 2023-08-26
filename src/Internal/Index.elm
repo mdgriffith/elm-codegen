@@ -1,6 +1,6 @@
 module Internal.Index exposing
     ( Index, startIndex, startChecked
-    , next, nextN, dive
+    , next, dive
     , getName, indexToString, protectTypeName
     , typecheck
     )
@@ -9,7 +9,7 @@ module Internal.Index exposing
 
 @docs Index, startIndex, startChecked
 
-@docs next, nextN, dive
+@docs next, dive
 
 @docs getName, indexToString, protectTypeName
 
@@ -43,7 +43,7 @@ type Index
 
 
 typecheck : Index -> Bool
-typecheck (Index top tail scope check) =
+typecheck (Index _ _ _ check) =
     check
 
 
@@ -81,6 +81,7 @@ dive (Index top tail scope check) =
 getName : String -> Index -> ( String, Index )
 getName desiredName ((Index top tail scope check) as index) =
     let
+        formattedName : String
         formattedName =
             Format.formatValue desiredName
     in
@@ -89,6 +90,7 @@ getName desiredName ((Index top tail scope check) as index) =
 
     else
         let
+            protectedName : String
             protectedName =
                 formattedName ++ String.fromInt top
         in
@@ -99,6 +101,7 @@ getName desiredName ((Index top tail scope check) as index) =
 
         else
             let
+                protectedNameLevel2 : String
                 protectedNameLevel2 =
                     formattedName ++ indexToString index
             in
@@ -108,7 +111,7 @@ getName desiredName ((Index top tail scope check) as index) =
 
 
 protectTypeName : String -> Index -> String
-protectTypeName base ((Index top tail scope check) as index) =
+protectTypeName base ((Index _ tail _ _) as index) =
     case tail of
         [] ->
             Format.formatValue base
@@ -119,7 +122,7 @@ protectTypeName base ((Index top tail scope check) as index) =
 
 
 indexToString : Index -> String
-indexToString (Index top tail scope check) =
+indexToString (Index top tail _ _) =
     (if top == 0 then
         ""
 

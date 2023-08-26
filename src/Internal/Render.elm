@@ -3,6 +3,7 @@ module Internal.Render exposing (render)
 {-| -}
 
 import Elm.Syntax.Declaration
+import Elm.Syntax.Documentation
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Module
 import Elm.Syntax.Range as Range
@@ -10,7 +11,7 @@ import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Index as Index
 import Internal.Write
-import Set exposing (Set)
+import Set
 
 
 {-| -}
@@ -49,6 +50,7 @@ render :
     -> File
 render toDocComment fileDetails =
     let
+        rendered : { declarations : List Compiler.RenderedDeclaration, imports : List Compiler.Module, exposed : List Expose.TopLevelExpose, exposedGroups : List ( Maybe String, String ), hasPorts : Bool, warnings : List Compiler.Warning }
         rendered =
             List.foldl
                 (\decl gathered ->
@@ -61,6 +63,7 @@ render toDocComment fileDetails =
 
                         Compiler.Declaration decDetails ->
                             let
+                                result : { declaration : Elm.Syntax.Declaration.Declaration, additionalImports : List Compiler.Module, warning : Maybe Compiler.Warning }
                                 result =
                                     decDetails.toBody fileDetails.index
                             in
@@ -106,6 +109,7 @@ render toDocComment fileDetails =
                 }
                 fileDetails.declarations
 
+        body : String
         body =
             Internal.Write.write
                 { moduleDefinition =
@@ -177,6 +181,7 @@ dedupImports mods =
     List.foldl
         (\mod ( set, gathered ) ->
             let
+                stringName : String
                 stringName =
                     Compiler.fullModName mod
             in
@@ -194,6 +199,7 @@ dedupImports mods =
         |> List.sortBy Compiler.fullModName
 
 
+addDocs : Maybe Elm.Syntax.Documentation.Documentation -> Elm.Syntax.Declaration.Declaration -> Elm.Syntax.Declaration.Declaration
 addDocs maybeDoc decl =
     case maybeDoc of
         Nothing ->
@@ -223,7 +229,7 @@ addDocs maybeDoc decl =
                                     (Compiler.nodify doc)
                         }
 
-                Elm.Syntax.Declaration.PortDeclaration sig ->
+                Elm.Syntax.Declaration.PortDeclaration _ ->
                     decl
 
                 Elm.Syntax.Declaration.InfixDeclaration _ ->
@@ -233,6 +239,7 @@ addDocs maybeDoc decl =
                     decl
 
 
+addExposed : Compiler.Expose -> Elm.Syntax.Declaration.Declaration -> List Expose.TopLevelExpose -> List Expose.TopLevelExpose
 addExposed exposed declaration otherExposes =
     case exposed of
         Compiler.NotExposed ->
@@ -242,6 +249,7 @@ addExposed exposed declaration otherExposes =
             case declaration of
                 Elm.Syntax.Declaration.FunctionDeclaration fn ->
                     let
+                        fnName : String
                         fnName =
                             Compiler.denode (.name (Compiler.denode fn.declaration))
                     in
@@ -250,6 +258,7 @@ addExposed exposed declaration otherExposes =
 
                 Elm.Syntax.Declaration.AliasDeclaration synonym ->
                     let
+                        aliasName : String
                         aliasName =
                             Compiler.denode synonym.name
                     in
@@ -258,6 +267,7 @@ addExposed exposed declaration otherExposes =
 
                 Elm.Syntax.Declaration.CustomTypeDeclaration myType ->
                     let
+                        typeName : String
                         typeName =
                             Compiler.denode myType.name
                     in
@@ -274,13 +284,14 @@ addExposed exposed declaration otherExposes =
 
                 Elm.Syntax.Declaration.PortDeclaration myPort ->
                     let
+                        typeName : String
                         typeName =
                             Compiler.denode myPort.name
                     in
                     Expose.FunctionExpose typeName
                         :: otherExposes
 
-                Elm.Syntax.Declaration.InfixDeclaration inf ->
+                Elm.Syntax.Declaration.InfixDeclaration _ ->
                     otherExposes
 
                 Elm.Syntax.Declaration.Destructuring _ _ ->
@@ -312,19 +323,4 @@ groupExposing items =
 
 matchName : Maybe a -> Maybe a -> Bool
 matchName one two =
-    case one of
-        Nothing ->
-            case two of
-                Nothing ->
-                    True
-
-                _ ->
-                    False
-
-        Just oneName ->
-            case two of
-                Nothing ->
-                    False
-
-                Just twoName ->
-                    oneName == twoName
+    one == two

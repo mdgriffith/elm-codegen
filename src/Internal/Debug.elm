@@ -1,4 +1,4 @@
-module Internal.Debug exposing (annotationFormatted, everything, everythingFormatted, facts)
+module Internal.Debug exposing (facts)
 
 import Dict
 import Internal.Compiler as Compiler
@@ -14,6 +14,7 @@ import Internal.Write
 facts : Compiler.Expression -> Result String (List ( String, String ))
 facts (Compiler.Expression exp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             exp Index.startIndex
     in
@@ -28,17 +29,9 @@ facts (Compiler.Expression exp) =
                 |> Ok
 
         Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            Compiler.inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                )
-                ""
-                inferenceError
+            inferenceError
+                |> List.map Compiler.inferenceErrorToString
+                |> String.join "\n\n"
                 |> Err
 
 
@@ -48,6 +41,7 @@ everythingFormatted :
     -> List String
 everythingFormatted log exp =
     let
+        every : Result String { facts : List ( String, String ), signature : String, aliases : List ( String, String ) }
         every =
             everything exp
 
@@ -59,8 +53,7 @@ everythingFormatted log exp =
             [ err ]
 
         Ok e ->
-            List.concatMap
-                identity
+            List.concat
                 [ [ "Signature"
                   , "  " ++ e.signature
                   ]
@@ -83,6 +76,7 @@ annotationFormatted :
     -> List String
 annotationFormatted log ann =
     let
+        every : Result String { facts : List ( String, String ), signature : String, aliases : List ( String, String ) }
         every =
             annotation ann
 
@@ -94,8 +88,7 @@ annotationFormatted log ann =
             [ err ]
 
         Ok e ->
-            List.concatMap
-                identity
+            List.concat
                 [ [ "Signature"
                   , "  " ++ e.signature
                   ]
@@ -121,6 +114,7 @@ everything :
             }
 everything (Compiler.Expression exp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             exp Index.startIndex
     in
@@ -143,6 +137,7 @@ annotation ann =
     case ann of
         Ok sig ->
             let
+                allFacts : List ( String, String )
                 allFacts =
                     sig.inferences
                         |> Dict.toList
@@ -164,15 +159,7 @@ annotation ann =
                 }
 
         Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            Compiler.inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                )
-                ""
-                inferenceError
+            inferenceError
+                |> List.map Compiler.inferenceErrorToString
+                |> String.join "\n\n"
                 |> Err

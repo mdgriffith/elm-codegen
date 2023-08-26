@@ -133,9 +133,9 @@ These helpers let you define a Custom Type pattern with a builder.
 -}
 
 import Elm exposing (Expression)
-import Elm.Annotation as Type
-import Elm.Syntax.Node as Node exposing (Node(..))
+import Elm.Syntax.Node exposing (Node)
 import Elm.Syntax.Pattern as Pattern
+import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Branch as Branch exposing (Pattern(..))
 import Internal.Compiler as Compiler
 import Internal.Format as Format
@@ -398,6 +398,7 @@ withField newField (Record toRecord) =
                 ( newIndex, existingFields, recordBuilder ) =
                     toRecord index
 
+                new : { name : String, typename : String, val : Expression, index : Index.Index }
                 new =
                     Compiler.toVarExactName newIndex newField
             in
@@ -463,6 +464,7 @@ withParam (Branch toBranch) (CustomType toCustomType) =
                 ( newIndex, pattern, val ) =
                     toBranch index
 
+                custom : { index : Index.Index, base : String, patterns : List Pattern.Pattern, value : a -> b }
                 custom =
                     toCustomType newIndex
             in
@@ -480,6 +482,7 @@ toPattern (CustomType toCustomType) =
     Branch.Branch
         (\index ->
             let
+                custom : { index : Index.Index, base : String, patterns : List Pattern.Pattern, value : a }
                 custom =
                     toCustomType index
             in
@@ -688,6 +691,7 @@ aliasAs name combine (Branch.Branch branch) =
                 ( newIndex, pattern, destructured ) =
                     branch index
 
+                aliased : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                 aliased =
                     Compiler.toVarMaybeType newIndex name Nothing
             in
@@ -739,6 +743,7 @@ var name =
     Branch.Branch
         (\index ->
             let
+                variable : { name : String, type_ : Annotation.TypeAnnotation, val : Expression, index : Index.Index }
                 variable =
                     Compiler.toVarMaybeType index name Nothing
             in
@@ -786,7 +791,7 @@ list { patterns, gather, startWith, finally } =
             let
                 ( finalIndex, itemPatterns, finalGathered ) =
                     List.foldl
-                        (\((Branch toBranch) as branch) ( index, patternList, gathered ) ->
+                        (\(Branch toBranch) ( index, patternList, gathered ) ->
                             let
                                 ( newIndex, pattern, value ) =
                                     toBranch index
@@ -858,12 +863,12 @@ listWithRemaining { patterns, gather, startWith, remaining, finally } =
                 (Branch toRemaining) =
                     remaining
 
-                ( restIndex, restPattern, remainingValue ) =
+                ( _, restPattern, remainingValue ) =
                     toRemaining startIndex
 
                 ( finalIndex, itemPatterns, finalGathered ) =
                     List.foldl
-                        (\((Branch toBranch) as branch) ( index, patternList, gathered ) ->
+                        (\(Branch toBranch) ( index, patternList, gathered ) ->
                             let
                                 ( newIndex, pattern, value ) =
                                     toBranch index

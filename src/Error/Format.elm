@@ -60,6 +60,7 @@ grey str =
 color : Int -> Int -> String -> String
 color openCode closeCode content =
     let
+        delim : Int -> String
         delim code =
             --"\\u001B[" ++ String.fromInt code ++ "m"
             "\u{001B}[" ++ String.fromInt code ++ "m"

@@ -100,19 +100,16 @@ import Dict
 import Elm.Annotation
 import Elm.Parser
 import Elm.Processing
-import Elm.Syntax.Declaration as Declaration exposing (Declaration(..))
+import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
-import Elm.Syntax.Infix as Infix
+import Elm.Syntax.File
 import Elm.Syntax.Module
-import Elm.Syntax.Node as Node
+import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Pattern as Pattern
-import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Clean as Clean
-import Internal.Comments
 import Internal.Compiler as Compiler
-import Internal.Debug
 import Internal.Dependencies
 import Internal.Format as Format
 import Internal.Index as Index
@@ -135,6 +132,7 @@ type alias Expression =
 toString : Expression -> String
 toString (Compiler.Expression toExp) =
     let
+        expresh : Compiler.ExpressionDetails
         expresh =
             toExp Index.startIndex
     in
@@ -301,13 +299,12 @@ value details =
                 case details.annotation of
                     Nothing ->
                         let
+                            typename : String
                             typename =
                                 Index.protectTypeName details.name index
                         in
                         Ok
-                            { type_ =
-                                Annotation.GenericType
-                                    typename
+                            { type_ = Annotation.GenericType typename
                             , inferences = Dict.empty
                             , aliases = Compiler.emptyAliases
                             }
@@ -349,6 +346,7 @@ withType ((Compiler.Annotation annDetails) as ann) (Compiler.Expression toExp) =
     Compiler.Expression <|
         \index ->
             let
+                exp : Compiler.ExpressionDetails
                 exp =
                     toExp index
             in
@@ -367,7 +365,7 @@ withType ((Compiler.Annotation annDetails) as ann) (Compiler.Expression toExp) =
                                         , aliases = expressionAnnotation.aliases
                                         }
 
-                                Err err ->
+                                Err _ ->
                                     Ok
                                         { type_ = annDetails.annotation
                                         , inferences = Dict.empty
@@ -391,9 +389,11 @@ unwrapper modName typename =
     Compiler.Expression <|
         \index ->
             let
+                arg : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
                 arg =
                     Compiler.toVar index "val"
 
+                return : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
                 return =
                     Compiler.toVar arg.index "unwrapped"
             in
@@ -585,7 +585,7 @@ tuple oneExp twoExp =
                 ( oneIndex, one ) =
                     Compiler.toExpressionDetails index oneExp
 
-                ( twoIndex, two ) =
+                ( _, two ) =
                     Compiler.toExpressionDetails oneIndex twoExp
             in
             { expression =
@@ -627,7 +627,7 @@ triple oneExp twoExp threeExp =
                 ( twoIndex, two ) =
                     Compiler.toExpressionDetails oneIndex twoExp
 
-                ( threeIndex, three ) =
+                ( _, three ) =
                     Compiler.toExpressionDetails twoIndex threeExp
             in
             { expression =
@@ -731,6 +731,7 @@ list exprs =
     Compiler.expression <|
         \index ->
             let
+                exprDetails : List Compiler.ExpressionDetails
                 exprDetails =
                     Compiler.thread index exprs
             in
@@ -777,12 +778,14 @@ updateRecord fields recordExpression =
                         |> List.foldl
                             (\( fieldNameUnformatted, fieldExp ) ( currentIndex, fieldAnnotationResult, items ) ->
                                 let
+                                    fieldName : String
                                     fieldName =
                                         Format.formatValue fieldNameUnformatted
 
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails currentIndex fieldExp
 
+                                    currentFieldAnnotations : Result (List Compiler.InferenceError) (List ( String, Compiler.Inference ))
                                     currentFieldAnnotations =
                                         case fieldAnnotationResult of
                                             Ok fieldAnns ->
@@ -824,6 +827,7 @@ updateRecord fields recordExpression =
 
                     _ ->
                         let
+                            name : String
                             name =
                                 "record" ++ Index.indexToString fieldIndex
                         in
@@ -893,7 +897,7 @@ updateRecord fields recordExpression =
                                                         )
                                             }
 
-                                    otherwise ->
+                                    _ ->
                                         recordExp.annotation
 
                             otherwise ->
@@ -924,6 +928,7 @@ record fields =
     Compiler.expression <|
         \index ->
             let
+                unified : { index : Index.Index, fields : List ( Node String, Node Exp.Expression ), passed : Set.Set String, errors : List Compiler.InferenceError, fieldAnnotations : List ( String, Compiler.Inference ), imports : List Compiler.Module }
                 unified =
                     fields
                         |> List.foldl
@@ -932,6 +937,7 @@ record fields =
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails found.index fieldExpression
 
+                                    fieldName : String
                                     fieldName =
                                         Format.formatValue unformattedFieldName
                                 in
@@ -953,11 +959,11 @@ record fields =
                                             Err errs ->
                                                 errs ++ found.errors
 
-                                            Ok ann ->
+                                            Ok _ ->
                                                 found.errors
                                 , fieldAnnotations =
                                     case exp.annotation of
-                                        Err err ->
+                                        Err _ ->
                                             found.fieldAnnotations
 
                                         Ok ann ->
@@ -998,14 +1004,14 @@ record fields =
                                     |> Annotation.Record
                             , inferences =
                                 List.foldl
-                                    (\( name, ann ) gathered ->
+                                    (\( _, ann ) gathered ->
                                         Compiler.mergeInferences ann.inferences gathered
                                     )
                                     Dict.empty
                                     unified.fieldAnnotations
                             , aliases =
                                 List.foldl
-                                    (\( name, ann ) gathered ->
+                                    (\( _, ann ) gathered ->
                                         Compiler.mergeAliases ann.aliases gathered
                                     )
                                     Compiler.emptyAliases
@@ -1065,7 +1071,7 @@ ifThen condition thenBranch elseBranch =
                 ( thenIndex, thenB ) =
                     Compiler.toExpressionDetails condIndex thenBranch
 
-                ( finalIndex, elseB ) =
+                ( _, elseB ) =
                     Compiler.toExpressionDetails thenIndex elseBranch
             in
             { expression =
@@ -1094,6 +1100,7 @@ get unformattedFieldName recordExpression =
     Compiler.Expression <|
         \index ->
             let
+                fieldName : String
                 fieldName =
                     Format.formatValue unformattedFieldName
 
@@ -1152,26 +1159,16 @@ verifyFieldsHelper existingFields updatedFields =
             True
 
         ( fieldName, fieldInference ) :: remain ->
-            if presentAndMatching fieldName fieldInference existingFields then
-                verifyFieldsHelper existingFields remain
-
-            else
-                False
+            presentAndMatching fieldName fieldInference existingFields
+                && verifyFieldsHelper existingFields remain
 
 
-presentAndMatching fieldName fieldInference existingFields =
-    List.foldl
-        (\(Node.Node _ ( Node.Node _ existingFieldName, Node.Node _ existingFieldType )) gathered ->
-            if gathered then
-                gathered
-
-            else if fieldName == existingFieldName then
-                True
-
-            else
-                False
+presentAndMatching : String -> Compiler.Inference -> List (Node Annotation.RecordField) -> Bool
+presentAndMatching fieldName _ existingFields =
+    List.any
+        (\(Node.Node _ ( Node.Node _ existingFieldName, _ )) ->
+            fieldName == existingFieldName
         )
-        False
         existingFields
 
 
@@ -1203,7 +1200,7 @@ customType name variants =
                 variants
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -1306,7 +1303,7 @@ alias name innerAnnotation =
             Compiler.getAnnotationImports innerAnnotation
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -1331,6 +1328,7 @@ apply fnExp argExpressions =
                 ( annotationIndex, fnDetails ) =
                     Compiler.toExpressionDetails index fnExp
 
+                args : List Compiler.ExpressionDetails
                 args =
                     Compiler.thread annotationIndex argExpressions
             in
@@ -1397,12 +1395,14 @@ fn ( oneBaseName, maybeAnnotation ) toExpression =
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeAnnotation
 
                 (Compiler.Expression toExpr) =
                     toExpression one.val
 
+                return : Compiler.ExpressionDetails
                 return =
                     toExpr one.index
             in
@@ -1413,7 +1413,7 @@ fn ( oneBaseName, maybeAnnotation ) toExpression =
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1452,9 +1452,11 @@ functionReduced argBaseName toExpression =
                 ( arg1Name, newIndex ) =
                     Index.getName argBaseName index
 
+                argType : Elm.Annotation.Annotation
                 argType =
                     Elm.Annotation.var arg1Name
 
+                arg1 : Expression
                 arg1 =
                     value
                         { importFrom = []
@@ -1465,6 +1467,7 @@ functionReduced argBaseName toExpression =
                 (Compiler.Expression toExpr) =
                     toExpression arg1
 
+                return : Compiler.ExpressionDetails
                 return =
                     toExpr newIndex
             in
@@ -1476,7 +1479,7 @@ functionReduced argBaseName toExpression =
                         }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1504,20 +1507,21 @@ popLastAndDenodeLast lst =
         [] ->
             Nothing
 
-        last :: initReverse ->
-            Just ( List.reverse initReverse, Compiler.denode last )
+        (Node _ last) :: initReverse ->
+            Just ( List.reverse initReverse, last )
 
 
 betaReduce : Exp.Expression -> Exp.Expression
 betaReduce e =
     let
+        extractLastArg : Exp.Expression -> Maybe String
         extractLastArg arg =
             case arg of
                 Exp.FunctionOrValue [] n ->
                     Just n
 
-                Exp.ParenthesizedExpression p ->
-                    extractLastArg <| Compiler.denode p
+                Exp.ParenthesizedExpression (Node _ p) ->
+                    extractLastArg p
 
                 _ ->
                     Nothing
@@ -1527,14 +1531,7 @@ betaReduce e =
             case popLastAndDenodeLast args of
                 Just ( initLambdaArgs, Pattern.VarPattern lastLambdaArg ) ->
                     case Compiler.denode expression of
-                        Exp.RecordAccess argNode fieldNode ->
-                            let
-                                fieldName =
-                                    Compiler.denode fieldNode
-
-                                arg =
-                                    Compiler.denode argNode
-                            in
+                        Exp.RecordAccess (Node _ arg) (Node.Node _ fieldName) ->
                             case arg of
                                 Exp.FunctionOrValue [] argName ->
                                     if argName == lastLambdaArg then
@@ -1559,8 +1556,8 @@ betaReduce e =
                                     if extractLastArg lastApplicationArg == Just lastLambdaArg then
                                         if List.isEmpty initLambdaArgs then
                                             case initApplicationArgs of
-                                                [ s ] ->
-                                                    betaReduce <| Compiler.denode s
+                                                [ Node _ s ] ->
+                                                    betaReduce s
 
                                                 _ ->
                                                     Exp.Application initApplicationArgs
@@ -1600,26 +1597,29 @@ fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
-                ( newIndex_, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails two.index (toExpression one.val two.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        ]
+                        Compiler.nodifyAll
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1653,30 +1653,34 @@ fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails three.index (toExpression one.val two.val three.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        ]
+                        Compiler.nodifyAll
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1716,34 +1720,39 @@ fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
+                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 four =
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails four.index (toExpression one.val two.val three.val four.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        , Compiler.nodify (Pattern.VarPattern four.name)
-                        ]
+                        Compiler.nodifyAll
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            , Pattern.VarPattern four.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1789,38 +1798,44 @@ fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
+                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 four =
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
+                five : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 five =
                     Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        , Compiler.nodify (Pattern.VarPattern four.name)
-                        , Compiler.nodify (Pattern.VarPattern five.name)
-                        ]
+                        Compiler.nodifyAll <|
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            , Pattern.VarPattern four.name
+                            , Pattern.VarPattern five.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1872,42 +1887,49 @@ fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
     Compiler.expression <|
         \index ->
             let
+                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 one =
                     Compiler.toVarMaybeType index oneBaseName maybeOneType
 
+                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
+                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 three =
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
+                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 four =
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
+                five : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 five =
                     Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
+                six : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
                 six =
                     Compiler.toVarMaybeType five.index sixBaseName maybeSixType
 
-                ( newIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val six.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern one.name)
-                        , Compiler.nodify (Pattern.VarPattern two.name)
-                        , Compiler.nodify (Pattern.VarPattern three.name)
-                        , Compiler.nodify (Pattern.VarPattern four.name)
-                        , Compiler.nodify (Pattern.VarPattern five.name)
-                        , Compiler.nodify (Pattern.VarPattern six.name)
-                        ]
+                        Compiler.nodifyAll <|
+                            [ Pattern.VarPattern one.name
+                            , Pattern.VarPattern two.name
+                            , Pattern.VarPattern three.name
+                            , Pattern.VarPattern four.name
+                            , Pattern.VarPattern five.name
+                            , Pattern.VarPattern six.name
+                            ]
                     , expression = Compiler.nodify return.expression
                     }
             , annotation =
                 case return.annotation of
-                    Err err ->
+                    Err _ ->
                         return.annotation
 
                     Ok returnAnnotation ->
@@ -1977,9 +1999,9 @@ renderDocumentation :
     -> Maybe String
 renderDocumentation resolvedType bodyAnnotation =
     case resolvedType of
-        Ok sig ->
+        Ok _ ->
             case bodyAnnotation of
-                Ok inference ->
+                Ok _ ->
                     Nothing
 
                 Err err ->
@@ -1996,9 +2018,10 @@ sep =
     "\n----\n"
 
 
+renderDebugDocumentation : Result String value -> Result (List Compiler.InferenceError) Compiler.Inference -> Maybe String
 renderDebugDocumentation resolvedType bodyAnnotation =
     case resolvedType of
-        Ok sig ->
+        Ok _ ->
             case bodyAnnotation of
                 Ok inference ->
                     Just (Internal.Write.writeInference inference)
@@ -2036,6 +2059,7 @@ renderError err =
 declaration : String -> Expression -> Declaration
 declaration nameStr (Compiler.Expression toBody) =
     let
+        name : String
         name =
             Format.formatDeclarationName nameStr
     in
@@ -2048,20 +2072,23 @@ declaration nameStr (Compiler.Expression toBody) =
         , toBody =
             \index ->
                 let
+                    body : Compiler.ExpressionDetails
                     body =
                         toBody index
 
+                    resolvedType : Result String Annotation.TypeAnnotation
                     resolvedType =
                         body.annotation
                             |> Result.mapError renderError
                             |> Result.andThen
                                 (\sig -> Compiler.resolve index sig.inferences sig.type_)
 
+                    maybeWarning : Maybe { declaration : String, warning : String }
                     maybeWarning =
                         case resolvedType of
-                            Ok sig ->
+                            Ok _ ->
                                 case body.annotation of
-                                    Ok inference ->
+                                    Ok _ ->
                                         Nothing
 
                                     Err [] ->
@@ -2091,26 +2118,21 @@ declaration nameStr (Compiler.Expression toBody) =
 
                         -- (renderDebugDocumentation resolvedType body.annotation)
                         , signature =
-                            case body.annotation of
-                                Ok sig ->
-                                    case resolvedType of
-                                        Ok (Annotation.GenericType generic) ->
-                                            -- Top level values can't be lonely generic types.
-                                            Nothing
+                            case ( body.annotation, resolvedType ) of
+                                ( Ok _, Ok (Annotation.GenericType _) ) ->
+                                    -- Top level values can't be lonely generic types.
+                                    Nothing
 
-                                        Ok finalType ->
-                                            Just
-                                                (Compiler.nodify
-                                                    { name = Compiler.nodify name
-                                                    , typeAnnotation =
-                                                        Compiler.nodify (Clean.clean finalType)
-                                                    }
-                                                )
+                                ( Ok _, Ok finalType ) ->
+                                    Just
+                                        (Compiler.nodify
+                                            { name = Compiler.nodify name
+                                            , typeAnnotation =
+                                                Compiler.nodify (Clean.clean finalType)
+                                            }
+                                        )
 
-                                        Err errMsg ->
-                                            Nothing
-
-                                Err _ ->
+                                _ ->
                                     Nothing
                         , declaration =
                             case body.expression of
@@ -2151,6 +2173,7 @@ functionAdvanced args fullExpression =
             Compiler.expression <|
                 \index ->
                     let
+                        expr : Compiler.ExpressionDetails
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
@@ -2160,7 +2183,7 @@ functionAdvanced args fullExpression =
                         Exp.LambdaExpression
                             { args =
                                 List.map
-                                    (\( name, ann ) -> Compiler.nodify (Pattern.VarPattern name))
+                                    (\( name, _ ) -> Compiler.nodify (Pattern.VarPattern name))
                                     args
                             , expression = Compiler.nodify expr.expression
                             }
@@ -2173,7 +2196,7 @@ functionAdvanced args fullExpression =
                                 Ok
                                     { type_ =
                                         List.foldr
-                                            (\( name, Compiler.Annotation ann ) fnbody ->
+                                            (\( _, Compiler.Annotation ann ) fnbody ->
                                                 Annotation.FunctionTypeAnnotation
                                                     (Compiler.nodify ann.annotation)
                                                     (Compiler.nodify fnbody)
@@ -2213,6 +2236,7 @@ function initialArgList toFullExpression =
             Compiler.expression <|
                 \index ->
                     let
+                        args : { index : Index.Index, args : List Expression, names : List String, types : List Annotation.TypeAnnotation }
                         args =
                             List.foldl
                                 (\( nameBase, maybeType ) found ->
@@ -2220,6 +2244,7 @@ function initialArgList toFullExpression =
                                         ( name, newIndex ) =
                                             Index.getName nameBase found.index
 
+                                        argType : Compiler.Annotation
                                         argType =
                                             Maybe.withDefault
                                                 (Compiler.Annotation
@@ -2235,6 +2260,7 @@ function initialArgList toFullExpression =
                                                 )
                                                 maybeType
 
+                                        arg : Expression
                                         arg =
                                             value
                                                 { importFrom = []
@@ -2255,9 +2281,11 @@ function initialArgList toFullExpression =
                                 }
                                 initialArgList
 
+                        fullExpression : Expression
                         fullExpression =
                             toFullExpression (List.reverse args.args)
 
+                        expr : Compiler.ExpressionDetails
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
@@ -2364,6 +2392,7 @@ This will give you more flexibility in the future and save you having to wire up
 portIncoming : String -> List Elm.Annotation.Annotation -> Declaration
 portIncoming nameStr args =
     let
+        name : String
         name =
             Format.formatDeclarationName nameStr
     in
@@ -2374,7 +2403,7 @@ portIncoming nameStr args =
             List.concatMap Compiler.getAnnotationImports args
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -2388,7 +2417,7 @@ portIncoming nameStr args =
                                             (Compiler.nodify (Annotation.GenericType "msg"))
                                             (Compiler.nodify sub)
 
-                                    start :: remain ->
+                                    _ :: _ ->
                                         Annotation.FunctionTypeAnnotation
                                             (groupAnn
                                                 (Compiler.nodify
@@ -2407,6 +2436,7 @@ portIncoming nameStr args =
         }
 
 
+groupAnn : Node Annotation.TypeAnnotation -> Node Annotation.TypeAnnotation
 groupAnn ann =
     Annotation.Tupled
         [ ann ]
@@ -2434,6 +2464,7 @@ will generate
 portOutgoing : String -> Elm.Annotation.Annotation -> Declaration
 portOutgoing nameStr arg =
     let
+        name : String
         name =
             Format.formatDeclarationName nameStr
     in
@@ -2444,7 +2475,7 @@ portOutgoing nameStr arg =
             Compiler.getAnnotationImports arg
         , docs = Nothing
         , toBody =
-            \index ->
+            \_ ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -2482,28 +2513,26 @@ unsafe source =
 parse : String -> Result String { declarations : List Declaration }
 parse source =
     case Elm.Parser.parse source of
-        Err deadends ->
+        Err _ ->
             Err "Uh oh"
 
         Ok raw ->
             let
+                parsedFile : Elm.Syntax.File.File
                 parsedFile =
                     Elm.Processing.process elmProcessContext
                         raw
 
+                exposedList : Expose.Exposing
                 exposedList =
                     Compiler.denode parsedFile.moduleDefinition
                         |> Elm.Syntax.Module.exposingList
 
+                declarations : List ( Int, Compiler.Declaration )
                 declarations =
                     List.map
-                        (\dec ->
-                            let
-                                declar =
-                                    Compiler.denode dec
-                            in
-                            ( Node.range dec
-                                |> (.start >> .row)
+                        (\(Node range declar) ->
+                            ( range.start.row
                             , Compiler.Declaration
                                 { name = Maybe.withDefault "parsed" (decName declar)
                                 , exposed = determineExposure declar exposedList
@@ -2511,7 +2540,7 @@ parse source =
                                     []
                                 , docs = Nothing
                                 , toBody =
-                                    \index ->
+                                    \_ ->
                                         { warning = Nothing
                                         , additionalImports = []
                                         , declaration =
@@ -2522,13 +2551,12 @@ parse source =
                         )
                         parsedFile.declarations
 
+                comments : List ( Int, Compiler.Declaration )
                 comments =
                     List.map
-                        (\nodedComment ->
-                            ( Node.range nodedComment
-                                |> (.start >> .row)
-                            , Compiler.Comment
-                                (Compiler.denode nodedComment)
+                        (\(Node range nodedComment) ->
+                            ( range.start.row
+                            , Compiler.Comment nodedComment
                             )
                         )
                         parsedFile.comments
@@ -2542,6 +2570,7 @@ parse source =
                 }
 
 
+decName : Declaration.Declaration -> Maybe String
 decName decBody =
     case decBody of
         Declaration.FunctionDeclaration func ->
@@ -2560,7 +2589,7 @@ decName decBody =
             Compiler.denode myPort.name
                 |> Just
 
-        Declaration.InfixDeclaration inf ->
+        Declaration.InfixDeclaration _ ->
             Nothing
 
         Declaration.Destructuring _ _ ->
@@ -2584,50 +2613,61 @@ determineExposure dec exposedDec =
         Expose.Explicit nodes ->
             case dec of
                 Declaration.FunctionDeclaration myFn ->
-                    case Compiler.denode myFn.declaration of
-                        implementation ->
-                            case Compiler.denode implementation.name of
-                                name ->
-                                    if List.any (valueIsExposed name) nodes then
-                                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                    let
+                        implementation : Exp.FunctionImplementation
+                        implementation =
+                            Compiler.denode myFn.declaration
 
-                                    else
-                                        Compiler.NotExposed
+                        name : String
+                        name =
+                            Compiler.denode implementation.name
+                    in
+                    if List.any (valueIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+
+                    else
+                        Compiler.NotExposed
 
                 Declaration.AliasDeclaration typeAlias ->
-                    case Compiler.denode typeAlias.name of
-                        name ->
-                            if List.any (typeIsExposed name) nodes then
-                                Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                    let
+                        name : String
+                        name =
+                            Compiler.denode typeAlias.name
+                    in
+                    if List.any (typeIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
 
-                            else
-                                Compiler.NotExposed
+                    else
+                        Compiler.NotExposed
 
                 Declaration.CustomTypeDeclaration type_ ->
-                    case Compiler.denode type_.name of
-                        name ->
-                            if List.any (typeIsExposed name) nodes then
-                                Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                    let
+                        name : String
+                        name =
+                            Compiler.denode type_.name
+                    in
+                    if List.any (typeIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
 
-                            else if List.any (typeConstructorIsExposed name) nodes then
-                                Compiler.Exposed { group = Nothing, exposeConstructor = True }
+                    else if List.any (typeConstructorIsExposed name) nodes then
+                        Compiler.Exposed { group = Nothing, exposeConstructor = True }
 
-                            else
-                                Compiler.NotExposed
+                    else
+                        Compiler.NotExposed
 
-                Declaration.PortDeclaration sig ->
+                Declaration.PortDeclaration _ ->
                     Compiler.NotExposed
 
-                Declaration.InfixDeclaration infixDec ->
+                Declaration.InfixDeclaration _ ->
                     Compiler.NotExposed
 
-                Declaration.Destructuring pattern exp ->
+                Declaration.Destructuring _ _ ->
                     Compiler.NotExposed
 
 
 valueIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
-valueIsExposed name node =
-    case Compiler.denode node of
+valueIsExposed name (Node _ node) =
+    case node of
         Expose.InfixExpose _ ->
             False
 
@@ -2642,12 +2682,12 @@ valueIsExposed name node =
 
 
 typeIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
-typeIsExposed name node =
-    case Compiler.denode node of
+typeIsExposed name (Node _ node) =
+    case node of
         Expose.InfixExpose _ ->
             False
 
-        Expose.FunctionExpose fnName ->
+        Expose.FunctionExpose _ ->
             False
 
         Expose.TypeOrAliasExpose typeName ->
@@ -2658,12 +2698,12 @@ typeIsExposed name node =
 
 
 typeConstructorIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
-typeConstructorIsExposed name node =
-    case Compiler.denode node of
+typeConstructorIsExposed name (Node _ node) =
+    case node of
         Expose.InfixExpose _ ->
             False
 
-        Expose.FunctionExpose fnName ->
+        Expose.FunctionExpose _ ->
             False
 
         Expose.TypeOrAliasExpose typeName ->

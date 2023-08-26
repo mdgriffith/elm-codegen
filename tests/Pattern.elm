@@ -1,15 +1,13 @@
 module Pattern exposing (suite)
 
 import Elm exposing (Expression)
-import Elm.Annotation as Type exposing (Annotation)
+import Elm.Annotation as Type
 import Elm.Case
 import Elm.Case.Branch as Pattern
 import Elm.Expect
-import Elm.Let
 import Elm.Op
 import Elm.ToString
 import Expect
-import Gen.Maybe
 import Gen.String
 import Internal.Compiler as Compiler
 import Internal.Index as Index
@@ -91,7 +89,7 @@ suite =
                     Type.unit
                     [ Pattern.triple (Pattern.unit ()) (Pattern.var "name") (Pattern.int 123 (Elm.int 123))
                         |> Pattern.map
-                            (\( (), name, literalInt ) ->
+                            (\( (), _, _ ) ->
                                 Elm.unit
                             )
                     ]
@@ -249,21 +247,21 @@ expectImports expectedImports expression =
         |> Expect.equal (Set.fromList expectedImports)
 
 
-fromString =
-    \fromStringArg ->
-        Elm.apply
-            (Elm.value
-                { importFrom = [ "QueryParams" ]
-                , name = "fromString"
-                , annotation =
-                    Just
-                        (Type.function
-                            [ Type.string ]
-                            (Type.namedWith [] "QueryParams" [])
-                        )
-                }
-            )
-            [ fromStringArg ]
+fromString : Expression -> Expression
+fromString fromStringArg =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "QueryParams" ]
+            , name = "fromString"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string ]
+                        (Type.namedWith [] "QueryParams" [])
+                    )
+            }
+        )
+        [ fromStringArg ]
 
 
 renderedAs : String -> Expression -> Expect.Expectation

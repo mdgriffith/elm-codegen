@@ -164,9 +164,11 @@ with (Let toScopeA) (Let toScopeAB) =
     Let
         (\index ->
             let
+                resultA : { letDecls : List (Node.Node Exp.LetDeclaration), index : Index.Index, return : a, imports : List Module }
                 resultA =
                     toScopeA index
 
+                resultB : { letDecls : List (Node.Node Exp.LetDeclaration), index : Index.Index, return : a -> b, imports : List Module }
                 resultB =
                     toScopeAB resultA.index
             in
@@ -219,7 +221,7 @@ value desiredName valueExpr sourceLet =
                 , index = finalIndex
                 , return =
                     Compiler.Expression
-                        (\i ->
+                        (\_ ->
                             { details
                                 | expression =
                                     Exp.FunctionOrValue []
@@ -251,6 +253,7 @@ fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
                     ( argName, thirdIndex ) =
                         Index.getName desiredArg secondIndex
 
+                    arg : Expression
                     arg =
                         Elm.value
                             { importFrom = []
@@ -285,7 +288,7 @@ fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
                     \callerArg ->
                         Elm.apply
                             (Compiler.Expression
-                                (\i ->
+                                (\_ ->
                                     { innerFnDetails
                                         | expression =
                                             Exp.FunctionOrValue []
@@ -323,6 +326,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                     ( twoName, fourIndex ) =
                         Index.getName twoDesiredArg thirdIndex
 
+                    one : Expression
                     one =
                         Elm.value
                             { importFrom = []
@@ -330,6 +334,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                             , name = oneName
                             }
 
+                    two : Expression
                     two =
                         Elm.value
                             { importFrom = []
@@ -366,7 +371,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                     \oneIncoming twoIncoming ->
                         Elm.apply
                             (Compiler.Expression
-                                (\i ->
+                                (\_ ->
                                     { innerFnDetails
                                         | expression =
                                             Exp.FunctionOrValue []
@@ -409,6 +414,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                     ( threeName, fifthIndex ) =
                         Index.getName threeDesiredArg fourIndex
 
+                    one : Expression
                     one =
                         Elm.value
                             { importFrom = []
@@ -416,6 +422,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                             , name = oneName
                             }
 
+                    two : Expression
                     two =
                         Elm.value
                             { importFrom = []
@@ -423,6 +430,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                             , name = twoName
                             }
 
+                    three : Expression
                     three =
                         Elm.value
                             { importFrom = []
@@ -461,7 +469,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                     \oneIncoming twoIncoming threeIncoming ->
                         Elm.apply
                             (Compiler.Expression
-                                (\i ->
+                                (\_ ->
                                     { innerFnDetails
                                         | expression =
                                             Exp.FunctionOrValue []
@@ -523,7 +531,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
 
                                         Ok inference ->
                                             case inference.type_ of
-                                                Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType ] ->
+                                                Annotation.Tupled [ Node.Node _ oneType, _ ] ->
                                                     Ok
                                                         { type_ = oneType
                                                         , inferences = Dict.empty
@@ -547,7 +555,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
 
                                         Ok inference ->
                                             case inference.type_ of
-                                                Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType ] ->
+                                                Annotation.Tupled [ _, Node.Node _ twoType ] ->
                                                     Ok
                                                         { type_ = twoType
                                                         , inferences = Dict.empty
@@ -584,7 +592,7 @@ record fields recordExp sourceLet =
 
                         ( finalIndex, unpackedfields ) =
                             List.foldl
-                                (\fieldName ( i, gathered ) ->
+                                (\fieldName ( _, gathered ) ->
                                     let
                                         ( gotIndex, got ) =
                                             Elm.get fieldName recordExp
@@ -633,10 +641,11 @@ toExpression (Let toScope) =
     Compiler.Expression <|
         \index ->
             let
+                scope : { letDecls : List (Node.Node Exp.LetDeclaration), index : Index.Index, return : Expression, imports : List Module }
                 scope =
                     toScope index
 
-                ( returnIndex, return ) =
+                ( _, return ) =
                     Compiler.toExpressionDetails scope.index scope.return
             in
             { expression =

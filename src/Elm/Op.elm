@@ -57,25 +57,13 @@ Would generate
 
 import Dict
 import Elm exposing (Expression)
-import Elm.Annotation
-import Elm.Parser
-import Elm.Processing
-import Elm.Syntax.Declaration as Declaration exposing (Declaration(..))
-import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Infix as Infix
-import Elm.Syntax.Module
-import Elm.Syntax.Node as Node
-import Elm.Syntax.Pattern as Pattern
-import Elm.Syntax.Range as Range
+import Elm.Syntax.Node exposing (Node(..))
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Comments
 import Internal.Compiler as Compiler
-import Internal.Debug
 import Internal.Index as Index
 import Internal.Types
-import Internal.Write
-import Set
 
 
 
@@ -492,11 +480,8 @@ applyPipe (BinOp symbol dir _) infixAnnotation l r =
                 ( leftIndex, left ) =
                     Compiler.toExpressionDetails index l
 
-                ( rightIndex, right ) =
+                ( _, right ) =
                     Compiler.toExpressionDetails leftIndex r
-
-                annotationIndex =
-                    Index.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol
@@ -528,6 +513,7 @@ parens (Compiler.Expression toExp) =
     Compiler.Expression
         (\index ->
             let
+                exp : Compiler.ExpressionDetails
                 exp =
                     toExp index
             in
@@ -546,11 +532,8 @@ applyInfix extraImports (BinOp symbol dir _) infixAnnotation l r =
                 ( leftIndex, left ) =
                     Compiler.toExpressionDetails index l
 
-                ( rightIndex, right ) =
+                ( _, right ) =
                     Compiler.toExpressionDetails leftIndex r
-
-                annotationIndex =
-                    Index.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol
@@ -583,9 +566,11 @@ applyNumber symbol dir l r =
                 ( rightIndex, right ) =
                     Compiler.toExpressionDetails leftIndex r
 
+                annotationIndex : Index.Index
                 annotationIndex =
                     Index.next rightIndex
 
+                numberTypeName : String
                 numberTypeName =
                     Index.protectTypeName
                         "number"
@@ -685,8 +670,8 @@ autopipe committed topFn expressions =
                                     [] ->
                                         Exp.Application []
 
-                                    innerFn :: remain ->
-                                        autopipe True (Compiler.denode innerFn) (List.map Compiler.denode remain)
+                                    (Node _ innerFn) :: remain ->
+                                        autopipe True innerFn (Compiler.denodeAll remain)
                                 )
                             )
                             (Compiler.nodify
