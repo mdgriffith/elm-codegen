@@ -45,7 +45,7 @@ config =
         }
     , Docs.ReviewLinksAndSections.rule
     , Docs.ReviewAtDocs.rule
-    -- , Docs.UpToDateReadmeLinks.rule
+    , Docs.UpToDateReadmeLinks.rule
     , NoDebug.Log.rule
     , NoDebug.TodoOrToString.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
@@ -55,7 +55,7 @@ config =
     , NoMissingTypeAnnotationInLetIn.rule
     , NoSimpleLetBody.rule
     , NoPrematureLetComputation.rule
-    -- , NoUnused.CustomTypeConstructors.rule []
+    , NoUnused.CustomTypeConstructors.rule []
     , NoUnused.CustomTypeConstructorArgs.rule
     , NoUnused.Exports.rule
     , NoUnused.Parameters.rule
