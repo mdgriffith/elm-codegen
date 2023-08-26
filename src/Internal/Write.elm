@@ -25,7 +25,7 @@ import Elm.Syntax.Import exposing (Import)
 import Elm.Syntax.Infix exposing (Infix, InfixDirection(..))
 import Elm.Syntax.Module exposing (DefaultModuleData, EffectModuleData, Module(..))
 import Elm.Syntax.ModuleName exposing (ModuleName)
-import Elm.Syntax.Node exposing (Node)
+import Elm.Syntax.Node exposing (Node(..))
 import Elm.Syntax.Pattern exposing (Pattern(..))
 import Elm.Syntax.Signature exposing (Signature)
 import Elm.Syntax.Type exposing (Type, ValueConstructor)
@@ -419,8 +419,8 @@ prettyElmSyntaxDeclaration aliases decl =
         Elm.Syntax.Declaration.InfixDeclaration infix_ ->
             prettyInfix infix_
 
-        Elm.Syntax.Declaration.Destructuring pattern expr ->
-            prettyDestructuring aliases (denode pattern) (denode expr)
+        Elm.Syntax.Declaration.Destructuring (Node _ pattern) (Node _ expr) ->
+            prettyDestructuring aliases pattern expr
 
 
 prettyDeclarations : Aliases -> List Util.RenderedDeclaration -> Doc t
@@ -636,10 +636,9 @@ adjustPatternParentheses isTop pattern =
 
         removeParens pat =
             case pat of
-                ParenthesizedPattern innerPat ->
-                    if shouldRemove (denode innerPat) then
-                        denode innerPat
-                            |> removeParens
+                ParenthesizedPattern (Node _ innerPat) ->
+                    if shouldRemove innerPat then
+                        removeParens innerPat
 
                     else
                         pat
@@ -703,10 +702,10 @@ prettyPatternInner aliases isTop pattern =
                 |> Pretty.surround Pretty.space Pretty.space
                 |> Pretty.braces
 
-        UnConsPattern hdPat tlPat ->
-            [ prettyPatternInner aliases False (denode hdPat)
+        UnConsPattern (Node _ hdPat) (Node _ tlPat) ->
+            [ prettyPatternInner aliases False hdPat
             , Pretty.string "::"
-            , prettyPatternInner aliases False (denode tlPat)
+            , prettyPatternInner aliases False tlPat
             ]
                 |> Pretty.words
 
@@ -737,15 +736,15 @@ prettyPatternInner aliases isTop pattern =
                 :: List.map (prettyPatternInner aliases False) (denodeAll listPats)
                 |> Pretty.words
 
-        AsPattern pat name ->
-            [ prettyPatternInner aliases False (denode pat)
+        AsPattern (Node _ pat) (Node _ name) ->
+            [ prettyPatternInner aliases False pat
             , Pretty.string "as"
-            , Pretty.string (denode name)
+            , Pretty.string name
             ]
                 |> Pretty.words
 
-        ParenthesizedPattern pat ->
-            prettyPatternInner aliases True (denode pat)
+        ParenthesizedPattern (Node _ pat) ->
+            prettyPatternInner aliases True pat
                 |> Pretty.parens
 
 
@@ -789,10 +788,9 @@ adjustExpressionParentheses context expression =
 
         removeParens expr =
             case expr of
-                ParenthesizedExpression innerExpr ->
-                    if shouldRemove (denode innerExpr) then
-                        denode innerExpr
-                            |> removeParens
+                ParenthesizedExpression (Node _ innerExpr) ->
+                    if shouldRemove innerExpr then
+                        removeParens innerExpr
 
                     else
                         expr
@@ -913,10 +911,10 @@ prettyExpressionInner aliases context indent expression =
             , False
             )
 
-        Negation expr ->
+        Negation (Node _ expr) ->
             let
                 ( prettyExpr, alwaysBreak ) =
-                    prettyExpressionInner aliases topContext 4 (denode expr)
+                    prettyExpressionInner aliases topContext 4 expr
             in
             ( Pretty.string "-"
                 |> Pretty.a prettyExpr
@@ -1017,7 +1015,7 @@ prettyOperatorApplication aliases indent symbol dir exprl exprr =
 
 
 prettyOperatorApplicationLeft : Aliases -> Int -> String -> InfixDirection -> Node Expression -> Node Expression -> ( Doc t, Bool )
-prettyOperatorApplicationLeft aliases indent symbol _ exprl exprr =
+prettyOperatorApplicationLeft aliases indent symbol _ (Node _ exprl) (Node _ exprr) =
     let
         context =
             { precedence = precedence symbol
@@ -1026,10 +1024,10 @@ prettyOperatorApplicationLeft aliases indent symbol _ exprl exprr =
             }
 
         ( prettyExpressionLeft, alwaysBreakLeft ) =
-            prettyExpressionInner aliases context 4 (denode exprl)
+            prettyExpressionInner aliases context 4 exprl
 
         ( prettyExpressionRight, alwaysBreakRight ) =
-            prettyExpressionInner aliases context 4 (denode exprr)
+            prettyExpressionInner aliases context 4 exprr
 
         alwaysBreak =
             alwaysBreakLeft || alwaysBreakRight
@@ -1057,7 +1055,7 @@ prettyOperatorApplicationRight aliases indent symbol _ exprl exprr =
                     [ prettyExpressionInner aliases context innerIndent expr ]
 
         innerOpApply : Bool -> String -> Node Expression -> Node Expression -> List ( Doc t, Bool )
-        innerOpApply isTop sym left right =
+        innerOpApply isTop sym (Node _ left) (Node _ right) =
             let
                 context =
                     { precedence = precedence sym
@@ -1069,7 +1067,7 @@ prettyOperatorApplicationRight aliases indent symbol _ exprl exprr =
                     decrementIndent 4 (String.length symbol + 1)
 
                 rightSide =
-                    denode right |> expandExpr innerIndent context
+                    right |> expandExpr innerIndent context
             in
             case rightSide of
                 ( hdExpr, hdBreak ) :: tl ->
@@ -1081,7 +1079,7 @@ prettyOperatorApplicationRight aliases indent symbol _ exprl exprr =
                             else
                                 innerIndent
                     in
-                    List.append (denode left |> expandExpr leftIndent context)
+                    List.append (left |> expandExpr leftIndent context)
                         (( Pretty.string sym |> Pretty.a Pretty.space |> Pretty.a hdExpr, hdBreak ) :: tl)
 
                 [] ->
@@ -1104,15 +1102,15 @@ prettyIfBlock : Aliases -> Int -> Node Expression -> Node Expression -> Node Exp
 prettyIfBlock aliases indent exprBool exprTrue exprFalse =
     let
         innerIfBlock : Node Expression -> Node Expression -> Node Expression -> List (Doc t)
-        innerIfBlock innerExprBool innerExprTrue innerExprFalse =
+        innerIfBlock (Node _ innerExprBool) (Node _ innerExprTrue) (Node _ innerExprFalse) =
             let
                 ifPart =
                     let
                         ( _, alwaysBreak ) =
-                            prettyExpressionInner aliases topContext 4 (denode innerExprBool)
+                            prettyExpressionInner aliases topContext 4 innerExprBool
                     in
                     [ [ Pretty.string "if"
-                      , prettyExpressionInner aliases topContext 4 (denode innerExprBool) |> Tuple.first
+                      , prettyExpressionInner aliases topContext 4 innerExprBool |> Tuple.first
                       ]
                         |> Pretty.lines
                         |> optionalGroup alwaysBreak
@@ -1123,7 +1121,7 @@ prettyIfBlock aliases indent exprBool exprTrue exprFalse =
                         |> optionalGroup alwaysBreak
 
                 truePart =
-                    prettyExpressionInner aliases topContext 4 (denode innerExprTrue)
+                    prettyExpressionInner aliases topContext 4 innerExprTrue
                         |> Tuple.first
                         |> Pretty.indent indent
 
@@ -1132,12 +1130,12 @@ prettyIfBlock aliases indent exprBool exprTrue exprFalse =
                         |> Pretty.a (Pretty.string "else")
 
                 falsePart =
-                    case denode innerExprFalse of
+                    case innerExprFalse of
                         IfBlock nestedExprBool nestedExprTrue nestedExprFalse ->
                             innerIfBlock nestedExprBool nestedExprTrue nestedExprFalse
 
                         _ ->
-                            [ prettyExpressionInner aliases topContext 4 (denode innerExprFalse)
+                            [ prettyExpressionInner aliases topContext 4 innerExprFalse
                                 |> Tuple.first
                                 |> Pretty.indent indent
                             ]
@@ -1211,7 +1209,7 @@ prettyTupledExpression aliases indent exprs =
 
 
 prettyParenthesizedExpression : Aliases -> Int -> Node Expression -> ( Doc t, Bool )
-prettyParenthesizedExpression aliases indent expr =
+prettyParenthesizedExpression aliases indent (Node _ expr) =
     let
         open =
             Pretty.string "("
@@ -1220,7 +1218,7 @@ prettyParenthesizedExpression aliases indent expr =
             Pretty.a (Pretty.string ")") Pretty.tightline
 
         ( prettyExpr, alwaysBreak ) =
-            prettyExpressionInner aliases topContext (decrementIndent indent 1) (denode expr)
+            prettyExpressionInner aliases topContext (decrementIndent indent 1) expr
     in
     ( prettyExpr
         |> Pretty.nest 1
@@ -1252,14 +1250,14 @@ prettyLetDeclaration aliases indent letDecl =
         LetFunction fn ->
             prettyFun aliases fn
 
-        LetDestructuring pattern expr ->
-            [ prettyPatternInner aliases False (denode pattern)
+        LetDestructuring (Node _ pattern) (Node _ expr) ->
+            [ prettyPatternInner aliases False pattern
             , Pretty.string "="
             ]
                 |> Pretty.words
                 |> Pretty.a Pretty.line
                 |> Pretty.a
-                    (prettyExpressionInner aliases topContext 4 (denode expr)
+                    (prettyExpressionInner aliases topContext 4 expr
                         |> Tuple.first
                         |> Pretty.indent indent
                     )
@@ -1284,11 +1282,11 @@ prettyCaseBlock aliases indent caseBlock =
                 |> Pretty.lines
                 |> optionalGroup alwaysBreak
 
-        prettyCase ( pattern, expr ) =
-            prettyPattern aliases (denode pattern)
+        prettyCase ( Node _ pattern, Node _ expr ) =
+            prettyPattern aliases pattern
                 |> Pretty.a (Pretty.string " ->")
                 |> Pretty.a Pretty.line
-                |> Pretty.a (prettyExpressionInner aliases topContext 4 (denode expr) |> Tuple.first |> Pretty.indent 4)
+                |> Pretty.a (prettyExpressionInner aliases topContext 4 expr |> Tuple.first |> Pretty.indent 4)
                 |> Pretty.indent indent
 
         patternsPart =
@@ -1351,12 +1349,12 @@ prettyRecordExpr aliases setters =
 
 
 prettySetter : Aliases -> ( Node String, Node Expression ) -> ( Doc t, Bool )
-prettySetter aliases ( fld, val ) =
+prettySetter aliases ( Node _ fld, Node _ val ) =
     let
         ( prettyExpr, alwaysBreak ) =
-            prettyExpressionInner aliases topContext 4 (denode val)
+            prettyExpressionInner aliases topContext 4 val
     in
-    ( [ [ Pretty.string (denode fld)
+    ( [ [ Pretty.string fld
         , Pretty.string "="
         ]
             |> Pretty.words
@@ -1398,20 +1396,20 @@ prettyList aliases indent exprs =
 
 
 prettyRecordAccess : Aliases -> Node Expression -> Node String -> ( Doc t, Bool )
-prettyRecordAccess aliases expr field =
+prettyRecordAccess aliases (Node _ expr) (Node _ field) =
     let
         ( prettyExpr, alwaysBreak ) =
-            prettyExpressionInner aliases topContext 4 (denode expr)
+            prettyExpressionInner aliases topContext 4 expr
     in
     ( prettyExpr
         |> Pretty.a dot
-        |> Pretty.a (Pretty.string (denode field))
+        |> Pretty.a (Pretty.string field)
     , alwaysBreak
     )
 
 
 prettyRecordUpdateExpression : Aliases -> Int -> Node String -> List (Node RecordSetter) -> ( Doc t, Bool )
-prettyRecordUpdateExpression aliases indent var setters =
+prettyRecordUpdateExpression aliases indent (Node _ var) setters =
     let
         addBarToFirst exprs =
             case exprs of
@@ -1429,7 +1427,7 @@ prettyRecordUpdateExpression aliases indent var setters =
             let
                 open =
                     [ Pretty.string "{"
-                    , Pretty.string (denode var)
+                    , Pretty.string var
                     ]
                         |> Pretty.words
                         |> Pretty.a Pretty.line
@@ -1481,19 +1479,16 @@ prettyTypeAnnotation aliases typeAnn =
         Record recordDef ->
             prettyRecord aliases (denodeAll recordDef)
 
-        GenericRecord paramName recordDef ->
-            prettyGenericRecord aliases (denode paramName) (denodeAll (denode recordDef))
+        GenericRecord (Node _ paramName) (Node _ recordDef) ->
+            prettyGenericRecord aliases paramName (denodeAll recordDef)
 
         FunctionTypeAnnotation fromAnn toAnn ->
             prettyFunctionTypeAnnotation aliases fromAnn toAnn
 
 
 prettyTyped : Aliases -> Node ( ModuleName, String ) -> List (Node TypeAnnotation) -> Doc t
-prettyTyped aliases fqName anns =
+prettyTyped aliases (Node _ ( moduleName, typeName )) anns =
     let
-        ( moduleName, typeName ) =
-            denode fqName
-
         typeDoc =
             prettyModuleNameDot aliases moduleName
                 |> Pretty.a (Pretty.string typeName)
@@ -1626,14 +1621,14 @@ prettyFunctionTypeAnnotation aliases left right =
                     [ prettyTypeAnnotation aliases ann ]
 
         innerFnTypeAnn : Node TypeAnnotation -> Node TypeAnnotation -> List (Doc t)
-        innerFnTypeAnn innerLeft innerRight =
+        innerFnTypeAnn (Node _ innerLeft) (Node _ innerRight) =
             let
                 rightSide =
-                    denode innerRight |> expandRight
+                    innerRight |> expandRight
             in
             case rightSide of
                 hd :: tl ->
-                    (denode innerLeft |> expandLeft)
+                    (innerLeft |> expandLeft)
                         :: ([ Pretty.string "->", hd ] |> Pretty.words)
                         :: tl
 

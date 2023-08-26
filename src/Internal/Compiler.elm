@@ -633,31 +633,23 @@ getGenericsHelper ann =
 
         Annotation.Record recordDefinition ->
             List.concatMap
-                (\nodedField ->
-                    let
-                        ( _, field ) =
-                            denode nodedField
-                    in
-                    getGenericsHelper (denode field)
+                (\(Node _ ( _, Node _ field )) ->
+                    getGenericsHelper field
                 )
                 recordDefinition
 
-        Annotation.GenericRecord recordName recordDefinition ->
-            denode recordName
+        Annotation.GenericRecord (Node _ recordName) (Node _ recordDefinition) ->
+            recordName
                 :: List.concatMap
-                    (\nodedField ->
-                        let
-                            ( _, field ) =
-                                denode nodedField
-                        in
-                        getGenericsHelper (denode field)
+                    (\(Node _ ( _, Node _ field )) ->
+                        getGenericsHelper field
                     )
-                    (denode recordDefinition)
+                    recordDefinition
 
-        Annotation.FunctionTypeAnnotation one two ->
+        Annotation.FunctionTypeAnnotation (Node _ one) (Node _ two) ->
             List.concatMap getGenericsHelper
-                [ denode one
-                , denode two
+                [ one
+                , two
                 ]
 
 
@@ -1465,10 +1457,10 @@ rewriteTypeVariablesHelper existing renames type_ =
                 ( newUsed, newVars ) =
                     vars
                         |> List.foldl
-                            (\typevar ( varUsed, varList ) ->
+                            (\(Node _ typevar) ( varUsed, varList ) ->
                                 let
                                     ( oneUsed, oneType ) =
-                                        rewriteTypeVariablesHelper existing varUsed (denode typevar)
+                                        rewriteTypeVariablesHelper existing varUsed typevar
                                 in
                                 ( oneUsed, nodify oneType :: varList )
                             )
@@ -1490,13 +1482,13 @@ rewriteTypeVariablesHelper existing renames type_ =
         Annotation.GenericRecord _ _ ->
             ( renames, type_ )
 
-        Annotation.FunctionTypeAnnotation one two ->
+        Annotation.FunctionTypeAnnotation (Node _ one) (Node _ two) ->
             let
                 ( oneUsed, oneType ) =
-                    rewriteTypeVariablesHelper existing renames (denode one)
+                    rewriteTypeVariablesHelper existing renames one
 
                 ( twoUsed, twoType ) =
-                    rewriteTypeVariablesHelper existing oneUsed (denode two)
+                    rewriteTypeVariablesHelper existing oneUsed two
             in
             ( twoUsed
             , Annotation.FunctionTypeAnnotation
@@ -1688,7 +1680,7 @@ applyTypeHelper :
     -> Result (List InferenceError) Inference
 applyTypeHelper aliases cache fn args =
     case fn of
-        Annotation.FunctionTypeAnnotation one two ->
+        Annotation.FunctionTypeAnnotation (Node _ one) (Node _ two) ->
             case args of
                 [] ->
                     Ok
@@ -1698,18 +1690,16 @@ applyTypeHelper aliases cache fn args =
                         }
 
                 top :: rest ->
-                    case unifiable aliases cache (denode one) top of
+                    case unifiable aliases cache one top of
                         ( variableCache, Ok _ ) ->
                             applyTypeHelper
                                 aliases
                                 variableCache
-                                (denode two)
+                                two
                                 rest
 
                         ( _, Err err ) ->
-                            Err
-                                [ err
-                                ]
+                            Err [ err ]
 
         Annotation.GenericType varName ->
             case args of
@@ -2161,7 +2151,7 @@ unifiable aliases vars one two =
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
 
-        Annotation.FunctionTypeAnnotation oneA oneB ->
+        Annotation.FunctionTypeAnnotation (Node _ oneA) (Node _ oneB) ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
@@ -2173,10 +2163,10 @@ unifiable aliases vars one two =
                         Just foundTwo ->
                             unifiable aliases vars one foundTwo
 
-                Annotation.FunctionTypeAnnotation twoA twoB ->
-                    case unifiable aliases vars (denode oneA) (denode twoA) of
+                Annotation.FunctionTypeAnnotation (Node _ twoA) (Node _ twoB) ->
+                    case unifiable aliases vars oneA twoA of
                         ( aVars, Ok unifiedA ) ->
-                            case unifiable aliases aVars (denode oneB) (denode twoB) of
+                            case unifiable aliases aVars oneB twoB of
                                 ( bVars, Ok unifiedB ) ->
                                     ( bVars
                                     , Ok
@@ -2213,22 +2203,12 @@ unifiableFields aliases vars one two unified =
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
 
-        ( oneX :: oneRemain, twoFields ) ->
-            let
-                ( oneFieldName, oneFieldVal ) =
-                    denode oneX
-
-                oneName =
-                    denode oneFieldName
-
-                oneVal =
-                    denode oneFieldVal
-            in
-            case getField oneName oneVal twoFields [] of
+        ( (Node _ ( Node _ oneFieldName, Node _ oneFieldVal )) :: oneRemain, twoFields ) ->
+            case getField oneFieldName oneFieldVal twoFields [] of
                 Ok ( matchingFieldVal, remainingTwo ) ->
                     let
                         ( newVars, unifiedFieldResult ) =
-                            unifiable aliases vars oneVal matchingFieldVal
+                            unifiable aliases vars oneFieldVal matchingFieldVal
                     in
                     case unifiedFieldResult of
                         Ok unifiedField ->
@@ -2236,7 +2216,7 @@ unifiableFields aliases vars one two unified =
                                 newVars
                                 oneRemain
                                 remainingTwo
-                                (( nodify oneName, nodify unifiedField ) :: unified)
+                                (( nodify oneFieldName, nodify unifiedField ) :: unified)
 
                         Err err ->
                             ( newVars, Err err )
@@ -2263,11 +2243,8 @@ getField name val fields captured =
 
         top :: remain ->
             let
-                ( topFieldName, Node _ topVal ) =
+                ( Node _ topName, Node _ topVal ) =
                     denode top
-
-                topName =
-                    denode topFieldName
             in
             if topName == name then
                 Ok
@@ -2284,16 +2261,16 @@ unifiableLists aliases vars one two unified =
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
 
-        ( [ oneX ], [ twoX ] ) ->
-            case unifiable aliases vars (denode oneX) (denode twoX) of
+        ( [ Node _ oneX ], [ Node _ twoX ] ) ->
+            case unifiable aliases vars oneX twoX of
                 ( newVars, Ok un ) ->
                     ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
 
                 ( newVars, Err err ) ->
                     ( newVars, Err err )
 
-        ( oneX :: oneRemain, twoX :: twoRemain ) ->
-            case unifiable aliases vars (denode oneX) (denode twoX) of
+        ( (Node _ oneX) :: oneRemain, (Node _ twoX) :: twoRemain ) ->
+            case unifiable aliases vars oneX twoX of
                 ( newVars, Ok un ) ->
                     unifiableLists aliases newVars oneRemain twoRemain (un :: unified)
 
@@ -2477,8 +2454,8 @@ resolveField index type_ aliases inferences fieldName =
                                 }
                             ]
 
-            Annotation.GenericRecord _ fields ->
-                case getFieldFromList fieldName (denode fields) of
+            Annotation.GenericRecord _ (Node _ fields) ->
+                case getFieldFromList fieldName fields of
                     Just ann ->
                         Ok
                             { type_ = ann
@@ -2493,7 +2470,7 @@ resolveField index type_ aliases inferences fieldName =
                                 , existingFields =
                                     List.map
                                         (denode >> Tuple.first >> denode)
-                                        (denode fields)
+                                        fields
                                 }
                             ]
 
@@ -2553,13 +2530,9 @@ getFieldFromList selector fields =
         [] ->
             Nothing
 
-        nodifiedTop :: remain ->
-            let
-                ( fieldname, contents ) =
-                    denode nodifiedTop
-            in
-            if denode fieldname == selector then
-                Just (denode contents)
+        (Node _ ( Node _ fieldname, Node _ contents )) :: remain ->
+            if fieldname == selector then
+                Just contents
 
             else
                 getFieldFromList selector remain

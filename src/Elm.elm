@@ -104,7 +104,7 @@ import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Module
-import Elm.Syntax.Node as Node
+import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Clean as Clean
@@ -1497,8 +1497,8 @@ popLastAndDenodeLast lst =
         [] ->
             Nothing
 
-        last :: initReverse ->
-            Just ( List.reverse initReverse, Compiler.denode last )
+        (Node _ last) :: initReverse ->
+            Just ( List.reverse initReverse, last )
 
 
 betaReduce : Exp.Expression -> Exp.Expression
@@ -1509,8 +1509,8 @@ betaReduce e =
                 Exp.FunctionOrValue [] n ->
                     Just n
 
-                Exp.ParenthesizedExpression p ->
-                    extractLastArg <| Compiler.denode p
+                Exp.ParenthesizedExpression (Node _ p) ->
+                    extractLastArg p
 
                 _ ->
                     Nothing
@@ -1520,11 +1520,7 @@ betaReduce e =
             case popLastAndDenodeLast args of
                 Just ( initLambdaArgs, Pattern.VarPattern lastLambdaArg ) ->
                     case Compiler.denode expression of
-                        Exp.RecordAccess argNode (Node.Node _ fieldName) ->
-                            let
-                                arg =
-                                    Compiler.denode argNode
-                            in
+                        Exp.RecordAccess (Node _ arg) (Node.Node _ fieldName) ->
                             case arg of
                                 Exp.FunctionOrValue [] argName ->
                                     if argName == lastLambdaArg then
@@ -1549,8 +1545,8 @@ betaReduce e =
                                     if extractLastArg lastApplicationArg == Just lastLambdaArg then
                                         if List.isEmpty initLambdaArgs then
                                             case initApplicationArgs of
-                                                [ s ] ->
-                                                    betaReduce <| Compiler.denode s
+                                                [ Node _ s ] ->
+                                                    betaReduce s
 
                                                 _ ->
                                                     Exp.Application initApplicationArgs
@@ -2482,13 +2478,8 @@ parse source =
 
                 declarations =
                     List.map
-                        (\dec ->
-                            let
-                                declar =
-                                    Compiler.denode dec
-                            in
-                            ( Node.range dec
-                                |> (.start >> .row)
+                        (\(Node range declar) ->
+                            ( range.start.row
                             , Compiler.Declaration
                                 { name = Maybe.withDefault "parsed" (decName declar)
                                 , exposed = determineExposure declar exposedList
@@ -2509,11 +2500,9 @@ parse source =
 
                 comments =
                     List.map
-                        (\nodedComment ->
-                            ( Node.range nodedComment
-                                |> (.start >> .row)
-                            , Compiler.Comment
-                                (Compiler.denode nodedComment)
+                        (\(Node range nodedComment) ->
+                            ( range.start.row
+                            , Compiler.Comment nodedComment
                             )
                         )
                         parsedFile.comments
@@ -2618,8 +2607,8 @@ determineExposure dec exposedDec =
 
 
 valueIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
-valueIsExposed name node =
-    case Compiler.denode node of
+valueIsExposed name (Node _ node) =
+    case node of
         Expose.InfixExpose _ ->
             False
 
@@ -2634,8 +2623,8 @@ valueIsExposed name node =
 
 
 typeIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
-typeIsExposed name node =
-    case Compiler.denode node of
+typeIsExposed name (Node _ node) =
+    case node of
         Expose.InfixExpose _ ->
             False
 
@@ -2650,8 +2639,8 @@ typeIsExposed name node =
 
 
 typeConstructorIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
-typeConstructorIsExposed name node =
-    case Compiler.denode node of
+typeConstructorIsExposed name (Node _ node) =
+    case node of
         Expose.InfixExpose _ ->
             False
 

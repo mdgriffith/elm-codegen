@@ -59,6 +59,7 @@ import Dict
 import Elm exposing (Expression)
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Infix as Infix
+import Elm.Syntax.Node exposing (Node(..))
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
 import Internal.Index as Index
@@ -666,8 +667,8 @@ autopipe committed topFn expressions =
                                     [] ->
                                         Exp.Application []
 
-                                    innerFn :: remain ->
-                                        autopipe True (Compiler.denode innerFn) (List.map Compiler.denode remain)
+                                    (Node _ innerFn) :: remain ->
+                                        autopipe True innerFn (Compiler.denodeAll remain)
                                 )
                             )
                             (Compiler.nodify
