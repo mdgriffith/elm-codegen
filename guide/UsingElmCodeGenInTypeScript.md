@@ -68,7 +68,6 @@ module Generate exposing (main)
 {-| -}
 
 import Elm
-import Elm.Annotation as Type
 import Gen.CodeGen.Generate as Generate
 import Json.Decode
 
@@ -103,7 +102,7 @@ generate files =
 fileToDeclaration : File -> Elm.Declaration
 fileToDeclaration file =
     Elm.declaration (getFileName file.path)
-        file.path
+        (Elm.string file.path)
 
 
 
