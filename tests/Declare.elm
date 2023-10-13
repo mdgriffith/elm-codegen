@@ -3,6 +3,7 @@ module Declare exposing (suite)
 {-| -}
 
 import Elm
+import Elm.Annotation as Type
 import Elm.Declare
 import Elm.Expect
 import Elm.Op
@@ -13,6 +14,10 @@ suite : Test
 suite =
     describe "Elm.Declare"
         [ declarations
+        , aliasTest
+        , aliasWithTest
+        , customTypeTest
+        , customTypeWithTest
         ]
 
 
@@ -47,3 +52,81 @@ mySweetNumber =
 
 """
         ]
+
+
+aliasTest : Test
+aliasTest =
+    test "Elm.alias" <|
+        \_ ->
+            Elm.Expect.declarationAs
+                (Elm.alias "MyAlias"
+                    (Type.record
+                        [ ( "one", Type.var "oneVar" )
+                        , ( "two", Type.var "twoVar" )
+                        , ( "three", Type.var "threeVar" )
+                        ]
+                    )
+                )
+                """
+type alias MyAlias oneVar twoVar threeVar =
+    { one : oneVar, two : twoVar, three : threeVar }
+"""
+
+
+aliasWithTest : Test
+aliasWithTest =
+    test "Elm.aliasWith" <|
+        \_ ->
+            Elm.Expect.declarationAs
+                (Elm.aliasWith "MyAlias"
+                    [ "twoVar", "nonexistingVar", "oneVar" ]
+                    (Type.record
+                        [ ( "one", Type.var "oneVar" )
+                        , ( "two", Type.var "twoVar" )
+                        , ( "three", Type.var "threeVar" )
+                        ]
+                    )
+                )
+                """
+type alias MyAlias twoVar oneVar threeVar =
+    { one : oneVar, two : twoVar, three : threeVar }
+"""
+
+
+customTypeTest : Test
+customTypeTest =
+    test "Elm.customType" <|
+        \_ ->
+            Elm.Expect.declarationAs
+                (Elm.customType "MyType"
+                    [ Elm.variantWith "One"
+                        [ Type.var "oneVar" ]
+                    , Elm.variantWith "Two"
+                        [ Type.var "twoVar" ]
+                    ]
+                )
+                """
+type MyType oneVar twoVar
+    = One oneVar
+    | Two twoVar
+"""
+
+
+customTypeWithTest : Test
+customTypeWithTest =
+    test "Elm.customTypeWith" <|
+        \_ ->
+            Elm.Expect.declarationAs
+                (Elm.customTypeWith "MyType"
+                    [ "addVar", "twoVar" ]
+                    [ Elm.variantWith "One"
+                        [ Type.var "oneVar" ]
+                    , Elm.variantWith "Two"
+                        [ Type.var "twoVar" ]
+                    ]
+                )
+                """
+type MyType addVar twoVar oneVar
+    = One oneVar
+    | Two twoVar
+"""
