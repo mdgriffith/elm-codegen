@@ -13,8 +13,8 @@ module Elm exposing
     , expose, exposeWith
     , fileWith, docs
     , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
-    , customType, Variant, variant, variantWith
-    , alias
+    , customType, customTypeWith, Variant, variant, variantWith
+    , alias, aliasWith
     , portIncoming, portOutgoing
     , parse, unsafe
     , apply, val, value
@@ -73,9 +73,9 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 ## Custom Types
 
-@docs customType, Variant, variant, variantWith
+@docs customType, customTypeWith, Variant, variant, variantWith
 
-@docs alias
+@docs alias, aliasWith
 
 
 # Ports
@@ -1189,6 +1189,30 @@ Will result in
 -}
 customType : String -> List Variant -> Declaration
 customType name variants =
+    customTypeWith name [] variants
+
+
+{-| A custom type declaration, with the ability to specify in which order to put the type variables.
+
+    Elm.customTypeWith "MyType"
+        [ "addVar", "twoVar" ]
+        [ Elm.variantWith "One"
+            [ Elm.Annotation.var "oneVar" ]
+        , Elm.variantWith "Two"
+            [ Elm.Annotation.var "twoVar" ]
+        ]
+
+Will result in
+
+    type MyType addVar twoVar oneVar
+        = One oneVar
+        | Two twoVar
+
+Notice how nonexisting variables (as used in phantom types) are included, and missing variable are automatically added.
+
+-}
+customTypeWith : String -> List String -> List Variant -> Declaration
+customTypeWith name generics variants =
     Compiler.Declaration
         { name = name
         , exposed = Compiler.NotExposed
@@ -1208,15 +1232,18 @@ customType name variants =
                         { documentation = Nothing
                         , name = Compiler.nodify (Format.formatType name)
                         , generics =
-                            variants
-                                |> List.concatMap
-                                    (\(Variant _ listAnn) ->
-                                        listAnn
-                                            |> List.concatMap
-                                                Compiler.getGenerics
-                                    )
-                                |> deduplicate
-                                |> List.map Compiler.nodify
+                            getGenerics
+                                { keepExtra = True
+                                , requested = generics
+                                , needed =
+                                    List.concatMap
+                                        (\(Variant _ listAnn) ->
+                                            listAnn
+                                                |> List.concatMap
+                                                    Compiler.getGenerics
+                                        )
+                                        variants
+                                }
                         , constructors =
                             List.map
                                 (\(Variant varName vars) ->
@@ -1296,6 +1323,34 @@ Should result in
 -}
 alias : String -> Elm.Annotation.Annotation -> Declaration
 alias name innerAnnotation =
+    aliasWith name [] innerAnnotation
+
+
+{-| A type alias declaration, with the ability to specify in which order to put the type variables.
+
+    import Elm.Annotation as Type
+
+    Elm.aliasWith "MyAlias" [ "twoVar", "nonexistingVar", "oneVar" ]
+        (Type.record
+            [ ( "one", Type.var "oneVar" )
+            , ( "two", Type.var "twoVar" )
+            , ( "three", Type.var "threeVar" )
+            ]
+        )
+
+Should result in
+
+    type alias MyAlias twoVar oneVar threeVar =
+        { one : oneVar
+        , two : twoVar
+        , three : threeVar
+        }
+
+Notice how nonexisting variables are omitted, and missing variable are automatically added.
+
+-}
+aliasWith : String -> List String -> Elm.Annotation.Annotation -> Declaration
+aliasWith name generics innerAnnotation =
     Compiler.Declaration
         { name = name
         , exposed = Compiler.NotExposed
@@ -1311,12 +1366,55 @@ alias name innerAnnotation =
                         { documentation = Nothing
                         , name = Compiler.nodify (Format.formatType name)
                         , generics =
-                            Compiler.getGenerics innerAnnotation
-                                |> List.map Compiler.nodify
+                            getGenerics
+                                { keepExtra = False
+                                , requested = generics
+                                , needed = Compiler.getGenerics innerAnnotation
+                                }
                         , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
                         }
                 }
         }
+
+
+getGenerics :
+    { keepExtra : Bool
+    , requested : List String
+    , needed : List String
+    }
+    -> List (Node String)
+getGenerics { keepExtra, requested, needed } =
+    let
+        requestedList : List String
+        requestedList =
+            if keepExtra then
+                List.reverse <| deduplicate requested
+
+            else
+                List.foldl
+                    (\generic acc ->
+                        if List.member generic needed then
+                            generic :: acc
+
+                        else
+                            acc
+                    )
+                    []
+                    (deduplicate requested)
+    in
+    needed
+        |> deduplicate
+        |> List.foldl
+            (\generic acc ->
+                if List.member generic requestedList then
+                    acc
+
+                else
+                    generic :: acc
+            )
+            requestedList
+        |> List.reverse
+        |> List.map Compiler.nodify
 
 
 {-| -}
