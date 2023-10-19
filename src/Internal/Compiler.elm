@@ -945,67 +945,6 @@ fullModName name =
     String.join "." name
 
 
-getExposedGroups :
-    List Declaration
-    -> List { group : Maybe String, members : List String }
-getExposedGroups decls =
-    List.filterMap
-        (\decl ->
-            case decl of
-                Comment _ ->
-                    Nothing
-
-                Block _ ->
-                    Nothing
-
-                Declaration declDetails ->
-                    case declDetails.exposed of
-                        NotExposed ->
-                            Nothing
-
-                        Exposed details ->
-                            Just ( details.group, declDetails.name )
-        )
-        decls
-        |> List.sortBy
-            (\( group, _ ) ->
-                case group of
-                    Nothing ->
-                        "zzzzzzzzz"
-
-                    Just name ->
-                        name
-            )
-        |> groupExposing
-
-
-matchName : Maybe a -> Maybe a -> Bool
-matchName one two =
-    one == two
-
-
-groupExposing : List ( Maybe String, String ) -> List { group : Maybe String, members : List String }
-groupExposing items =
-    List.foldr
-        (\( maybeGroup, name ) acc ->
-            case acc of
-                [] ->
-                    [ { group = maybeGroup, members = [ name ] } ]
-
-                top :: groups ->
-                    if matchName maybeGroup top.group then
-                        { group = top.group
-                        , members = name :: top.members
-                        }
-                            :: groups
-
-                    else
-                        { group = maybeGroup, members = [ name ] } :: acc
-        )
-        []
-        items
-
-
 type Expose
     = NotExposed
     | Exposed

@@ -244,10 +244,6 @@ fileWith mod options decs =
         }
 
 
-type alias Module =
-    List String
-
-
 {-| -}
 type alias File =
     { path : String
@@ -257,15 +253,6 @@ type alias File =
             { declaration : String
             , warning : String
             }
-    }
-
-
-type alias FileDetails =
-    { moduleDefinition : Module
-    , imports : List Module
-    , aliases : List ( Module, String )
-    , body : List Declaration
-    , moduleComment : String
     }
 
 
@@ -907,12 +894,6 @@ updateRecord fields recordExpression =
                     (Tuple.second >> Compiler.getImports)
                     fieldDetails
             }
-
-
-{-| -}
-field : String -> Expression -> ( String, Expression )
-field =
-    Tuple.pair
 
 
 {-|
@@ -2091,56 +2072,6 @@ comment content =
     Compiler.Comment ("{- " ++ content ++ " -}")
 
 
-renderDocumentation :
-    Result String value1
-    -> Result (List Compiler.InferenceError) Compiler.Inference
-    -> Maybe String
-renderDocumentation resolvedType bodyAnnotation =
-    case resolvedType of
-        Ok _ ->
-            case bodyAnnotation of
-                Ok _ ->
-                    Nothing
-
-                Err err ->
-                    Just
-                        (renderError err)
-
-        Err err ->
-            Just
-                err
-
-
-sep : String
-sep =
-    "\n----\n"
-
-
-renderDebugDocumentation : Result String value -> Result (List Compiler.InferenceError) Compiler.Inference -> Maybe String
-renderDebugDocumentation resolvedType bodyAnnotation =
-    case resolvedType of
-        Ok _ ->
-            case bodyAnnotation of
-                Ok inference ->
-                    Just (Internal.Write.writeInference inference)
-
-                Err err ->
-                    Just
-                        (renderError err)
-
-        Err err ->
-            case bodyAnnotation of
-                Ok inference ->
-                    Just
-                        (Internal.Write.writeInference inference
-                            ++ sep
-                            ++ err
-                        )
-
-                Err _ ->
-                    Just err
-
-
 renderError : List Compiler.InferenceError -> String
 renderError err =
     case err of
@@ -2213,8 +2144,6 @@ declaration nameStr (Compiler.Expression toBody) =
                     Declaration.FunctionDeclaration
                         { documentation =
                             Nothing
-
-                        -- (renderDebugDocumentation resolvedType body.annotation)
                         , signature =
                             case ( body.annotation, resolvedType ) of
                                 ( Ok _, Ok (Annotation.GenericType _) ) ->
