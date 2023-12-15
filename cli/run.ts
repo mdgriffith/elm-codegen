@@ -443,21 +443,24 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
   // Install all dependencies
   const elmSources = []
   for (const item of codeGenJson.dependencies.local) {
-    console.log("Installing " + item)
     if (item.endsWith(".json")) {
-      console.log("From json " + item)
+      console.log("Installing from JSON docs " + chalk.yellow(item))
       let docs = JSON.parse(fs.readFileSync(item).toString())
       run_package_generator(install_dir, { docs: docs })
     } else if (item.endsWith(".elm")) {
+      console.log("Installing from Elm file " + chalk.yellow(item))
       elmSources.push(fs.readFileSync(item).toString())
-    } else if (item.endsWith(path.sep)) {
+    } else {
+      console.log("Installing from path " + chalk.yellow(item))
       if (fs.existsSync(item)) {
         getFilesWithin(item, ".elm").forEach((elmPath) => {
           elmSources.push(fs.readFileSync(elmPath).toString())
         })
       } else {
         console.log(
-          `\n${chalk.yellow(item)} is listed in your elm-codegen.json but doesn't exist!\nMaybe it should be removed?\n`
+          `\n${chalk.yellow(
+            item
+          )} is listed in your elm-codegen.json but doesn't exist!\nMaybe it should be removed?\nLocal paths are relative to the path elm-codegen is running from, which is usually the one containing the package.json file.\n`
         )
       }
     }
