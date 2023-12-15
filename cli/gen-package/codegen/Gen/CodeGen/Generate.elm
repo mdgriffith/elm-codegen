@@ -1,5 +1,5 @@
 port module Gen.CodeGen.Generate exposing
-    ( run, fromJson, fromText, fromDirectory
+    ( run, fromJson, fromText, fromDirectory, directoryDecoder
     , withFeedback, Error
     , File, Directory(..)
     , error, files, info
@@ -10,7 +10,7 @@ port module Gen.CodeGen.Generate exposing
 
 # Simple API
 
-@docs run, fromJson, fromText, fromDirectory
+@docs run, fromJson, fromText, fromDirectory, directoryDecoder
 
 
 # With errors
