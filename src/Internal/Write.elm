@@ -446,7 +446,9 @@ prettyDeclarations aliases decls =
                         , Pretty.a Pretty.line >> Pretty.a Pretty.line >> Pretty.a Pretty.line
                         ]
             )
-        |> (List.reverse >> List.drop 1 >> List.reverse)
+        |> List.reverse
+        |> List.drop 1
+        |> List.reverse
         |> List.foldl (<|) Pretty.empty
 
 
