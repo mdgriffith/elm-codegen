@@ -117,7 +117,7 @@ packageHelpers =
                     cycles =
                         layout
                             |> Compiler.facts
-                            |> Result.map (List.any ((==) True) << detectCycles)
+                            |> Result.map (List.member True << detectCycles)
                             |> Result.withDefault True
                 in
                 Expect.equal False cycles
