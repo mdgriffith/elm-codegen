@@ -228,7 +228,7 @@ value desiredName valueExpr sourceLet =
                                         name
                             }
                         )
-                , imports = []
+                , imports = details.imports
                 }
             )
         )
@@ -283,7 +283,7 @@ fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
                             }
                     ]
                 , index = finalIndex
-                , imports = []
+                , imports = innerFnDetails.imports
                 , return =
                     \callerArg ->
                         Elm.apply
@@ -366,7 +366,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                             }
                     ]
                 , index = finalIndex
-                , imports = []
+                , imports = innerFnDetails.imports
                 , return =
                     \oneIncoming twoIncoming ->
                         Elm.apply
@@ -464,7 +464,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                             }
                     ]
                 , index = finalIndex
-                , imports = []
+                , imports = innerFnDetails.imports
                 , return =
                     \oneIncoming twoIncoming threeIncoming ->
                         Elm.apply
@@ -517,7 +517,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
                                 (Compiler.nodify sourceDetails.expression)
                         ]
                     , index = newIndex
-                    , imports = []
+                    , imports = sourceDetails.imports
                     , return =
                         ( Compiler.Expression <|
                             \_ ->
@@ -627,9 +627,8 @@ record fields recordExp sourceLet =
                             )
                         ]
                     , index = finalIndex
-                    , return =
-                        List.reverse unpackedfields
-                    , imports = []
+                    , return = List.reverse unpackedfields
+                    , imports = recordDetails.imports
                     }
                 )
             )
