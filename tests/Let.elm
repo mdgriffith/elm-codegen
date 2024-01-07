@@ -55,6 +55,54 @@ imports =
                         |> Elm.Let.toExpression
                     )
                     "import Module"
+        , test "Tuple" <|
+            \_ ->
+                Elm.Expect.importAs
+                    (Elm.Let.letIn
+                        (\( one, two ) ->
+                            Elm.Op.append one two
+                        )
+                        |> Elm.Let.tuple "one"
+                            "two"
+                            (Elm.tuple
+                                (Elm.value
+                                    { importFrom = [ "Module" ]
+                                    , name = "constant"
+                                    , annotation = Nothing
+                                    }
+                                )
+                                (Elm.string "World!")
+                            )
+                        |> Elm.Let.toExpression
+                    )
+                    "import Module"
+        , test "Record" <|
+            \_ ->
+                Elm.Expect.importAs
+                    (Elm.Let.letIn
+                        (\fields ->
+                            case fields of
+                                [ one, two ] ->
+                                    Elm.Op.append one two
+
+                                _ ->
+                                    Elm.string "ERRORR"
+                        )
+                        |> Elm.Let.record [ "one", "two" ]
+                            (Elm.record
+                                [ ( "one"
+                                  , Elm.value
+                                        { importFrom = [ "Module" ]
+                                        , name = "constant"
+                                        , annotation = Nothing
+                                        }
+                                  )
+                                , ( "two", Elm.string "World!" )
+                                ]
+                            )
+                        |> Elm.Let.toExpression
+                    )
+                    "import Module"
         , test "Nested" <|
             \_ ->
                 Elm.Expect.importAs
