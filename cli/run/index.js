@@ -5,7 +5,7 @@ const { exec, execSync } = require("child_process")
 const XMLHttpRequest = require("./vendor/XMLHttpRequest").XMLHttpRequest
 const root = path.join(__dirname, "..", "..")
 
-// We have to stub this in the allow ELm the ability to make http requests.
+// We have to stub this in the allow Elm the ability to make http requests.
 globalThis["XMLHttpRequest"] = XMLHttpRequest
 
 
