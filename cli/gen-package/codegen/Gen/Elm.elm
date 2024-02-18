@@ -1,6 +1,10 @@
-module Gen.Elm exposing (alias, aliasWith, annotation_, apply, bool, call_, char, comment, customType, customTypeWith, declaration, docs, expose, exposeWith, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, hex, ifThen, int, just, list, make_, maybe, moduleName_, nothing, parse, portIncoming, portOutgoing, record, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, val, value, values_, variant, variantWith, withDocumentation, withType)
+module Gen.Elm exposing (alias, aliasWith, annotation_, apply, bool, call_, char, comment, customType, customTypeWith, declaration, docs, expose, exposeWith, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, hex, ifThen, int, just, list, make_, maybe, moduleName_, nothing, parse, portIncoming, portOutgoing, record, string, toExpression_File, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, val, value, values_, variant, variantWith, withDocumentation, withType)
 
 {-| 
+## toExpression
+
+@docs toExpression_File
+
 @docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, customTypeWith, variant, variantWith, alias, aliasWith, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 
@@ -4147,3 +4151,23 @@ values_ =
                     )
             }
     }
+
+
+toExpression_File : Elm.File -> Elm.Expression
+toExpression_File input_ =
+    Elm.record
+        [ ( "path", Elm.string input_.path )
+        , ( "contents", Elm.string input_.contents )
+        , ( "warnings"
+          , Elm.list
+                (List.map
+                    (\item ->
+                        Elm.record
+                            [ ( "declaration", Elm.string item.declaration )
+                            , ( "warning", Elm.string item.warning )
+                            ]
+                    )
+                    input_.warnings
+                )
+          )
+        ]
