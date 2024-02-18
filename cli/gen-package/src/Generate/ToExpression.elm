@@ -469,20 +469,21 @@ innerToExpression availableToExpressions thisModule targetType varConverters =
                         moduleName : List String
                         moduleName =
                             List.reverse <| List.drop 1 splat
-
-                        typeName : String
-                        typeName =
-                            String.concat <| List.take 1 splat
-
-                        targetName : String
-                        targetName =
-                            "toExpression_" ++ typeName
                     in
                     case Dict.get (String.join "." moduleName) availableToExpressions of
                         Nothing ->
                             Ok ( Nothing, Set.singleton <| "Module " ++ String.join "." moduleName ++ " not found" )
 
                         Just foundModule ->
+                            let
+                                typeName : String
+                                typeName =
+                                    String.concat <| List.take 1 splat
+
+                                targetName : String
+                                targetName =
+                                    "toExpression_" ++ typeName
+                            in
                             if
                                 Dict.member targetName foundModule
                                     || -- Recursive types
