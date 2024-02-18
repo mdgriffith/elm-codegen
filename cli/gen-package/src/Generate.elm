@@ -2,18 +2,14 @@ module Generate exposing (main)
 
 {-| -}
 
-import Dict exposing (Dict)
+import Dict
 import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
-import Elm.Case
-import Elm.Case.Branch
 import Elm.Docs
 import Elm.Gen
 import Elm.Syntax.TypeAnnotation
 import Elm.Type
-import Gen.Debug
-import Gen.Dict
 import Gen.Elm
 import Gen.Elm.Annotation as GenType
 import Gen.Elm.Case
@@ -24,7 +20,6 @@ import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Write as Write
 import Json.Decode as Json
-import Result.Extra
 
 
 main : Program Json.Value () ()
