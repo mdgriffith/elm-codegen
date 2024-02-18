@@ -977,17 +977,17 @@ toExpression thisModule block =
                                 union.name
                                 (List.map Annotation.var union.args)
                     in
-                    Just
-                        ( union.name
-                        , Elm.fn ( "value", Just valueAnnotation ) <|
-                            \value ->
-                                Elm.withType expressionType <|
-                                    case union.tags of
-                                        [] ->
-                                            -- This type has not been exposed and can't be constructed
-                                            Gen.Debug.todo <| "The type " ++ union.name ++ " is not exposed"
+                    case union.tags of
+                        [] ->
+                            -- This type has not been exposed and can't be constructed
+                            Nothing
 
-                                        _ ->
+                        _ ->
+                            Just
+                                ( union.name
+                                , Elm.fn ( "value_", Just valueAnnotation ) <|
+                                    \value ->
+                                        Elm.withType expressionType <|
                                             Elm.Case.custom value valueAnnotation <|
                                                 List.map
                                                     (\(( name, tags ) as tag) ->
@@ -1008,7 +1008,7 @@ toExpression thisModule block =
                                                         Elm.Case.Branch.map build <| buildBranch tag
                                                     )
                                                     union.tags
-                        )
+                                )
 
                 ( _, Elm.Docs.AliasBlock alias ) ->
                     let
@@ -1023,13 +1023,12 @@ toExpression thisModule block =
                         , Elm.withType
                             (Annotation.function [ valueAnnotation ] expressionType)
                           <|
-                            Elm.withType expressionType <|
-                                case innerToExpression thisModule alias.tipe of
-                                    Ok converter ->
-                                        Elm.functionReduced "value" converter
+                            case innerToExpression thisModule alias.tipe of
+                                Ok converter ->
+                                    Elm.functionReduced "value" converter
 
-                                    Err e ->
-                                        Elm.functionReduced "_" <| \_ -> Gen.Debug.todo e
+                                Err e ->
+                                    Elm.functionReduced "_" <| \_ -> Gen.Debug.todo e
                         )
 
                 ( _, Elm.Docs.ValueBlock _ ) ->
