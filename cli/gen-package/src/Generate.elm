@@ -6,10 +6,13 @@ import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
 import Elm.Case
+import Elm.Case.Branch
 import Elm.Docs
 import Elm.Gen
 import Elm.Syntax.TypeAnnotation
 import Elm.Type
+import Gen.Debug
+import Gen.Dict
 import Gen.Elm
 import Gen.Elm.Annotation as GenType
 import Gen.Elm.Case
@@ -19,6 +22,7 @@ import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Write as Write
 import Json.Decode as Json
+import Result.Extra
 
 
 main : Program Json.Value () ()
@@ -151,6 +155,9 @@ moduleToFile docs =
                 , record "values_"
                     blocks
                     (blockToIdField sourceModName)
+                , recordWithFieldList "toExpression_"
+                    blocks
+                    (toExpression sourceModName)
                 ]
         )
 
@@ -937,6 +944,236 @@ typeCreation thisModule block =
 
         Elm.Docs.UnknownBlock str ->
             []
+
+
+toExpression : List String -> Elm.Docs.Block -> List Field
+toExpression thisModule block =
+    let
+        inner =
+            case ( thisModule, block ) of
+                ( _, Elm.Docs.MarkdownBlock _ ) ->
+                    Nothing
+
+                ( [ "Dict" ], _ ) ->
+                    Nothing
+
+                ( [ "Array" ], _ ) ->
+                    Nothing
+
+                ( _, Elm.Docs.UnionBlock union ) ->
+                    let
+                        valueAnnotation : Annotation.Annotation
+                        valueAnnotation =
+                            Annotation.namedWith thisModule
+                                union.name
+                                (List.map Annotation.var union.args)
+                    in
+                    Just
+                        ( union.name
+                        , Elm.fn ( "value", Just valueAnnotation ) <|
+                            \value ->
+                                Elm.withType expressionType <|
+                                    case union.tags of
+                                        [] ->
+                                            -- This type has not been exposed and can't be constructed
+                                            Gen.Debug.todo <| "The type " ++ union.name ++ " is not exposed"
+
+                                        _ ->
+                                            Elm.Case.custom value valueAnnotation <|
+                                                List.map
+                                                    (\(( name, tags ) as tag) ->
+                                                        let
+                                                            build : List Elm.Expression -> Elm.Expression
+                                                            build args =
+                                                                case
+                                                                    Result.Extra.combineMap (innerToExpression thisModule) tags
+                                                                of
+                                                                    Ok converters ->
+                                                                        Elm.apply
+                                                                            (Elm.get name (Elm.val "make_"))
+                                                                            (List.map2 identity converters args)
+
+                                                                    Err e ->
+                                                                        Gen.Debug.todo e
+                                                        in
+                                                        Elm.Case.Branch.map build <| buildBranch tag
+                                                    )
+                                                    union.tags
+                        )
+
+                ( _, Elm.Docs.AliasBlock alias ) ->
+                    let
+                        valueAnnotation : Annotation.Annotation
+                        valueAnnotation =
+                            Annotation.namedWith thisModule
+                                alias.name
+                                (List.map Annotation.var alias.args)
+                    in
+                    Just
+                        ( alias.name
+                        , Elm.withType
+                            (Annotation.function [ valueAnnotation ] expressionType)
+                          <|
+                            Elm.withType expressionType <|
+                                case innerToExpression thisModule alias.tipe of
+                                    Ok converter ->
+                                        Elm.functionReduced "value" converter
+
+                                    Err e ->
+                                        Elm.functionReduced "_" <| \_ -> Gen.Debug.todo e
+                        )
+
+                ( _, Elm.Docs.ValueBlock _ ) ->
+                    Nothing
+
+                ( _, Elm.Docs.BinopBlock _ ) ->
+                    Nothing
+
+                ( _, Elm.Docs.UnknownBlock _ ) ->
+                    Nothing
+    in
+    case inner of
+        Just ( name, value ) ->
+            [ ( name, value ) ]
+
+        Nothing ->
+            []
+
+
+buildBranch : ( String, List Elm.Type.Type ) -> Elm.Case.Branch.Pattern (List Elm.Expression)
+buildBranch ( name, tags ) =
+    case tags of
+        [] ->
+            Elm.Case.Branch.variant0 name []
+
+        [ _ ] ->
+            Elm.Case.Branch.variant1 name
+                (Elm.Case.Branch.var "arg0")
+                (\arg0 -> [ arg0 ])
+
+        [ _, _ ] ->
+            Elm.Case.Branch.variant2 name
+                (Elm.Case.Branch.var "arg0")
+                (Elm.Case.Branch.var "arg1")
+                (\arg0 arg1 -> [ arg0, arg1 ])
+
+        [ _, _, _ ] ->
+            Elm.Case.Branch.variant3 name
+                (Elm.Case.Branch.var "arg0")
+                (Elm.Case.Branch.var "arg1")
+                (Elm.Case.Branch.var "arg2")
+                (\arg0 arg1 arg2 -> [ arg0, arg1, arg2 ])
+
+        [ _, _, _, _ ] ->
+            Elm.Case.Branch.variant4 name
+                (Elm.Case.Branch.var "arg0")
+                (Elm.Case.Branch.var "arg1")
+                (Elm.Case.Branch.var "arg2")
+                (Elm.Case.Branch.var "arg3")
+                (\arg0 arg1 arg2 arg3 -> [ arg0, arg1, arg2, arg3 ])
+
+        _ :: _ :: _ ->
+            Elm.Case.Branch.variant0 name
+                [ Gen.Debug.todo <|
+                    "buildBranch: branch for length "
+                        ++ String.fromInt (List.length tags)
+                        ++ " not implemented"
+                ]
+
+
+innerToExpression : List String -> Elm.Type.Type -> Result String (Elm.Expression -> Elm.Expression)
+innerToExpression thisModule tipe =
+    case tipe of
+        Elm.Type.Type "Basics.Int" [] ->
+            Ok Gen.Elm.call_.int
+
+        Elm.Type.Type "Basics.Float" [] ->
+            Ok Gen.Elm.call_.float
+
+        Elm.Type.Type "Basics.Bool" [] ->
+            Ok Gen.Elm.call_.bool
+
+        Elm.Type.Type "String.String" [] ->
+            Ok Gen.Elm.call_.string
+
+        Elm.Type.Type "Char.Char" [] ->
+            Ok Gen.Elm.call_.char
+
+        Elm.Type.Type "List.List" [ itemType ] ->
+            Result.map
+                (\itemToExpression expression ->
+                    Gen.Elm.call_.list <|
+                        Gen.List.call_.map
+                            (Elm.functionReduced "item" itemToExpression)
+                            expression
+                )
+                (innerToExpression thisModule itemType)
+
+        Elm.Type.Type "Maybe.Maybe" [ itemType ] ->
+            Result.map
+                (\itemToExpression expression ->
+                    Elm.Case.maybe expression
+                        { nothing = Gen.Elm.nothing
+                        , just = ( "value", \value -> Gen.Elm.just (itemToExpression value) )
+                        }
+                )
+                (innerToExpression thisModule itemType)
+
+        Elm.Type.Type "Dict.Dict" [ keyType, valueType ] ->
+            Result.map2
+                (\keyToExpression valueToExpression expression ->
+                    Elm.apply
+                        (Elm.value { importFrom = [ "Gen", "Dict" ], annotation = Nothing, name = "fromList" })
+                        [ Gen.List.call_.map
+                            (Elm.functionReduced "tuple" <|
+                                \tuple ->
+                                    Gen.Elm.tuple
+                                        (keyToExpression <| Gen.Tuple.first tuple)
+                                        (valueToExpression <| Gen.Tuple.second tuple)
+                            )
+                            (Gen.Dict.toList expression)
+                        ]
+                )
+                (innerToExpression thisModule keyType)
+                (innerToExpression thisModule valueType)
+
+        Elm.Type.Type name args ->
+            let
+                splat =
+                    List.reverse <| String.split "." name
+
+                moduleName =
+                    List.reverse <| List.drop 1 splat
+
+                typeName =
+                    String.concat <| List.take 1 splat
+            in
+            if thisModule == moduleName then
+                Ok <| \expression -> Elm.apply (Elm.val <| "toExpression_" ++ typeName) [ expression ]
+
+            else
+                Ok <|
+                    \expression ->
+                        Elm.apply
+                            (Elm.value
+                                { importFrom = "Gen" :: moduleName
+                                , name = "toExpression_" ++ typeName
+                                , annotation = Nothing
+                                }
+                            )
+                            [ expression ]
+
+        Elm.Type.Var _ ->
+            Err "innerToExpression: branch 'Var _' not implemented"
+
+        Elm.Type.Lambda _ _ ->
+            Err "innerToExpression: branch 'Lambda _ _' not implemented"
+
+        Elm.Type.Tuple _ ->
+            Err "innerToExpression: branch 'Tuple _' not implemented"
+
+        Elm.Type.Record _ _ ->
+            Err "innerToExpression: branch 'Record _ _' not implemented"
 
 
 generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
