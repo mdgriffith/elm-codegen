@@ -960,6 +960,15 @@ toExpression thisModule block =
                 ( [ "Array" ], _ ) ->
                     Nothing
 
+                ( [ "Result" ], _ ) ->
+                    Nothing
+
+                ( [ "Maybe" ], _ ) ->
+                    Nothing
+
+                ( [ "Basics" ], _ ) ->
+                    Nothing
+
                 ( _, Elm.Docs.UnionBlock union ) ->
                     let
                         valueAnnotation : Annotation.Annotation
