@@ -11,6 +11,7 @@ import Elm.Type
 import Gen.Debug
 import Gen.Dict
 import Gen.Elm
+import Gen.Elm.Annotation
 import Gen.List
 import Gen.Tuple
 import Set exposing (Set)
@@ -210,6 +211,14 @@ toExpression availableToExpressions thisModule block =
                                                 in
                                                 Elm.Case.custom value valueAnnotation branches
                                                     |> Elm.withType expressionType
+                                                    |> Gen.Elm.withType
+                                                        (union.args
+                                                            |> List.map Gen.Elm.Annotation.var
+                                                            |> Elm.apply
+                                                                (Elm.val "annotation_"
+                                                                    |> Elm.get union.name
+                                                                )
+                                                        )
                                         in
                                         ( union.name
                                         , Elm.function (converterAnnotations ++ [ ( "input_", Just valueAnnotation ) ]) fn
@@ -262,6 +271,14 @@ toExpression availableToExpressions thisModule block =
                                     in
                                     simple value
                                         |> Elm.withType expressionType
+                                        |> Gen.Elm.withType
+                                            (alias.args
+                                                |> List.map Gen.Elm.Annotation.var
+                                                |> Elm.apply
+                                                    (Elm.val "annotation_"
+                                                        |> Elm.get alias.name
+                                                    )
+                                            )
                             in
                             Ok
                                 ( Just
@@ -549,13 +566,14 @@ innerToExpression availableToExpressions thisModule targetType varConverters =
                             return <| \v -> Elm.apply f [ v ]
 
                         Nothing ->
-                            Err "innerToExpression: branch 'Var _' not implemented"
+                            Err <| "innerToExpression: variable " ++ name ++ " not found"
 
                 Elm.Type.Record _ (Just _) ->
                     Err "innerToExpression: branch 'Record _ (Just _)' not implemented"
 
                 Elm.Type.Lambda _ _ ->
-                    Err "innerToExpression: branch 'Lambda _ _' not implemented"
+                    -- There is no way to convert a lambda
+                    nothing
 
                 Elm.Type.Tuple [ l, r ] ->
                     map2
