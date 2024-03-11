@@ -1,6 +1,6 @@
 export default () => `
 {
-    "elm-codegen-version": "0.3.0",
+    "elm-codegen-version": "0.5.2",
     "codegen-helpers": {
         "packages": {},
         "local": []
