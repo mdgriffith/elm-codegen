@@ -1,6 +1,7 @@
 module Elm.Let exposing
     ( letIn, value, Let
     , tuple
+    , triple
     , record
     , fn, fn2, fn3
     , toExpression
@@ -52,6 +53,25 @@ Will generate
             ( "Hello", "World!" )
     in
     first ++ second
+
+@docs triple
+
+Here's an example destructing a triple. This code
+
+    Elm.Let.letIn
+        (\( first, second, third ) ->
+            Elm.Op.append (Elm.Op.append first second) third
+        )
+        |> Elm.Let.triple "first" "second" "third" (Elm.triple (Elm.string "Hello") (Elm.string "World") (Elm.string "!"))
+        |> Elm.Let.toExpression
+
+Will generate
+
+    let
+        ( first, second, third ) =
+            ( "Hello", "World", "!" )
+    in
+    first ++ second ++ third
 
 @docs record
 
@@ -503,6 +523,19 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
 
                         ( newIndex, sourceDetails ) =
                             Compiler.toExpressionDetails twoIndex valueExpr
+
+                        annotation =
+                            case sourceDetails.annotation of
+                                Err e ->
+                                    Err e
+
+                                Ok inference ->
+                                    case inference.type_ of
+                                        Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType ] ->
+                                            Ok ( ( oneType, twoType ), inference.aliases )
+
+                                        _ ->
+                                            Err []
                     in
                     { letDecls =
                         [ Compiler.nodify <|
@@ -523,23 +556,16 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
                             \_ ->
                                 { expression =
                                     Exp.FunctionOrValue []
-                                        oneName
+                                        (Format.sanitize oneName)
                                 , annotation =
-                                    case sourceDetails.annotation of
-                                        Err e ->
-                                            Err e
-
-                                        Ok inference ->
-                                            case inference.type_ of
-                                                Annotation.Tupled [ Node.Node _ oneType, _ ] ->
-                                                    Ok
-                                                        { type_ = oneType
-                                                        , inferences = Dict.empty
-                                                        , aliases = inference.aliases
-                                                        }
-
-                                                _ ->
-                                                    Err []
+                                    annotation
+                                        |> Result.map
+                                            (\( ( oneType, _ ), aliases ) ->
+                                                { type_ = oneType
+                                                , inferences = Dict.empty
+                                                , aliases = aliases
+                                                }
+                                            )
                                 , imports =
                                     sourceDetails.imports
                                 }
@@ -549,23 +575,119 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
                                     Exp.FunctionOrValue []
                                         (Format.sanitize twoName)
                                 , annotation =
-                                    case sourceDetails.annotation of
-                                        Err e ->
-                                            Err e
-
-                                        Ok inference ->
-                                            case inference.type_ of
-                                                Annotation.Tupled [ _, Node.Node _ twoType ] ->
-                                                    Ok
-                                                        { type_ = twoType
-                                                        , inferences = Dict.empty
-                                                        , aliases = inference.aliases
-                                                        }
-
-                                                _ ->
-                                                    Err []
+                                    annotation
+                                        |> Result.map
+                                            (\( ( _, twoType ), aliases ) ->
+                                                { type_ = twoType
+                                                , inferences = Dict.empty
+                                                , aliases = aliases
+                                                }
+                                            )
                                 , imports =
                                     []
+                                }
+                        )
+                    }
+                )
+            )
+
+
+{-| -}
+triple : String -> String -> String -> Expression -> Let (( Expression, Expression, Expression ) -> a) -> Let a
+triple desiredNameOne desiredNameTwo desiredNameThree valueExpr sourceLet =
+    sourceLet
+        |> with
+            (Let
+                (\index ->
+                    let
+                        ( oneName, oneIndex ) =
+                            Index.getName desiredNameOne index
+
+                        ( twoName, twoIndex ) =
+                            Index.getName desiredNameTwo oneIndex
+
+                        ( threeName, threeIndex ) =
+                            Index.getName desiredNameThree twoIndex
+
+                        ( newIndex, sourceDetails ) =
+                            Compiler.toExpressionDetails threeIndex valueExpr
+
+                        annotation =
+                            case sourceDetails.annotation of
+                                Err e ->
+                                    Err e
+
+                                Ok inference ->
+                                    case inference.type_ of
+                                        Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType, Node.Node _ threeType ] ->
+                                            Ok ( ( oneType, twoType, threeType ), inference.aliases )
+
+                                        _ ->
+                                            Err []
+                    in
+                    { letDecls =
+                        [ Compiler.nodify <|
+                            Exp.LetDestructuring
+                                (Compiler.nodify
+                                    (Pattern.TuplePattern
+                                        [ Compiler.nodify (Pattern.VarPattern oneName)
+                                        , Compiler.nodify (Pattern.VarPattern twoName)
+                                        , Compiler.nodify (Pattern.VarPattern threeName)
+                                        ]
+                                    )
+                                )
+                                (Compiler.nodify sourceDetails.expression)
+                        ]
+                    , index = newIndex
+                    , imports = sourceDetails.imports
+                    , return =
+                        ( Compiler.Expression <|
+                            \_ ->
+                                { expression =
+                                    Exp.FunctionOrValue []
+                                        (Format.sanitize oneName)
+                                , annotation =
+                                    annotation
+                                        |> Result.map
+                                            (\( ( oneType, _, _ ), aliases ) ->
+                                                { type_ = oneType
+                                                , inferences = Dict.empty
+                                                , aliases = aliases
+                                                }
+                                            )
+                                , imports = sourceDetails.imports
+                                }
+                        , Compiler.Expression <|
+                            \_ ->
+                                { expression =
+                                    Exp.FunctionOrValue []
+                                        (Format.sanitize twoName)
+                                , annotation =
+                                    annotation
+                                        |> Result.map
+                                            (\( ( _, twoType, _ ), aliases ) ->
+                                                { type_ = twoType
+                                                , inferences = Dict.empty
+                                                , aliases = aliases
+                                                }
+                                            )
+                                , imports = []
+                                }
+                        , Compiler.Expression <|
+                            \_ ->
+                                { expression =
+                                    Exp.FunctionOrValue []
+                                        (Format.sanitize threeName)
+                                , annotation =
+                                    annotation
+                                        |> Result.map
+                                            (\( ( _, _, threeType ), aliases ) ->
+                                                { type_ = threeType
+                                                , inferences = Dict.empty
+                                                , aliases = aliases
+                                                }
+                                            )
+                                , imports = []
                                 }
                         )
                     }
