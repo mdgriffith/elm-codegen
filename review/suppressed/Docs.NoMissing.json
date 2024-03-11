@@ -7,7 +7,7 @@
     { "count": 29, "filePath": "src/Elm.elm" },
     { "count": 22, "filePath": "src/Elm/Annotation.elm" },
     { "count": 13, "filePath": "src/Elm/Case.elm" },
-    { "count": 9, "filePath": "src/Elm/Let.elm" },
+    { "count": 10, "filePath": "src/Elm/Let.elm" },
     { "count": 8, "filePath": "src/Elm/Declare.elm" },
     { "count": 6, "filePath": "src/Elm/ToString.elm" }
   ]
