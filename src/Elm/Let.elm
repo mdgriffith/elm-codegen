@@ -524,6 +524,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
                         ( newIndex, sourceDetails ) =
                             Compiler.toExpressionDetails twoIndex valueExpr
 
+                        annotation : Result (List Compiler.InferenceError) ( ( Annotation.TypeAnnotation, Annotation.TypeAnnotation ), Compiler.AliasCache )
                         annotation =
                             case sourceDetails.annotation of
                                 Err e ->
@@ -612,6 +613,7 @@ triple desiredNameOne desiredNameTwo desiredNameThree valueExpr sourceLet =
                         ( newIndex, sourceDetails ) =
                             Compiler.toExpressionDetails threeIndex valueExpr
 
+                        annotation : Result (List Compiler.InferenceError) ( ( Annotation.TypeAnnotation, Annotation.TypeAnnotation, Annotation.TypeAnnotation ), Compiler.AliasCache )
                         annotation =
                             case sourceDetails.annotation of
                                 Err e ->
