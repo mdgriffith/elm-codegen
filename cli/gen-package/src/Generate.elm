@@ -5,11 +5,10 @@ module Generate exposing (main)
 import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
-import Elm.Case
 import Elm.Docs
-import Elm.Gen
 import Elm.Syntax.TypeAnnotation
 import Elm.Type
+import Gen.CodeGen.Generate as Codegen
 import Gen.Elm
 import Gen.Elm.Annotation as GenType
 import Gen.Elm.Case
@@ -23,46 +22,36 @@ import Json.Decode as Json
 
 main : Program Json.Value () ()
 main =
-    Platform.worker
-        { init =
-            \json ->
-                case Json.decodeValue flagsDecoder json of
-                    Err err ->
-                        ( ()
-                        , Elm.Gen.error
-                            { title = "Invalid docs"
-                            , description =
-                                Json.errorToString err
+    Codegen.withFeedback <|
+        \flags ->
+            case Json.decodeValue flagsDecoder flags of
+                Err err ->
+                    [ { title = "Invalid docs"
+                      , description = Json.errorToString err
+                      }
+                    ]
+                        |> Err
+
+                Ok (Docs docs) ->
+                    { files = List.map moduleToFile docs
+                    , info = []
+                    }
+                        |> Ok
+
+                Ok (ElmSource srcs) ->
+                    case parseSources srcs [] of
+                        Ok docs ->
+                            { files = List.map moduleToFile docs
+                            , info = []
                             }
-                        )
+                                |> Ok
 
-                    Ok (Docs docs) ->
-                        ( ()
-                        , Elm.Gen.files
-                            (List.map moduleToFile docs)
-                        )
-
-                    Ok (ElmSource srcs) ->
-                        case parseSources srcs [] of
-                            Ok docs ->
-                                ( ()
-                                , Elm.Gen.files
-                                    (List.map moduleToFile docs)
-                                )
-
-                            Err err ->
-                                ( ()
-                                , Elm.Gen.error
-                                    { title = "Error generating docs"
-                                    , description =
-                                        err
-                                    }
-                                )
-        , update =
-            \msg model ->
-                ( model, Cmd.none )
-        , subscriptions = \_ -> Sub.none
-        }
+                        Err err ->
+                            [ { title = "Error generating docs"
+                              , description = err
+                              }
+                            ]
+                                |> Err
 
 
 parseSources : List String -> List Elm.Docs.Module -> Result String (List Elm.Docs.Module)
