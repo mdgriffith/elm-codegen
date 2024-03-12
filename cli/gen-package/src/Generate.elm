@@ -706,26 +706,7 @@ localType : List String -> String -> List Elm.Expression -> Elm.Expression
 localType thisModule typeName args =
     case preludeTypeName thisModule typeName of
         ( mod, name ) ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "namedWith"
-                    , annotation =
-                        Just
-                            (Annotation.function
-                                [ Annotation.list Annotation.string
-                                , Annotation.string
-                                , Annotation.list
-                                    (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                                ]
-                                (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                            )
-                    }
-                )
-                [ Elm.list (List.map Elm.string mod)
-                , Elm.string name
-                , Elm.list args
-                ]
+            GenType.namedWith mod name args
 
 
 preludeTypeName : List String -> String -> ( List String, String )
