@@ -766,109 +766,19 @@ prettyPatternInner aliases isTop pattern =
 
 type alias Context =
     { precedence : Int
-    , isTop : Bool
-    , isLeftPipe : Bool
     }
 
 
-topContext : { precedence : number, isTop : Bool, isLeftPipe : Bool }
+topContext : Context
 topContext =
-    { precedence = 11
-    , isTop = True
-    , isLeftPipe = False
+    { precedence = 0
     }
 
 
-adjustExpressionParentheses : Context -> Expression -> Expression
-adjustExpressionParentheses context expression =
-    let
-        addParens : Expression -> Expression
-        addParens expr =
-            case ( context.isTop, context.isLeftPipe, expr ) of
-                ( False, False, LetExpression _ ) ->
-                    nodify expr |> ParenthesizedExpression
-
-                ( False, False, CaseExpression _ ) ->
-                    nodify expr |> ParenthesizedExpression
-
-                ( False, False, LambdaExpression _ ) ->
-                    nodify expr |> ParenthesizedExpression
-
-                ( False, False, IfBlock _ _ _ ) ->
-                    nodify expr |> ParenthesizedExpression
-
-                _ ->
-                    expr
-
-        removeParens : Expression -> Expression
-        removeParens expr =
-            case expr of
-                ParenthesizedExpression (Node _ innerExpr) ->
-                    if shouldRemove innerExpr then
-                        removeParens innerExpr
-
-                    else
-                        expr
-
-                _ ->
-                    expr
-
-        shouldRemove : Expression -> Bool
-        shouldRemove expr =
-            case ( context.isTop, context.isLeftPipe, expr ) of
-                ( True, _, _ ) ->
-                    True
-
-                ( _, True, _ ) ->
-                    True
-
-                ( False, _, Application _ ) ->
-                    context.precedence < 11
-
-                ( False, _, FunctionOrValue _ _ ) ->
-                    True
-
-                ( False, _, Integer _ ) ->
-                    True
-
-                ( False, _, Hex _ ) ->
-                    True
-
-                ( False, _, Floatable _ ) ->
-                    True
-
-                ( False, _, Negation _ ) ->
-                    True
-
-                ( False, _, Literal _ ) ->
-                    True
-
-                ( False, _, CharLiteral _ ) ->
-                    True
-
-                ( False, _, TupledExpression _ ) ->
-                    True
-
-                ( False, _, RecordExpr _ ) ->
-                    True
-
-                ( False, _, ListExpr _ ) ->
-                    True
-
-                ( False, _, RecordAccess _ _ ) ->
-                    True
-
-                ( False, _, RecordAccessFunction _ ) ->
-                    True
-
-                ( False, _, RecordUpdateExpression _ _ ) ->
-                    True
-
-                _ ->
-                    False
-    in
-    removeParens expression
-        |> addParens
+bottomContext : Context
+bottomContext =
+    { precedence = 11
+    }
 
 
 {-| Pretty prints an expression.
@@ -881,17 +791,23 @@ prettyExpression aliases expression =
 
 prettyExpressionInner : Aliases -> Context -> Int -> Expression -> ( Doc t, Bool )
 prettyExpressionInner aliases context indent expression =
-    case adjustExpressionParentheses context expression of
+    let
+        noninfix : ( Doc t, Bool ) -> ( Doc t, Bool )
+        noninfix =
+            showParen (context.precedence > 10)
+    in
+    case expression of
         UnitExpr ->
             ( Pretty.string "()"
             , False
             )
 
         Application exprs ->
-            prettyApplication aliases indent exprs
+            noninfix <| prettyApplication aliases indent exprs
 
         OperatorApplication symbol dir exprl exprr ->
-            prettyOperatorApplication aliases indent symbol dir exprl exprr
+            showParen (context.precedence > precedence symbol) <|
+                prettyOperatorApplication aliases indent symbol dir exprl exprr
 
         FunctionOrValue modl val ->
             ( prettyModuleNameDot aliases modl
@@ -900,7 +816,8 @@ prettyExpressionInner aliases context indent expression =
             )
 
         IfBlock exprBool exprTrue exprFalse ->
-            prettyIfBlock aliases indent exprBool exprTrue exprFalse
+            noninfix <|
+                prettyIfBlock aliases indent exprBool exprTrue exprFalse
 
         PrefixOperator symbol ->
             ( Pretty.string symbol |> Pretty.parens
@@ -928,14 +845,15 @@ prettyExpressionInner aliases context indent expression =
             )
 
         Negation (Node _ expr) ->
-            let
-                ( prettyExpr, alwaysBreak ) =
-                    prettyExpressionInner aliases topContext 4 expr
-            in
-            ( Pretty.string "-"
-                |> Pretty.a prettyExpr
-            , alwaysBreak
-            )
+            noninfix <|
+                let
+                    ( prettyExpr, alwaysBreak ) =
+                        prettyExpressionInner aliases bottomContext 4 expr
+                in
+                ( Pretty.string "-"
+                    |> Pretty.a prettyExpr
+                , alwaysBreak
+                )
 
         Literal val ->
             ( prettyLiteral val
@@ -951,17 +869,17 @@ prettyExpressionInner aliases context indent expression =
         TupledExpression exprs ->
             prettyTupledExpression aliases indent exprs
 
-        ParenthesizedExpression expr ->
-            prettyParenthesizedExpression aliases indent expr
+        ParenthesizedExpression (Node _ expr) ->
+            prettyExpressionInner aliases context indent expr
 
         LetExpression letBlock ->
-            prettyLetBlock aliases indent letBlock
+            noninfix <| prettyLetBlock aliases indent letBlock
 
         CaseExpression caseBlock ->
-            prettyCaseBlock aliases indent caseBlock
+            noninfix <| prettyCaseBlock aliases indent caseBlock
 
         LambdaExpression lambda ->
-            prettyLambdaExpression aliases indent lambda
+            noninfix <| prettyLambdaExpression aliases indent lambda
 
         RecordExpr setters ->
             prettyRecordExpr aliases setters
@@ -991,13 +909,7 @@ prettyApplication aliases indent exprs =
     let
         ( prettyExpressions, alwaysBreak ) =
             List.map
-                (prettyExpressionInner aliases
-                    { precedence = 11
-                    , isTop = False
-                    , isLeftPipe = False
-                    }
-                    4
-                )
+                (prettyExpressionInner aliases bottomContext indent)
                 (denodeAll exprs)
                 |> List.unzip
                 |> Tuple.mapSecond (List.any identity)
@@ -1011,104 +923,39 @@ prettyApplication aliases indent exprs =
     )
 
 
-isEndLineOperator : String -> Bool
-isEndLineOperator op =
-    op == "<|"
-
-
 prettyOperatorApplication : Aliases -> Int -> String -> InfixDirection -> Node Expression -> Node Expression -> ( Doc t, Bool )
-prettyOperatorApplication aliases indent symbol dir exprl exprr =
-    if symbol == "<|" then
-        prettyOperatorApplicationLeft aliases indent symbol dir exprl exprr
-
-    else
-        prettyOperatorApplicationRight aliases indent symbol dir exprl exprr
-
-
-prettyOperatorApplicationLeft : Aliases -> Int -> String -> InfixDirection -> Node Expression -> Node Expression -> ( Doc t, Bool )
-prettyOperatorApplicationLeft aliases _ symbol _ (Node _ exprl) (Node _ exprr) =
+prettyOperatorApplication aliases indent symbol dir (Node _ exprl) (Node _ exprr) =
     let
-        context : Context
-        context =
-            { precedence = precedence symbol
-            , isTop = False
-            , isLeftPipe = True
-            }
+        prec : Int
+        prec =
+            precedence symbol
 
-        ( prettyExpressionLeft, alwaysBreakLeft ) =
-            prettyExpressionInner aliases context 4 exprl
+        ( lprec, rprec ) =
+            case dir of
+                Left ->
+                    ( prec, prec + 1 )
 
-        ( prettyExpressionRight, alwaysBreakRight ) =
-            prettyExpressionInner aliases context 4 exprr
+                Non ->
+                    ( prec + 1, prec + 1 )
+
+                Right ->
+                    ( prec + 1, prec )
+
+        ( left, breakLeft ) =
+            prettyExpressionInner aliases { precedence = lprec } indent exprl
+
+        ( right, breakRight ) =
+            prettyExpressionInner aliases { precedence = rprec } (indent + 4) exprr
 
         alwaysBreak : Bool
         alwaysBreak =
-            alwaysBreakLeft || alwaysBreakRight
+            breakLeft || breakRight
     in
-    ( [ [ prettyExpressionLeft, Pretty.string symbol ] |> Pretty.words
-      , prettyExpressionRight
-      ]
-        |> Pretty.lines
-        |> optionalGroup alwaysBreak
-        |> Pretty.nest 4
-    , alwaysBreak
-    )
-
-
-prettyOperatorApplicationRight : Aliases -> Int -> String -> InfixDirection -> Node Expression -> Node Expression -> ( Doc t, Bool )
-prettyOperatorApplicationRight aliases indent symbol _ exprl exprr =
-    let
-        expandExpr : Int -> Context -> Expression -> List ( Doc t, Bool )
-        expandExpr innerIndent context expr =
-            case expr of
-                OperatorApplication sym _ left right ->
-                    innerOpApply False sym left right
-
-                _ ->
-                    [ prettyExpressionInner aliases context innerIndent expr ]
-
-        innerOpApply : Bool -> String -> Node Expression -> Node Expression -> List ( Doc t, Bool )
-        innerOpApply isTop sym (Node _ left) (Node _ right) =
-            let
-                context : Context
-                context =
-                    { precedence = precedence sym
-                    , isTop = False
-                    , isLeftPipe = "<|" == sym
-                    }
-
-                innerIndent : Int
-                innerIndent =
-                    decrementIndent 4 (String.length symbol + 1)
-
-                rightSide : List ( Doc t, Bool )
-                rightSide =
-                    right |> expandExpr innerIndent context
-            in
-            case rightSide of
-                ( hdExpr, hdBreak ) :: tl ->
-                    let
-                        leftIndent : Int
-                        leftIndent =
-                            if isTop then
-                                indent
-
-                            else
-                                innerIndent
-                    in
-                    List.append (left |> expandExpr leftIndent context)
-                        (( Pretty.string sym |> Pretty.a Pretty.space |> Pretty.a hdExpr, hdBreak ) :: tl)
-
-                [] ->
-                    []
-
-        ( prettyExpressions, alwaysBreak ) =
-            innerOpApply True symbol exprl exprr
-                |> List.unzip
-                |> Tuple.mapSecond (List.any identity)
-    in
-    ( prettyExpressions
-        |> Pretty.join (Pretty.nest indent Pretty.line)
+    ( left
+        |> Pretty.a Pretty.space
+        |> Pretty.a (Pretty.string symbol)
+        |> Pretty.a Pretty.space
+        |> Pretty.a right
         |> Pretty.align
         |> optionalGroup alwaysBreak
     , alwaysBreak
@@ -1232,27 +1079,28 @@ prettyTupledExpression aliases indent exprs =
             )
 
 
-prettyParenthesizedExpression : Aliases -> Int -> Node Expression -> ( Doc t, Bool )
-prettyParenthesizedExpression aliases indent (Node _ expr) =
-    let
-        open : Doc t
-        open =
-            Pretty.string "("
+showParen : Bool -> ( Doc t, Bool ) -> ( Doc t, Bool )
+showParen show ( child, alwaysBreak ) =
+    if show then
+        let
+            open : Doc t
+            open =
+                Pretty.string "("
 
-        close : Doc t
-        close =
-            Pretty.a (Pretty.string ")") Pretty.tightline
+            close : Doc t
+            close =
+                Pretty.a (Pretty.string ")") Pretty.tightline
+        in
+        ( child
+            |> Pretty.nest 1
+            |> Pretty.surround open close
+            |> Pretty.align
+            |> optionalGroup alwaysBreak
+        , alwaysBreak
+        )
 
-        ( prettyExpr, alwaysBreak ) =
-            prettyExpressionInner aliases topContext (decrementIndent indent 1) expr
-    in
-    ( prettyExpr
-        |> Pretty.nest 1
-        |> Pretty.surround open close
-        |> Pretty.align
-        |> optionalGroup alwaysBreak
-    , alwaysBreak
-    )
+    else
+        ( child, alwaysBreak )
 
 
 prettyLetBlock : Aliases -> Int -> LetBlock -> ( Doc t, Bool )
@@ -1432,7 +1280,7 @@ prettyRecordAccess : Aliases -> Node Expression -> Node String -> ( Doc t, Bool 
 prettyRecordAccess aliases (Node _ expr) (Node _ field) =
     let
         ( prettyExpr, alwaysBreak ) =
-            prettyExpressionInner aliases topContext 4 expr
+            prettyExpressionInner aliases bottomContext 4 expr
     in
     ( prettyExpr
         |> Pretty.a dot
