@@ -152,69 +152,62 @@ stringifying =
     describe "ToString"
         [ test "expressionWith applies aliases as expected" <|
             \_ ->
-                Expect.equal
-                    (Elm.record
-                        [ Elm.fn ( "arg", Nothing )
-                            (\arg ->
-                                Elm.apply
-                                    (Elm.value
-                                        { importFrom = [ "Longer", "Module" ]
-                                        , name = "gorthalax"
-                                        , annotation = Nothing
-                                        }
-                                    )
-                                    [ arg
-                                    ]
-                            )
-                            |> Tuple.pair "one"
-                        ]
-                        |> Elm.ToString.expressionWith
-                            { aliases =
-                                [ ( [ "Longer", "Module" ], "Ui" )
+                Elm.record
+                    [ Elm.fn ( "arg", Nothing )
+                        (\arg ->
+                            Elm.apply
+                                (Elm.value
+                                    { importFrom = [ "Longer", "Module" ]
+                                    , name = "gorthalax"
+                                    , annotation = Nothing
+                                    }
+                                )
+                                [ arg
                                 ]
-                            }
-                        |> .body
-                    )
-                    "{ one = \\arg -> Ui.gorthalax arg }"
+                        )
+                        |> Tuple.pair "one"
+                    ]
+                    |> Elm.ToString.expressionWith
+                        { aliases =
+                            [ ( [ "Longer", "Module" ], "Ui" )
+                            ]
+                        }
+                    |> .body
+                    |> Expect.equal "{ one = \\arg -> Ui.gorthalax arg }"
         , test "expressionWith generates aliases as expected" <|
             \_ ->
-                Expect.equal
-                    (Elm.record
-                        [ Elm.fn ( "arg", Nothing )
-                            (\arg ->
-                                Elm.apply
-                                    (Elm.value
-                                        { importFrom = [ "Longer", "Module" ]
-                                        , name = "gorthalax"
-                                        , annotation = Nothing
-                                        }
-                                    )
-                                    [ arg
-                                    ]
-                            )
-                            |> Tuple.pair "one"
-                        ]
-                        |> Elm.ToString.expressionWith
-                            { aliases =
-                                [ ( [ "Longer", "Module" ], "Ui" )
+                Elm.record
+                    [ Elm.fn ( "arg", Nothing )
+                        (\arg ->
+                            Elm.apply
+                                (Elm.value
+                                    { importFrom = [ "Longer", "Module" ]
+                                    , name = "gorthalax"
+                                    , annotation = Nothing
+                                    }
+                                )
+                                [ arg
                                 ]
-                            }
-                        |> .imports
-                    )
-                    "import Longer.Module as Ui"
+                        )
+                        |> Tuple.pair "one"
+                    ]
+                    |> Elm.ToString.expressionWith
+                        { aliases =
+                            [ ( [ "Longer", "Module" ], "Ui" )
+                            ]
+                        }
+                    |> .imports
+                    |> Expect.equal "import Longer.Module as Ui"
         , test "declarations named `main` do not get sanitized" <|
             \_ ->
-                Expect.equal
+                Elm.Expect.declarationAs
                     (Elm.declaration "main"
                         (Elm.int 5)
-                        |> Elm.ToString.declaration
-                        |> .body
-                        |> String.trim
                     )
                     "main : Int\nmain =\n    5"
         , test "Pipelines are paren-ed correctly" <|
             \_ ->
-                Expect.equal
+                Elm.Expect.renderedAs
                     (Elm.string "Hello"
                         |> Elm.Op.pipe
                             (Elm.value
@@ -235,8 +228,6 @@ stringifying =
                                 , Elm.string "HELLOOOOOOOOOOOOOO"
                                 ]
                             )
-                        |> Elm.ToString.expression
-                        |> .body
                     )
                     """"Hello" |> one |> two 5 "HELLOOOOOOOOOOOOOO\""""
         ]
