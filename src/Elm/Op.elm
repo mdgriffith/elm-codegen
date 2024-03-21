@@ -110,7 +110,7 @@ type BinOp
 equal : Expression -> Expression -> Expression
 equal =
     applyInfix []
-        (BinOp "==" Infix.Left 4)
+        (BinOp "==" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.var "a"
@@ -124,7 +124,7 @@ equal =
 notEqual : Expression -> Expression -> Expression
 notEqual =
     applyInfix []
-        (BinOp "/=" Infix.Left 4)
+        (BinOp "/=" Infix.Non 4)
         (Internal.Types.function
             [ Internal.Types.var "a"
             , Internal.Types.var "a"
@@ -221,7 +221,7 @@ or =
 -}
 power : Expression -> Expression -> Expression
 power =
-    applyNumber "^" Infix.Left
+    applyNumber "^" Infix.Right
 
 
 {-| `*`
@@ -417,12 +417,12 @@ query =
 -- -}
 -- compose : Expression -> Expression -> Expression
 -- compose =
---     applyBinOp (BinOp ">>" Infix.Left 9)
+--     applyBinOp (BinOp ">>" Infix.Right 9)
 -- {-| `<<`
 -- -}
 -- composeLeft : Expression -> Expression -> Expression
 -- composeLeft =
---     applyBinOp (BinOp "<<" Infix.Right 9)
+--     applyBinOp (BinOp "<<" Infix.Left 9)
 
 
 {-| `|>`
