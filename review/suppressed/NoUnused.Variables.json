@@ -4,8 +4,8 @@
   "learn more": "elm-review suppress --help",
   "suppressions": [
     { "count": 8, "filePath": "src/Internal/Compiler.elm" },
-    { "count": 5, "filePath": "src/Internal/Write.elm" },
     { "count": 4, "filePath": "src/Internal/Debug.elm" },
+    { "count": 4, "filePath": "src/Internal/Write.elm" },
     { "count": 2, "filePath": "src/Elm/Op.elm" },
     { "count": 2, "filePath": "src/Internal/Comments.elm" },
     { "count": 2, "filePath": "tests/Pattern.elm" },

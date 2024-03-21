@@ -3,6 +3,7 @@ module TypeChecking exposing (generatedCode, suite)
 import Elm
 import Elm.Annotation as Type
 import Elm.Case
+import Elm.Expect
 import Elm.Op
 import Elm.ToString
 import Expect
@@ -27,25 +28,6 @@ successfullyInferredType expression =
                     ++ String.join "\n"
                         (List.map Compiler.inferenceErrorToString errs)
                 )
-
-
-renderedAs : Elm.Expression -> String -> Expect.Expectation
-renderedAs expression str =
-    Expect.equal
-        (Elm.ToString.expression expression
-            |> .body
-        )
-        str
-
-
-declarationAs : Elm.Declaration -> String -> Expect.Expectation
-declarationAs decl str =
-    Expect.equal
-        (Elm.ToString.declaration decl
-            |> .body
-            |> String.trim
-        )
-        (String.trim str)
 
 
 suite : Test
@@ -164,7 +146,7 @@ generatedCode =
     describe "Exact Output"
         [ test "Strings" <|
             \_ ->
-                renderedAs
+                Elm.Expect.renderedAs
                     (Elm.string "Hello!")
                     "\"Hello!\""
         , test "Function, arg order isn't reversed" <|
@@ -186,12 +168,12 @@ generatedCode =
                                         Elm.unit
                             )
                 in
-                declarationAs
+                Elm.Expect.declarationAs
                     (Elm.declaration "myFunc" exp)
                     "myFunc : String -> Int -> Bool -> ( String, Int, Bool )\nmyFunc str int bool =\n    ( str, int, bool )"
         , test "Simplified version of map generates the correct signature" <|
             \_ ->
-                declarationAs
+                Elm.Expect.declarationAs
                     (Elm.declaration "map" myMap2)
                     """
 map : (optional -> fn) -> optional -> Optional fn
@@ -201,16 +183,15 @@ map fn optional =
 """
         , test "Map function generates corrections " <|
             \_ ->
-                Expect.equal
-                    (Elm.ToString.expression myMap
-                        |> .signature
-                    )
-                    (String.trim """
+                (Elm.ToString.expression myMap
+                    |> .signature
+                )
+                    |> Expect.equal (String.trim """
 (a -> fn) -> Optional a -> Optional fn
 """)
         , test "Multiply used type variable in record only appears once in signature" <|
             \_ ->
-                declarationAs
+                Elm.Expect.declarationAs
                     (Elm.alias "Record"
                         (Type.record
                             [ ( "a", Type.var "var" )
