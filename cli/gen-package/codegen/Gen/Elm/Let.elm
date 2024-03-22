@@ -1,7 +1,7 @@
-module Gen.Elm.Let exposing (annotation_, call_, fn, fn2, fn3, letIn, moduleName_, record, toExpression, tuple, value, values_)
+module Gen.Elm.Let exposing (annotation_, call_, fn, fn2, fn3, letIn, moduleName_, record, toExpression, triple, tuple, value, values_)
 
 {-| 
-@docs moduleName_, letIn, value, tuple, record, fn, fn2, fn3, toExpression, annotation_, call_, values_
+@docs moduleName_, letIn, value, tuple, triple, record, fn, fn2, fn3, toExpression, annotation_, call_, values_
 -}
 
 
@@ -95,6 +95,57 @@ tuple tupleArg tupleArg0 tupleArg1 tupleArg2 =
             }
         )
         [ Elm.string tupleArg, Elm.string tupleArg0, tupleArg1, tupleArg2 ]
+
+
+{-| triple: 
+    String
+    -> String
+    -> String
+    -> Elm.Expression
+    -> Elm.Let.Let (( Elm.Expression, Elm.Expression, Elm.Expression ) -> a)
+    -> Elm.Let.Let a
+-}
+triple :
+    String
+    -> String
+    -> String
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+triple tripleArg tripleArg0 tripleArg1 tripleArg2 tripleArg3 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm", "Let" ]
+            , name = "triple"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string
+                        , Type.string
+                        , Type.string
+                        , Type.namedWith [ "Elm" ] "Expression" []
+                        , Type.namedWith
+                            [ "Elm", "Let" ]
+                            "Let"
+                            [ Type.function
+                                [ Type.triple
+                                    (Type.namedWith [ "Elm" ] "Expression" [])
+                                    (Type.namedWith [ "Elm" ] "Expression" [])
+                                    (Type.namedWith [ "Elm" ] "Expression" [])
+                                ]
+                                (Type.var "a")
+                            ]
+                        ]
+                        (Type.namedWith [ "Elm", "Let" ] "Let" [ Type.var "a" ])
+                    )
+            }
+        )
+        [ Elm.string tripleArg
+        , Elm.string tripleArg0
+        , Elm.string tripleArg1
+        , tripleArg2
+        , tripleArg3
+        ]
 
 
 {-| record: 
@@ -402,6 +453,13 @@ call_ :
         -> Elm.Expression
         -> Elm.Expression
         -> Elm.Expression
+    , triple :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
     , record :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , fn :
@@ -519,6 +577,52 @@ call_ =
                     }
                 )
                 [ tupleArg, tupleArg0, tupleArg1, tupleArg2 ]
+    , triple =
+        \tripleArg tripleArg0 tripleArg1 tripleArg2 tripleArg3 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm", "Let" ]
+                    , name = "triple"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.string
+                                , Type.string
+                                , Type.string
+                                , Type.namedWith [ "Elm" ] "Expression" []
+                                , Type.namedWith
+                                    [ "Elm", "Let" ]
+                                    "Let"
+                                    [ Type.function
+                                        [ Type.triple
+                                            (Type.namedWith
+                                                [ "Elm" ]
+                                                "Expression"
+                                                []
+                                            )
+                                            (Type.namedWith
+                                                [ "Elm" ]
+                                                "Expression"
+                                                []
+                                            )
+                                            (Type.namedWith
+                                                [ "Elm" ]
+                                                "Expression"
+                                                []
+                                            )
+                                        ]
+                                        (Type.var "a")
+                                    ]
+                                ]
+                                (Type.namedWith
+                                    [ "Elm", "Let" ]
+                                    "Let"
+                                    [ Type.var "a" ]
+                                )
+                            )
+                    }
+                )
+                [ tripleArg, tripleArg0, tripleArg1, tripleArg2, tripleArg3 ]
     , record =
         \recordArg recordArg0 recordArg1 ->
             Elm.apply
@@ -773,6 +877,7 @@ values_ :
     { letIn : Elm.Expression
     , value : Elm.Expression
     , tuple : Elm.Expression
+    , triple : Elm.Expression
     , record : Elm.Expression
     , fn : Elm.Expression
     , fn2 : Elm.Expression
@@ -826,6 +931,32 @@ values_ =
                             "Let"
                             [ Type.function
                                 [ Type.tuple
+                                    (Type.namedWith [ "Elm" ] "Expression" [])
+                                    (Type.namedWith [ "Elm" ] "Expression" [])
+                                ]
+                                (Type.var "a")
+                            ]
+                        ]
+                        (Type.namedWith [ "Elm", "Let" ] "Let" [ Type.var "a" ])
+                    )
+            }
+    , triple =
+        Elm.value
+            { importFrom = [ "Elm", "Let" ]
+            , name = "triple"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string
+                        , Type.string
+                        , Type.string
+                        , Type.namedWith [ "Elm" ] "Expression" []
+                        , Type.namedWith
+                            [ "Elm", "Let" ]
+                            "Let"
+                            [ Type.function
+                                [ Type.triple
+                                    (Type.namedWith [ "Elm" ] "Expression" [])
                                     (Type.namedWith [ "Elm" ] "Expression" [])
                                     (Type.namedWith [ "Elm" ] "Expression" [])
                                 ]

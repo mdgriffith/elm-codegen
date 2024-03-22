@@ -44,15 +44,19 @@ map mapArg mapArg0 =
 
 {-| This is the most basic kind of pattern - it matches anything and gives it a variable name.
 
-    example =
-        Elm.Case.Branch.variant1 "Username"
-            (Elm.Case.Branch.var "username")
-            |> Elm.Case.Branch.map
-                (\username ->
-                    Elm.Op.append
-                        (Elm.string "Hello ")
-                        username
-                )
+    import Elm.Case.Branch as Branch
+
+
+    Branch.variant1 "Username" (Branch.var "username") <|
+        \username ->
+            Elm.Op.append
+                (Elm.string "Hello ")
+                username
+
+Results in
+
+    Username username ->
+        "Hello " ++ username
 
 var: String -> Elm.Case.Branch.Pattern Elm.Expression
 -}
@@ -123,19 +127,19 @@ ignore ignoreArg =
 
 {-| Pattern match with a literal Int.
 
-    example =
-        Elm.Case.Branch.variant1 "Just" (Elm.Case.Branch.int 2)
+    import Elm.Case.Branch as Branch
+
+    Branch.just (Branch.int 2 (Elm.int 5))
 
 Results in
 
-    case value of
-        Just 2 ->
-            2
+    Just 2 ->
+        5
 
-int: Int -> Elm.Case.Branch.Pattern Int
+int: Int -> value -> Elm.Case.Branch.Pattern value
 -}
-int : Int -> Elm.Expression
-int intArg =
+int : Int -> Elm.Expression -> Elm.Expression
+int intArg intArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case", "Branch" ]
@@ -143,16 +147,16 @@ int intArg =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.int ]
+                        [ Type.int, Type.var "value" ]
                         (Type.namedWith
                             [ "Elm", "Case", "Branch" ]
                             "Pattern"
-                            [ Type.int ]
+                            [ Type.var "value" ]
                         )
                     )
             }
         )
-        [ Elm.int intArg ]
+        [ Elm.int intArg, intArg0 ]
 
 
 {-| Matches a literal String.
@@ -170,10 +174,10 @@ Results in
         Just "admin" ->
             "This user is an admin!"
 
-string: String -> Elm.Case.Branch.Pattern String
+string: String -> value -> Elm.Case.Branch.Pattern value
 -}
-string : String -> Elm.Expression
-string stringArg =
+string : String -> Elm.Expression -> Elm.Expression
+string stringArg stringArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case", "Branch" ]
@@ -181,24 +185,24 @@ string stringArg =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string ]
+                        [ Type.string, Type.var "value" ]
                         (Type.namedWith
                             [ "Elm", "Case", "Branch" ]
                             "Pattern"
-                            [ Type.string ]
+                            [ Type.var "value" ]
                         )
                     )
             }
         )
-        [ Elm.string stringArg ]
+        [ Elm.string stringArg, stringArg0 ]
 
 
 {-| Matches a literal Char.
 
-char: Char.Char -> Elm.Case.Branch.Pattern Char.Char
+char: Char.Char -> a -> Elm.Case.Branch.Pattern a
 -}
-char : Char.Char -> Elm.Expression
-char charArg =
+char : Char.Char -> Elm.Expression -> Elm.Expression
+char charArg charArg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case", "Branch" ]
@@ -206,16 +210,16 @@ char charArg =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.char ]
+                        [ Type.char, Type.var "a" ]
                         (Type.namedWith
                             [ "Elm", "Case", "Branch" ]
                             "Pattern"
-                            [ Type.char ]
+                            [ Type.var "a" ]
                         )
                     )
             }
         )
-        [ Elm.char charArg ]
+        [ Elm.char charArg, charArg0 ]
 
 
 {-| Branch.tuple (Branch.var "one") (Branch.var "two")
@@ -552,7 +556,7 @@ nothing nothingArg =
         [ nothingArg ]
 
 
-{-| `Err` variant. A simple helper of `variant1 "Err"`.
+{-| The `Err` value of a result.
 
 err: Elm.Case.Branch.Pattern err -> Elm.Case.Branch.Pattern err
 -}
@@ -581,7 +585,7 @@ err errArg =
         [ errArg ]
 
 
-{-| `Ok` variant. A simple helper of `variant1 "Ok"`.
+{-| The `Ok` value for a `Result`
 
 ok: Elm.Case.Branch.Pattern ok -> Elm.Case.Branch.Pattern ok
 -}
@@ -2527,9 +2531,9 @@ call_ :
     , var : Elm.Expression -> Elm.Expression
     , unit : Elm.Expression -> Elm.Expression
     , ignore : Elm.Expression -> Elm.Expression
-    , int : Elm.Expression -> Elm.Expression
-    , string : Elm.Expression -> Elm.Expression
-    , char : Elm.Expression -> Elm.Expression
+    , int : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , string : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , char : Elm.Expression -> Elm.Expression -> Elm.Expression
     , tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
     , triple :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -2774,7 +2778,7 @@ call_ =
                 )
                 [ ignoreArg ]
     , int =
-        \intArg ->
+        \intArg intArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case", "Branch" ]
@@ -2782,18 +2786,18 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.int ]
+                                [ Type.int, Type.var "value" ]
                                 (Type.namedWith
                                     [ "Elm", "Case", "Branch" ]
                                     "Pattern"
-                                    [ Type.int ]
+                                    [ Type.var "value" ]
                                 )
                             )
                     }
                 )
-                [ intArg ]
+                [ intArg, intArg0 ]
     , string =
-        \stringArg ->
+        \stringArg stringArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case", "Branch" ]
@@ -2801,18 +2805,18 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.string ]
+                                [ Type.string, Type.var "value" ]
                                 (Type.namedWith
                                     [ "Elm", "Case", "Branch" ]
                                     "Pattern"
-                                    [ Type.string ]
+                                    [ Type.var "value" ]
                                 )
                             )
                     }
                 )
-                [ stringArg ]
+                [ stringArg, stringArg0 ]
     , char =
-        \charArg ->
+        \charArg charArg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case", "Branch" ]
@@ -2820,16 +2824,16 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.char ]
+                                [ Type.char, Type.var "a" ]
                                 (Type.namedWith
                                     [ "Elm", "Case", "Branch" ]
                                     "Pattern"
-                                    [ Type.char ]
+                                    [ Type.var "a" ]
                                 )
                             )
                     }
                 )
-                [ charArg ]
+                [ charArg, charArg0 ]
     , tuple =
         \tupleArg tupleArg0 ->
             Elm.apply
@@ -4145,11 +4149,11 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.int ]
+                        [ Type.int, Type.var "value" ]
                         (Type.namedWith
                             [ "Elm", "Case", "Branch" ]
                             "Pattern"
-                            [ Type.int ]
+                            [ Type.var "value" ]
                         )
                     )
             }
@@ -4160,11 +4164,11 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string ]
+                        [ Type.string, Type.var "value" ]
                         (Type.namedWith
                             [ "Elm", "Case", "Branch" ]
                             "Pattern"
-                            [ Type.string ]
+                            [ Type.var "value" ]
                         )
                     )
             }
@@ -4175,11 +4179,11 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.char ]
+                        [ Type.char, Type.var "a" ]
                         (Type.namedWith
                             [ "Elm", "Case", "Branch" ]
                             "Pattern"
-                            [ Type.char ]
+                            [ Type.var "a" ]
                         )
                     )
             }

@@ -2,10 +2,10 @@ module Generate exposing (main)
 
 {-| -}
 
+import Dict
 import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
-import Elm.Case
 import Elm.Docs
 import Elm.Gen
 import Elm.Syntax.TypeAnnotation
@@ -15,6 +15,7 @@ import Gen.Elm.Annotation as GenType
 import Gen.Elm.Case
 import Gen.List
 import Gen.Tuple
+import Generate.ToExpression as ToExpression
 import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Write as Write
@@ -37,32 +38,41 @@ main =
                         )
 
                     Ok (Docs docs) ->
-                        ( ()
-                        , Elm.Gen.files
-                            (List.map moduleToFile docs)
-                        )
+                        generateFromDocs docs
 
                     Ok (ElmSource srcs) ->
                         case parseSources srcs [] of
                             Ok docs ->
-                                ( ()
-                                , Elm.Gen.files
-                                    (List.map moduleToFile docs)
-                                )
+                                generateFromDocs docs
 
                             Err err ->
                                 ( ()
                                 , Elm.Gen.error
                                     { title = "Error generating docs"
-                                    , description =
-                                        err
+                                    , description = err
                                     }
                                 )
-        , update =
-            \msg model ->
-                ( model, Cmd.none )
+        , update = \_ model -> ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
+
+
+generateFromDocs : List Elm.Docs.Module -> ( (), Cmd () )
+generateFromDocs docs =
+    let
+        docsWithBlocks : List ( Elm.Docs.Module, List Elm.Docs.Block )
+        docsWithBlocks =
+            List.map (\doc -> ( doc, Elm.Docs.toBlocks doc )) docs
+
+        availableToExpressions : ToExpression.ToExpressionDict
+        availableToExpressions =
+            ToExpression.generate docsWithBlocks
+    in
+    ( ()
+    , docsWithBlocks
+        |> List.map (moduleToFile availableToExpressions)
+        |> Elm.Gen.files
+    )
 
 
 parseSources : List String -> List Elm.Docs.Module -> Result String (List Elm.Docs.Module)
@@ -96,12 +106,9 @@ flagsDecoder =
         ]
 
 
-moduleToFile : Elm.Docs.Module -> Elm.File
-moduleToFile docs =
+moduleToFile : ToExpression.ToExpressionDict -> ( Elm.Docs.Module, List Elm.Docs.Block ) -> Elm.File
+moduleToFile availableToExpressions ( docs, blocks ) =
     let
-        blocks =
-            Elm.Docs.toBlocks docs
-
         sourceModName =
             -- Platform.Sub and Platform.Cmd are always imported aliased as Sub and Cmd
             -- Which makes things kinda awkward.
@@ -152,6 +159,10 @@ moduleToFile docs =
                     blocks
                     (blockToIdField sourceModName)
                 ]
+            ++ (Dict.get docs.name availableToExpressions
+                    |> Maybe.withDefault Dict.empty
+                    |> Dict.values
+               )
         )
 
 
