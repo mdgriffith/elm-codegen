@@ -1,7 +1,7 @@
-module Gen.Elm exposing (alias, annotation_, apply, bool, call_, char, comment, customType, declaration, docs, expose, exposeWith, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, hex, ifThen, int, just, list, make_, maybe, moduleName_, nothing, parse, portIncoming, portOutgoing, record, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, val, value, values_, variant, variantWith, withDocumentation, withType)
+module Gen.Elm exposing (alias, aliasWith, annotation_, apply, bool, call_, char, comment, customType, customTypeWith, declaration, docs, expose, exposeWith, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, hex, ifThen, int, just, list, make_, maybe, moduleName_, nothing, parse, portIncoming, portOutgoing, record, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, val, value, values_, variant, variantWith, withDocumentation, withType)
 
 {-| 
-@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
+@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, customTypeWith, variant, variantWith, alias, aliasWith, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 
 
@@ -1437,6 +1437,49 @@ customType customTypeArg customTypeArg0 =
         [ Elm.string customTypeArg, Elm.list customTypeArg0 ]
 
 
+{-| A custom type declaration, with the ability to specify in which order to put the type variables.
+
+    Elm.customTypeWith "MyType"
+        [ "addVar", "twoVar" ]
+        [ Elm.variantWith "One"
+            [ Elm.Annotation.var "oneVar" ]
+        , Elm.variantWith "Two"
+            [ Elm.Annotation.var "twoVar" ]
+        ]
+
+Will result in
+
+    type MyType addVar twoVar oneVar
+        = One oneVar
+        | Two twoVar
+
+Notice how nonexisting variables (as used in phantom types) are included, and missing variable are automatically added.
+
+customTypeWith: String -> List String -> List Elm.Variant -> Elm.Declaration
+-}
+customTypeWith : String -> List String -> List Elm.Expression -> Elm.Expression
+customTypeWith customTypeWithArg customTypeWithArg0 customTypeWithArg1 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "customTypeWith"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string
+                        , Type.list Type.string
+                        , Type.list (Type.namedWith [ "Elm" ] "Variant" [])
+                        ]
+                        (Type.namedWith [ "Elm" ] "Declaration" [])
+                    )
+            }
+        )
+        [ Elm.string customTypeWithArg
+        , Elm.list (List.map Elm.string customTypeWithArg0)
+        , Elm.list customTypeWithArg1
+        ]
+
+
 {-| variant: String -> Elm.Variant -}
 variant : String -> Elm.Expression
 variant variantArg =
@@ -1519,6 +1562,53 @@ alias aliasArg aliasArg0 =
             }
         )
         [ Elm.string aliasArg, aliasArg0 ]
+
+
+{-| A type alias declaration, with the ability to specify in which order to put the type variables.
+
+    import Elm.Annotation as Type
+
+    Elm.aliasWith "MyAlias" [ "twoVar", "nonexistingVar", "oneVar" ]
+        (Type.record
+            [ ( "one", Type.var "oneVar" )
+            , ( "two", Type.var "twoVar" )
+            , ( "three", Type.var "threeVar" )
+            ]
+        )
+
+Should result in
+
+    type alias MyAlias twoVar oneVar threeVar =
+        { one : oneVar
+        , two : twoVar
+        , three : threeVar
+        }
+
+Notice how nonexisting variables are omitted, and missing variable are automatically added.
+
+aliasWith: String -> List String -> Elm.Annotation.Annotation -> Elm.Declaration
+-}
+aliasWith : String -> List String -> Elm.Expression -> Elm.Expression
+aliasWith aliasWithArg aliasWithArg0 aliasWithArg1 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "aliasWith"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string
+                        , Type.list Type.string
+                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Type.namedWith [ "Elm" ] "Declaration" [])
+                    )
+            }
+        )
+        [ Elm.string aliasWithArg
+        , Elm.list (List.map Elm.string aliasWithArg0)
+        , aliasWithArg1
+        ]
 
 
 {-| import Elm.Annotation as Type
@@ -1949,9 +2039,13 @@ call_ :
     , function : Elm.Expression -> Elm.Expression -> Elm.Expression
     , functionReduced : Elm.Expression -> Elm.Expression -> Elm.Expression
     , customType : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , customTypeWith :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , variant : Elm.Expression -> Elm.Expression
     , variantWith : Elm.Expression -> Elm.Expression -> Elm.Expression
     , alias : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , aliasWith :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , portIncoming : Elm.Expression -> Elm.Expression -> Elm.Expression
     , portOutgoing : Elm.Expression -> Elm.Expression -> Elm.Expression
     , parse : Elm.Expression -> Elm.Expression
@@ -2809,6 +2903,25 @@ call_ =
                     }
                 )
                 [ customTypeArg, customTypeArg0 ]
+    , customTypeWith =
+        \customTypeWithArg customTypeWithArg0 customTypeWithArg1 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm" ]
+                    , name = "customTypeWith"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.string
+                                , Type.list Type.string
+                                , Type.list
+                                    (Type.namedWith [ "Elm" ] "Variant" [])
+                                ]
+                                (Type.namedWith [ "Elm" ] "Declaration" [])
+                            )
+                    }
+                )
+                [ customTypeWithArg, customTypeWithArg0, customTypeWithArg1 ]
     , variant =
         \variantArg ->
             Elm.apply
@@ -2866,6 +2979,27 @@ call_ =
                     }
                 )
                 [ aliasArg, aliasArg0 ]
+    , aliasWith =
+        \aliasWithArg aliasWithArg0 aliasWithArg1 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm" ]
+                    , name = "aliasWith"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.string
+                                , Type.list Type.string
+                                , Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
+                                ]
+                                (Type.namedWith [ "Elm" ] "Declaration" [])
+                            )
+                    }
+                )
+                [ aliasWithArg, aliasWithArg0, aliasWithArg1 ]
     , portIncoming =
         \portIncomingArg portIncomingArg0 ->
             Elm.apply
@@ -3086,9 +3220,11 @@ values_ :
     , function : Elm.Expression
     , functionReduced : Elm.Expression
     , customType : Elm.Expression
+    , customTypeWith : Elm.Expression
     , variant : Elm.Expression
     , variantWith : Elm.Expression
     , alias : Elm.Expression
+    , aliasWith : Elm.Expression
     , portIncoming : Elm.Expression
     , portOutgoing : Elm.Expression
     , parse : Elm.Expression
@@ -3800,6 +3936,20 @@ values_ =
                         (Type.namedWith [ "Elm" ] "Declaration" [])
                     )
             }
+    , customTypeWith =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "customTypeWith"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string
+                        , Type.list Type.string
+                        , Type.list (Type.namedWith [ "Elm" ] "Variant" [])
+                        ]
+                        (Type.namedWith [ "Elm" ] "Declaration" [])
+                    )
+            }
     , variant =
         Elm.value
             { importFrom = [ "Elm" ]
@@ -3837,6 +3987,20 @@ values_ =
                 Just
                     (Type.function
                         [ Type.string
+                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Type.namedWith [ "Elm" ] "Declaration" [])
+                    )
+            }
+    , aliasWith =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "aliasWith"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.string
+                        , Type.list Type.string
                         , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                         ]
                         (Type.namedWith [ "Elm" ] "Declaration" [])
