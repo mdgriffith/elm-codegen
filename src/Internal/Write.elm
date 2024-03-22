@@ -448,8 +448,7 @@ prettyDeclarations aliases decls =
             )
         |> List.reverse
         |> List.drop 1
-        |> List.reverse
-        |> List.foldl (<|) Pretty.empty
+        |> List.foldr (<|) Pretty.empty
 
 
 {-| Pretty prints an Elm function, which may include documentation and a signature too.
