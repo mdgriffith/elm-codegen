@@ -33,6 +33,7 @@
     "play:install-css": "(npm run build; cd play; node ../bin/elm-codegen install rtfeldman/elm-css)",
     "play:install-browser": "(npm run build; cd play; node ../bin/elm-codegen install elm/browser)",
     "play-watch": "(npm run build; cd play; node ../bin/elm-codegen run --debug --watch)",
+    "test:init": "(npm run build; bash scripts/test-init.sh)",
     "review": "elm-review"
   },
   "files": [
