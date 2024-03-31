@@ -322,7 +322,11 @@ value details =
 
     import Elm.Annotation as Type
 
-    Elm.value "myString"
+    Elm.value
+        { importFrom = []
+        , name = "myString"
+        , annotation = Nothing
+        }
         |> Elm.withType Type.string
 
 Though be sure `elm-codegen` isn't already doing this automatically for you!
@@ -1439,7 +1443,7 @@ So, this
 
     Elm.fn ( "firstInt", Nothing )
         (\firstArgument ->
-            Elm.plus
+            Elm.Op.plus
                 (Elm.int 42)
                 firstArgument
         )
@@ -1453,7 +1457,7 @@ If you want to generate a **top level** function instead of an anonymous functio
     Elm.declaration "add42" <|
         Elm.fn ( "firstInt", Nothing )
             (\firstArgument ->
-                Elm.plus
+                Elm.Op.plus
                     (Elm.int 42)
                     firstArgument
             )
