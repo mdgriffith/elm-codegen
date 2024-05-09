@@ -157,11 +157,11 @@ arg argument (Fn toFnDetails) =
     Fn
         (\index ->
             let
-                fnDetails =
-                    toFnDetails (Index.next index)
-
                 argDetails =
                     Internal.Arg.toDetails index argument
+
+                fnDetails =
+                    toFnDetails argDetails.index
             in
             { args = argDetails.details :: fnDetails.args
             , body = fnDetails.body argDetails.value

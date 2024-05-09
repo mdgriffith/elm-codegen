@@ -2,7 +2,7 @@ module Elm.Arg exposing
     ( Arg, unit, var, varWith
     , tuple, triple
     , record, field
-    , Expression
+    , ignore, string, char
     )
 
 {-|
@@ -12,6 +12,15 @@ module Elm.Arg exposing
 @docs tuple, triple
 
 @docs record, field
+
+
+## Useful for case expressions
+
+@docs ignore, string, char
+
+@docs list, item, listRemaining
+
+@customType
 
 -}
 
@@ -70,3 +79,82 @@ record =
 field : String -> Arg (Expression -> a) -> Arg a
 field =
     Internal.Arg.field
+
+
+{-| -}
+string : String -> Arg Expression
+string =
+    Internal.Arg.string
+
+
+{-| -}
+char : Char -> Arg Expression
+char =
+    Internal.Arg.char
+
+
+{-| -}
+ignore : Arg Expression
+ignore =
+    Internal.Arg.ignore
+
+
+{-|
+
+    Arg.list Tuple.pair
+        |> Arg.item (Arg.var "first")
+        |> Arg.item (Arg.var "second")
+
+Will genrate
+
+    [ first, second ]
+
+And
+
+     Arg.list
+        (\one two remaining ->
+            { one = one
+            , two = two
+            , remaining = remaining
+            }
+        )
+        |> Arg.item (Arg.var "first")
+        |> Arg.item (Arg.var "second")
+        |> Arg.listRemaining "remaining"
+
+Will generate
+
+    first :: second :: remaining
+
+-}
+list : a -> Arg a
+list =
+    Internal.Arg.list
+
+
+{-| -}
+listRemaining : String -> Arg (Expression -> a) -> Arg a
+listRemaining =
+    Internal.Arg.listRemaining
+
+
+{-| -}
+item : Arg arg -> Arg (arg -> a) -> Arg a
+item =
+    Internal.Arg.item
+
+
+{-|
+
+    Arg.customType "MyCustomType" Tuple.pair
+        |> Arg.item (Arg.var "first")
+        |> Arg.item (Arg.var "second")
+
+Will generate
+
+    MyCustomType first second
+
+-}
+customType : String -> a -> Arg a
+customType =
+    Internal.Arg.customType

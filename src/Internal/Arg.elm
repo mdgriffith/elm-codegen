@@ -3,8 +3,15 @@ module Internal.Arg exposing
     , ArgDetails
     , Expression
     , Module
+    , char
+    , customType
     , field
+    , ignore
+    , item
+    , list
+    , listRemaining
     , record
+    , string
     , toDetails
     , triple
     , tuple
@@ -22,6 +29,7 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Index as Index
+import Internal.Types
 
 
 type alias Expression =
@@ -34,6 +42,7 @@ type Arg val
          ->
             { details : ArgDetails
             , value : val
+            , index : Index.Index
             }
         )
 
@@ -58,6 +67,7 @@ toDetails :
     ->
         { details : ArgDetails
         , value : val
+        , index : Index.Index
         }
 toDetails index (Arg arg) =
     arg index
@@ -80,6 +90,102 @@ unit =
                 , pattern = Compiler.nodify Pattern.UnitPattern
                 , annotation = annotation
                 }
+            , index = Index.next index
+            , value =
+                Compiler.Expression <|
+                    \_ ->
+                        { expression = Exp.UnitExpr
+                        , annotation = Ok (Compiler.inference Annotation.Unit)
+                        , imports = imports
+                        }
+            }
+        )
+
+
+{-| -}
+string : String -> Arg Expression
+string str =
+    Arg
+        (\index ->
+            let
+                annotation =
+                    Ok
+                        { inferences = Dict.empty
+                        , type_ = Internal.Types.string
+                        , aliases = Compiler.emptyAliases
+                        }
+
+                imports =
+                    []
+            in
+            { details =
+                { imports = imports
+                , pattern = Compiler.nodify (Pattern.StringPattern str)
+                , annotation = annotation
+                }
+            , index = Index.next index
+            , value =
+                Compiler.Expression <|
+                    \_ ->
+                        { expression = Exp.Literal str
+                        , annotation = annotation
+                        , imports = imports
+                        }
+            }
+        )
+
+
+{-| -}
+char : Char -> Arg Expression
+char c =
+    Arg
+        (\index ->
+            let
+                annotation =
+                    Ok
+                        { inferences = Dict.empty
+                        , type_ = Internal.Types.char
+                        , aliases = Compiler.emptyAliases
+                        }
+
+                imports =
+                    []
+            in
+            { details =
+                { imports = imports
+                , pattern = Compiler.nodify (Pattern.CharPattern c)
+                , annotation = annotation
+                }
+            , index = Index.next index
+            , value =
+                Compiler.Expression <|
+                    \_ ->
+                        { expression = Exp.CharLiteral c
+                        , annotation = annotation
+                        , imports = imports
+                        }
+            }
+        )
+
+
+{-| -}
+ignore : Arg Expression
+ignore =
+    Arg
+        (\index ->
+            let
+                annotation =
+                    Ok (Compiler.inference Annotation.Unit)
+
+                imports =
+                    []
+            in
+            { details =
+                { imports = imports
+                , pattern = Compiler.nodify Pattern.AllPattern
+                , annotation = annotation
+                }
+            , index = Index.next index
             , value =
                 Compiler.Expression <|
                     \_ ->
@@ -105,7 +211,7 @@ tuple (Arg arg1) (Arg arg2) =
                         |> .details
 
                 two =
-                    arg2 index
+                    arg2 one.index
 
                 details2 =
                     two
@@ -139,6 +245,7 @@ tuple (Arg arg1) (Arg arg2) =
                     Compiler.nodify (Pattern.TuplePattern [ details1.pattern, details2.pattern ])
                 , annotation = annotation
                 }
+            , index = Index.next two.index
             , value =
                 ( one.value
                 , two.value
@@ -161,14 +268,14 @@ triple (Arg arg1) (Arg arg2) (Arg arg3) =
                         |> .details
 
                 two =
-                    arg2 index
+                    arg2 one.index
 
                 details2 =
                     two
                         |> .details
 
                 three =
-                    arg3 index
+                    arg3 two.index
 
                 details3 =
                     three
@@ -206,6 +313,7 @@ triple (Arg arg1) (Arg arg2) (Arg arg3) =
                     Compiler.nodify (Pattern.TuplePattern [ details1.pattern, details2.pattern, details3.pattern ])
                 , annotation = annotation
                 }
+            , index = Index.next three.index
             , value =
                 ( one.value
                 , two.value
@@ -275,6 +383,7 @@ var name =
                 , pattern = Compiler.nodify (Pattern.VarPattern name)
                 , annotation = annotation
                 }
+            , index = Index.next index
             , value = value
             }
         )
@@ -297,6 +406,7 @@ varWith name ann =
                 , pattern = Compiler.nodify (Pattern.VarPattern name)
                 , annotation = annotation
                 }
+            , index = Index.next index
             , value =
                 Compiler.Expression <|
                     \_ ->
@@ -309,6 +419,175 @@ varWith name ann =
                         , annotation = annotation
                         , imports = imports
                         }
+            }
+        )
+
+
+list : a -> Arg a
+list toList =
+    Arg
+        (\index ->
+            let
+                annotation =
+                    Ok
+                        { type_ = Internal.Types.list (Annotation.GenericType "list")
+                        , inferences = Dict.empty
+                        , aliases = Compiler.emptyAliases
+                        }
+
+                imports =
+                    []
+            in
+            { details =
+                { imports = imports
+                , pattern =
+                    Compiler.nodify (Pattern.ListPattern [])
+                , annotation = annotation
+                }
+            , index = Index.next index
+            , value =
+                toList
+            }
+        )
+
+
+customType : String -> a -> Arg a
+customType name toType =
+    Arg
+        (\index ->
+            let
+                annotation =
+                    Ok
+                        { type_ = Internal.Types.custom [] name []
+                        , inferences = Dict.empty
+                        , aliases = Compiler.emptyAliases
+                        }
+
+                imports =
+                    []
+            in
+            { details =
+                { imports = imports
+                , pattern =
+                    Compiler.nodify
+                        (Pattern.NamedPattern
+                            { moduleName = []
+                            , name = name
+                            }
+                            []
+                        )
+                , annotation = annotation
+                }
+            , index = Index.next index
+            , value =
+                toType
+            }
+        )
+
+
+toUncons : List (Node.Node Pattern.Pattern) -> Pattern.Pattern -> Node.Node Pattern.Pattern
+toUncons listItems lastItem =
+    case listItems of
+        [] ->
+            Compiler.nodify lastItem
+
+        first :: rest ->
+            Compiler.nodify
+                (Pattern.UnConsPattern
+                    first
+                    (toUncons rest lastItem)
+                )
+
+
+listRemaining : String -> Arg (Expression -> a) -> Arg a
+listRemaining variableName (Arg toRemaining) =
+    Arg
+        (\index ->
+            let
+                toSequence =
+                    toRemaining index
+
+                imports =
+                    []
+
+                ( variable, variableAnnotation, innerAnnotation ) =
+                    val toSequence.index variableName
+            in
+            { details =
+                { imports = imports
+                , pattern =
+                    case Compiler.denode toSequence.details.pattern of
+                        Pattern.ListPattern listItems ->
+                            toUncons listItems (Pattern.VarPattern variableName)
+
+                        _ ->
+                            toSequence.details.pattern
+                , annotation = toSequence.details.annotation
+                }
+            , index = Index.next toSequence.index
+            , value =
+                toSequence.value variable
+            }
+        )
+
+
+item : Arg arg -> Arg (arg -> a) -> Arg a
+item (Arg itemArg) (Arg arg) =
+    Arg
+        (\index ->
+            let
+                toSequence =
+                    arg index
+
+                itemDetails =
+                    itemArg toSequence.index
+
+                details =
+                    toSequence
+                        |> .details
+
+                newAnnotation =
+                    Result.map
+                        (\ann ->
+                            { type_ =
+                                -- case ann.type_ of
+                                --     Annotation.Record fields ->
+                                --         Annotation.Record
+                                --             (fields
+                                --                 ++ [ Compiler.nodify
+                                --                         ( Compiler.nodify name
+                                --                         , Compiler.nodify fieldType
+                                --                         )
+                                --                    ]
+                                --             )
+                                --     _ ->
+                                ann.type_
+                            , inferences = ann.inferences
+                            , aliases = ann.aliases
+                            }
+                        )
+                        details.annotation
+
+                imports =
+                    details.imports
+            in
+            { details =
+                { imports = imports
+                , pattern =
+                    case Compiler.denode details.pattern of
+                        Pattern.ListPattern listItems ->
+                            Compiler.nodify (Pattern.ListPattern (listItems ++ [ itemDetails.details.pattern ]))
+
+                        Pattern.NamedPattern base variantItems ->
+                            Compiler.nodify (Pattern.NamedPattern base (variantItems ++ [ itemDetails.details.pattern ]))
+
+                        _ ->
+                            details.pattern
+                , annotation = newAnnotation
+                }
+            , index = Index.next index
+            , value =
+                toSequence.value itemDetails.value
             }
         )
 
@@ -334,6 +613,7 @@ record toRecord =
                     Compiler.nodify (Pattern.RecordPattern [])
                 , annotation = annotation
                 }
+            , index = Index.next index
             , value =
                 toRecord
             }
@@ -393,6 +673,7 @@ field name (Arg arg) =
                             Compiler.nodify (Pattern.RecordPattern [ Compiler.nodify name ])
                 , annotation = newAnnotation
                 }
+            , index = Index.next index
             , value =
                 toRecord.value fieldExpression
             }
