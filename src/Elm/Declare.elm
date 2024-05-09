@@ -2,6 +2,7 @@ module Elm.Declare exposing
     ( fn, fn2, fn3, fn4, fn5, fn6
     , value
     , function
+    , Module, elmModule, with
     )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
@@ -64,159 +65,284 @@ In that case you can do something like this using `callFrom`:
 
 -}
 
-import Elm exposing (Declaration, Expression)
+import Elm exposing (Expression)
 import Elm.Annotation
+import Elm.Arg
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.ModuleName as ModuleName
 import Internal.Compiler as Compiler
 import Internal.Format as Format
 
 
+type alias Module val =
+    { name : List String
+    , declarations : List Elm.Declaration
+    , call : val
+    }
+
+
+{-| -}
+elmModule : List String -> val -> Module val
+elmModule name call =
+    { name = name
+    , call = call
+    , declarations = []
+    }
+
+
+{-| -}
+with : Decl required -> Module (required -> val) -> Module val
+with decl mod =
+    { name = mod.name
+    , declarations = decl.declaration :: mod.declarations
+    , call = mod.call (decl.call mod.name)
+    }
+
+
+type alias Decl value =
+    { declaration : Elm.Declaration
+    , call : List String -> value
+    , value : List String -> Expression
+    }
+
+
 {-| -}
 fn :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression)
-    ->
-        { declaration : Declaration
-        , call : Expression -> Expression
-        , callFrom : List String -> Expression -> Expression
-        , value : List String -> Expression
-        }
+    -> Elm.Arg.Arg value
+    -> (value -> Expression)
+    -> Decl (Expression -> Expression)
 fn name one toExp =
     let
         funcExp : Expression
         funcExp =
-            Elm.fn one toExp
+            Elm.fnBuilder toExp
+                |> Elm.arg one
+                |> Elm.done
     in
-    innerFunction name funcExp <|
-        \call argOne ->
-            call [ argOne ]
+    { declaration = Elm.declaration name funcExp
+    , call =
+        \modName argOne ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = modName
+                    , name = Format.sanitize name
+                    , annotation = Nothing
+                    }
+                )
+                [ argOne
+                ]
+    , value = \modName -> toValueFrom modName name funcExp
+    }
 
 
 {-| -}
 fn2 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression)
-    ->
-        { declaration : Declaration
-        , call : Expression -> Expression -> Expression
-        , callFrom : List String -> Expression -> Expression -> Expression
-        , value : List String -> Expression
-        }
+    -> Elm.Arg.Arg one
+    -> Elm.Arg.Arg two
+    -> (one -> two -> Expression)
+    -> Decl (Expression -> Expression -> Expression)
 fn2 name one two toExp =
     let
         funcExp : Expression
         funcExp =
-            Elm.fn2 one two toExp
+            -- Elm.fn2 one two toExp
+            Elm.fnBuilder toExp
+                |> Elm.arg one
+                |> Elm.arg two
+                |> Elm.done
     in
-    innerFunction name funcExp <|
-        \call argOne argTwo ->
-            call [ argOne, argTwo ]
+    { declaration = Elm.declaration name funcExp
+    , call =
+        \modName argOne argTwo ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = modName
+                    , name = Format.sanitize name
+                    , annotation = Nothing
+                    }
+                )
+                [ argOne
+                , argTwo
+                ]
+    , value = \modName -> toValueFrom modName name funcExp
+    }
 
 
 {-| -}
 fn3 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression)
-    ->
-        { declaration : Declaration
-        , call : Expression -> Expression -> Expression -> Expression
-        , callFrom : List String -> Expression -> Expression -> Expression -> Expression
-        , value : List String -> Expression
-        }
+    -> Elm.Arg.Arg one
+    -> Elm.Arg.Arg two
+    -> Elm.Arg.Arg three
+    -> (one -> two -> three -> Expression)
+    -> Decl (Expression -> Expression -> Expression -> Expression)
 fn3 name one two three toExp =
     let
         funcExp : Expression
         funcExp =
-            Elm.fn3 one two three toExp
+            -- Elm.fn3 one two three toExp
+            Elm.fnBuilder toExp
+                |> Elm.arg one
+                |> Elm.arg two
+                |> Elm.arg three
+                |> Elm.done
     in
-    innerFunction name funcExp <|
-        \call argOne argTwo argThree ->
-            call [ argOne, argTwo, argThree ]
+    { declaration = Elm.declaration name funcExp
+    , call =
+        \modName argOne argTwo argThree ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = modName
+                    , name = Format.sanitize name
+                    , annotation = Nothing
+                    }
+                )
+                [ argOne
+                , argTwo
+                , argThree
+                ]
+    , value = \modName -> toValueFrom modName name funcExp
+    }
 
 
 {-| -}
 fn4 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression)
-    ->
-        { declaration : Declaration
-        , call : Expression -> Expression -> Expression -> Expression -> Expression
-        , callFrom : List String -> Expression -> Expression -> Expression -> Expression -> Expression
-        , value : List String -> Expression
-        }
+    -> Elm.Arg.Arg one
+    -> Elm.Arg.Arg two
+    -> Elm.Arg.Arg three
+    -> Elm.Arg.Arg four
+    -> (one -> two -> three -> four -> Expression)
+    -> Decl (Expression -> Expression -> Expression -> Expression -> Expression)
 fn4 name one two three four toExp =
     let
         funcExp : Expression
         funcExp =
-            Elm.fn4 one two three four toExp
+            -- Elm.fn4 one two three four toExp
+            Elm.fnBuilder toExp
+                |> Elm.arg one
+                |> Elm.arg two
+                |> Elm.arg three
+                |> Elm.arg four
+                |> Elm.done
     in
-    innerFunction name funcExp <|
-        \call argOne argTwo argThree argFour ->
-            call [ argOne, argTwo, argThree, argFour ]
+    -- innerFunction name funcExp <|
+    --     \call argOne argTwo argThree argFour ->
+    --         call [ argOne, argTwo, argThree, argFour ]
+    { declaration = Elm.declaration name funcExp
+    , call =
+        \modName argOne argTwo argThree argFour ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = modName
+                    , name = Format.sanitize name
+                    , annotation = Nothing
+                    }
+                )
+                [ argOne
+                , argTwo
+                , argThree
+                , argFour
+                ]
+    , value = \modName -> toValueFrom modName name funcExp
+    }
 
 
 {-| -}
 fn5 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
-    ->
-        { declaration : Declaration
-        , call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression
-        , callFrom : List String -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
-        , value : List String -> Expression
-        }
+    -> Elm.Arg.Arg one
+    -> Elm.Arg.Arg two
+    -> Elm.Arg.Arg three
+    -> Elm.Arg.Arg four
+    -> Elm.Arg.Arg five
+    -> (one -> two -> three -> four -> five -> Expression)
+    -> Decl (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn5 name one two three four five toExp =
     let
         funcExp : Expression
         funcExp =
-            Elm.fn5 one two three four five toExp
+            -- Elm.fn5 one two three four five toExp
+            Elm.fnBuilder toExp
+                |> Elm.arg one
+                |> Elm.arg two
+                |> Elm.arg three
+                |> Elm.arg four
+                |> Elm.arg five
+                |> Elm.done
     in
-    innerFunction name funcExp <|
-        \call argOne argTwo argThree argFour argFive ->
-            call [ argOne, argTwo, argThree, argFour, argFive ]
+    -- innerFunction name funcExp <|
+    --     \call argOne argTwo argThree argFour argFive ->
+    --         call [ argOne, argTwo, argThree, argFour, argFive ]
+    { declaration = Elm.declaration name funcExp
+    , call =
+        \modName argOne argTwo argThree argFour argFive ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = modName
+                    , name = Format.sanitize name
+                    , annotation = Nothing
+                    }
+                )
+                [ argOne
+                , argTwo
+                , argThree
+                , argFour
+                , argFive
+                ]
+    , value = \modName -> toValueFrom modName name funcExp
+    }
 
 
 {-| -}
 fn6 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
-    ->
-        { declaration : Declaration
-        , call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
-        , callFrom : List String -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
-        , value : List String -> Expression
-        }
+    -> Elm.Arg.Arg one
+    -> Elm.Arg.Arg two
+    -> Elm.Arg.Arg three
+    -> Elm.Arg.Arg four
+    -> Elm.Arg.Arg five
+    -> Elm.Arg.Arg six
+    -> (one -> two -> three -> four -> five -> six -> Expression)
+    -> Decl (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn6 name one two three four five six toExp =
     let
         funcExp : Expression
         funcExp =
-            Elm.fn6 one two three four five six toExp
+            -- Elm.fn6 one two three four five six toExp
+            Elm.fnBuilder toExp
+                |> Elm.arg one
+                |> Elm.arg two
+                |> Elm.arg three
+                |> Elm.arg four
+                |> Elm.arg five
+                |> Elm.arg six
+                |> Elm.done
     in
-    innerFunction name funcExp <|
-        \call argOne argTwo argThree argFour argFive argSix ->
-            call [ argOne, argTwo, argThree, argFour, argFive, argSix ]
+    -- innerFunction name funcExp <|
+    --     \call argOne argTwo argThree argFour argFive argSix ->
+    -- call [ argOne, argTwo, argThree, argFour, argFive, argSix ]
+    { declaration = Elm.declaration name funcExp
+    , call =
+        \modName argOne argTwo argThree argFour argFive argSix ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = modName
+                    , name = Format.sanitize name
+                    , annotation = Nothing
+                    }
+                )
+                [ argOne
+                , argTwo
+                , argThree
+                , argFour
+                , argFive
+                , argSix
+                ]
+    , value = \modName -> toValueFrom modName name funcExp
+    }
 
 
 {-| -}
@@ -225,9 +351,10 @@ function :
     -> List ( String, Maybe Elm.Annotation.Annotation )
     -> (List Expression -> Expression)
     ->
-        { declaration : Declaration
-        , call : List Expression -> Expression
-        , callFrom : List String -> List Expression -> Expression
+        { declaration : Elm.Declaration
+        , call : List String -> List Expression -> Expression
+
+        -- , callFrom : List String -> List Expression -> Expression
         , value : List String -> Expression
         }
 function name params toExp =
@@ -236,54 +363,42 @@ function name params toExp =
         funcExp =
             Elm.function params toExp
     in
-    innerFunction name funcExp identity
-
-
-innerFunction :
-    String
-    -> Expression
-    -> ((List Expression -> Expression) -> a)
-    ->
-        { declaration : Declaration
-        , call : a
-        , callFrom : ModuleName.ModuleName -> a
-        , value : ModuleName.ModuleName -> Expression
-        }
-innerFunction name funcExp collectArgs =
-    let
-        valueFrom : ModuleName.ModuleName -> Expression
-        valueFrom importFrom =
-            Compiler.Expression <|
-                \index ->
-                    case funcExp of
-                        Compiler.Expression toFnExp ->
-                            let
-                                fnExp : Compiler.ExpressionDetails
-                                fnExp =
-                                    toFnExp index
-                            in
-                            { expression =
-                                -- This *must* be an un-protected name, where we only use
-                                -- literally what the dev gives us, because we are trying
-                                -- to refer to something that already exists.
-                                Exp.FunctionOrValue importFrom
-                                    (Format.sanitize name)
-                            , annotation = fnExp.annotation
-                            , imports = fnExp.imports
-                            }
-
-        call : ModuleName.ModuleName -> a
-        call importFrom =
-            collectArgs
-                (Elm.apply
-                    (valueFrom importFrom)
-                )
-    in
+    -- innerFunction name funcExp identity
     { declaration = Elm.declaration name funcExp
-    , call = call []
-    , callFrom = call
-    , value = valueFrom
+    , call =
+        \modName args ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = modName
+                    , name = Format.sanitize name
+                    , annotation = Nothing
+                    }
+                )
+                args
+    , value = \modName -> toValueFrom modName name funcExp
     }
+
+
+toValueFrom : ModuleName.ModuleName -> String -> Expression -> Expression
+toValueFrom importFrom name funcExp =
+    Compiler.Expression <|
+        \index ->
+            case funcExp of
+                Compiler.Expression toFnExp ->
+                    let
+                        fnExp : Compiler.ExpressionDetails
+                        fnExp =
+                            toFnExp index
+                    in
+                    { expression =
+                        -- This *must* be an un-protected name, where we only use
+                        -- literally what the dev gives us, because we are trying
+                        -- to refer to something that already exists.
+                        Exp.FunctionOrValue importFrom
+                            (Format.sanitize name)
+                    , annotation = fnExp.annotation
+                    , imports = fnExp.imports
+                    }
 
 
 {-| -}
@@ -299,14 +414,15 @@ value name expression =
     let
         declaration_ :
             { declaration : Elm.Declaration
-            , call : List Elm.Expression -> Elm.Expression
-            , callFrom : List String -> List Elm.Expression -> Elm.Expression
+            , call : List String -> List Elm.Expression -> Elm.Expression
+
+            -- , callFrom : List String -> List Elm.Expression -> Elm.Expression
             , value : List String -> Elm.Expression
             }
         declaration_ =
             function name [] (\_ -> expression)
     in
     { declaration = declaration_.declaration
-    , value = declaration_.call []
-    , valueFrom = \from -> declaration_.callFrom from []
+    , value = declaration_.call [] []
+    , valueFrom = \from -> declaration_.call from []
     }
