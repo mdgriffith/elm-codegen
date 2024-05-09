@@ -38,6 +38,57 @@ type alias FileDetails =
     }
 
 
+renderDecls fileDetails decl gathered =
+    case decl of
+        Compiler.Comment comm ->
+            { gathered | declarations = Compiler.RenderedComment comm :: gathered.declarations }
+
+        Compiler.Block block ->
+            { gathered | declarations = Compiler.RenderedBlock block :: gathered.declarations }
+
+        Compiler.Declaration decDetails ->
+            let
+                result : { declaration : Elm.Syntax.Declaration.Declaration, additionalImports : List Compiler.Module, warning : Maybe Compiler.Warning }
+                result =
+                    decDetails.toBody fileDetails.index
+            in
+            { declarations =
+                Compiler.RenderedDecl (addDocs decDetails.docs result.declaration) :: gathered.declarations
+            , imports =
+                result.additionalImports ++ decDetails.imports ++ gathered.imports
+            , exposed =
+                addExposed decDetails.exposed result.declaration gathered.exposed
+            , exposedGroups =
+                case decDetails.exposed of
+                    Compiler.NotExposed ->
+                        gathered.exposedGroups
+
+                    Compiler.Exposed details ->
+                        ( details.group, decDetails.name ) :: gathered.exposedGroups
+            , hasPorts =
+                if gathered.hasPorts then
+                    gathered.hasPorts
+
+                else
+                    case result.declaration of
+                        Elm.Syntax.Declaration.PortDeclaration _ ->
+                            True
+
+                        _ ->
+                            False
+            , warnings =
+                case result.warning of
+                    Nothing ->
+                        gathered.warnings
+
+                    Just warn ->
+                        warn :: gathered.warnings
+            }
+
+        Compiler.Group group ->
+            List.foldl (renderDecls fileDetails) gathered group.decls
+
+
 {-| -}
 render :
     (List
@@ -53,53 +104,7 @@ render toDocComment fileDetails =
         rendered : { declarations : List Compiler.RenderedDeclaration, imports : List Compiler.Module, exposed : List Expose.TopLevelExpose, exposedGroups : List ( Maybe String, String ), hasPorts : Bool, warnings : List Compiler.Warning }
         rendered =
             List.foldl
-                (\decl gathered ->
-                    case decl of
-                        Compiler.Comment comm ->
-                            { gathered | declarations = Compiler.RenderedComment comm :: gathered.declarations }
-
-                        Compiler.Block block ->
-                            { gathered | declarations = Compiler.RenderedBlock block :: gathered.declarations }
-
-                        Compiler.Declaration decDetails ->
-                            let
-                                result : { declaration : Elm.Syntax.Declaration.Declaration, additionalImports : List Compiler.Module, warning : Maybe Compiler.Warning }
-                                result =
-                                    decDetails.toBody fileDetails.index
-                            in
-                            { declarations =
-                                Compiler.RenderedDecl (addDocs decDetails.docs result.declaration) :: gathered.declarations
-                            , imports =
-                                result.additionalImports ++ decDetails.imports ++ gathered.imports
-                            , exposed =
-                                addExposed decDetails.exposed result.declaration gathered.exposed
-                            , exposedGroups =
-                                case decDetails.exposed of
-                                    Compiler.NotExposed ->
-                                        gathered.exposedGroups
-
-                                    Compiler.Exposed details ->
-                                        ( details.group, decDetails.name ) :: gathered.exposedGroups
-                            , hasPorts =
-                                if gathered.hasPorts then
-                                    gathered.hasPorts
-
-                                else
-                                    case result.declaration of
-                                        Elm.Syntax.Declaration.PortDeclaration _ ->
-                                            True
-
-                                        _ ->
-                                            False
-                            , warnings =
-                                case result.warning of
-                                    Nothing ->
-                                        gathered.warnings
-
-                                    Just warn ->
-                                        warn :: gathered.warnings
-                            }
-                )
+                (renderDecls fileDetails)
                 { imports = []
                 , hasPorts = False
                 , exposed = []

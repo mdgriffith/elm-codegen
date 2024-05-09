@@ -10,7 +10,8 @@ module Elm exposing
     , Declaration
     , comment, declaration
     , withDocumentation
-    , expose, exposeWith
+    , group
+    , expose, exposeWith, exposeConstructor
     , fileWith, docs
     , fnBuilder, arg, done, body
     , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
@@ -62,7 +63,9 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 @docs withDocumentation
 
-@docs expose, exposeWith
+@docs group
+
+@docs expose, exposeWith, exposeConstructor
 
 @docs fileWith, docs
 
@@ -307,13 +310,13 @@ docs :
     , members : List String
     }
     -> String
-docs group =
-    case group.group of
+docs groups =
+    case groups.group of
         Nothing ->
-            "@docs " ++ String.join ", " group.members
+            "@docs " ++ String.join ", " groups.members
 
         Just groupName ->
-            "## " ++ groupName ++ "\n\n@docs " ++ String.join ", " group.members
+            "## " ++ groupName ++ "\n\n@docs " ++ String.join ", " groups.members
 
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
@@ -2512,6 +2515,22 @@ For precise control over what is rendered for the module comment, use [fileWith]
 exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
 exposeWith =
     Compiler.exposeWith
+
+
+{-| -}
+exposeConstructor : Declaration -> Declaration
+exposeConstructor =
+    Compiler.exposeWith { exposeConstructor = True, group = Nothing }
+
+
+{-| -}
+group : { title : String, docs : String } -> List Declaration -> Declaration
+group options decls =
+    Compiler.Group
+        { title = options.title
+        , docs = options.docs
+        , decls = decls
+        }
 
 
 {-|

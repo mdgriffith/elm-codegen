@@ -100,6 +100,11 @@ type Declaration
     = Declaration DeclarationDetails
     | Comment String
     | Block String
+    | Group
+        { title : String
+        , docs : String
+        , decls : List Declaration
+        }
 
 
 type RenderedDeclaration
@@ -782,6 +787,13 @@ documentation rawDoc decl =
                                     Just (doc ++ "\n\n" ++ existing)
                     }
 
+            Group group ->
+                Group
+                    { group
+                        | decls =
+                            List.map (documentation doc) group.decls
+                    }
+
 
 {-| -}
 expose : Declaration -> Declaration
@@ -796,6 +808,9 @@ expose decl =
         Declaration details ->
             Declaration { details | exposed = Exposed { group = Nothing, exposeConstructor = False } }
 
+        Group group ->
+            Group { group | decls = List.map expose group.decls }
+
 
 {-| -}
 exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
@@ -809,6 +824,9 @@ exposeWith opts decl =
 
         Declaration details ->
             Declaration { details | exposed = Exposed opts }
+
+        Group group ->
+            Group { group | decls = List.map (exposeWith opts) group.decls }
 
 
 type alias Module =
