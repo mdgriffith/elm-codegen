@@ -1,15 +1,13 @@
 module Elm.Let exposing
-    ( letIn, value, Let
-    , tuple
-    , triple
+    ( letIn, value, unpack, Let
     , record
     , fn, fn2, fn3
-    , toExpression
+    , toExpression, withBody
     )
 
 {-| This module is for building `let` expressions.
 
-@docs letIn, value, Let
+@docs letIn, value, unpack, Let
 
 Here's a brief example to get you started
 
@@ -43,7 +41,9 @@ Here's an example destructing a tuple. This code
         (\( first, second ) ->
             Elm.Op.append first second
         )
-        |> Elm.Let.tuple "first" "second" (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
+        |> Elm.Let.unpack
+            (Elm.Arg.tuple (Elm.Arg.var "first") (Elm.Arg.var "second"))
+            (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
         |> Elm.Let.toExpression
 
 Will generate
@@ -55,23 +55,6 @@ Will generate
     first ++ second
 
 @docs triple
-
-Here's an example destructing a triple. This code
-
-    Elm.Let.letIn
-        (\( first, second, third ) ->
-            Elm.Op.append (Elm.Op.append first second) third
-        )
-        |> Elm.Let.triple "first" "second" "third" (Elm.triple (Elm.string "Hello") (Elm.string "World") (Elm.string "!"))
-        |> Elm.Let.toExpression
-
-Will generate
-
-    let
-        ( first, second, third ) =
-            ( "Hello", "World", "!" )
-    in
-    first ++ second ++ third
 
 @docs record
 
@@ -137,17 +120,19 @@ will generate
 
 # Converting to an Expression
 
-@docs toExpression
+@docs toExpression, withBody
 
 -}
 
 import Dict
 import Elm exposing (Expression)
 import Elm.Annotation
+import Elm.Arg
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
+import Internal.Arg
 import Internal.Compiler as Compiler exposing (Module)
 import Internal.Format as Format
 import Internal.Index as Index
@@ -175,6 +160,41 @@ letIn return =
             , index = index
             , return = return
             , imports = []
+            }
+        )
+
+
+{-| -}
+unpack : Elm.Arg.Arg arg -> Expression -> Let (arg -> b) -> Let b
+unpack argument bodyExpression (Let toLetScope) =
+    Let
+        (\index ->
+            let
+                argDetails =
+                    Internal.Arg.toDetails index argument
+
+                ( threeIndex, bodyDetails ) =
+                    Compiler.toExpressionDetails (Index.next index) bodyExpression
+
+                previousLet :
+                    { letDecls : List (Node.Node Exp.LetDeclaration)
+                    , index : Index.Index
+                    , return : arg -> b
+                    , imports : List Module
+                    }
+                previousLet =
+                    toLetScope threeIndex
+
+                decl =
+                    Compiler.nodify <|
+                        Exp.LetDestructuring
+                            argDetails.details.pattern
+                            (Compiler.nodify bodyDetails.expression)
+            in
+            { letDecls = decl :: previousLet.letDecls
+            , index = previousLet.index
+            , return = previousLet.return argDetails.value
+            , imports = argDetails.details.imports ++ previousLet.imports
             }
         )
 
@@ -508,196 +528,6 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
 
 
 {-| -}
-tuple : String -> String -> Expression -> Let (( Expression, Expression ) -> a) -> Let a
-tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
-    sourceLet
-        |> with
-            (Let
-                (\index ->
-                    let
-                        ( oneName, oneIndex ) =
-                            Index.getName desiredNameOne index
-
-                        ( twoName, twoIndex ) =
-                            Index.getName desiredNameTwo oneIndex
-
-                        ( newIndex, sourceDetails ) =
-                            Compiler.toExpressionDetails twoIndex valueExpr
-
-                        annotation : Result (List Compiler.InferenceError) ( ( Annotation.TypeAnnotation, Annotation.TypeAnnotation ), Compiler.AliasCache )
-                        annotation =
-                            case sourceDetails.annotation of
-                                Err e ->
-                                    Err e
-
-                                Ok inference ->
-                                    case inference.type_ of
-                                        Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType ] ->
-                                            Ok ( ( oneType, twoType ), inference.aliases )
-
-                                        _ ->
-                                            Err []
-                    in
-                    { letDecls =
-                        [ Compiler.nodify <|
-                            Exp.LetDestructuring
-                                (Compiler.nodify
-                                    (Pattern.TuplePattern
-                                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                                        , Compiler.nodify (Pattern.VarPattern twoName)
-                                        ]
-                                    )
-                                )
-                                (Compiler.nodify sourceDetails.expression)
-                        ]
-                    , index = newIndex
-                    , imports = sourceDetails.imports
-                    , return =
-                        ( Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize oneName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( oneType, _ ), aliases ) ->
-                                                { type_ = oneType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports =
-                                    sourceDetails.imports
-                                }
-                        , Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize twoName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( _, twoType ), aliases ) ->
-                                                { type_ = twoType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports =
-                                    []
-                                }
-                        )
-                    }
-                )
-            )
-
-
-{-| -}
-triple : String -> String -> String -> Expression -> Let (( Expression, Expression, Expression ) -> a) -> Let a
-triple desiredNameOne desiredNameTwo desiredNameThree valueExpr sourceLet =
-    sourceLet
-        |> with
-            (Let
-                (\index ->
-                    let
-                        ( oneName, oneIndex ) =
-                            Index.getName desiredNameOne index
-
-                        ( twoName, twoIndex ) =
-                            Index.getName desiredNameTwo oneIndex
-
-                        ( threeName, threeIndex ) =
-                            Index.getName desiredNameThree twoIndex
-
-                        ( newIndex, sourceDetails ) =
-                            Compiler.toExpressionDetails threeIndex valueExpr
-
-                        annotation : Result (List Compiler.InferenceError) ( ( Annotation.TypeAnnotation, Annotation.TypeAnnotation, Annotation.TypeAnnotation ), Compiler.AliasCache )
-                        annotation =
-                            case sourceDetails.annotation of
-                                Err e ->
-                                    Err e
-
-                                Ok inference ->
-                                    case inference.type_ of
-                                        Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType, Node.Node _ threeType ] ->
-                                            Ok ( ( oneType, twoType, threeType ), inference.aliases )
-
-                                        _ ->
-                                            Err []
-                    in
-                    { letDecls =
-                        [ Compiler.nodify <|
-                            Exp.LetDestructuring
-                                (Compiler.nodify
-                                    (Pattern.TuplePattern
-                                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                                        , Compiler.nodify (Pattern.VarPattern twoName)
-                                        , Compiler.nodify (Pattern.VarPattern threeName)
-                                        ]
-                                    )
-                                )
-                                (Compiler.nodify sourceDetails.expression)
-                        ]
-                    , index = newIndex
-                    , imports = sourceDetails.imports
-                    , return =
-                        ( Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize oneName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( oneType, _, _ ), aliases ) ->
-                                                { type_ = oneType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports = sourceDetails.imports
-                                }
-                        , Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize twoName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( _, twoType, _ ), aliases ) ->
-                                                { type_ = twoType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports = []
-                                }
-                        , Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize threeName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( _, _, threeType ), aliases ) ->
-                                                { type_ = threeType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports = []
-                                }
-                        )
-                    }
-                )
-            )
-
-
-{-| -}
 record :
     List String
     -> Expression
@@ -788,6 +618,48 @@ toExpression (Let toScope) =
                             , expression = Compiler.nodify return.expression
                             }
             , imports = return.imports ++ scope.imports
+            , annotation =
+                return.annotation
+            }
+
+
+{-| -}
+withBody : (val -> Expression) -> Let val -> Expression
+withBody toBody (Let toScope) =
+    Compiler.Expression <|
+        \index ->
+            let
+                letDetails :
+                    { letDecls : List (Node.Node Exp.LetDeclaration)
+                    , index : Index.Index
+                    , return : val
+                    , imports : List Module
+                    }
+                letDetails =
+                    toScope index
+
+                ( _, return ) =
+                    letDetails.return
+                        |> toBody
+                        |> Compiler.toExpressionDetails letDetails.index
+            in
+            { expression =
+                -- if we're leading into another let expression, just merge with it.
+                case return.expression of
+                    Exp.LetExpression innerReturn ->
+                        Exp.LetExpression
+                            { declarations =
+                                List.reverse letDetails.letDecls
+                                    ++ innerReturn.declarations
+                            , expression = innerReturn.expression
+                            }
+
+                    _ ->
+                        Exp.LetExpression
+                            { declarations = List.reverse letDetails.letDecls
+                            , expression = Compiler.nodify return.expression
+                            }
+            , imports = return.imports ++ letDetails.imports
             , annotation =
                 return.annotation
             }
