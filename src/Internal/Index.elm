@@ -39,11 +39,15 @@ If you're handing an index to a lower lever, use Compiler.dive.
 
 -}
 type Index
-    = Index Int (List Int) Scope Bool
+    = Index (Maybe ModuleName) Int (List Int) Scope Bool
+
+
+type alias ModuleName =
+    List String
 
 
 typecheck : Index -> Bool
-typecheck (Index _ _ _ check) =
+typecheck (Index _ _ _ _ check) =
     check
 
 
@@ -52,41 +56,41 @@ type alias Scope =
 
 
 {-| -}
-startIndex : Index
-startIndex =
-    Index 0 [] Set.empty True
+startIndex : Maybe ModuleName -> Index
+startIndex modName =
+    Index modName 0 [] Set.empty True
 
 
 {-| -}
-startChecked : Bool -> Index
-startChecked checked =
-    Index 0 [] Set.empty checked
+startChecked : Maybe ModuleName -> Bool -> Index
+startChecked modName checked =
+    Index modName 0 [] Set.empty checked
 
 
 next : Index -> Index
-next (Index top tail scope check) =
-    Index (top + 1) tail scope check
+next (Index modName top tail scope check) =
+    Index modName (top + 1) tail scope check
 
 
 nextN : Int -> Index -> Index
-nextN n (Index top tail scope check) =
-    Index (top + n) tail scope check
+nextN n (Index modName top tail scope check) =
+    Index modName (top + n) tail scope check
 
 
 dive : Index -> Index
-dive (Index top tail scope check) =
-    Index 0 (top :: tail) scope check
+dive (Index modName top tail scope check) =
+    Index modName 0 (top :: tail) scope check
 
 
 getName : String -> Index -> ( String, Index )
-getName desiredName ((Index top tail scope check) as index) =
+getName desiredName ((Index modName top tail scope check) as index) =
     let
         formattedName : String
         formattedName =
             Format.formatValue desiredName
     in
     if not (Set.member formattedName scope) then
-        ( formattedName, Index top tail (Set.insert formattedName scope) check )
+        ( formattedName, Index modName top tail (Set.insert formattedName scope) check )
 
     else
         let
@@ -96,7 +100,7 @@ getName desiredName ((Index top tail scope check) as index) =
         in
         if not (Set.member protectedName scope) then
             ( protectedName
-            , Index (top + 1) tail (Set.insert protectedName scope) check
+            , Index modName (top + 1) tail (Set.insert protectedName scope) check
             )
 
         else
@@ -106,12 +110,12 @@ getName desiredName ((Index top tail scope check) as index) =
                     formattedName ++ indexToString index
             in
             ( protectedNameLevel2
-            , Index (top + 1) tail (Set.insert protectedNameLevel2 scope) check
+            , Index modName (top + 1) tail (Set.insert protectedNameLevel2 scope) check
             )
 
 
 protectTypeName : String -> Index -> String
-protectTypeName base ((Index _ tail _ _) as index) =
+protectTypeName base ((Index _ _ tail _ _) as index) =
     case tail of
         [] ->
             Format.formatValue base
@@ -122,7 +126,7 @@ protectTypeName base ((Index _ tail _ _) as index) =
 
 
 indexToString : Index -> String
-indexToString (Index top tail _ _) =
+indexToString (Index modName top tail _ _) =
     (if top == 0 then
         ""
 

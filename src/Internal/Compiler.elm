@@ -296,7 +296,7 @@ facts (Expression exp) =
     let
         expresh : ExpressionDetails
         expresh =
-            exp Index.startIndex
+            exp (Index.startIndex Nothing)
     in
     case expresh.annotation of
         Ok sig ->

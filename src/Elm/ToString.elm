@@ -58,7 +58,7 @@ expressionWith options (Compiler.Expression toExp) =
     let
         expresh : Compiler.ExpressionDetails
         expresh =
-            toExp Index.startIndex
+            toExp (Index.startIndex Nothing)
     in
     { imports =
         expresh
@@ -69,7 +69,7 @@ expressionWith options (Compiler.Expression toExp) =
     , signature =
         case expresh.annotation of
             Ok sig ->
-                case Compiler.resolve Index.startIndex sig.inferences sig.type_ of
+                case Compiler.resolve (Index.startIndex Nothing) sig.inferences sig.type_ of
                     Ok finalType ->
                         Internal.Write.writeAnnotationWith options.aliases (Clean.clean finalType)
 
@@ -122,7 +122,7 @@ declarationWith options decl =
                     , warning : Maybe Compiler.Warning
                     }
                 rendered =
-                    toBody Index.startIndex
+                    toBody (Index.startIndex Nothing)
             in
             [ { imports =
                     imports

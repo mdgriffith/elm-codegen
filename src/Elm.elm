@@ -253,7 +253,7 @@ toString (Compiler.Expression toExp) =
     let
         expresh : Compiler.ExpressionDetails
         expresh =
-            toExp Index.startIndex
+            toExp (Index.startIndex Nothing)
     in
     Internal.Write.writeExpression expresh.expression
 
@@ -272,7 +272,7 @@ file mod decs =
         { moduleName = mod
         , declarations = decs
         , aliases = []
-        , index = Index.startIndex
+        , index = Index.startIndex (Just mod)
         }
 
 
@@ -359,7 +359,7 @@ fileWith mod options decs =
         { moduleName = mod
         , aliases = options.aliases
         , declarations = decs
-        , index = Index.startChecked True
+        , index = Index.startChecked (Just mod) True
         }
 
 
