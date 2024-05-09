@@ -4,6 +4,7 @@ module Elm.Declare exposing
     , function
     , Module, module_
     , with, placeholder
+    , toFile
     )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
@@ -67,6 +68,8 @@ In that case you can do something like this using `callFrom`:
 @docs Module, module_
 
 @docs with, placeholder, alias
+
+@docs toFile
 
 -}
 
@@ -448,3 +451,10 @@ placeholder =
             }
         )
         [ Elm.string "Placeholder function body" ]
+
+
+{-| -}
+toFile : Module val -> Elm.File
+toFile mod =
+    Elm.file mod.name
+        (List.reverse mod.declarations)
