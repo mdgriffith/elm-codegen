@@ -2,7 +2,8 @@ module Elm.Declare exposing
     ( Decl, fn, fn2, fn3, fn4, fn5, fn6
     , value
     , function
-    , Module, module_, with, placeholder
+    , Module, module_
+    , with, placeholder
     )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
@@ -63,7 +64,9 @@ In that case you can do something like this using `callFrom`:
 
 @docs function
 
-@docs Module, module_, with, placeholder
+@docs Module, module_
+
+@docs with, placeholder, alias
 
 -}
 
@@ -89,6 +92,15 @@ module_ name call =
     { name = name
     , call = call
     , declarations = []
+    }
+
+
+{-| -}
+alias : String -> Elm.Annotation.Annotation -> Module (Elm.Annotation.Annotation -> val) -> Module val
+alias name annotation mod =
+    { name = mod.name
+    , declarations = Elm.alias name annotation :: mod.declarations
+    , call = mod.call (Elm.Annotation.var name)
     }
 
 
