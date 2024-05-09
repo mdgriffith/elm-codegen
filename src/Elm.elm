@@ -9,9 +9,8 @@ module Elm exposing
     , ifThen
     , Declaration
     , comment, declaration
-    , withDocumentation
-    , group
-    , expose, exposeWith, exposeConstructor
+    , withDocumentation, group
+    , expose, exposeConstructor
     , fileWith, docs
     , fnBuilder, arg, fnDone, body
     , fn, fn2, fn3, function, functionReduced
@@ -61,11 +60,9 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 @docs comment, declaration
 
-@docs withDocumentation
+@docs withDocumentation, group
 
-@docs group
-
-@docs expose, exposeWith, exposeConstructor
+@docs expose, exposeConstructor
 
 @docs fileWith, docs
 
@@ -2115,16 +2112,6 @@ However, you can tag specific declarations you want exposed, and then only those
 expose : Declaration -> Declaration
 expose =
     Compiler.expose
-
-
-{-| You can also add a group tag to an exposed value. This will automatically group the `docs` statements in the module docs.
-
-For precise control over what is rendered for the module comment, use [fileWith](#fileWith).
-
--}
-exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
-exposeWith =
-    Compiler.exposeWith
 
 
 {-| -}
