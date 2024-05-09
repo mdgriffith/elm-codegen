@@ -92,7 +92,7 @@ unit =
 
 
 {-| -}
-tuple : Arg Expression -> Arg Expression -> Arg ( Expression, Expression )
+tuple : Arg one -> Arg two -> Arg ( one, two )
 tuple (Arg arg1) (Arg arg2) =
     Arg
         (\index ->
@@ -148,7 +148,7 @@ tuple (Arg arg1) (Arg arg2) =
 
 
 {-| -}
-triple : Arg Expression -> Arg Expression -> Arg Expression -> Arg ( Expression, Expression, Expression )
+triple : Arg one -> Arg two -> Arg three -> Arg ( one, two, three )
 triple (Arg arg1) (Arg arg2) (Arg arg3) =
     Arg
         (\index ->

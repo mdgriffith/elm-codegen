@@ -49,13 +49,13 @@ unit =
 
 
 {-| -}
-tuple : Arg Expression -> Arg Expression -> Arg ( Expression, Expression )
+tuple : Arg one -> Arg two -> Arg ( one, two )
 tuple =
     Internal.Arg.tuple
 
 
 {-| -}
-triple : Arg Expression -> Arg Expression -> Arg Expression -> Arg ( Expression, Expression, Expression )
+triple : Arg one -> Arg two -> Arg three -> Arg ( one, two, three )
 triple =
     Internal.Arg.triple
 

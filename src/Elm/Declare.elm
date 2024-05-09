@@ -1,8 +1,8 @@
 module Elm.Declare exposing
-    ( fn, fn2, fn3, fn4, fn5, fn6
+    ( Decl, fn, fn2, fn3, fn4, fn5, fn6
     , value
     , function
-    , Module, elmModule, with
+    , Module, module_, with, placeholder
     )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
@@ -57,11 +57,13 @@ In that case you can do something like this using `callFrom`:
             ]
         ]
 
-@docs fn, fn2, fn3, fn4, fn5, fn6
+@docs Decl, fn, fn2, fn3, fn4, fn5, fn6
 
 @docs value
 
 @docs function
+
+@docs Module, module_, with, placeholder
 
 -}
 
@@ -82,8 +84,8 @@ type alias Module val =
 
 
 {-| -}
-elmModule : List String -> val -> Module val
-elmModule name call =
+module_ : List String -> val -> Module val
+module_ name call =
     { name = name
     , call = call
     , declarations = []
@@ -118,7 +120,7 @@ fn name one toExp =
         funcExp =
             Elm.fnBuilder toExp
                 |> Elm.arg one
-                |> Elm.done
+                |> Elm.fnDone
     in
     { declaration = Elm.declaration name funcExp
     , call =
@@ -151,7 +153,7 @@ fn2 name one two toExp =
             Elm.fnBuilder toExp
                 |> Elm.arg one
                 |> Elm.arg two
-                |> Elm.done
+                |> Elm.fnDone
     in
     { declaration = Elm.declaration name funcExp
     , call =
@@ -187,7 +189,7 @@ fn3 name one two three toExp =
                 |> Elm.arg one
                 |> Elm.arg two
                 |> Elm.arg three
-                |> Elm.done
+                |> Elm.fnDone
     in
     { declaration = Elm.declaration name funcExp
     , call =
@@ -226,11 +228,8 @@ fn4 name one two three four toExp =
                 |> Elm.arg two
                 |> Elm.arg three
                 |> Elm.arg four
-                |> Elm.done
+                |> Elm.fnDone
     in
-    -- innerFunction name funcExp <|
-    --     \call argOne argTwo argThree argFour ->
-    --         call [ argOne, argTwo, argThree, argFour ]
     { declaration = Elm.declaration name funcExp
     , call =
         \modName argOne argTwo argThree argFour ->
@@ -271,7 +270,7 @@ fn5 name one two three four five toExp =
                 |> Elm.arg three
                 |> Elm.arg four
                 |> Elm.arg five
-                |> Elm.done
+                |> Elm.fnDone
     in
     -- innerFunction name funcExp <|
     --     \call argOne argTwo argThree argFour argFive ->
@@ -319,7 +318,7 @@ fn6 name one two three four five six toExp =
                 |> Elm.arg four
                 |> Elm.arg five
                 |> Elm.arg six
-                |> Elm.done
+                |> Elm.fnDone
     in
     -- innerFunction name funcExp <|
     --     \call argOne argTwo argThree argFour argFive argSix ->
@@ -353,8 +352,6 @@ function :
     ->
         { declaration : Elm.Declaration
         , call : List String -> List Expression -> Expression
-
-        -- , callFrom : List String -> List Expression -> Expression
         , value : List String -> Expression
         }
 function name params toExp =
@@ -405,24 +402,37 @@ toValueFrom importFrom name funcExp =
 value :
     String
     -> Elm.Expression
-    ->
-        { declaration : Elm.Declaration
-        , value : Elm.Expression
-        , valueFrom : List String -> Elm.Expression
-        }
+    -> Decl Elm.Expression
 value name expression =
     let
         declaration_ :
             { declaration : Elm.Declaration
             , call : List String -> List Elm.Expression -> Elm.Expression
-
-            -- , callFrom : List String -> List Elm.Expression -> Elm.Expression
             , value : List String -> Elm.Expression
             }
         declaration_ =
             function name [] (\_ -> expression)
     in
     { declaration = declaration_.declaration
-    , value = declaration_.call [] []
-    , valueFrom = \from -> declaration_.call from []
+    , call = \from -> declaration_.call from []
+    , value = \from -> declaration_.call from []
     }
+
+
+{-| You may want a placeholder function body if you're defining a function using `Declare` with the intention of _calling_ the function instead of defining it.
+
+In that case you can use `placeholder`!
+
+Of note, if you generate the actual body of `placeholder`, it'll generate `Debug.todo "Placeholder function body"`.
+
+-}
+placeholder : Elm.Expression
+placeholder =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Debug" ]
+            , name = "todo"
+            , annotation = Just (Elm.Annotation.var "a")
+            }
+        )
+        [ Elm.string "Placeholder function body" ]
