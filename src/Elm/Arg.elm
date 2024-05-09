@@ -3,6 +3,8 @@ module Elm.Arg exposing
     , tuple, triple
     , record, field
     , ignore, string, char
+    , list, item, listRemaining
+    , customType
     )
 
 {-|

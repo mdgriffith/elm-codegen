@@ -61,15 +61,15 @@ Will generate
 And extracting fields from a record.
 
     Elm.Let.letIn
-        (\fields ->
-            case fields of
-                [ first, second ] ->
-                    Elm.Op.append first second
-
-                _ ->
-                    Elm.unit
+        (\{first, second } ->
+            Elm.Op.append first second
         )
-        |> Elm.Let.record [ "first", "second" ]
+        |> Elm.Let.unpack
+            (Elm.Arg.record (\first second -> {first, second})
+                |> Elm.Arg.field "first"
+                |> Elm.Arg.field "second"
+
+            )
             (Elm.record
                 [ ( "first", Elm.string "Hello" )
                 , ( "second", Elm.string "world!" )
@@ -174,7 +174,7 @@ unpack argument bodyExpression (Let toLetScope) =
                     Internal.Arg.toDetails index argument
 
                 ( threeIndex, bodyDetails ) =
-                    Compiler.toExpressionDetails (Index.next index) bodyExpression
+                    Compiler.toExpressionDetails argDetails.index bodyExpression
 
                 previousLet :
                     { letDecls : List (Node.Node Exp.LetDeclaration)
