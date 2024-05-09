@@ -3,7 +3,7 @@ module Elm.Op exposing
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
     , lt, gt, lte, gte
-    , pipe
+    , pipe, pipeLeft
     , parens
     , keep, skip
     , slash, query
@@ -39,7 +39,7 @@ Would generate
 
 @docs lt, gt, lte, gte
 
-@docs pipe
+@docs pipe, pipeLeft
 
 @docs parens
 
