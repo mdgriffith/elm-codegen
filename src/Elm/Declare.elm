@@ -100,7 +100,7 @@ alias : String -> Elm.Annotation.Annotation -> Module (Elm.Annotation.Annotation
 alias name annotation mod =
     { name = mod.name
     , declarations = Elm.alias name annotation :: mod.declarations
-    , call = mod.call (Elm.Annotation.var name)
+    , call = mod.call (Elm.Annotation.alias mod.name name [] annotation)
     }
 
 
