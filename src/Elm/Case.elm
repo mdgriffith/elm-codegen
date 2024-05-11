@@ -72,7 +72,6 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Arg
 import Internal.Branch as Branch exposing (Branch, Pattern(..))
 import Internal.Compiler as Compiler
-import Internal.Format as Format
 import Internal.Index as Index
 
 
