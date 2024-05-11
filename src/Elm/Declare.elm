@@ -85,6 +85,7 @@ import Elm.Arg
 import Internal.Format as Format
 
 
+{-| -}
 type alias Module val =
     { name : List String
     , declarations : List Elm.Declaration
@@ -92,6 +93,7 @@ type alias Module val =
     }
 
 
+{-| -}
 type alias Annotation =
     { annotation : Elm.Annotation.Annotation
     , declaration : Elm.Declaration
@@ -99,6 +101,7 @@ type alias Annotation =
     }
 
 
+{-| -}
 type alias Function tipe =
     { call : tipe
     , value : Elm.Expression
@@ -107,6 +110,7 @@ type alias Function tipe =
     }
 
 
+{-| -}
 type alias Value =
     { value : Elm.Expression
     , declaration : Elm.Declaration
@@ -114,6 +118,7 @@ type alias Value =
     }
 
 
+{-| -}
 type Internal val
     = Internal (List String -> val)
 
@@ -136,6 +141,7 @@ alias name annotation =
     }
 
 
+{-| -}
 customType : String -> List Elm.Variant -> Annotation
 customType name variants =
     { annotation = Elm.Annotation.named [] name
@@ -157,6 +163,7 @@ with decl mod =
     }
 
 
+{-| -}
 withUnexposed : { a | declaration : Elm.Declaration } -> Module val -> Module val
 withUnexposed { declaration } mod =
     { mod | declarations = declaration :: mod.declarations }

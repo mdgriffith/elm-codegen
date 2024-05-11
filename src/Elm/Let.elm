@@ -33,8 +33,6 @@ Will translate into
 
 # Destructing values
 
-@docs tuple
-
 Here's an example destructing a tuple. This code
 
     Elm.Let.letIn
@@ -53,8 +51,6 @@ Will generate
             ( "Hello", "World!" )
     in
     first ++ second
-
-@docs triple
 
 @docs record
 
@@ -124,17 +120,14 @@ will generate
 
 -}
 
-import Dict
 import Elm exposing (Expression)
 import Elm.Annotation
 import Elm.Arg
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
-import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Arg
 import Internal.Compiler as Compiler exposing (Module)
-import Internal.Format as Format
 import Internal.Index as Index
 
 

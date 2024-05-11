@@ -152,6 +152,7 @@ fnBuilder innerValue =
         )
 
 
+{-| -}
 arg : Elm.Arg.Arg arg -> Fn (arg -> value) -> Fn value
 arg argument (Fn toFnDetails) =
     Fn
@@ -229,6 +230,7 @@ fnDone (Fn toFnDetails) =
         )
 
 
+{-| -}
 body : (args -> Expression) -> Fn args -> Expression
 body toBody (Fn toFnDetails) =
     Compiler.Expression
