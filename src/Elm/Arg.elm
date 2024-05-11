@@ -22,7 +22,7 @@ module Elm.Arg exposing
 
 @docs list, item, listRemaining
 
-@customType
+@docs customType
 
 -}
 
