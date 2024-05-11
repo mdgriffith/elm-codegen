@@ -372,15 +372,18 @@ var name =
     Arg
         (\index ->
             let
+                sanitizedName =
+                    Format.formatValue name
+
                 ( value, annotation, _ ) =
-                    val index name
+                    val index sanitizedName
 
                 imports =
                     []
             in
             { details =
                 { imports = imports
-                , pattern = Compiler.nodify (Pattern.VarPattern name)
+                , pattern = Compiler.nodify (Pattern.VarPattern sanitizedName)
                 , annotation = annotation
                 }
             , index = Index.next index
