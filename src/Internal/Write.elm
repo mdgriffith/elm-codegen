@@ -354,8 +354,23 @@ prettyExposing exposing_ =
 
 prettyTopLevelExposes : List TopLevelExpose -> Doc t
 prettyTopLevelExposes exposes =
-    List.map prettyTopLevelExpose exposes
-        |> Pretty.join (Pretty.string ", ")
+    let
+        renderedTopLevelExposes =
+            List.map prettyTopLevelExpose exposes
+
+        renderedWithSeparator =
+            case List.reverse renderedTopLevelExposes of
+                head :: tail ->
+                    head
+                        :: List.map (Pretty.a <| Pretty.char ',') tail
+                        |> List.reverse
+
+                _ ->
+                    renderedTopLevelExposes
+    in
+    renderedWithSeparator
+        |> Pretty.softlines
+        |> Pretty.nest 4
 
 
 prettyTopLevelExpose : TopLevelExpose -> Doc t
