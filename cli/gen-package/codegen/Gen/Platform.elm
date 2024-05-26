@@ -51,71 +51,71 @@ worker :
 worker workerArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Platform" ]
-            , name = "worker"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.record
-                            [ ( "init"
-                              , Type.function
+             { importFrom = [ "Platform" ]
+             , name = "worker"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.record
+                              [ ( "init"
+                                , Type.function
                                     [ Type.var "flags" ]
                                     (Type.tuple
-                                        (Type.var "model")
-                                        (Type.namedWith
-                                            []
-                                            "Cmd"
-                                            [ Type.var "msg" ]
-                                        )
+                                       (Type.var "model")
+                                       (Type.namedWith
+                                          []
+                                          "Cmd"
+                                          [ Type.var "msg" ]
+                                       )
                                     )
-                              )
-                            , ( "update"
-                              , Type.function
+                                )
+                              , ( "update"
+                                , Type.function
                                     [ Type.var "msg", Type.var "model" ]
                                     (Type.tuple
-                                        (Type.var "model")
-                                        (Type.namedWith
-                                            []
-                                            "Cmd"
-                                            [ Type.var "msg" ]
-                                        )
+                                       (Type.var "model")
+                                       (Type.namedWith
+                                          []
+                                          "Cmd"
+                                          [ Type.var "msg" ]
+                                       )
                                     )
-                              )
-                            , ( "subscriptions"
-                              , Type.function
+                                )
+                              , ( "subscriptions"
+                                , Type.function
                                     [ Type.var "model" ]
                                     (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                              )
-                            ]
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Program"
-                            [ Type.var "flags"
-                            , Type.var "model"
-                            , Type.var "msg"
-                            ]
-                        )
-                    )
-            }
+                                )
+                              ]
+                          ]
+                          (Type.namedWith
+                               [ "Platform" ]
+                               "Program"
+                               [ Type.var "flags"
+                               , Type.var "model"
+                               , Type.var "msg"
+                               ]
+                          )
+                     )
+             }
         )
         [ Elm.record
             [ Tuple.pair
-                "init"
-                (Elm.functionReduced "workerUnpack" workerArg.init)
+                  "init"
+                  (Elm.functionReduced "workerUnpack" workerArg.init)
             , Tuple.pair
-                "update"
-                (Elm.functionReduced
-                    "workerUnpack"
-                    (\functionReducedUnpack ->
-                        Elm.functionReduced
-                            "unpack"
-                            (workerArg.update functionReducedUnpack)
-                    )
-                )
+                  "update"
+                  (Elm.functionReduced
+                       "workerUnpack"
+                       (\functionReducedUnpack ->
+                            Elm.functionReduced
+                                "unpack"
+                                (workerArg.update functionReducedUnpack)
+                       )
+                  )
             , Tuple.pair
-                "subscriptions"
-                (Elm.functionReduced "workerUnpack" workerArg.subscriptions)
+                  "subscriptions"
+                  (Elm.functionReduced "workerUnpack" workerArg.subscriptions)
             ]
         ]
 
@@ -129,24 +129,24 @@ sendToApp : Elm.Expression -> Elm.Expression -> Elm.Expression
 sendToApp sendToAppArg sendToAppArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Platform" ]
-            , name = "sendToApp"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Platform" ]
-                            "Router"
-                            [ Type.var "msg", Type.var "a" ]
-                        , Type.var "msg"
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
+             { importFrom = [ "Platform" ]
+             , name = "sendToApp"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Platform" ]
+                              "Router"
+                              [ Type.var "msg", Type.var "a" ]
+                          , Type.var "msg"
+                          ]
+                          (Type.namedWith
+                               [ "Platform" ]
+                               "Task"
+                               [ Type.var "x", Type.unit ]
+                          )
+                     )
+             }
         )
         [ sendToAppArg, sendToAppArg0 ]
 
@@ -163,24 +163,24 @@ sendToSelf : Elm.Expression -> Elm.Expression -> Elm.Expression
 sendToSelf sendToSelfArg sendToSelfArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Platform" ]
-            , name = "sendToSelf"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Platform" ]
-                            "Router"
-                            [ Type.var "a", Type.var "msg" ]
-                        , Type.var "msg"
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
+             { importFrom = [ "Platform" ]
+             , name = "sendToSelf"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Platform" ]
+                              "Router"
+                              [ Type.var "a", Type.var "msg" ]
+                          , Type.var "msg"
+                          ]
+                          (Type.namedWith
+                               [ "Platform" ]
+                               "Task"
+                               [ Type.var "x", Type.unit ]
+                          )
+                     )
+             }
         )
         [ sendToSelfArg, sendToSelfArg0 ]
 
@@ -219,105 +219,105 @@ call_ =
         \workerArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Platform" ]
-                    , name = "worker"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.record
-                                    [ ( "init"
-                                      , Type.function
+                     { importFrom = [ "Platform" ]
+                     , name = "worker"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.record
+                                      [ ( "init"
+                                        , Type.function
                                             [ Type.var "flags" ]
                                             (Type.tuple
-                                                (Type.var "model")
-                                                (Type.namedWith
-                                                    []
-                                                    "Cmd"
-                                                    [ Type.var "msg" ]
-                                                )
+                                               (Type.var "model")
+                                               (Type.namedWith
+                                                  []
+                                                  "Cmd"
+                                                  [ Type.var "msg" ]
+                                               )
                                             )
-                                      )
-                                    , ( "update"
-                                      , Type.function
+                                        )
+                                      , ( "update"
+                                        , Type.function
                                             [ Type.var "msg", Type.var "model" ]
                                             (Type.tuple
-                                                (Type.var "model")
-                                                (Type.namedWith
-                                                    []
-                                                    "Cmd"
-                                                    [ Type.var "msg" ]
-                                                )
+                                               (Type.var "model")
+                                               (Type.namedWith
+                                                  []
+                                                  "Cmd"
+                                                  [ Type.var "msg" ]
+                                               )
                                             )
-                                      )
-                                    , ( "subscriptions"
-                                      , Type.function
+                                        )
+                                      , ( "subscriptions"
+                                        , Type.function
                                             [ Type.var "model" ]
                                             (Type.namedWith
-                                                []
-                                                "Sub"
-                                                [ Type.var "msg" ]
+                                               []
+                                               "Sub"
+                                               [ Type.var "msg" ]
                                             )
-                                      )
-                                    ]
-                                ]
-                                (Type.namedWith
-                                    [ "Platform" ]
-                                    "Program"
-                                    [ Type.var "flags"
-                                    , Type.var "model"
-                                    , Type.var "msg"
-                                    ]
-                                )
-                            )
-                    }
+                                        )
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Platform" ]
+                                       "Program"
+                                       [ Type.var "flags"
+                                       , Type.var "model"
+                                       , Type.var "msg"
+                                       ]
+                                  )
+                             )
+                     }
                 )
                 [ workerArg ]
     , sendToApp =
         \sendToAppArg sendToAppArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Platform" ]
-                    , name = "sendToApp"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Platform" ]
-                                    "Router"
-                                    [ Type.var "msg", Type.var "a" ]
-                                , Type.var "msg"
-                                ]
-                                (Type.namedWith
-                                    [ "Platform" ]
-                                    "Task"
-                                    [ Type.var "x", Type.unit ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Platform" ]
+                     , name = "sendToApp"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Platform" ]
+                                      "Router"
+                                      [ Type.var "msg", Type.var "a" ]
+                                  , Type.var "msg"
+                                  ]
+                                  (Type.namedWith
+                                       [ "Platform" ]
+                                       "Task"
+                                       [ Type.var "x", Type.unit ]
+                                  )
+                             )
+                     }
                 )
                 [ sendToAppArg, sendToAppArg0 ]
     , sendToSelf =
         \sendToSelfArg sendToSelfArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Platform" ]
-                    , name = "sendToSelf"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Platform" ]
-                                    "Router"
-                                    [ Type.var "a", Type.var "msg" ]
-                                , Type.var "msg"
-                                ]
-                                (Type.namedWith
-                                    [ "Platform" ]
-                                    "Task"
-                                    [ Type.var "x", Type.unit ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Platform" ]
+                     , name = "sendToSelf"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Platform" ]
+                                      "Router"
+                                      [ Type.var "a", Type.var "msg" ]
+                                  , Type.var "msg"
+                                  ]
+                                  (Type.namedWith
+                                       [ "Platform" ]
+                                       "Task"
+                                       [ Type.var "x", Type.unit ]
+                                  )
+                             )
+                     }
                 )
                 [ sendToSelfArg, sendToSelfArg0 ]
     }
@@ -336,46 +336,46 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.record
-                            [ ( "init"
-                              , Type.function
-                                    [ Type.var "flags" ]
-                                    (Type.tuple
-                                        (Type.var "model")
-                                        (Type.namedWith
-                                            []
-                                            "Cmd"
-                                            [ Type.var "msg" ]
-                                        )
-                                    )
-                              )
-                            , ( "update"
-                              , Type.function
-                                    [ Type.var "msg", Type.var "model" ]
-                                    (Type.tuple
-                                        (Type.var "model")
-                                        (Type.namedWith
-                                            []
-                                            "Cmd"
-                                            [ Type.var "msg" ]
-                                        )
-                                    )
-                              )
-                            , ( "subscriptions"
-                              , Type.function
-                                    [ Type.var "model" ]
-                                    (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                              )
-                            ]
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Program"
-                            [ Type.var "flags"
-                            , Type.var "model"
-                            , Type.var "msg"
-                            ]
-                        )
+                         [ Type.record
+                             [ ( "init"
+                               , Type.function
+                                   [ Type.var "flags" ]
+                                   (Type.tuple
+                                      (Type.var "model")
+                                      (Type.namedWith
+                                         []
+                                         "Cmd"
+                                         [ Type.var "msg" ]
+                                      )
+                                   )
+                               )
+                             , ( "update"
+                               , Type.function
+                                   [ Type.var "msg", Type.var "model" ]
+                                   (Type.tuple
+                                      (Type.var "model")
+                                      (Type.namedWith
+                                         []
+                                         "Cmd"
+                                         [ Type.var "msg" ]
+                                      )
+                                   )
+                               )
+                             , ( "subscriptions"
+                               , Type.function
+                                   [ Type.var "model" ]
+                                   (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                               )
+                             ]
+                         ]
+                         (Type.namedWith
+                              [ "Platform" ]
+                              "Program"
+                              [ Type.var "flags"
+                              , Type.var "model"
+                              , Type.var "msg"
+                              ]
+                         )
                     )
             }
     , sendToApp =
@@ -385,17 +385,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Platform" ]
-                            "Router"
-                            [ Type.var "msg", Type.var "a" ]
-                        , Type.var "msg"
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
+                         [ Type.namedWith
+                             [ "Platform" ]
+                             "Router"
+                             [ Type.var "msg", Type.var "a" ]
+                         , Type.var "msg"
+                         ]
+                         (Type.namedWith
+                              [ "Platform" ]
+                              "Task"
+                              [ Type.var "x", Type.unit ]
+                         )
                     )
             }
     , sendToSelf =
@@ -405,17 +405,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Platform" ]
-                            "Router"
-                            [ Type.var "a", Type.var "msg" ]
-                        , Type.var "msg"
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
+                         [ Type.namedWith
+                             [ "Platform" ]
+                             "Router"
+                             [ Type.var "a", Type.var "msg" ]
+                         , Type.var "msg"
+                         ]
+                         (Type.namedWith
+                              [ "Platform" ]
+                              "Task"
+                              [ Type.var "x", Type.unit ]
+                         )
                     )
             }
     }

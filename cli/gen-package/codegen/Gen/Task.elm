@@ -43,22 +43,22 @@ perform : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 perform performArg performArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "perform"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "msg")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.namedWith [ "Basics" ] "Never" []
-                            , Type.var "a"
-                            ]
-                        ]
-                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "perform"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.var "a" ] (Type.var "msg")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.namedWith [ "Basics" ] "Never" []
+                              , Type.var "a"
+                              ]
+                          ]
+                          (Type.namedWith [] "Cmd" [ Type.var "msg" ])
+                     )
+             }
         )
         [ Elm.functionReduced "performUnpack" performArg, performArg0 ]
 
@@ -93,26 +93,26 @@ attempt : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 attempt attemptArg attemptArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "attempt"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.namedWith
-                                [ "Result" ]
-                                "Result"
-                                [ Type.var "x", Type.var "a" ]
-                            ]
-                            (Type.var "msg")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "attempt"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.namedWith
+                                    [ "Result" ]
+                                    "Result"
+                                    [ Type.var "x", Type.var "a" ]
+                              ]
+                              (Type.var "msg")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          ]
+                          (Type.namedWith [] "Cmd" [ Type.var "msg" ])
+                     )
+             }
         )
         [ Elm.functionReduced "attemptUnpack" attemptArg, attemptArg0 ]
 
@@ -138,30 +138,30 @@ andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen andThenArg andThenArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "andThen"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a" ]
-                            (Type.namedWith
-                                [ "Task" ]
-                                "Task"
-                                [ Type.var "x", Type.var "b" ]
-                            )
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "andThen"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a" ]
+                              (Type.namedWith
+                                 [ "Task" ]
+                                 "Task"
+                                 [ Type.var "x", Type.var "b" ]
+                              )
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "b" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced "andThenUnpack" andThenArg, andThenArg0 ]
 
@@ -182,19 +182,19 @@ succeed : Elm.Expression -> Elm.Expression
 succeed succeedArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "succeed"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "a" ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "succeed"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "a" ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "a" ]
+                          )
+                     )
+             }
         )
         [ succeedArg ]
 
@@ -214,19 +214,19 @@ fail : Elm.Expression -> Elm.Expression
 fail failArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "fail"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "x" ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "fail"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "x" ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "a" ]
+                          )
+                     )
+             }
         )
         [ failArg ]
 
@@ -243,25 +243,25 @@ sequence : List Elm.Expression -> Elm.Expression
 sequence sequenceArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "sequence"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list
-                            (Type.namedWith
-                                [ "Task" ]
-                                "Task"
-                                [ Type.var "x", Type.var "a" ]
-                            )
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.list (Type.var "a") ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "sequence"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list
+                              (Type.namedWith
+                                 [ "Task" ]
+                                 "Task"
+                                 [ Type.var "x", Type.var "a" ]
+                              )
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.list (Type.var "a") ]
+                          )
+                     )
+             }
         )
         [ Elm.list sequenceArg ]
 
@@ -288,24 +288,24 @@ map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map mapArg mapArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "b")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "map"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.var "a" ] (Type.var "b")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "b" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced "mapUnpack" mapArg, mapArg0 ]
 
@@ -336,35 +336,35 @@ map2 :
 map2 map2Arg map2Arg0 map2Arg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "map2"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b" ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "map2"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a", Type.var "b" ]
+                              (Type.var "result")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "b" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "result" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced
             "map2Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced "unpack" (map2Arg functionReducedUnpack)
+               Elm.functionReduced "unpack" (map2Arg functionReducedUnpack)
             )
         , map2Arg0
         , map2Arg1
@@ -387,47 +387,47 @@ map3 :
 map3 map3Arg map3Arg0 map3Arg1 map3Arg2 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "map3"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b", Type.var "c" ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "c" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "map3"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a", Type.var "b", Type.var "c" ]
+                              (Type.var "result")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "b" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "c" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "result" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced
             "map3Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (map3Arg functionReducedUnpack
-                                functionReducedUnpack0
+                            ((map3Arg functionReducedUnpack)
+                                 functionReducedUnpack0
                             )
-                    )
+                   )
             )
         , map3Arg0
         , map3Arg1
@@ -457,60 +457,61 @@ map4 :
 map4 map4Arg map4Arg0 map4Arg1 map4Arg2 map4Arg3 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "map4"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "c" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "d" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "map4"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a"
+                              , Type.var "b"
+                              , Type.var "c"
+                              , Type.var "d"
+                              ]
+                              (Type.var "result")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "b" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "c" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "d" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "result" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced
             "map4Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
                             (\functionReducedUnpack_2_1_2_0_2_0_2_0_0 ->
-                                Elm.functionReduced
-                                    "unpack"
-                                    (map4Arg functionReducedUnpack
-                                         functionReducedUnpack0
-                                        functionReducedUnpack_2_1_2_0_2_0_2_0_0
-                                    )
+                                 Elm.functionReduced
+                                     "unpack"
+                                     (((map4Arg functionReducedUnpack)
+                                           functionReducedUnpack0
+                                      )
+                                          functionReducedUnpack_2_1_2_0_2_0_2_0_0
+                                     )
                             )
-                    )
+                   )
             )
         , map4Arg0
         , map4Arg1
@@ -544,70 +545,72 @@ map5 :
 map5 map5Arg map5Arg0 map5Arg1 map5Arg2 map5Arg3 map5Arg4 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "map5"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            , Type.var "e"
-                            ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "c" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "d" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "e" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "map5"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a"
+                              , Type.var "b"
+                              , Type.var "c"
+                              , Type.var "d"
+                              , Type.var "e"
+                              ]
+                              (Type.var "result")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "b" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "c" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "d" ]
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "e" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.var "result" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced
             "map5Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
                             (\functionReducedUnpack_2_1_2_0_2_0_2_0_0 ->
-                                Elm.functionReduced
-                                    "unpack"
-                                    (\functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0 ->
-                                        Elm.functionReduced
-                                            "unpack"
-                                            (map5Arg functionReducedUnpack
-                                                 functionReducedUnpack0
-                                                 functionReducedUnpack_2_1_2_0_2_0_2_0_0
-                                                functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0
-                                            )
-                                    )
+                                 Elm.functionReduced
+                                     "unpack"
+                                     (\functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0 ->
+                                          Elm.functionReduced
+                                              "unpack"
+                                              ((((map5Arg functionReducedUnpack)
+                                                     functionReducedUnpack0
+                                                )
+                                                    functionReducedUnpack_2_1_2_0_2_0_2_0_0
+                                               )
+                                                   functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0
+                                              )
+                                     )
                             )
-                    )
+                   )
             )
         , map5Arg0
         , map5Arg1
@@ -634,30 +637,30 @@ onError : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 onError onErrorArg onErrorArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "onError"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "x" ]
-                            (Type.namedWith
-                                [ "Task" ]
-                                "Task"
-                                [ Type.var "y", Type.var "a" ]
-                            )
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "y", Type.var "a" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "onError"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "x" ]
+                              (Type.namedWith
+                                 [ "Task" ]
+                                 "Task"
+                                 [ Type.var "y", Type.var "a" ]
+                              )
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "y", Type.var "a" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced "onErrorUnpack" onErrorArg, onErrorArg0 ]
 
@@ -683,24 +686,24 @@ mapError :
 mapError mapErrorArg mapErrorArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Task" ]
-            , name = "mapError"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "x" ] (Type.var "y")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "y", Type.var "a" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Task" ]
+             , name = "mapError"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.var "x" ] (Type.var "y")
+                          , Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "y", Type.var "a" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced "mapErrorUnpack" mapErrorArg, mapErrorArg0 ]
 
@@ -714,9 +717,9 @@ annotation_ =
                 "Task"
                 [ taskArg0, taskArg1 ]
                 (Type.namedWith
-                    [ "Platform" ]
-                    "Task"
-                    [ Type.var "x", Type.var "a" ]
+                     [ "Platform" ]
+                     "Task"
+                     [ Type.var "x", Type.var "a" ]
                 )
     }
 
@@ -760,374 +763,383 @@ call_ =
         \performArg performArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "perform"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a" ]
-                                    (Type.var "msg")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.namedWith [ "Basics" ] "Never" []
-                                    , Type.var "a"
-                                    ]
-                                ]
-                                (Type.namedWith [] "Cmd" [ Type.var "msg" ])
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "perform"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a" ]
+                                      (Type.var "msg")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.namedWith [ "Basics" ] "Never" []
+                                      , Type.var "a"
+                                      ]
+                                  ]
+                                  (Type.namedWith [] "Cmd" [ Type.var "msg" ])
+                             )
+                     }
                 )
                 [ performArg, performArg0 ]
     , attempt =
         \attemptArg attemptArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "attempt"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.namedWith
-                                        [ "Result" ]
-                                        "Result"
-                                        [ Type.var "x", Type.var "a" ]
-                                    ]
-                                    (Type.var "msg")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                ]
-                                (Type.namedWith [] "Cmd" [ Type.var "msg" ])
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "attempt"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.namedWith
+                                            [ "Result" ]
+                                            "Result"
+                                            [ Type.var "x", Type.var "a" ]
+                                      ]
+                                      (Type.var "msg")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  ]
+                                  (Type.namedWith [] "Cmd" [ Type.var "msg" ])
+                             )
+                     }
                 )
                 [ attemptArg, attemptArg0 ]
     , andThen =
         \andThenArg andThenArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "andThen"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a" ]
-                                    (Type.namedWith
-                                        [ "Task" ]
-                                        "Task"
-                                        [ Type.var "x", Type.var "b" ]
-                                    )
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "b" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "andThen"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a" ]
+                                      (Type.namedWith
+                                         [ "Task" ]
+                                         "Task"
+                                         [ Type.var "x", Type.var "b" ]
+                                      )
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "b" ]
+                                  )
+                             )
+                     }
                 )
                 [ andThenArg, andThenArg0 ]
     , succeed =
         \succeedArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "succeed"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "a" ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "succeed"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "a" ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "a" ]
+                                  )
+                             )
+                     }
                 )
                 [ succeedArg ]
     , fail =
         \failArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "fail"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "x" ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "fail"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "x" ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "a" ]
+                                  )
+                             )
+                     }
                 )
                 [ failArg ]
     , sequence =
         \sequenceArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "sequence"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list
-                                    (Type.namedWith
-                                        [ "Task" ]
-                                        "Task"
-                                        [ Type.var "x", Type.var "a" ]
-                                    )
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.list (Type.var "a") ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "sequence"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list
+                                      (Type.namedWith
+                                         [ "Task" ]
+                                         "Task"
+                                         [ Type.var "x", Type.var "a" ]
+                                      )
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x"
+                                       , Type.list (Type.var "a")
+                                       ]
+                                  )
+                             )
+                     }
                 )
                 [ sequenceArg ]
     , map =
         \mapArg mapArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "map"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function [ Type.var "a" ] (Type.var "b")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "b" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "map"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a" ]
+                                      (Type.var "b")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "b" ]
+                                  )
+                             )
+                     }
                 )
                 [ mapArg, mapArg0 ]
     , map2 =
         \map2Arg map2Arg0 map2Arg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "map2"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a", Type.var "b" ]
-                                    (Type.var "result")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "b" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "result" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "map2"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a", Type.var "b" ]
+                                      (Type.var "result")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "b" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "result" ]
+                                  )
+                             )
+                     }
                 )
                 [ map2Arg, map2Arg0, map2Arg1 ]
     , map3 =
         \map3Arg map3Arg0 map3Arg1 map3Arg2 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "map3"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a", Type.var "b", Type.var "c" ]
-                                    (Type.var "result")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "b" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "c" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "result" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "map3"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a"
+                                      , Type.var "b"
+                                      , Type.var "c"
+                                      ]
+                                      (Type.var "result")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "b" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "c" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "result" ]
+                                  )
+                             )
+                     }
                 )
                 [ map3Arg, map3Arg0, map3Arg1, map3Arg2 ]
     , map4 =
         \map4Arg map4Arg0 map4Arg1 map4Arg2 map4Arg3 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "map4"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a"
-                                    , Type.var "b"
-                                    , Type.var "c"
-                                    , Type.var "d"
-                                    ]
-                                    (Type.var "result")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "b" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "c" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "d" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "result" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "map4"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a"
+                                      , Type.var "b"
+                                      , Type.var "c"
+                                      , Type.var "d"
+                                      ]
+                                      (Type.var "result")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "b" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "c" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "d" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "result" ]
+                                  )
+                             )
+                     }
                 )
                 [ map4Arg, map4Arg0, map4Arg1, map4Arg2, map4Arg3 ]
     , map5 =
         \map5Arg map5Arg0 map5Arg1 map5Arg2 map5Arg3 map5Arg4 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "map5"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a"
-                                    , Type.var "b"
-                                    , Type.var "c"
-                                    , Type.var "d"
-                                    , Type.var "e"
-                                    ]
-                                    (Type.var "result")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "b" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "c" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "d" ]
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "e" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "result" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "map5"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a"
+                                      , Type.var "b"
+                                      , Type.var "c"
+                                      , Type.var "d"
+                                      , Type.var "e"
+                                      ]
+                                      (Type.var "result")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "b" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "c" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "d" ]
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "e" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.var "result" ]
+                                  )
+                             )
+                     }
                 )
                 [ map5Arg, map5Arg0, map5Arg1, map5Arg2, map5Arg3, map5Arg4 ]
     , onError =
         \onErrorArg onErrorArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "onError"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "x" ]
-                                    (Type.namedWith
-                                        [ "Task" ]
-                                        "Task"
-                                        [ Type.var "y", Type.var "a" ]
-                                    )
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "y", Type.var "a" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "onError"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "x" ]
+                                      (Type.namedWith
+                                         [ "Task" ]
+                                         "Task"
+                                         [ Type.var "y", Type.var "a" ]
+                                      )
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "y", Type.var "a" ]
+                                  )
+                             )
+                     }
                 )
                 [ onErrorArg, onErrorArg0 ]
     , mapError =
         \mapErrorArg mapErrorArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Task" ]
-                    , name = "mapError"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function [ Type.var "x" ] (Type.var "y")
-                                , Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "y", Type.var "a" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Task" ]
+                     , name = "mapError"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "x" ]
+                                      (Type.var "y")
+                                  , Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "y", Type.var "a" ]
+                                  )
+                             )
+                     }
                 )
                 [ mapErrorArg, mapErrorArg0 ]
     }
@@ -1156,15 +1168,15 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "msg")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.namedWith [ "Basics" ] "Never" []
-                            , Type.var "a"
-                            ]
-                        ]
-                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
+                         [ Type.function [ Type.var "a" ] (Type.var "msg")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.namedWith [ "Basics" ] "Never" []
+                             , Type.var "a"
+                             ]
+                         ]
+                         (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
     , attempt =
@@ -1174,19 +1186,19 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.namedWith
-                                [ "Result" ]
-                                "Result"
-                                [ Type.var "x", Type.var "a" ]
-                            ]
-                            (Type.var "msg")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
+                         [ Type.function
+                             [ Type.namedWith
+                                   [ "Result" ]
+                                   "Result"
+                                   [ Type.var "x", Type.var "a" ]
+                             ]
+                             (Type.var "msg")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         ]
+                         (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
     , andThen =
@@ -1196,23 +1208,23 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a" ]
-                            (Type.namedWith
+                         [ Type.function
+                             [ Type.var "a" ]
+                             (Type.namedWith
                                 [ "Task" ]
                                 "Task"
                                 [ Type.var "x", Type.var "b" ]
-                            )
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        )
+                             )
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "b" ]
+                         )
                     )
             }
     , succeed =
@@ -1222,12 +1234,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "a" ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        )
+                         [ Type.var "a" ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                         )
                     )
             }
     , fail =
@@ -1237,12 +1249,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "x" ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        )
+                         [ Type.var "x" ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                         )
                     )
             }
     , sequence =
@@ -1252,18 +1264,18 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list
-                            (Type.namedWith
+                         [ Type.list
+                             (Type.namedWith
                                 [ "Task" ]
                                 "Task"
                                 [ Type.var "x", Type.var "a" ]
-                            )
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.list (Type.var "a") ]
-                        )
+                             )
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.list (Type.var "a") ]
+                         )
                     )
             }
     , map =
@@ -1273,17 +1285,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "b")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        )
+                         [ Type.function [ Type.var "a" ] (Type.var "b")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "b" ]
+                         )
                     )
             }
     , map2 =
@@ -1293,23 +1305,23 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b" ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
+                         [ Type.function
+                             [ Type.var "a", Type.var "b" ]
+                             (Type.var "result")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "b" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "result" ]
+                         )
                     )
             }
     , map3 =
@@ -1319,27 +1331,27 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b", Type.var "c" ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "c" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
+                         [ Type.function
+                             [ Type.var "a", Type.var "b", Type.var "c" ]
+                             (Type.var "result")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "b" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "c" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "result" ]
+                         )
                     )
             }
     , map4 =
@@ -1349,35 +1361,35 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "c" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "d" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
+                         [ Type.function
+                             [ Type.var "a"
+                             , Type.var "b"
+                             , Type.var "c"
+                             , Type.var "d"
+                             ]
+                             (Type.var "result")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "b" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "c" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "d" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "result" ]
+                         )
                     )
             }
     , map5 =
@@ -1387,40 +1399,40 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            , Type.var "e"
-                            ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "c" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "d" ]
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "e" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "result" ]
-                        )
+                         [ Type.function
+                             [ Type.var "a"
+                             , Type.var "b"
+                             , Type.var "c"
+                             , Type.var "d"
+                             , Type.var "e"
+                             ]
+                             (Type.var "result")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "b" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "c" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "d" ]
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "e" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "result" ]
+                         )
                     )
             }
     , onError =
@@ -1430,23 +1442,23 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "x" ]
-                            (Type.namedWith
+                         [ Type.function
+                             [ Type.var "x" ]
+                             (Type.namedWith
                                 [ "Task" ]
                                 "Task"
                                 [ Type.var "y", Type.var "a" ]
-                            )
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "y", Type.var "a" ]
-                        )
+                             )
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "y", Type.var "a" ]
+                         )
                     )
             }
     , mapError =
@@ -1456,17 +1468,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.var "x" ] (Type.var "y")
-                        , Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "y", Type.var "a" ]
-                        )
+                         [ Type.function [ Type.var "x" ] (Type.var "y")
+                         , Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "y", Type.var "a" ]
+                         )
                     )
             }
     }

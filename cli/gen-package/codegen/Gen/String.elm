@@ -26,10 +26,10 @@ isEmpty : String -> Elm.Expression
 isEmpty isEmptyArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "isEmpty"
-            , annotation = Just (Type.function [ Type.string ] Type.bool)
-            }
+             { importFrom = [ "String" ]
+             , name = "isEmpty"
+             , annotation = Just (Type.function [ Type.string ] Type.bool)
+             }
         )
         [ Elm.string isEmptyArg ]
 
@@ -45,10 +45,10 @@ length : String -> Elm.Expression
 length lengthArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "length"
-            , annotation = Just (Type.function [ Type.string ] Type.int)
-            }
+             { importFrom = [ "String" ]
+             , name = "length"
+             , annotation = Just (Type.function [ Type.string ] Type.int)
+             }
         )
         [ Elm.string lengthArg ]
 
@@ -63,10 +63,10 @@ reverse : String -> Elm.Expression
 reverse reverseArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "reverse"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "reverse"
+             , annotation = Just (Type.function [ Type.string ] Type.string)
+             }
         )
         [ Elm.string reverseArg ]
 
@@ -81,11 +81,11 @@ repeat : Int -> String -> Elm.Expression
 repeat repeatArg repeatArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "repeat"
-            , annotation =
-                Just (Type.function [ Type.int, Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "repeat"
+             , annotation =
+                 Just (Type.function [ Type.int, Type.string ] Type.string)
+             }
         )
         [ Elm.int repeatArg, Elm.string repeatArg0 ]
 
@@ -107,15 +107,15 @@ replace : String -> String -> String -> Elm.Expression
 replace replaceArg replaceArg0 replaceArg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "replace"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string, Type.string, Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "replace"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string, Type.string, Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.string replaceArg
         , Elm.string replaceArg0
@@ -134,11 +134,11 @@ append : String -> String -> Elm.Expression
 append appendArg appendArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "append"
-            , annotation =
-                Just (Type.function [ Type.string, Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "append"
+             , annotation =
+                 Just (Type.function [ Type.string, Type.string ] Type.string)
+             }
         )
         [ Elm.string appendArg, Elm.string appendArg0 ]
 
@@ -153,11 +153,11 @@ concat : List String -> Elm.Expression
 concat concatArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "concat"
-            , annotation =
-                Just (Type.function [ Type.list Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "concat"
+             , annotation =
+                 Just (Type.function [ Type.list Type.string ] Type.string)
+             }
         )
         [ Elm.list (List.map Elm.string concatArg) ]
 
@@ -173,15 +173,15 @@ split : String -> String -> Elm.Expression
 split splitArg splitArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "split"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string, Type.string ]
-                        (Type.list Type.string)
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "split"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string, Type.string ]
+                          (Type.list Type.string)
+                     )
+             }
         )
         [ Elm.string splitArg, Elm.string splitArg0 ]
 
@@ -198,15 +198,15 @@ join : String -> List String -> Elm.Expression
 join joinArg joinArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "join"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string, Type.list Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "join"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string, Type.list Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.string joinArg, Elm.list (List.map Elm.string joinArg0) ]
 
@@ -221,11 +221,11 @@ words : String -> Elm.Expression
 words wordsArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "words"
-            , annotation =
-                Just (Type.function [ Type.string ] (Type.list Type.string))
-            }
+             { importFrom = [ "String" ]
+             , name = "words"
+             , annotation =
+                 Just (Type.function [ Type.string ] (Type.list Type.string))
+             }
         )
         [ Elm.string wordsArg ]
 
@@ -240,11 +240,11 @@ lines : String -> Elm.Expression
 lines linesArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "lines"
-            , annotation =
-                Just (Type.function [ Type.string ] (Type.list Type.string))
-            }
+             { importFrom = [ "String" ]
+             , name = "lines"
+             , annotation =
+                 Just (Type.function [ Type.string ] (Type.list Type.string))
+             }
         )
         [ Elm.string linesArg ]
 
@@ -263,15 +263,15 @@ slice : Int -> Int -> String -> Elm.Expression
 slice sliceArg sliceArg0 sliceArg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "slice"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.int, Type.int, Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "slice"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.int, Type.int, Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.int sliceArg, Elm.int sliceArg0, Elm.string sliceArg1 ]
 
@@ -286,11 +286,11 @@ left : Int -> String -> Elm.Expression
 left leftArg leftArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "left"
-            , annotation =
-                Just (Type.function [ Type.int, Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "left"
+             , annotation =
+                 Just (Type.function [ Type.int, Type.string ] Type.string)
+             }
         )
         [ Elm.int leftArg, Elm.string leftArg0 ]
 
@@ -305,11 +305,11 @@ right : Int -> String -> Elm.Expression
 right rightArg rightArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "right"
-            , annotation =
-                Just (Type.function [ Type.int, Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "right"
+             , annotation =
+                 Just (Type.function [ Type.int, Type.string ] Type.string)
+             }
         )
         [ Elm.int rightArg, Elm.string rightArg0 ]
 
@@ -324,11 +324,11 @@ dropLeft : Int -> String -> Elm.Expression
 dropLeft dropLeftArg dropLeftArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "dropLeft"
-            , annotation =
-                Just (Type.function [ Type.int, Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "dropLeft"
+             , annotation =
+                 Just (Type.function [ Type.int, Type.string ] Type.string)
+             }
         )
         [ Elm.int dropLeftArg, Elm.string dropLeftArg0 ]
 
@@ -343,11 +343,11 @@ dropRight : Int -> String -> Elm.Expression
 dropRight dropRightArg dropRightArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "dropRight"
-            , annotation =
-                Just (Type.function [ Type.int, Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "dropRight"
+             , annotation =
+                 Just (Type.function [ Type.int, Type.string ] Type.string)
+             }
         )
         [ Elm.int dropRightArg, Elm.string dropRightArg0 ]
 
@@ -364,11 +364,11 @@ contains : String -> String -> Elm.Expression
 contains containsArg containsArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "contains"
-            , annotation =
-                Just (Type.function [ Type.string, Type.string ] Type.bool)
-            }
+             { importFrom = [ "String" ]
+             , name = "contains"
+             , annotation =
+                 Just (Type.function [ Type.string, Type.string ] Type.bool)
+             }
         )
         [ Elm.string containsArg, Elm.string containsArg0 ]
 
@@ -384,11 +384,11 @@ startsWith : String -> String -> Elm.Expression
 startsWith startsWithArg startsWithArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "startsWith"
-            , annotation =
-                Just (Type.function [ Type.string, Type.string ] Type.bool)
-            }
+             { importFrom = [ "String" ]
+             , name = "startsWith"
+             , annotation =
+                 Just (Type.function [ Type.string, Type.string ] Type.bool)
+             }
         )
         [ Elm.string startsWithArg, Elm.string startsWithArg0 ]
 
@@ -404,11 +404,11 @@ endsWith : String -> String -> Elm.Expression
 endsWith endsWithArg endsWithArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "endsWith"
-            , annotation =
-                Just (Type.function [ Type.string, Type.string ] Type.bool)
-            }
+             { importFrom = [ "String" ]
+             , name = "endsWith"
+             , annotation =
+                 Just (Type.function [ Type.string, Type.string ] Type.bool)
+             }
         )
         [ Elm.string endsWithArg, Elm.string endsWithArg0 ]
 
@@ -425,15 +425,15 @@ indexes : String -> String -> Elm.Expression
 indexes indexesArg indexesArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "indexes"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string, Type.string ]
-                        (Type.list Type.int)
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "indexes"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string, Type.string ]
+                          (Type.list Type.int)
+                     )
+             }
         )
         [ Elm.string indexesArg, Elm.string indexesArg0 ]
 
@@ -446,15 +446,15 @@ indices : String -> String -> Elm.Expression
 indices indicesArg indicesArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "indices"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string, Type.string ]
-                        (Type.list Type.int)
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "indices"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string, Type.string ]
+                          (Type.list Type.int)
+                     )
+             }
         )
         [ Elm.string indicesArg, Elm.string indicesArg0 ]
 
@@ -478,11 +478,11 @@ toInt : String -> Elm.Expression
 toInt toIntArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "toInt"
-            , annotation =
-                Just (Type.function [ Type.string ] (Type.maybe Type.int))
-            }
+             { importFrom = [ "String" ]
+             , name = "toInt"
+             , annotation =
+                 Just (Type.function [ Type.string ] (Type.maybe Type.int))
+             }
         )
         [ Elm.string toIntArg ]
 
@@ -501,10 +501,10 @@ fromInt : Int -> Elm.Expression
 fromInt fromIntArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "fromInt"
-            , annotation = Just (Type.function [ Type.int ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "fromInt"
+             , annotation = Just (Type.function [ Type.int ] Type.string)
+             }
         )
         [ Elm.int fromIntArg ]
 
@@ -528,11 +528,11 @@ toFloat : String -> Elm.Expression
 toFloat toFloatArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "toFloat"
-            , annotation =
-                Just (Type.function [ Type.string ] (Type.maybe Type.float))
-            }
+             { importFrom = [ "String" ]
+             , name = "toFloat"
+             , annotation =
+                 Just (Type.function [ Type.string ] (Type.maybe Type.float))
+             }
         )
         [ Elm.string toFloatArg ]
 
@@ -552,10 +552,10 @@ fromFloat : Float -> Elm.Expression
 fromFloat fromFloatArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "fromFloat"
-            , annotation = Just (Type.function [ Type.float ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "fromFloat"
+             , annotation = Just (Type.function [ Type.float ] Type.string)
+             }
         )
         [ Elm.float fromFloatArg ]
 
@@ -570,10 +570,10 @@ fromChar : Char.Char -> Elm.Expression
 fromChar fromCharArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "fromChar"
-            , annotation = Just (Type.function [ Type.char ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "fromChar"
+             , annotation = Just (Type.function [ Type.char ] Type.string)
+             }
         )
         [ Elm.char fromCharArg ]
 
@@ -588,11 +588,11 @@ cons : Char.Char -> String -> Elm.Expression
 cons consArg consArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "cons"
-            , annotation =
-                Just (Type.function [ Type.char, Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "cons"
+             , annotation =
+                 Just (Type.function [ Type.char, Type.string ] Type.string)
+             }
         )
         [ Elm.char consArg, Elm.string consArg0 ]
 
@@ -609,15 +609,15 @@ uncons : String -> Elm.Expression
 uncons unconsArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "uncons"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string ]
-                        (Type.maybe (Type.tuple Type.char Type.string))
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "uncons"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string ]
+                          (Type.maybe (Type.tuple Type.char Type.string))
+                     )
+             }
         )
         [ Elm.string unconsArg ]
 
@@ -633,11 +633,11 @@ toList : String -> Elm.Expression
 toList toListArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "toList"
-            , annotation =
-                Just (Type.function [ Type.string ] (Type.list Type.char))
-            }
+             { importFrom = [ "String" ]
+             , name = "toList"
+             , annotation =
+                 Just (Type.function [ Type.string ] (Type.list Type.char))
+             }
         )
         [ Elm.string toListArg ]
 
@@ -655,11 +655,11 @@ fromList : List Char.Char -> Elm.Expression
 fromList fromListArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "fromList"
-            , annotation =
-                Just (Type.function [ Type.list Type.char ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "fromList"
+             , annotation =
+                 Just (Type.function [ Type.list Type.char ] Type.string)
+             }
         )
         [ Elm.list (List.map Elm.char fromListArg) ]
 
@@ -675,10 +675,10 @@ toUpper : String -> Elm.Expression
 toUpper toUpperArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "toUpper"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "toUpper"
+             , annotation = Just (Type.function [ Type.string ] Type.string)
+             }
         )
         [ Elm.string toUpperArg ]
 
@@ -693,10 +693,10 @@ toLower : String -> Elm.Expression
 toLower toLowerArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "toLower"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "toLower"
+             , annotation = Just (Type.function [ Type.string ] Type.string)
+             }
         )
         [ Elm.string toLowerArg ]
 
@@ -713,15 +713,15 @@ pad : Int -> Char.Char -> String -> Elm.Expression
 pad padArg padArg0 padArg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "pad"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.int, Type.char, Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "pad"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.int, Type.char, Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.int padArg, Elm.char padArg0, Elm.string padArg1 ]
 
@@ -738,15 +738,15 @@ padLeft : Int -> Char.Char -> String -> Elm.Expression
 padLeft padLeftArg padLeftArg0 padLeftArg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "padLeft"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.int, Type.char, Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "padLeft"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.int, Type.char, Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.int padLeftArg, Elm.char padLeftArg0, Elm.string padLeftArg1 ]
 
@@ -763,15 +763,15 @@ padRight : Int -> Char.Char -> String -> Elm.Expression
 padRight padRightArg padRightArg0 padRightArg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "padRight"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.int, Type.char, Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "padRight"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.int, Type.char, Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.int padRightArg, Elm.char padRightArg0, Elm.string padRightArg1 ]
 
@@ -786,10 +786,10 @@ trim : String -> Elm.Expression
 trim trimArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "trim"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "trim"
+             , annotation = Just (Type.function [ Type.string ] Type.string)
+             }
         )
         [ Elm.string trimArg ]
 
@@ -804,10 +804,10 @@ trimLeft : String -> Elm.Expression
 trimLeft trimLeftArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "trimLeft"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "trimLeft"
+             , annotation = Just (Type.function [ Type.string ] Type.string)
+             }
         )
         [ Elm.string trimLeftArg ]
 
@@ -822,10 +822,10 @@ trimRight : String -> Elm.Expression
 trimRight trimRightArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "trimRight"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
+             { importFrom = [ "String" ]
+             , name = "trimRight"
+             , annotation = Just (Type.function [ Type.string ] Type.string)
+             }
         )
         [ Elm.string trimRightArg ]
 
@@ -840,15 +840,15 @@ map : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 map mapArg mapArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.char ] Type.char, Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "map"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.char ] Type.char, Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.functionReduced "mapUnpack" mapArg, Elm.string mapArg0 ]
 
@@ -863,15 +863,15 @@ filter : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 filter filterArg filterArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "filter"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.char ] Type.bool, Type.string ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "filter"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.char ] Type.bool, Type.string ]
+                          Type.string
+                     )
+             }
         )
         [ Elm.functionReduced "filterUnpack" filterArg, Elm.string filterArg0 ]
 
@@ -890,25 +890,25 @@ foldl :
 foldl foldlArg foldlArg0 foldlArg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "foldl"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.char, Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.string
-                        ]
-                        (Type.var "b")
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "foldl"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.char, Type.var "b" ]
+                              (Type.var "b")
+                          , Type.var "b"
+                          , Type.string
+                          ]
+                          (Type.var "b")
+                     )
+             }
         )
         [ Elm.functionReduced
             "foldlUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced "unpack" (foldlArg functionReducedUnpack)
+               Elm.functionReduced "unpack" (foldlArg functionReducedUnpack)
             )
         , foldlArg0
         , Elm.string foldlArg1
@@ -929,25 +929,25 @@ foldr :
 foldr foldrArg foldrArg0 foldrArg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "foldr"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.char, Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.string
-                        ]
-                        (Type.var "b")
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "foldr"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.char, Type.var "b" ]
+                              (Type.var "b")
+                          , Type.var "b"
+                          , Type.string
+                          ]
+                          (Type.var "b")
+                     )
+             }
         )
         [ Elm.functionReduced
             "foldrUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced "unpack" (foldrArg functionReducedUnpack)
+               Elm.functionReduced "unpack" (foldrArg functionReducedUnpack)
             )
         , foldrArg0
         , Elm.string foldrArg1
@@ -966,15 +966,15 @@ any : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 any anyArg anyArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "any"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.char ] Type.bool, Type.string ]
-                        Type.bool
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "any"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.char ] Type.bool, Type.string ]
+                          Type.bool
+                     )
+             }
         )
         [ Elm.functionReduced "anyUnpack" anyArg, Elm.string anyArg0 ]
 
@@ -991,15 +991,15 @@ all : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 all allArg allArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "String" ]
-            , name = "all"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.char ] Type.bool, Type.string ]
-                        Type.bool
-                    )
-            }
+             { importFrom = [ "String" ]
+             , name = "all"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.char ] Type.bool, Type.string ]
+                          Type.bool
+                     )
+             }
         )
         [ Elm.functionReduced "allUnpack" allArg, Elm.string allArg0 ]
 
@@ -1066,612 +1066,632 @@ call_ =
         \isEmptyArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "isEmpty"
-                    , annotation =
-                        Just (Type.function [ Type.string ] Type.bool)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "isEmpty"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.bool)
+                     }
                 )
                 [ isEmptyArg ]
     , length =
         \lengthArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "length"
-                    , annotation = Just (Type.function [ Type.string ] Type.int)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "length"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.int)
+                     }
                 )
                 [ lengthArg ]
     , reverse =
         \reverseArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "reverse"
-                    , annotation =
-                        Just (Type.function [ Type.string ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "reverse"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.string)
+                     }
                 )
                 [ reverseArg ]
     , repeat =
         \repeatArg repeatArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "repeat"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.int, Type.string ] Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "repeat"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ repeatArg, repeatArg0 ]
     , replace =
         \replaceArg replaceArg0 replaceArg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "replace"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string, Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "replace"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ replaceArg, replaceArg0, replaceArg1 ]
     , append =
         \appendArg appendArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "append"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "append"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ appendArg, appendArg0 ]
     , concat =
         \concatArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "concat"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.list Type.string ] Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "concat"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ concatArg ]
     , split =
         \splitArg splitArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "split"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string ]
-                                (Type.list Type.string)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "split"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string ]
+                                  (Type.list Type.string)
+                             )
+                     }
                 )
                 [ splitArg, splitArg0 ]
     , join =
         \joinArg joinArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "join"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.list Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "join"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.list Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ joinArg, joinArg0 ]
     , words =
         \wordsArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "words"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string ]
-                                (Type.list Type.string)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "words"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.list Type.string)
+                             )
+                     }
                 )
                 [ wordsArg ]
     , lines =
         \linesArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "lines"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string ]
-                                (Type.list Type.string)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "lines"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.list Type.string)
+                             )
+                     }
                 )
                 [ linesArg ]
     , slice =
         \sliceArg sliceArg0 sliceArg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "slice"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.int, Type.int, Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "slice"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.int, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ sliceArg, sliceArg0, sliceArg1 ]
     , left =
         \leftArg leftArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "left"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.int, Type.string ] Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "left"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ leftArg, leftArg0 ]
     , right =
         \rightArg rightArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "right"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.int, Type.string ] Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "right"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ rightArg, rightArg0 ]
     , dropLeft =
         \dropLeftArg dropLeftArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "dropLeft"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.int, Type.string ] Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "dropLeft"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ dropLeftArg, dropLeftArg0 ]
     , dropRight =
         \dropRightArg dropRightArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "dropRight"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.int, Type.string ] Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "dropRight"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ dropRightArg, dropRightArg0 ]
     , contains =
         \containsArg containsArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "contains"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string ]
-                                Type.bool
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "contains"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string ]
+                                  Type.bool
+                             )
+                     }
                 )
                 [ containsArg, containsArg0 ]
     , startsWith =
         \startsWithArg startsWithArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "startsWith"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string ]
-                                Type.bool
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "startsWith"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string ]
+                                  Type.bool
+                             )
+                     }
                 )
                 [ startsWithArg, startsWithArg0 ]
     , endsWith =
         \endsWithArg endsWithArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "endsWith"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string ]
-                                Type.bool
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "endsWith"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string ]
+                                  Type.bool
+                             )
+                     }
                 )
                 [ endsWithArg, endsWithArg0 ]
     , indexes =
         \indexesArg indexesArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "indexes"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string ]
-                                (Type.list Type.int)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "indexes"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string ]
+                                  (Type.list Type.int)
+                             )
+                     }
                 )
                 [ indexesArg, indexesArg0 ]
     , indices =
         \indicesArg indicesArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "indices"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.string ]
-                                (Type.list Type.int)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "indices"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.string ]
+                                  (Type.list Type.int)
+                             )
+                     }
                 )
                 [ indicesArg, indicesArg0 ]
     , toInt =
         \toIntArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "toInt"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.string ] (Type.maybe Type.int)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "toInt"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.maybe Type.int)
+                             )
+                     }
                 )
                 [ toIntArg ]
     , fromInt =
         \fromIntArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "fromInt"
-                    , annotation = Just (Type.function [ Type.int ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "fromInt"
+                     , annotation =
+                         Just (Type.function [ Type.int ] Type.string)
+                     }
                 )
                 [ fromIntArg ]
     , toFloat =
         \toFloatArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "toFloat"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string ]
-                                (Type.maybe Type.float)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "toFloat"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.maybe Type.float)
+                             )
+                     }
                 )
                 [ toFloatArg ]
     , fromFloat =
         \fromFloatArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "fromFloat"
-                    , annotation =
-                        Just (Type.function [ Type.float ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "fromFloat"
+                     , annotation =
+                         Just (Type.function [ Type.float ] Type.string)
+                     }
                 )
                 [ fromFloatArg ]
     , fromChar =
         \fromCharArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "fromChar"
-                    , annotation =
-                        Just (Type.function [ Type.char ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "fromChar"
+                     , annotation =
+                         Just (Type.function [ Type.char ] Type.string)
+                     }
                 )
                 [ fromCharArg ]
     , cons =
         \consArg consArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "cons"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.char, Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "cons"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.char, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ consArg, consArg0 ]
     , uncons =
         \unconsArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "uncons"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string ]
-                                (Type.maybe (Type.tuple Type.char Type.string))
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "uncons"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.maybe (Type.tuple Type.char Type.string)
+                                  )
+                             )
+                     }
                 )
                 [ unconsArg ]
     , toList =
         \toListArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "toList"
-                    , annotation =
-                        Just
-                            (Type.function [ Type.string ] (Type.list Type.char)
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "toList"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.list Type.char)
+                             )
+                     }
                 )
                 [ toListArg ]
     , fromList =
         \fromListArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "fromList"
-                    , annotation =
-                        Just (Type.function [ Type.list Type.char ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "fromList"
+                     , annotation =
+                         Just
+                             (Type.function [ Type.list Type.char ] Type.string)
+                     }
                 )
                 [ fromListArg ]
     , toUpper =
         \toUpperArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "toUpper"
-                    , annotation =
-                        Just (Type.function [ Type.string ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "toUpper"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.string)
+                     }
                 )
                 [ toUpperArg ]
     , toLower =
         \toLowerArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "toLower"
-                    , annotation =
-                        Just (Type.function [ Type.string ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "toLower"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.string)
+                     }
                 )
                 [ toLowerArg ]
     , pad =
         \padArg padArg0 padArg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "pad"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.int, Type.char, Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "pad"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.char, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ padArg, padArg0, padArg1 ]
     , padLeft =
         \padLeftArg padLeftArg0 padLeftArg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "padLeft"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.int, Type.char, Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "padLeft"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.char, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ padLeftArg, padLeftArg0, padLeftArg1 ]
     , padRight =
         \padRightArg padRightArg0 padRightArg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "padRight"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.int, Type.char, Type.string ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "padRight"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.int, Type.char, Type.string ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ padRightArg, padRightArg0, padRightArg1 ]
     , trim =
         \trimArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "trim"
-                    , annotation =
-                        Just (Type.function [ Type.string ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "trim"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.string)
+                     }
                 )
                 [ trimArg ]
     , trimLeft =
         \trimLeftArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "trimLeft"
-                    , annotation =
-                        Just (Type.function [ Type.string ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "trimLeft"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.string)
+                     }
                 )
                 [ trimLeftArg ]
     , trimRight =
         \trimRightArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "trimRight"
-                    , annotation =
-                        Just (Type.function [ Type.string ] Type.string)
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "trimRight"
+                     , annotation =
+                         Just (Type.function [ Type.string ] Type.string)
+                     }
                 )
                 [ trimRightArg ]
     , map =
         \mapArg mapArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "map"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function [ Type.char ] Type.char
-                                , Type.string
-                                ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "map"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function [ Type.char ] Type.char
+                                  , Type.string
+                                  ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ mapArg, mapArg0 ]
     , filter =
         \filterArg filterArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "filter"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function [ Type.char ] Type.bool
-                                , Type.string
-                                ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "filter"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function [ Type.char ] Type.bool
+                                  , Type.string
+                                  ]
+                                  Type.string
+                             )
+                     }
                 )
                 [ filterArg, filterArg0 ]
     , foldl =
         \foldlArg foldlArg0 foldlArg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "foldl"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.char, Type.var "b" ]
-                                    (Type.var "b")
-                                , Type.var "b"
-                                , Type.string
-                                ]
-                                (Type.var "b")
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "foldl"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.char, Type.var "b" ]
+                                      (Type.var "b")
+                                  , Type.var "b"
+                                  , Type.string
+                                  ]
+                                  (Type.var "b")
+                             )
+                     }
                 )
                 [ foldlArg, foldlArg0, foldlArg1 ]
     , foldr =
         \foldrArg foldrArg0 foldrArg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "foldr"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.char, Type.var "b" ]
-                                    (Type.var "b")
-                                , Type.var "b"
-                                , Type.string
-                                ]
-                                (Type.var "b")
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "foldr"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.char, Type.var "b" ]
+                                      (Type.var "b")
+                                  , Type.var "b"
+                                  , Type.string
+                                  ]
+                                  (Type.var "b")
+                             )
+                     }
                 )
                 [ foldrArg, foldrArg0, foldrArg1 ]
     , any =
         \anyArg anyArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "any"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function [ Type.char ] Type.bool
-                                , Type.string
-                                ]
-                                Type.bool
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "any"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function [ Type.char ] Type.bool
+                                  , Type.string
+                                  ]
+                                  Type.bool
+                             )
+                     }
                 )
                 [ anyArg, anyArg0 ]
     , all =
         \allArg allArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "String" ]
-                    , name = "all"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function [ Type.char ] Type.bool
-                                , Type.string
-                                ]
-                                Type.bool
-                            )
-                    }
+                     { importFrom = [ "String" ]
+                     , name = "all"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function [ Type.char ] Type.bool
+                                  , Type.string
+                                  ]
+                                  Type.bool
+                             )
+                     }
                 )
                 [ allArg, allArg0 ]
     }
@@ -1756,8 +1776,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string, Type.string, Type.string ]
-                        Type.string
+                         [ Type.string, Type.string, Type.string ]
+                         Type.string
                     )
             }
     , append =
@@ -1781,8 +1801,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string, Type.string ]
-                        (Type.list Type.string)
+                         [ Type.string, Type.string ]
+                         (Type.list Type.string)
                     )
             }
     , join =
@@ -1792,8 +1812,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string, Type.list Type.string ]
-                        Type.string
+                         [ Type.string, Type.list Type.string ]
+                         Type.string
                     )
             }
     , words =
@@ -1817,8 +1837,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.int, Type.int, Type.string ]
-                        Type.string
+                         [ Type.int, Type.int, Type.string ]
+                         Type.string
                     )
             }
     , left =
@@ -1877,8 +1897,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string, Type.string ]
-                        (Type.list Type.int)
+                         [ Type.string, Type.string ]
+                         (Type.list Type.int)
                     )
             }
     , indices =
@@ -1888,8 +1908,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string, Type.string ]
-                        (Type.list Type.int)
+                         [ Type.string, Type.string ]
+                         (Type.list Type.int)
                     )
             }
     , toInt =
@@ -1938,8 +1958,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string ]
-                        (Type.maybe (Type.tuple Type.char Type.string))
+                         [ Type.string ]
+                         (Type.maybe (Type.tuple Type.char Type.string))
                     )
             }
     , toList =
@@ -1975,8 +1995,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.int, Type.char, Type.string ]
-                        Type.string
+                         [ Type.int, Type.char, Type.string ]
+                         Type.string
                     )
             }
     , padLeft =
@@ -1986,8 +2006,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.int, Type.char, Type.string ]
-                        Type.string
+                         [ Type.int, Type.char, Type.string ]
+                         Type.string
                     )
             }
     , padRight =
@@ -1997,8 +2017,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.int, Type.char, Type.string ]
-                        Type.string
+                         [ Type.int, Type.char, Type.string ]
+                         Type.string
                     )
             }
     , trim =
@@ -2026,8 +2046,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.char ] Type.char, Type.string ]
-                        Type.string
+                         [ Type.function [ Type.char ] Type.char, Type.string ]
+                         Type.string
                     )
             }
     , filter =
@@ -2037,8 +2057,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.char ] Type.bool, Type.string ]
-                        Type.string
+                         [ Type.function [ Type.char ] Type.bool, Type.string ]
+                         Type.string
                     )
             }
     , foldl =
@@ -2048,13 +2068,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.char, Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.string
-                        ]
-                        (Type.var "b")
+                         [ Type.function
+                             [ Type.char, Type.var "b" ]
+                             (Type.var "b")
+                         , Type.var "b"
+                         , Type.string
+                         ]
+                         (Type.var "b")
                     )
             }
     , foldr =
@@ -2064,13 +2084,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.char, Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.string
-                        ]
-                        (Type.var "b")
+                         [ Type.function
+                             [ Type.char, Type.var "b" ]
+                             (Type.var "b")
+                         , Type.var "b"
+                         , Type.string
+                         ]
+                         (Type.var "b")
                     )
             }
     , any =
@@ -2080,8 +2100,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.char ] Type.bool, Type.string ]
-                        Type.bool
+                         [ Type.function [ Type.char ] Type.bool, Type.string ]
+                         Type.bool
                     )
             }
     , all =
@@ -2091,8 +2111,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.char ] Type.bool, Type.string ]
-                        Type.bool
+                         [ Type.function [ Type.char ] Type.bool, Type.string ]
+                         Type.bool
                     )
             }
     }

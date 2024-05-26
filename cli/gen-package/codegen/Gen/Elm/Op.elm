@@ -23,17 +23,17 @@ equal : Elm.Expression -> Elm.Expression -> Elm.Expression
 equal equalArg equalArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "equal"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "equal"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ equalArg, equalArg0 ]
 
@@ -46,17 +46,17 @@ notEqual : Elm.Expression -> Elm.Expression -> Elm.Expression
 notEqual notEqualArg notEqualArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "notEqual"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "notEqual"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ notEqualArg, notEqualArg0 ]
 
@@ -69,17 +69,17 @@ and : Elm.Expression -> Elm.Expression -> Elm.Expression
 and andArg andArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "and"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "and"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ andArg, andArg0 ]
 
@@ -92,17 +92,17 @@ or : Elm.Expression -> Elm.Expression -> Elm.Expression
 or orArg orArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "or"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "or"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ orArg, orArg0 ]
 
@@ -115,17 +115,17 @@ append : Elm.Expression -> Elm.Expression -> Elm.Expression
 append appendArg appendArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "append"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "append"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ appendArg, appendArg0 ]
 
@@ -138,17 +138,17 @@ cons : Elm.Expression -> Elm.Expression -> Elm.Expression
 cons consArg consArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "cons"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "cons"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ consArg, consArg0 ]
 
@@ -161,17 +161,17 @@ plus : Elm.Expression -> Elm.Expression -> Elm.Expression
 plus plusArg plusArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "plus"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "plus"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ plusArg, plusArg0 ]
 
@@ -184,17 +184,17 @@ minus : Elm.Expression -> Elm.Expression -> Elm.Expression
 minus minusArg minusArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "minus"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "minus"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ minusArg, minusArg0 ]
 
@@ -207,17 +207,17 @@ multiply : Elm.Expression -> Elm.Expression -> Elm.Expression
 multiply multiplyArg multiplyArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "multiply"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "multiply"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ multiplyArg, multiplyArg0 ]
 
@@ -230,17 +230,17 @@ divide : Elm.Expression -> Elm.Expression -> Elm.Expression
 divide divideArg divideArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "divide"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "divide"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ divideArg, divideArg0 ]
 
@@ -253,17 +253,17 @@ intDivide : Elm.Expression -> Elm.Expression -> Elm.Expression
 intDivide intDivideArg intDivideArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "intDivide"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "intDivide"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ intDivideArg, intDivideArg0 ]
 
@@ -276,17 +276,17 @@ power : Elm.Expression -> Elm.Expression -> Elm.Expression
 power powerArg powerArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "power"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "power"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ powerArg, powerArg0 ]
 
@@ -299,17 +299,17 @@ lt : Elm.Expression -> Elm.Expression -> Elm.Expression
 lt ltArg ltArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "lt"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "lt"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ ltArg, ltArg0 ]
 
@@ -322,17 +322,17 @@ gt : Elm.Expression -> Elm.Expression -> Elm.Expression
 gt gtArg gtArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "gt"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "gt"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ gtArg, gtArg0 ]
 
@@ -345,17 +345,17 @@ lte : Elm.Expression -> Elm.Expression -> Elm.Expression
 lte lteArg lteArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "lte"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "lte"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ lteArg, lteArg0 ]
 
@@ -368,24 +368,28 @@ gte : Elm.Expression -> Elm.Expression -> Elm.Expression
 gte gteArg gteArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "gte"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "gte"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ gteArg, gteArg0 ]
 
 
 {-| `|>`
 
-    Elm.value "thang"
+    Elm.value
+        { importFrom = []
+        , name = "thang"
+        , annotation = Nothing
+        }
         |> Elm.Op.pipe (Elm.value "thang2")
         |> Elm.Op.pipe (Elm.value "thang3")
 
@@ -401,17 +405,17 @@ pipe : Elm.Expression -> Elm.Expression -> Elm.Expression
 pipe pipeArg pipeArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "pipe"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "pipe"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ pipeArg, pipeArg0 ]
 
@@ -426,15 +430,15 @@ parens : Elm.Expression -> Elm.Expression
 parens parensArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "parens"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "parens"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ parensArg ]
 
@@ -449,17 +453,17 @@ keep : Elm.Expression -> Elm.Expression -> Elm.Expression
 keep keepArg keepArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "keep"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "keep"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ keepArg, keepArg0 ]
 
@@ -472,17 +476,17 @@ skip : Elm.Expression -> Elm.Expression -> Elm.Expression
 skip skipArg skipArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "skip"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "skip"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ skipArg, skipArg0 ]
 
@@ -495,17 +499,17 @@ slash : Elm.Expression -> Elm.Expression -> Elm.Expression
 slash slashArg slashArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "slash"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "slash"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ slashArg, slashArg0 ]
 
@@ -518,17 +522,17 @@ query : Elm.Expression -> Elm.Expression -> Elm.Expression
 query queryArg queryArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Op" ]
-            , name = "query"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Op" ]
+             , name = "query"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
         )
         [ queryArg, queryArg0 ]
 
@@ -562,372 +566,372 @@ call_ =
         \equalArg equalArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "equal"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "equal"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ equalArg, equalArg0 ]
     , notEqual =
         \notEqualArg notEqualArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "notEqual"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "notEqual"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ notEqualArg, notEqualArg0 ]
     , and =
         \andArg andArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "and"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "and"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ andArg, andArg0 ]
     , or =
         \orArg orArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "or"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "or"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ orArg, orArg0 ]
     , append =
         \appendArg appendArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "append"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "append"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ appendArg, appendArg0 ]
     , cons =
         \consArg consArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "cons"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "cons"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ consArg, consArg0 ]
     , plus =
         \plusArg plusArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "plus"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "plus"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ plusArg, plusArg0 ]
     , minus =
         \minusArg minusArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "minus"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "minus"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ minusArg, minusArg0 ]
     , multiply =
         \multiplyArg multiplyArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "multiply"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "multiply"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ multiplyArg, multiplyArg0 ]
     , divide =
         \divideArg divideArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "divide"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "divide"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ divideArg, divideArg0 ]
     , intDivide =
         \intDivideArg intDivideArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "intDivide"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "intDivide"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ intDivideArg, intDivideArg0 ]
     , power =
         \powerArg powerArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "power"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "power"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ powerArg, powerArg0 ]
     , lt =
         \ltArg ltArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "lt"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "lt"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ ltArg, ltArg0 ]
     , gt =
         \gtArg gtArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "gt"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "gt"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ gtArg, gtArg0 ]
     , lte =
         \lteArg lteArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "lte"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "lte"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ lteArg, lteArg0 ]
     , gte =
         \gteArg gteArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "gte"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "gte"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ gteArg, gteArg0 ]
     , pipe =
         \pipeArg pipeArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "pipe"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "pipe"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ pipeArg, pipeArg0 ]
     , parens =
         \parensArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "parens"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "parens"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ parensArg ]
     , keep =
         \keepArg keepArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "keep"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "keep"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ keepArg, keepArg0 ]
     , skip =
         \skipArg skipArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "skip"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "skip"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ skipArg, skipArg0 ]
     , slash =
         \slashArg slashArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "slash"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "slash"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ slashArg, slashArg0 ]
     , query =
         \queryArg queryArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Op" ]
-                    , name = "query"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" []
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "query"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
                 )
                 [ queryArg, queryArg0 ]
     }
@@ -965,10 +969,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , notEqual =
@@ -978,10 +982,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , and =
@@ -991,10 +995,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , or =
@@ -1004,10 +1008,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , append =
@@ -1017,10 +1021,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , cons =
@@ -1030,10 +1034,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , plus =
@@ -1043,10 +1047,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , minus =
@@ -1056,10 +1060,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , multiply =
@@ -1069,10 +1073,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , divide =
@@ -1082,10 +1086,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , intDivide =
@@ -1095,10 +1099,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , power =
@@ -1108,10 +1112,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , lt =
@@ -1121,10 +1125,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , gt =
@@ -1134,10 +1138,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , lte =
@@ -1147,10 +1151,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , gte =
@@ -1160,10 +1164,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , pipe =
@@ -1173,10 +1177,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , parens =
@@ -1186,8 +1190,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , keep =
@@ -1197,10 +1201,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , skip =
@@ -1210,10 +1214,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , slash =
@@ -1223,10 +1227,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , query =
@@ -1236,10 +1240,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" []
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     }
