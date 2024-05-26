@@ -38,6 +38,11 @@ type alias FileDetails =
     }
 
 
+renderDecls :
+    FileDetails
+    -> Compiler.Declaration
+    -> { declarations : List Compiler.RenderedDeclaration, imports : List Compiler.Module, exposed : List Expose.TopLevelExpose, exposedGroups : List ( Maybe String, String ), hasPorts : Bool, warnings : List Compiler.Warning }
+    -> { declarations : List Compiler.RenderedDeclaration, imports : List Compiler.Module, exposed : List Expose.TopLevelExpose, exposedGroups : List ( Maybe String, String ), hasPorts : Bool, warnings : List Compiler.Warning }
 renderDecls fileDetails decl gathered =
     case decl of
         Compiler.Comment comm ->

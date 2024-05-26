@@ -129,6 +129,7 @@ type alias Expression =
     Compiler.Expression
 
 
+{-| -}
 type Fn value
     = Fn
         (Index.Index
@@ -144,7 +145,7 @@ type Fn value
 fnBuilder : value -> Fn value
 fnBuilder innerValue =
     Fn
-        (\index ->
+        (\_ ->
             { args = []
             , body = innerValue
             , imports = []
@@ -197,7 +198,7 @@ fnDone (Fn toFnDetails) =
                     Err _ ->
                         return.annotation
 
-                    Ok returnAnnotation ->
+                    Ok _ ->
                         List.foldr
                             (\argDetails result ->
                                 case result of
