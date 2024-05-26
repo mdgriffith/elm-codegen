@@ -885,7 +885,7 @@ If you absolutely don't want this behavior, you'll need to use [`functionAdvance
 fn: Elm.Arg.Arg arg -> (arg -> Elm.Expression) -> Elm.Expression
 -}
 fn : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-fn fnArg fnArg0 =
+fn fn_Arg fn_Arg0 =
     Elm.apply
         (Elm.value
              { importFrom = [ "Elm" ]
@@ -905,7 +905,7 @@ fn fnArg fnArg0 =
                      )
              }
         )
-        [ fnArg, Elm.functionReduced "fnUnpack" fnArg0 ]
+        [ fn_Arg, Elm.functionReduced "fnUnpack" fn_Arg0 ]
 
 
 {-| fn2: 
@@ -2319,7 +2319,7 @@ call_ =
                 )
                 [ bodyArg, bodyArg0 ]
     , fn =
-        \fnArg fnArg0 ->
+        \fn_Arg fn_Arg0 ->
             Elm.apply
                 (Elm.value
                      { importFrom = [ "Elm" ]
@@ -2339,7 +2339,7 @@ call_ =
                              )
                      }
                 )
-                [ fnArg, fnArg0 ]
+                [ fn_Arg, fn_Arg0 ]
     , fn2 =
         \fn2Arg fn2Arg0 fn2Arg1 ->
             Elm.apply
