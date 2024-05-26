@@ -179,21 +179,9 @@ fn :
     -> (value -> Expression)
     -> Function (Expression -> Expression)
 fn name one toExp =
-    let
-        funcExp : Expression
-        funcExp =
-            Elm.fnBuilder toExp
-                |> Elm.fnArg one
-                |> Elm.fnDone
-
-        call : Expression -> Expression -> Expression
-        call expr argOne =
-            Elm.apply
-                expr
-                [ argOne
-                ]
-    in
-    innerFunction name funcExp call
+    fnX name toExp
+        |> fnArg one
+        |> fnDone
 
 
 {-| -}
@@ -204,23 +192,10 @@ fn2 :
     -> (one -> two -> Expression)
     -> Function (Expression -> Expression -> Expression)
 fn2 name one two toExp =
-    let
-        funcExp : Expression
-        funcExp =
-            Elm.fnBuilder toExp
-                |> Elm.fnArg one
-                |> Elm.fnArg two
-                |> Elm.fnDone
-
-        call : Expression -> Expression -> Expression -> Expression
-        call expr argOne argTwo =
-            Elm.apply
-                expr
-                [ argOne
-                , argTwo
-                ]
-    in
-    innerFunction name funcExp call
+    fnX name toExp
+        |> fnArg one
+        |> fnArg two
+        |> fnDone
 
 
 {-| -}
@@ -232,25 +207,11 @@ fn3 :
     -> (one -> two -> three -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression)
 fn3 name one two three toExp =
-    let
-        funcExp : Expression
-        funcExp =
-            Elm.fnBuilder toExp
-                |> Elm.fnArg one
-                |> Elm.fnArg two
-                |> Elm.fnArg three
-                |> Elm.fnDone
-
-        call : Expression -> Expression -> Expression -> Expression -> Expression
-        call expr argOne argTwo argThree =
-            Elm.apply
-                expr
-                [ argOne
-                , argTwo
-                , argThree
-                ]
-    in
-    innerFunction name funcExp call
+    fnX name toExp
+        |> fnArg one
+        |> fnArg two
+        |> fnArg three
+        |> fnDone
 
 
 {-| -}
@@ -263,27 +224,12 @@ fn4 :
     -> (one -> two -> three -> four -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression)
 fn4 name one two three four toExp =
-    let
-        funcExp : Expression
-        funcExp =
-            Elm.fnBuilder toExp
-                |> Elm.fnArg one
-                |> Elm.fnArg two
-                |> Elm.fnArg three
-                |> Elm.fnArg four
-                |> Elm.fnDone
-
-        call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression
-        call expr argOne argTwo argThree argFour =
-            Elm.apply
-                expr
-                [ argOne
-                , argTwo
-                , argThree
-                , argFour
-                ]
-    in
-    innerFunction name funcExp call
+    fnX name toExp
+        |> fnArg one
+        |> fnArg two
+        |> fnArg three
+        |> fnArg four
+        |> fnDone
 
 
 {-| -}
@@ -297,29 +243,13 @@ fn5 :
     -> (one -> two -> three -> four -> five -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn5 name one two three four five toExp =
-    let
-        funcExp : Expression
-        funcExp =
-            Elm.fnBuilder toExp
-                |> Elm.fnArg one
-                |> Elm.fnArg two
-                |> Elm.fnArg three
-                |> Elm.fnArg four
-                |> Elm.fnArg five
-                |> Elm.fnDone
-
-        call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
-        call expr argOne argTwo argThree argFour argFive =
-            Elm.apply
-                expr
-                [ argOne
-                , argTwo
-                , argThree
-                , argFour
-                , argFive
-                ]
-    in
-    innerFunction name funcExp call
+    fnX name toExp
+        |> fnArg one
+        |> fnArg two
+        |> fnArg three
+        |> fnArg four
+        |> fnArg five
+        |> fnDone
 
 
 {-| -}
@@ -334,31 +264,14 @@ fn6 :
     -> (one -> two -> three -> four -> five -> six -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn6 name one two three four five six toExp =
-    let
-        funcExp : Expression
-        funcExp =
-            Elm.fnBuilder toExp
-                |> Elm.fnArg one
-                |> Elm.fnArg two
-                |> Elm.fnArg three
-                |> Elm.fnArg four
-                |> Elm.fnArg five
-                |> Elm.fnArg six
-                |> Elm.fnDone
-
-        call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
-        call expr argOne argTwo argThree argFour argFive argSix =
-            Elm.apply
-                expr
-                [ argOne
-                , argTwo
-                , argThree
-                , argFour
-                , argFive
-                , argSix
-                ]
-    in
-    innerFunction name funcExp call
+    fnX name toExp
+        |> fnArg one
+        |> fnArg two
+        |> fnArg three
+        |> fnArg four
+        |> fnArg five
+        |> fnArg six
+        |> fnDone
 
 
 {-| -}
