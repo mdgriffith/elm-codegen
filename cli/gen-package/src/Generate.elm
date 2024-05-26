@@ -412,7 +412,7 @@ block2Maker thisModule block =
                                     )
                                 |> Gen.Elm.record
                     in
-                    Elm.fn ( name ++ "arg", Just lambdaArgType ) lambdaValue
+                    Elm.fn ( name ++ "_Arg", Just lambdaArgType ) lambdaValue
                         |> Just
 
                 _ ->
@@ -530,7 +530,7 @@ annotationNamed thisModule name tags =
             Elm.function
                 (List.indexedMap
                     (\i arg ->
-                        ( name ++ "Arg" ++ String.fromInt i
+                        ( name ++ "_Arg" ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
                     )
@@ -626,7 +626,7 @@ aliasNamed docAlias =
             Elm.function
                 (List.indexedMap
                     (\i arg ->
-                        ( docAlias.name ++ "Arg" ++ String.fromInt i
+                        ( docAlias.name ++ "_Arg" ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
                     )
@@ -880,7 +880,7 @@ captureFunction baseName tipe captured =
             in
             captureFunction baseName
                 two
-                { arguments = ( baseName ++ "Arg", Just unpacked.annotation ) :: captured.arguments
+                { arguments = ( baseName ++ "_Arg", Just unpacked.annotation ) :: captured.arguments
                 , unpackers = unpacked.unpacker :: captured.unpackers
                 }
 
@@ -889,7 +889,7 @@ captureFunction baseName tipe captured =
                 unpacked =
                     unpackArg baseName tipe
             in
-            { arguments = ( baseName ++ "Arg", Just unpacked.annotation ) :: captured.arguments
+            { arguments = ( baseName ++ "_Arg", Just unpacked.annotation ) :: captured.arguments
             , unpackers = unpacked.unpacker :: captured.unpackers
             }
 
