@@ -7,6 +7,8 @@ module Gen.Maybe exposing (andThen, annotation_, call_, caseOf_, make_, map, map
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg
+import Elm.Case
 
 
 {-| The name of this module. -}
@@ -403,7 +405,7 @@ make_ =
 caseOf_ :
     { maybe :
         Elm.Expression
-        -> { maybeTags
+       -> { maybeTags
             | just : Elm.Expression -> Elm.Expression
             , nothing : Elm.Expression
         }
@@ -415,8 +417,15 @@ caseOf_ =
             Elm.Case.custom
                 maybeExpression
                 (Type.namedWith [ "Maybe" ] "Maybe" [ Type.var "a" ])
-                [ Elm.Case.branch1 "Just" ( "a", Type.var "a" ) maybeTags.just
-                , Elm.Case.branch0 "Nothing" maybeTags.nothing
+                [ Elm.Case.branch
+                    (Elm.Arg.item
+                       (Elm.Arg.varWith "arg0" (Type.var "a"))
+                       (Elm.Arg.customType "Just" maybeTags.just)
+                    )
+                    (\branchUnpack -> branchUnpack)
+                , Elm.Case.branch
+                    (Elm.Arg.customType "Nothing" maybeTags.nothing)
+                    (\branchUnpack -> branchUnpack)
                 ]
     }
 

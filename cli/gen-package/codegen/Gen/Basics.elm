@@ -7,6 +7,8 @@ module Gen.Basics exposing (abs, acos, always, annotation_, asin, atan, atan2, c
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg
+import Elm.Case
 
 
 {-| The name of this module. -}
@@ -906,17 +908,27 @@ caseOf_ =
             Elm.Case.custom
                 orderExpression
                 (Type.namedWith [ "Basics" ] "Order" [])
-                [ Elm.Case.branch0 "LT" orderTags.lT
-                , Elm.Case.branch0 "EQ" orderTags.eQ
-                , Elm.Case.branch0 "GT" orderTags.gT
+                [ Elm.Case.branch
+                    (Elm.Arg.customType "LT" orderTags.lT)
+                    (\branchUnpack -> branchUnpack)
+                , Elm.Case.branch
+                    (Elm.Arg.customType "EQ" orderTags.eQ)
+                    (\branchUnpack -> branchUnpack)
+                , Elm.Case.branch
+                    (Elm.Arg.customType "GT" orderTags.gT)
+                    (\branchUnpack -> branchUnpack)
                 ]
     , bool =
         \boolExpression boolTags ->
             Elm.Case.custom
                 boolExpression
                 (Type.namedWith [ "Basics" ] "Bool" [])
-                [ Elm.Case.branch0 "True" boolTags.true
-                , Elm.Case.branch0 "False" boolTags.false
+                [ Elm.Case.branch
+                    (Elm.Arg.customType "True" boolTags.true)
+                    (\branchUnpack -> branchUnpack)
+                , Elm.Case.branch
+                    (Elm.Arg.customType "False" boolTags.false)
+                    (\branchUnpack -> branchUnpack)
                 ]
     }
 

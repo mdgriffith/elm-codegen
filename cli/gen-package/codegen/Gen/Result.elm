@@ -7,6 +7,8 @@ module Gen.Result exposing (andThen, annotation_, call_, caseOf_, fromMaybe, mak
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg
+import Elm.Case
 
 
 {-| The name of this module. -}
@@ -630,14 +632,18 @@ caseOf_ =
                      "Result"
                      [ Type.var "error", Type.var "value" ]
                 )
-                [ Elm.Case.branch1
-                    "Ok"
-                    ( "value", Type.var "value" )
-                    resultTags.ok
-                , Elm.Case.branch1
-                    "Err"
-                    ( "error", Type.var "error" )
-                    resultTags.err
+                [ Elm.Case.branch
+                    (Elm.Arg.item
+                       (Elm.Arg.varWith "arg0" (Type.var "value"))
+                       (Elm.Arg.customType "Ok" resultTags.ok)
+                    )
+                    (\branchUnpack -> branchUnpack)
+                , Elm.Case.branch
+                    (Elm.Arg.item
+                       (Elm.Arg.varWith "arg0" (Type.var "error"))
+                       (Elm.Arg.customType "Err" resultTags.err)
+                    )
+                    (\branchUnpack -> branchUnpack)
                 ]
     }
 
