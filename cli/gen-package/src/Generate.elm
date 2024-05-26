@@ -5,6 +5,7 @@ module Generate exposing (main)
 import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
+import Elm.Arg
 import Elm.Docs
 import Elm.Gen
 import Elm.Syntax.Node exposing (Node(..))
@@ -305,8 +306,8 @@ block2Case thisModule union =
         _ ->
             Just
                 (Elm.fn2
-                    ( union.name ++ "Expression", Nothing )
-                    ( union.name ++ "Tags", Nothing )
+                    (Elm.Arg.var (union.name ++ "Expression"))
+                    (Elm.Arg.var (union.name ++ "Tags"))
                     (\express tagRecord ->
                         Gen.Elm.Case.custom express
                             (unionToAnnotation thisModule union)
@@ -331,12 +332,15 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
                 ("arg" ++ String.fromInt index)
                 (typeToExpression thisModule tipe)
     in
-    (subtypes
-        |> List.indexedMap Tuple.pair
-        |> List.foldl (\arg acc -> acc |> Gen.Elm.Arg.item (toItem arg)) baseArg
-        |> Gen.Elm.Case.branch
-    )
-        Gen.Basics.identity
+    Gen.Elm.Case.branch
+        (subtypes
+            |> List.indexedMap Tuple.pair
+            |> List.foldl (\arg acc -> acc |> Gen.Elm.Arg.item (toItem arg)) baseArg
+        )
+        (\q ->
+            q
+                |> Elm.withType Gen.Elm.annotation_.expression
+        )
 
 
 block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
@@ -412,7 +416,7 @@ block2Maker thisModule block =
                                     )
                                 |> Gen.Elm.record
                     in
-                    Elm.fn ( name ++ "_Arg", Just lambdaArgType ) lambdaValue
+                    Elm.fn (Elm.Arg.varWith (name ++ "_Arg") lambdaArgType) lambdaValue
                         |> Just
 
                 _ ->
@@ -713,7 +717,7 @@ typeCreation thisModule block =
                                 |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
                                 |> Annotation.record
                     in
-                    [ Elm.fn ( alias.name ++ "_args", Nothing )
+                    [ Elm.fn (Elm.Arg.var (alias.name ++ "_args"))
                         (\val ->
                             let
                                 arg =
@@ -757,31 +761,31 @@ typeCreation thisModule block =
                 _ ->
                     []
 
-        Elm.Docs.ValueBlock value ->
+        Elm.Docs.ValueBlock _ ->
             []
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             []
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             []
 
 
 generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
 generateBlocks thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             []
 
-        Elm.Docs.UnionBlock union ->
+        Elm.Docs.UnionBlock _ ->
             []
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             []
 
         Elm.Docs.ValueBlock value ->
             case value.tipe of
-                Elm.Type.Lambda one two ->
+                Elm.Type.Lambda _ _ ->
                     let
                         captured =
                             captureFunction value.name
@@ -829,11 +833,11 @@ generateBlocks thisModule block =
                         |> Elm.expose
                     ]
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             --All binops are defined in the top level `Elm` library
             []
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             []
 
 
