@@ -12,7 +12,7 @@ module Elm exposing
     , withDocumentation, group
     , expose, exposeConstructor
     , fileWith, docs
-    , fnBuilder, arg, fnDone, body
+    , fnBuilder, fnArg, fnDone, body, Fn
     , fn, fn2, fn3, function, functionReduced
     , customType, customTypeWith, Variant, variant, variantWith
     , alias, aliasWith
@@ -69,7 +69,7 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 ## Functions
 
-@docs fnBuilder, arg, fnDone, body
+@docs fnBuilder, fnArg, fnDone, body, Fn
 
 @docs fn, fn2, fn3, function, functionReduced
 
@@ -154,8 +154,8 @@ fnBuilder innerValue =
 
 
 {-| -}
-arg : Elm.Arg.Arg arg -> Fn (arg -> value) -> Fn value
-arg argument (Fn toFnDetails) =
+fnArg : Elm.Arg.Arg arg -> Fn (arg -> value) -> Fn value
+fnArg argument (Fn toFnDetails) =
     Fn
         (\index ->
             let
@@ -1598,7 +1598,7 @@ If you absolutely don't want this behavior, you'll need to use [`functionAdvance
 fn : Elm.Arg.Arg arg -> (arg -> Expression) -> Expression
 fn arg1 toExpression =
     fnBuilder toExpression
-        |> arg arg1
+        |> fnArg arg1
         |> fnDone
 
 
@@ -1766,8 +1766,8 @@ fn2 :
     -> Expression
 fn2 arg1 arg2 toExpression =
     fnBuilder toExpression
-        |> arg arg1
-        |> arg arg2
+        |> fnArg arg1
+        |> fnArg arg2
         |> fnDone
 
 
@@ -1780,9 +1780,9 @@ fn3 :
     -> Expression
 fn3 arg1 arg2 arg3 toExpression =
     fnBuilder toExpression
-        |> arg arg1
-        |> arg arg2
-        |> arg arg3
+        |> fnArg arg1
+        |> fnArg arg2
+        |> fnArg arg3
         |> fnDone
 
 

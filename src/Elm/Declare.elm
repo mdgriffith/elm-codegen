@@ -183,7 +183,7 @@ fn name one toExp =
         funcExp : Expression
         funcExp =
             Elm.fnBuilder toExp
-                |> Elm.arg one
+                |> Elm.fnArg one
                 |> Elm.fnDone
 
         call : Expression -> Expression -> Expression
@@ -208,8 +208,8 @@ fn2 name one two toExp =
         funcExp : Expression
         funcExp =
             Elm.fnBuilder toExp
-                |> Elm.arg one
-                |> Elm.arg two
+                |> Elm.fnArg one
+                |> Elm.fnArg two
                 |> Elm.fnDone
 
         call : Expression -> Expression -> Expression -> Expression
@@ -236,9 +236,9 @@ fn3 name one two three toExp =
         funcExp : Expression
         funcExp =
             Elm.fnBuilder toExp
-                |> Elm.arg one
-                |> Elm.arg two
-                |> Elm.arg three
+                |> Elm.fnArg one
+                |> Elm.fnArg two
+                |> Elm.fnArg three
                 |> Elm.fnDone
 
         call : Expression -> Expression -> Expression -> Expression -> Expression
@@ -267,10 +267,10 @@ fn4 name one two three four toExp =
         funcExp : Expression
         funcExp =
             Elm.fnBuilder toExp
-                |> Elm.arg one
-                |> Elm.arg two
-                |> Elm.arg three
-                |> Elm.arg four
+                |> Elm.fnArg one
+                |> Elm.fnArg two
+                |> Elm.fnArg three
+                |> Elm.fnArg four
                 |> Elm.fnDone
 
         call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression
@@ -301,11 +301,11 @@ fn5 name one two three four five toExp =
         funcExp : Expression
         funcExp =
             Elm.fnBuilder toExp
-                |> Elm.arg one
-                |> Elm.arg two
-                |> Elm.arg three
-                |> Elm.arg four
-                |> Elm.arg five
+                |> Elm.fnArg one
+                |> Elm.fnArg two
+                |> Elm.fnArg three
+                |> Elm.fnArg four
+                |> Elm.fnArg five
                 |> Elm.fnDone
 
         call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
@@ -338,12 +338,12 @@ fn6 name one two three four five six toExp =
         funcExp : Expression
         funcExp =
             Elm.fnBuilder toExp
-                |> Elm.arg one
-                |> Elm.arg two
-                |> Elm.arg three
-                |> Elm.arg four
-                |> Elm.arg five
-                |> Elm.arg six
+                |> Elm.fnArg one
+                |> Elm.fnArg two
+                |> Elm.fnArg three
+                |> Elm.fnArg four
+                |> Elm.fnArg five
+                |> Elm.fnArg six
                 |> Elm.fnDone
 
         call : Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression
@@ -392,7 +392,7 @@ fnArg :
         }
 fnArg arg builder =
     { name = builder.name
-    , builder = builder.builder |> Elm.arg arg
+    , builder = builder.builder |> Elm.fnArg arg
     , call = \expr args p -> builder.call expr (p :: args)
     }
 

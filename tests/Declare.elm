@@ -42,8 +42,8 @@ name ( a, b ) c =
 inner : Elm.Expression
 inner =
     Elm.fnBuilder (\( a, b ) c -> Elm.triple a b c)
-        |> Elm.arg (Elm.Arg.tuple (Elm.Arg.var "a") (Elm.Arg.var "b"))
-        |> Elm.arg (Elm.Arg.var "c")
+        |> Elm.fnArg (Elm.Arg.tuple (Elm.Arg.var "a") (Elm.Arg.var "b"))
+        |> Elm.fnArg (Elm.Arg.var "c")
         |> Elm.fnDone
 
 
