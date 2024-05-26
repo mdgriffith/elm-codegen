@@ -20,7 +20,6 @@ import Elm.Syntax.Type
 import Elm.Syntax.TypeAlias
 import Elm.Syntax.TypeAnnotation
 import Elm.Type
-import Internal.Compiler as Compiler
 
 
 fromSource : String -> Result String Elm.Docs.Module
@@ -50,10 +49,10 @@ toModuleNameAndExposed : { a | moduleName : Node Elm.Syntax.ModuleName.ModuleNam
 toModuleNameAndExposed { moduleName, exposingList } =
     case exposingList of
         Node _ (Elm.Syntax.Exposing.All _) ->
-            ( Compiler.denode moduleName, All )
+            ( Node.value moduleName, All )
 
         Node _ (Elm.Syntax.Exposing.Explicit exposedVals) ->
-            ( Compiler.denode moduleName, Explicit (List.map (exposeValue << Compiler.denode) exposedVals) )
+            ( Node.value moduleName, Explicit (List.map (exposeValue << Node.value) exposedVals) )
 
 
 exposeValue val =
@@ -119,7 +118,7 @@ toDocs : Elm.Syntax.File.File -> Elm.Docs.Module
 toDocs file =
     let
         ( moduleName, exposingSet ) =
-            case Compiler.denode file.moduleDefinition of
+            case Node.value file.moduleDefinition of
                 Elm.Syntax.Module.NormalModule mod ->
                     toModuleNameAndExposed mod
 
@@ -156,17 +155,17 @@ toDocs file =
                 file.declarations
     in
     { name =
-        case Compiler.denode file.moduleDefinition of
+        case Node.value file.moduleDefinition of
             Elm.Syntax.Module.NormalModule mod ->
-                Compiler.denode mod.moduleName
+                Node.value mod.moduleName
                     |> String.join "."
 
             Elm.Syntax.Module.PortModule mod ->
-                Compiler.denode mod.moduleName
+                Node.value mod.moduleName
                     |> String.join "."
 
             Elm.Syntax.Module.EffectModule mod ->
-                Compiler.denode mod.moduleName
+                Node.value mod.moduleName
                     |> String.join "."
     , comment =
         renderDocNames gathered.values
@@ -210,10 +209,10 @@ gatherImport (Node _ { moduleName, moduleAlias, exposingList }) acc =
                                 iacc
 
                             Elm.Syntax.Exposing.TypeOrAliasExpose name ->
-                                Dict.insert name (Compiler.denode moduleName) iacc
+                                Dict.insert name (Node.value moduleName) iacc
 
                             Elm.Syntax.Exposing.TypeExpose { name } ->
-                                Dict.insert name (Compiler.denode moduleName) iacc
+                                Dict.insert name (Node.value moduleName) iacc
                     )
                     acc.importedTypes
                     explicits
@@ -223,7 +222,7 @@ gatherImport (Node _ { moduleName, moduleAlias, exposingList }) acc =
                 acc.aliases
 
             Just (Node _ aliasName) ->
-                Dict.insert aliasName (Compiler.denode moduleName) acc.aliases
+                Dict.insert aliasName (Node.value moduleName) acc.aliases
     }
 
 
@@ -257,13 +256,12 @@ gather :
         , unions : List Elm.Docs.Union
         }
 gather context exposed node found =
-    case Compiler.denode node of
+    case Node.value node of
         Elm.Syntax.Declaration.FunctionDeclaration fn ->
             let
-                fnName =
-                    Compiler.denode fn.declaration
+                (Node _ fnName) =
+                    Node.value fn.declaration
                         |> .name
-                        |> Compiler.denode
             in
             if isExposed fnName exposed then
                 case toDocValue context fn of
@@ -281,7 +279,7 @@ gather context exposed node found =
         Elm.Syntax.Declaration.AliasDeclaration alias ->
             let
                 aliasName =
-                    Compiler.denode alias.name
+                    Node.value alias.name
             in
             if isExposed aliasName exposed then
                 { found
@@ -294,7 +292,7 @@ gather context exposed node found =
         Elm.Syntax.Declaration.CustomTypeDeclaration type_ ->
             let
                 typeName =
-                    Compiler.denode type_.name
+                    Node.value type_.name
             in
             if isExposedConstructors typeName exposed then
                 { found
@@ -312,7 +310,7 @@ gather context exposed node found =
         Elm.Syntax.Declaration.PortDeclaration portSignature ->
             let
                 portName =
-                    Compiler.denode portSignature.name
+                    Node.value portSignature.name
             in
             if isExposed portName exposed then
                 { found
@@ -332,7 +330,7 @@ gather context exposed node found =
 portToValue : Context -> Elm.Syntax.Signature.Signature -> Elm.Docs.Value
 portToValue context signature =
     { name =
-        Compiler.denode signature.name
+        Node.value signature.name
     , comment = ""
     , tipe =
         signature.typeAnnotation
@@ -345,18 +343,18 @@ toDocValue context fn =
     Maybe.map
         (\signature ->
             { name =
-                case Compiler.denode fn.declaration of
+                case Node.value fn.declaration of
                     implementation ->
-                        Compiler.denode implementation.name
+                        Node.value implementation.name
             , comment =
                 case fn.documentation of
                     Nothing ->
                         ""
 
                     Just doc ->
-                        Compiler.denode doc
+                        Node.value doc
             , tipe =
-                Compiler.denode signature
+                Node.value signature
                     |> .typeAnnotation
                     |> toDocType context
             }
@@ -366,21 +364,21 @@ toDocValue context fn =
 
 toDocUnion : Context -> Elm.Syntax.Type.Type -> Elm.Docs.Union
 toDocUnion context type_ =
-    { name = Compiler.denode type_.name
+    { name = Node.value type_.name
     , comment =
         case type_.documentation of
             Nothing ->
                 ""
 
             Just doc ->
-                Compiler.denode doc
-    , args = List.map Compiler.denode type_.generics
+                Node.value doc
+    , args = List.map Node.value type_.generics
     , tags =
         List.map
             (\const ->
-                case Compiler.denode const of
+                case Node.value const of
                     node ->
-                        ( Compiler.denode node.name
+                        ( Node.value node.name
                         , List.map (toDocType context) node.arguments
                         )
             )
@@ -390,15 +388,15 @@ toDocUnion context type_ =
 
 toDocUnionOpaque : Elm.Syntax.Type.Type -> Elm.Docs.Union
 toDocUnionOpaque type_ =
-    { name = Compiler.denode type_.name
+    { name = Node.value type_.name
     , comment =
         case type_.documentation of
             Nothing ->
                 ""
 
             Just doc ->
-                Compiler.denode doc
-    , args = List.map Compiler.denode type_.generics
+                Node.value doc
+    , args = List.map Node.value type_.generics
     , tags =
         []
     }
@@ -406,15 +404,15 @@ toDocUnionOpaque type_ =
 
 toDocAlias : Context -> Elm.Syntax.TypeAlias.TypeAlias -> Elm.Docs.Alias
 toDocAlias context typeAlias =
-    { name = Compiler.denode typeAlias.name
+    { name = Node.value typeAlias.name
     , comment =
         case typeAlias.documentation of
             Nothing ->
                 ""
 
             Just str ->
-                Compiler.denode str
-    , args = List.map Compiler.denode typeAlias.generics
+                Node.value str
+    , args = List.map Node.value typeAlias.generics
     , tipe =
         typeAlias.typeAnnotation
             |> toDocType context
@@ -431,7 +429,7 @@ toDocType context (Node _ annotation) =
             let
                 typeName : String
                 typeName =
-                    case Compiler.denode modName of
+                    case Node.value modName of
                         -- This is the list found at https://package.elm-lang.org/packages/elm/core/latest/
                         ( [], "List" ) ->
                             "List.List"
@@ -493,9 +491,9 @@ toDocType context (Node _ annotation) =
             Elm.Type.Record
                 (List.map
                     (\f ->
-                        case Compiler.denode f of
+                        case Node.value f of
                             ( name, fieldAnnotation ) ->
-                                ( Compiler.denode name
+                                ( Node.value name
                                 , toDocType context fieldAnnotation
                                 )
                     )
@@ -507,15 +505,15 @@ toDocType context (Node _ annotation) =
             Elm.Type.Record
                 (List.map
                     (\f ->
-                        case Compiler.denode f of
+                        case Node.value f of
                             ( name, fieldAnnotation ) ->
-                                ( Compiler.denode name
+                                ( Node.value name
                                 , toDocType context fieldAnnotation
                                 )
                     )
-                    (Compiler.denode fields)
+                    (Node.value fields)
                 )
-                (Just (Compiler.denode recordName))
+                (Just (Node.value recordName))
 
         Elm.Syntax.TypeAnnotation.FunctionTypeAnnotation one two ->
             Elm.Type.Lambda
