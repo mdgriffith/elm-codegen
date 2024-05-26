@@ -1,5 +1,6 @@
 module Elm.Declare exposing
     ( Function, fn, fn2, fn3, fn4, fn5, fn6
+    , fnX, fnArg, fnDone
     , Value, value
     , function
     , Module, module_
@@ -62,6 +63,8 @@ In that case you can do something like this using `callFrom`:
         ]
 
 @docs Function, fn, fn2, fn3, fn4, fn5, fn6
+
+@docs fnX, fnArg, fnDone
 
 @docs Value, value
 
@@ -356,6 +359,53 @@ fn6 name one two three four five six toExp =
                 ]
     in
     innerFunction name funcExp call
+
+
+{-| -}
+fnX :
+    String
+    -> res
+    ->
+        { name : String
+        , builder : Elm.Fn res
+        , call : Expression -> List Expression -> Expression
+        }
+fnX name fun =
+    { name = name
+    , builder = Elm.fnBuilder fun
+    , call = \expr args -> Elm.apply expr (List.reverse args)
+    }
+
+
+{-| -}
+fnArg :
+    Elm.Arg.Arg arg
+    ->
+        { name : String
+        , builder : Elm.Fn (arg -> value)
+        , call : Expression -> List Expression -> e
+        }
+    ->
+        { name : String
+        , builder : Elm.Fn value
+        , call : Expression -> List Expression -> Expression -> e
+        }
+fnArg arg builder =
+    { name = builder.name
+    , builder = builder.builder |> Elm.arg arg
+    , call = \expr args p -> builder.call expr (p :: args)
+    }
+
+
+{-| -}
+fnDone :
+    { name : String
+    , builder : Elm.Fn Expression
+    , call : Expression -> List Expression -> res
+    }
+    -> Function res
+fnDone builder =
+    innerFunction builder.name (Elm.fnDone builder.builder) (\expr -> builder.call expr [])
 
 
 {-| -}
