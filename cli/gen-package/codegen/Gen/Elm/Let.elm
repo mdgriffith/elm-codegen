@@ -155,7 +155,7 @@ fn :
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-fn fnArg fnArg0 fnArg1 fnArg2 =
+fn fn_Arg fn_Arg0 fn_Arg1 fn_Arg2 =
     Elm.apply
         (Elm.value
              { importFrom = [ "Elm", "Let" ]
@@ -203,10 +203,10 @@ fn fnArg fnArg0 fnArg1 fnArg2 =
                      )
              }
         )
-        [ Elm.string fnArg
-        , fnArg0
-        , Elm.functionReduced "fnUnpack" fnArg1
-        , fnArg2
+        [ Elm.string fn_Arg
+        , fn_Arg0
+        , Elm.functionReduced "fnUnpack" fn_Arg1
+        , fn_Arg2
         ]
 
 
@@ -622,7 +622,7 @@ call_ =
                 )
                 [ recordArg, recordArg0, recordArg1 ]
     , fn =
-        \fnArg fnArg0 fnArg1 fnArg2 ->
+        \fn_Arg fn_Arg0 fn_Arg1 fn_Arg2 ->
             Elm.apply
                 (Elm.value
                      { importFrom = [ "Elm", "Let" ]
@@ -671,7 +671,7 @@ call_ =
                              )
                      }
                 )
-                [ fnArg, fnArg0, fnArg1, fnArg2 ]
+                [ fn_Arg, fn_Arg0, fn_Arg1, fn_Arg2 ]
     , fn2 =
         \fn2Arg fn2Arg0 fn2Arg1 fn2Arg2 fn2Arg3 ->
             Elm.apply

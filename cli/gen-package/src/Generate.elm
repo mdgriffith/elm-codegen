@@ -416,7 +416,7 @@ block2Maker thisModule block =
                                     )
                                 |> Gen.Elm.record
                     in
-                    Elm.fn (Elm.Arg.varWith (name ++ "_Arg") lambdaArgType) lambdaValue
+                    Elm.fn (Elm.Arg.varWith (toArgName name) lambdaArgType) lambdaValue
                         |> Just
 
                 _ ->
@@ -534,7 +534,7 @@ annotationNamed thisModule name tags =
             Elm.function
                 (List.indexedMap
                     (\i arg ->
-                        ( name ++ "_Arg" ++ String.fromInt i
+                        ( toArgName name ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
                     )
@@ -630,7 +630,7 @@ aliasNamed docAlias =
             Elm.function
                 (List.indexedMap
                     (\i arg ->
-                        ( docAlias.name ++ "_Arg" ++ String.fromInt i
+                        ( toArgName docAlias.name ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
                     )
@@ -884,7 +884,7 @@ captureFunction baseName tipe captured =
             in
             captureFunction baseName
                 two
-                { arguments = ( baseName ++ "_Arg", Just unpacked.annotation ) :: captured.arguments
+                { arguments = ( toArgName baseName, Just unpacked.annotation ) :: captured.arguments
                 , unpackers = unpacked.unpacker :: captured.unpackers
                 }
 
@@ -893,9 +893,18 @@ captureFunction baseName tipe captured =
                 unpacked =
                     unpackArg baseName tipe
             in
-            { arguments = ( baseName ++ "_Arg", Just unpacked.annotation ) :: captured.arguments
+            { arguments = ( toArgName baseName, Just unpacked.annotation ) :: captured.arguments
             , unpackers = unpacked.unpacker :: captured.unpackers
             }
+
+
+toArgName : String -> String
+toArgName baseName =
+    if baseName == "fn" then
+        "fn_Arg"
+
+    else
+        baseName ++ "Arg"
 
 
 unpackArgForLambdas :
