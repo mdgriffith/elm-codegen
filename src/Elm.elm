@@ -164,7 +164,7 @@ arg argument (Fn toFnDetails) =
                 fnDetails =
                     toFnDetails argDetails.index
             in
-            { args = argDetails.details :: fnDetails.args
+            { args = fnDetails.args ++ [ argDetails.details ]
             , body = fnDetails.body argDetails.value
             , imports = fnDetails.imports
             }
