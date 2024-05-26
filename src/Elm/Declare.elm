@@ -1,6 +1,6 @@
 module Elm.Declare exposing
     ( Function, fn, fn2, fn3, fn4, fn5, fn6
-    , fnX, fnArg, fnDone
+    , fnArg, fnDone
     , Value, value
     , function
     , Module, module_
@@ -8,6 +8,7 @@ module Elm.Declare exposing
     , Annotation, alias, customType
     , Internal
     , toFile
+    , fnBuilder
     )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
@@ -64,7 +65,7 @@ In that case you can do something like this using `callFrom`:
 
 @docs Function, fn, fn2, fn3, fn4, fn5, fn6
 
-@docs fnX, fnArg, fnDone
+@docs fnBuilder, fnArg, fnDone
 
 @docs Value, value
 
@@ -179,7 +180,7 @@ fn :
     -> (value -> Expression)
     -> Function (Expression -> Expression)
 fn name one toExp =
-    fnX name toExp
+    fnBuilder name toExp
         |> fnArg one
         |> fnDone
 
@@ -192,7 +193,7 @@ fn2 :
     -> (one -> two -> Expression)
     -> Function (Expression -> Expression -> Expression)
 fn2 name one two toExp =
-    fnX name toExp
+    fnBuilder name toExp
         |> fnArg one
         |> fnArg two
         |> fnDone
@@ -207,7 +208,7 @@ fn3 :
     -> (one -> two -> three -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression)
 fn3 name one two three toExp =
-    fnX name toExp
+    fnBuilder name toExp
         |> fnArg one
         |> fnArg two
         |> fnArg three
@@ -224,7 +225,7 @@ fn4 :
     -> (one -> two -> three -> four -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression)
 fn4 name one two three four toExp =
-    fnX name toExp
+    fnBuilder name toExp
         |> fnArg one
         |> fnArg two
         |> fnArg three
@@ -243,7 +244,7 @@ fn5 :
     -> (one -> two -> three -> four -> five -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn5 name one two three four five toExp =
-    fnX name toExp
+    fnBuilder name toExp
         |> fnArg one
         |> fnArg two
         |> fnArg three
@@ -264,7 +265,7 @@ fn6 :
     -> (one -> two -> three -> four -> five -> six -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn6 name one two three four five six toExp =
-    fnX name toExp
+    fnBuilder name toExp
         |> fnArg one
         |> fnArg two
         |> fnArg three
@@ -275,7 +276,7 @@ fn6 name one two three four five six toExp =
 
 
 {-| -}
-fnX :
+fnBuilder :
     String
     -> res
     ->
@@ -283,7 +284,7 @@ fnX :
         , builder : Elm.Fn res
         , call : Expression -> List Expression -> Expression
         }
-fnX name fun =
+fnBuilder name fun =
     { name = name
     , builder = Elm.fnBuilder fun
     , call = \expr args -> Elm.apply expr (List.reverse args)

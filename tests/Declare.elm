@@ -49,7 +49,7 @@ inner =
 
 newStyle : Elm.Declare.Function (Elm.Expression -> Elm.Expression -> Elm.Expression)
 newStyle =
-    Elm.Declare.fnX "name" (\( a, b ) c -> Elm.triple a b c)
+    Elm.Declare.fnBuilder "name" (\( a, b ) c -> Elm.triple a b c)
         |> Elm.Declare.fnArg (Elm.Arg.tuple (Elm.Arg.var "a") (Elm.Arg.var "b"))
         |> Elm.Declare.fnArg (Elm.Arg.var "c")
         |> Elm.Declare.fnDone
