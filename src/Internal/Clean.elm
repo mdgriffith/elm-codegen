@@ -28,15 +28,12 @@ clean index ann =
         renames =
             prepareRename ann Set.empty
                 |> verify
-
-        renamed =
-            if Dict.isEmpty renames && not (Index.hasModuleName index) then
-                ann
-
-            else
-                doRename index renames ann
     in
-    renamed
+    if Dict.isEmpty renames && not (Index.hasModuleName index) then
+        ann
+
+    else
+        doRename index renames ann
 
 
 {-| -}

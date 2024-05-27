@@ -289,81 +289,72 @@ value desiredName valueExpr sourceLet =
 {-| -}
 fn :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression)
-    -> Let ((Expression -> Expression) -> a)
+    -> Elm.Arg.Arg arg
+    -> (arg -> Expression)
+    -> Let ((arg -> Expression) -> a)
     -> Let a
-fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
-    with
-        (Let
-            (\index ->
-                let
-                    ( name, secondIndex ) =
-                        Index.getName desiredName index
+fn desiredName arg toInnerFn sourceLet =
+    sourceLet
+        |> with
+            (Let
+                (\index ->
+                    let
+                        ( name, secondIndex ) =
+                            Index.getName desiredName index
 
-                    ( argName, thirdIndex ) =
-                        Index.getName desiredArg secondIndex
+                        argDetails =
+                            Internal.Arg.toDetails secondIndex arg
 
-                    arg : Expression
-                    arg =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = argAnnotation
-                            , name = argName
-                            }
-
-                    ( finalIndex, innerFnDetails ) =
-                        Compiler.toExpressionDetails thirdIndex
-                            (toInnerFn arg)
-                in
-                { letDecls =
-                    [ Compiler.nodify <|
-                        Exp.LetFunction
-                            { documentation = Nothing
-                            , signature = Nothing
-                            , declaration =
-                                Compiler.nodify
-                                    { name = Compiler.nodify name
-                                    , arguments =
-                                        [ Compiler.nodify
-                                            (Pattern.VarPattern argName)
-                                        ]
-                                    , expression =
-                                        Compiler.nodify innerFnDetails.expression
-                                    }
-                            }
-                    ]
-                , index = finalIndex
-                , imports = innerFnDetails.imports
-                , return =
-                    \callerArg ->
-                        Elm.apply
-                            (Compiler.Expression
-                                (\_ ->
-                                    { innerFnDetails
-                                        | expression =
-                                            Exp.FunctionOrValue []
-                                                name
-                                    }
+                        ( finalIndex, innerFnDetails ) =
+                            Compiler.toExpressionDetails argDetails.index
+                                (toInnerFn argDetails.value)
+                    in
+                    { letDecls =
+                        [ Compiler.nodify <|
+                            Exp.LetFunction
+                                { documentation = Nothing
+                                , signature = Nothing
+                                , declaration =
+                                    Compiler.nodify
+                                        { name = Compiler.nodify name
+                                        , arguments =
+                                            [ argDetails.details.pattern
+                                            ]
+                                        , expression =
+                                            Compiler.nodify innerFnDetails.expression
+                                        }
+                                }
+                        ]
+                    , index = finalIndex
+                    , imports = innerFnDetails.imports ++ argDetails.details.imports
+                    , return =
+                        \callerArg ->
+                            Elm.apply
+                                (Compiler.Expression
+                                    (\_ ->
+                                        { innerFnDetails
+                                            | expression =
+                                                Exp.FunctionOrValue []
+                                                    name
+                                        }
+                                    )
                                 )
-                            )
-                            [ callerArg
-                            ]
-                }
+                                [ toInnerFn callerArg
+                                ]
+                    }
+                )
             )
-        )
-        sourceLet
 
 
 {-| -}
 fn2 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression)
-    -> Let ((Expression -> Expression -> Expression) -> a)
+    -> Elm.Arg.Arg one
+    -> Elm.Arg.Arg two
+    -> (one -> two -> Expression)
+    -> Let ((one -> two -> Expression) -> a)
     -> Let a
-fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn sourceLet =
+fn2 desiredName argOne argTwo toInnerFn sourceLet =
     with
         (Let
             (\index ->
@@ -371,31 +362,15 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                     ( name, secondIndex ) =
                         Index.getName desiredName index
 
-                    ( oneName, thirdIndex ) =
-                        Index.getName oneDesiredArg secondIndex
+                    argOneDetails =
+                        Internal.Arg.toDetails secondIndex argOne
 
-                    ( twoName, fourIndex ) =
-                        Index.getName twoDesiredArg thirdIndex
-
-                    one : Expression
-                    one =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = oneType
-                            , name = oneName
-                            }
-
-                    two : Expression
-                    two =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = twoType
-                            , name = twoName
-                            }
+                    argTwoDetails =
+                        Internal.Arg.toDetails argOneDetails.index argTwo
 
                     ( finalIndex, innerFnDetails ) =
-                        Compiler.toExpressionDetails fourIndex
-                            (toInnerFn one two)
+                        Compiler.toExpressionDetails argTwoDetails.index
+                            (toInnerFn argOneDetails.value argTwoDetails.value)
                 in
                 { letDecls =
                     [ Compiler.nodify <|
@@ -406,10 +381,8 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                                 Compiler.nodify
                                     { name = Compiler.nodify name
                                     , arguments =
-                                        [ Compiler.nodify
-                                            (Pattern.VarPattern oneName)
-                                        , Compiler.nodify
-                                            (Pattern.VarPattern twoName)
+                                        [ argOneDetails.details.pattern
+                                        , argTwoDetails.details.pattern
                                         ]
                                     , expression =
                                         Compiler.nodify innerFnDetails.expression
@@ -430,8 +403,7 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                                     }
                                 )
                             )
-                            [ oneIncoming
-                            , twoIncoming
+                            [ toInnerFn oneIncoming twoIncoming
                             ]
                 }
             )
@@ -442,13 +414,13 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
 {-| -}
 fn3 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression)
-    -> Let ((Expression -> Expression -> Expression -> Expression) -> a)
+    -> Elm.Arg.Arg one
+    -> Elm.Arg.Arg two
+    -> Elm.Arg.Arg three
+    -> (one -> two -> three -> Expression)
+    -> Let ((one -> two -> three -> Expression) -> a)
     -> Let a
-fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDesiredArg, threeType ) toInnerFn sourceLet =
+fn3 desiredName argOne argTwo argThree toInnerFn sourceLet =
     with
         (Let
             (\index ->
@@ -456,42 +428,21 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                     ( name, secondIndex ) =
                         Index.getName desiredName index
 
-                    ( oneName, thirdIndex ) =
-                        Index.getName oneDesiredArg secondIndex
+                    argOneDetails =
+                        Internal.Arg.toDetails secondIndex argOne
 
-                    ( twoName, fourIndex ) =
-                        Index.getName twoDesiredArg thirdIndex
+                    argTwoDetails =
+                        Internal.Arg.toDetails argOneDetails.index argTwo
 
-                    ( threeName, fifthIndex ) =
-                        Index.getName threeDesiredArg fourIndex
-
-                    one : Expression
-                    one =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = oneType
-                            , name = oneName
-                            }
-
-                    two : Expression
-                    two =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = twoType
-                            , name = twoName
-                            }
-
-                    three : Expression
-                    three =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = threeType
-                            , name = threeName
-                            }
+                    argThreeDetails =
+                        Internal.Arg.toDetails argTwoDetails.index argThree
 
                     ( finalIndex, innerFnDetails ) =
-                        Compiler.toExpressionDetails fifthIndex
-                            (toInnerFn one two three)
+                        Compiler.toExpressionDetails argTwoDetails.index
+                            (toInnerFn argOneDetails.value
+                                argTwoDetails.value
+                                argThreeDetails.value
+                            )
                 in
                 { letDecls =
                     [ Compiler.nodify <|
@@ -502,12 +453,9 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                                 Compiler.nodify
                                     { name = Compiler.nodify name
                                     , arguments =
-                                        [ Compiler.nodify
-                                            (Pattern.VarPattern oneName)
-                                        , Compiler.nodify
-                                            (Pattern.VarPattern twoName)
-                                        , Compiler.nodify
-                                            (Pattern.VarPattern threeName)
+                                        [ argOneDetails.details.pattern
+                                        , argTwoDetails.details.pattern
+                                        , argThreeDetails.details.pattern
                                         ]
                                     , expression =
                                         Compiler.nodify innerFnDetails.expression
@@ -528,9 +476,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                                     }
                                 )
                             )
-                            [ oneIncoming
-                            , twoIncoming
-                            , threeIncoming
+                            [ toInnerFn oneIncoming twoIncoming threeIncoming
                             ]
                 }
             )
