@@ -3,7 +3,7 @@ module Elm.Declare exposing
     , value
     , function
     , Module, module_
-    , with, placeholder
+    , with, placeholder, alias
     , toFile
     )
 
@@ -82,6 +82,7 @@ import Internal.Compiler as Compiler
 import Internal.Format as Format
 
 
+{-| -}
 type alias Module val =
     { name : List String
     , declarations : List Elm.Declaration
@@ -116,6 +117,7 @@ with decl mod =
     }
 
 
+{-| -}
 type alias Decl value =
     { declaration : Elm.Declaration
     , call : List String -> value
