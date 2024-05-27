@@ -1,4 +1,4 @@
-module Internal.Debug exposing (facts)
+module Internal.Debug exposing (everything, everythingFormatted, facts)
 
 import Dict
 import Internal.Compiler as Compiler
@@ -16,7 +16,7 @@ facts (Compiler.Expression exp) =
     let
         expresh : Compiler.ExpressionDetails
         expresh =
-            exp Index.startIndex
+            exp (Index.startIndex Nothing)
     in
     case expresh.annotation of
         Ok sig ->
@@ -116,7 +116,7 @@ everything (Compiler.Expression exp) =
     let
         expresh : Compiler.ExpressionDetails
         expresh =
-            exp Index.startIndex
+            exp (Index.startIndex Nothing)
     in
     annotation expresh.annotation
 
