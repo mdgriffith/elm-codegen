@@ -2,30 +2,41 @@ module Internal.Clean exposing (clean)
 
 {-| For cleaning up signatures that look like
 
-        Html msg_0_1_5
+    Html msg_0_1_5
 
 to
 
-        Html msg
+    Html msg
+
+Will also adjust qualification of the type based on if this is used in the module it's declared in or not.'
 
 -}
 
 import Dict exposing (Dict)
+import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node
 import Elm.Syntax.TypeAnnotation as Type
+import Internal.Index as Index
 import Set exposing (Set)
 
 
 {-| -}
-clean : Type.TypeAnnotation -> Type.TypeAnnotation
-clean ann =
+clean : Index.Index -> Type.TypeAnnotation -> Type.TypeAnnotation
+clean index ann =
     let
         renames : Dict String String
         renames =
             prepareRename ann Set.empty
                 |> verify
+
+        renamed =
+            if Dict.isEmpty renames && not (Index.hasModuleName index) then
+                ann
+
+            else
+                doRename index renames ann
     in
-    doRename renames ann
+    renamed
 
 
 {-| -}
@@ -99,8 +110,21 @@ prepareRename ann dict =
                 |> prepareRename two
 
 
-doRename : Dict String String -> Type.TypeAnnotation -> Type.TypeAnnotation
-doRename dict ann =
+{-| Adjust the qualification of this type based on if it's used in the module it's defiend in or not.
+-}
+adjustQualification :
+    Index.Index
+    -> Node.Node ( ModuleName.ModuleName, String )
+    -> Node.Node ( ModuleName.ModuleName, String )
+adjustQualification index (Node.Node range ( modName, name )) =
+    Node.Node range
+        ( Index.getImport index modName
+        , name
+        )
+
+
+doRename : Index.Index -> Dict String String -> Type.TypeAnnotation -> Type.TypeAnnotation
+doRename index dict ann =
     case ann of
         Type.GenericType generic ->
             case Dict.get generic dict of
@@ -111,19 +135,42 @@ doRename dict ann =
                     Type.GenericType renamed
 
         Type.Typed name nodedVars ->
-            Type.Typed name (List.map (Node.map (doRename dict)) nodedVars)
+            Type.Typed (adjustQualification index name)
+                (List.map (Node.map (doRename index dict)) nodedVars)
 
         Type.Unit ->
             ann
 
         Type.Tupled nodedVars ->
-            Type.Tupled (List.map (Node.map (doRename dict)) nodedVars)
+            Type.Tupled (List.map (Node.map (doRename index dict)) nodedVars)
 
         Type.Record record ->
-            Type.Record (List.map (Node.map (Tuple.mapSecond (Node.map (doRename dict)))) record)
+            Type.Record
+                (List.map
+                    (Node.map
+                        (Tuple.mapSecond
+                            (Node.map (doRename index dict))
+                        )
+                    )
+                    record
+                )
 
         Type.GenericRecord name (Node.Node range record) ->
-            Type.GenericRecord name (Node.Node range (List.map (Node.map (Tuple.mapSecond (Node.map (doRename dict)))) record))
+            Type.GenericRecord name
+                (Node.Node range
+                    (List.map
+                        (Node.map
+                            (Tuple.mapSecond
+                                (Node.map
+                                    (doRename index dict)
+                                )
+                            )
+                        )
+                        record
+                    )
+                )
 
         Type.FunctionTypeAnnotation nodeOne nodeTwo ->
-            Type.FunctionTypeAnnotation (Node.map (doRename dict) nodeOne) (Node.map (doRename dict) nodeTwo)
+            Type.FunctionTypeAnnotation
+                (Node.map (doRename index dict) nodeOne)
+                (Node.map (doRename index dict) nodeTwo)

@@ -56,9 +56,12 @@ expressionWith :
         }
 expressionWith options (Compiler.Expression toExp) =
     let
+        index =
+            Index.startIndex Nothing
+
         expresh : Compiler.ExpressionDetails
         expresh =
-            toExp (Index.startIndex Nothing)
+            toExp index
     in
     { imports =
         expresh
@@ -71,7 +74,7 @@ expressionWith options (Compiler.Expression toExp) =
             Ok sig ->
                 case Compiler.resolve (Index.startIndex Nothing) sig.inferences sig.type_ of
                     Ok finalType ->
-                        Internal.Write.writeAnnotationWith options.aliases (Clean.clean finalType)
+                        Internal.Write.writeAnnotationWith options.aliases (Clean.clean index finalType)
 
                     Err errMsg ->
                         errMsg
@@ -116,13 +119,16 @@ declarationWith options decl =
 
         Compiler.Declaration { imports, docs, toBody } ->
             let
+                index =
+                    Index.startIndex Nothing
+
                 rendered :
                     { declaration : Declaration.Declaration
                     , additionalImports : List Compiler.Module
                     , warning : Maybe Compiler.Warning
                     }
                 rendered =
-                    toBody (Index.startIndex Nothing)
+                    toBody index
             in
             [ { imports =
                     imports
@@ -142,7 +148,7 @@ declarationWith options decl =
                                 Just (Node _ sig) ->
                                     Internal.Write.writeSignatureWith options.aliases
                                         { name = sig.name
-                                        , typeAnnotation = Node.map Clean.clean sig.typeAnnotation
+                                        , typeAnnotation = Node.map (Clean.clean index) sig.typeAnnotation
                                         }
 
                         _ ->

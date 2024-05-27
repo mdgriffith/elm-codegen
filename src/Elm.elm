@@ -398,11 +398,15 @@ value :
 value details =
     Compiler.Expression <|
         \index ->
+            let
+                importFrom =
+                    Index.getImport index details.importFrom
+            in
             { expression =
                 -- This *must* be an un-protected name, where we only use
                 -- literally what the dev gives us, because we are trying
                 -- to refer to something that already exists.
-                Exp.FunctionOrValue details.importFrom
+                Exp.FunctionOrValue importFrom
                     (Format.sanitize details.name)
             , annotation =
                 case details.annotation of
@@ -423,20 +427,20 @@ value details =
             , imports =
                 case details.annotation of
                     Nothing ->
-                        case details.importFrom of
+                        case importFrom of
                             [] ->
                                 []
 
                             _ ->
-                                [ details.importFrom ]
+                                [ importFrom ]
 
                     Just ann ->
-                        case details.importFrom of
+                        case importFrom of
                             [] ->
                                 Compiler.getAnnotationImports ann
 
                             _ ->
-                                details.importFrom :: Compiler.getAnnotationImports ann
+                                importFrom :: Compiler.getAnnotationImports ann
             }
 
 
@@ -1890,7 +1894,7 @@ declaration nameStr (Compiler.Expression toBody) =
                                         (Compiler.nodify
                                             { name = Compiler.nodify name
                                             , typeAnnotation =
-                                                Compiler.nodify (Clean.clean finalType)
+                                                Compiler.nodify (Clean.clean index finalType)
                                             }
                                         )
 

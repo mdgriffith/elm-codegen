@@ -608,8 +608,6 @@ getInnerInference index (Annotation details) =
             -- running protectAnnotation will cause the typechecking to fail :/
             -- So, there's a bug to debug
             |> protectAnnotation index
-
-    --details.annotation
     , inferences = Dict.empty
     , aliases = details.aliases
     }
@@ -2523,7 +2521,8 @@ protectAnnotation index ann =
                 (str ++ Index.indexToString index)
 
         Annotation.Typed modName anns ->
-            Annotation.Typed modName
+            Annotation.Typed
+                modName
                 (List.map (mapNode (protectAnnotation index))
                     anns
                 )
