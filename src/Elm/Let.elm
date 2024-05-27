@@ -1,6 +1,5 @@
 module Elm.Let exposing
     ( letIn, value, unpack, Let
-    , record
     , fn, fn2, fn3
     , toExpression, withBody
     )
@@ -11,13 +10,16 @@ module Elm.Let exposing
 
 Here's a brief example to get you started
 
-    Elm.Let.letIn
+    import Elm
+    import Elm.Let as Let
+
+    Let.letIn
         (\one two ->
             Elm.Op.append one two
         )
-        |> Elm.Let.value "one" (Elm.string "Hello")
-        |> Elm.Let.value "two" (Elm.string "World!")
-        |> Elm.Let.toExpression
+        |> Let.value "one" (Elm.string "Hello")
+        |> Let.value "two" (Elm.string "World!")
+        |> Let.toExpression
 
 Will translate into
 
@@ -35,14 +37,25 @@ Will translate into
 
 Here's an example destructing a tuple. This code
 
-    Elm.Let.letIn
+    import Elm
+    import Elm.Let as Let
+    import Elm.Arg as Arg
+
+
+    Let.letIn
         (\( first, second ) ->
             Elm.Op.append first second
         )
-        |> Elm.Let.unpack
-            (Elm.Arg.tuple (Elm.Arg.var "first") (Elm.Arg.var "second"))
-            (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
-        |> Elm.Let.toExpression
+        |> Let.unpack
+            (Arg.tuple
+                (Arg.var "first")
+                (Arg.var "second")
+            )
+            (Elm.tuple
+                (Elm.string "Hello")
+                (Elm.string "World!")
+            )
+        |> Let.toExpression
 
 Will generate
 
@@ -52,18 +65,20 @@ Will generate
     in
     first ++ second
 
-@docs record
-
 And extracting fields from a record.
 
-    Elm.Let.letIn
+    import Elm
+    import Elm.Let as Let
+    import Elm.Arg as Arg
+
+    Let.letIn
         (\{first, second } ->
             Elm.Op.append first second
         )
-        |> Elm.Let.unpack
-            (Elm.Arg.record (\first second -> {first, second})
-                |> Elm.Arg.field "first"
-                |> Elm.Arg.field "second"
+        |> Let.unpack
+            (Arg.record (\first second -> {first, second})
+            |> Arg.field "first"
+            |> Arg.field "second"
 
             )
             (Elm.record
@@ -71,7 +86,7 @@ And extracting fields from a record.
                 , ( "second", Elm.string "world!" )
                 ]
             )
-        |> Elm.Let.toExpression
+        |> Let.toExpression
 
 Will generate:
 
@@ -86,18 +101,21 @@ Will generate:
 
 Here's an example of declaring functions in a let expression:
 
-    Elm.Let.letIn
+    import Elm
+    import Elm.Let as Let
+
+    Let.letIn
         (\myFn ->
             myFn (Elm.bool True)
         )
-        |> Elm.Let.fn "myFn"
+        |> Let.fn "myFn"
             ( "arg", Just Type.bool )
             (\arg ->
                 Elm.ifThen arg
                     (Elm.string "True")
                     (Elm.string "False")
             )
-        |> Elm.Let.toExpression
+        |> Let.toExpression
 
 will generate
 
@@ -521,67 +539,6 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
 
 
 {-| -}
-record :
-    List String
-    -> Expression
-    -> Let (List Expression -> a)
-    -> Let a
-record fields recordExp sourceLet =
-    -- Note, we can't actually guard the field names against collision here
-    -- They have to be the actual field names in the record, duh.
-    sourceLet
-        |> with
-            (Let
-                (\index ->
-                    let
-                        ( recordIndex, recordDetails ) =
-                            Compiler.toExpressionDetails index recordExp
-
-                        ( finalIndex, unpackedfields ) =
-                            List.foldl
-                                (\fieldName ( _, gathered ) ->
-                                    let
-                                        ( gotIndex, got ) =
-                                            Elm.get fieldName recordExp
-                                                |> Compiler.toExpressionDetails index
-                                    in
-                                    ( gotIndex
-                                    , Compiler.Expression
-                                        (\_ ->
-                                            { got
-                                                | expression =
-                                                    Exp.FunctionOrValue []
-                                                        fieldName
-                                            }
-                                        )
-                                        :: gathered
-                                    )
-                                )
-                                ( recordIndex, [] )
-                                fields
-                    in
-                    { letDecls =
-                        [ Compiler.nodify
-                            (Exp.LetDestructuring
-                                (Compiler.nodify
-                                    (Pattern.RecordPattern
-                                        (List.map Compiler.nodify
-                                            fields
-                                        )
-                                    )
-                                )
-                                (Compiler.nodify recordDetails.expression)
-                            )
-                        ]
-                    , index = finalIndex
-                    , return = List.reverse unpackedfields
-                    , imports = recordDetails.imports
-                    }
-                )
-            )
-
-
-{-| -}
 toExpression : Let Expression -> Expression
 toExpression (Let toScope) =
     Compiler.Expression <|
@@ -616,7 +573,38 @@ toExpression (Let toScope) =
             }
 
 
-{-| -}
+{-| Define the body of your `let` at the bottom instead of the top so it matches the generated syntax a bit closer.
+
+These two are equivalent
+import Elm
+import Elm.Let as Let
+
+      Let.letIn
+          (\one two ->
+              Elm.Op.append one two
+          )
+          |> Let.value "one" (Elm.string "Hello")
+          |> Let.value "two" (Elm.string "World!")
+          |> Let.toExpression
+
+
+      Let.letIn Tuple.pair
+          |> Let.value "one" (Elm.string "Hello")
+          |> Let.value "two" (Elm.string "World!")
+          |> Let.withBody
+              (\(one, two) ->
+                  Elm.Op.append one two
+              )
+
+And will generate
+
+      let
+          one = "Hello"
+          two = "World!"
+      in
+      one ++ two
+
+-}
 withBody : (val -> Expression) -> Let val -> Expression
 withBody toBody (Let toScope) =
     Compiler.Expression <|
