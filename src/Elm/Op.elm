@@ -612,13 +612,3 @@ applyNumber symbol dir l r =
                     ]
             , imports = left.imports ++ right.imports
             }
-
-
-popLast : List a -> Maybe ( List a, a )
-popLast lst =
-    case List.reverse lst of
-        [] ->
-            Nothing
-
-        last :: initReverse ->
-            Just ( List.reverse initReverse, last )
