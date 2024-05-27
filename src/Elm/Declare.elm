@@ -1,13 +1,12 @@
 module Elm.Declare exposing
     ( Function, fn, fn2, fn3, fn4, fn5, fn6
-    , fnBuilder, fnArg, fnDone
+    , fnBuilder, fnArg, fnDone, placeholder
     , Value, value
     , function
-    , Module, module_
-    , with, withUnexposed, placeholder
+    , Module, module_, with, withUnexposed
     , Annotation, alias, customType
+    , toFile, include
     , Internal
-    , toFile
     )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
@@ -44,7 +43,7 @@ In that case you can do something like this using `callFrom`:
         let
             add42 =
                 Elm.Declare.fn "add42"
-                    ( "firstInt", Nothing )
+                    (Elm.Arg.var "firstInt")
                     (\firstArgument ->
                         Elm.plus
                             (Elm.int 42)
@@ -58,33 +57,32 @@ In that case you can do something like this using `callFrom`:
         , Elm.file [ "MyOtherFile" ]
             -- and call from another file
             [ Elm.declaration "mySweetNumber"
-                (add42.callFrom [ "MyFile" ] (Elm.int 82))
+                (add42.call (Elm.int 82))
             ]
         ]
 
 @docs Function, fn, fn2, fn3, fn4, fn5, fn6
 
-@docs fnBuilder, fnArg, fnDone
+@docs fnBuilder, fnArg, fnDone, placeholder
 
 @docs Value, value
 
 @docs function
 
-@docs Module, module_
-
-@docs with, withUnexposed, placeholder
+@docs Module, module_, with, withUnexposed
 
 @docs Annotation, alias, customType
 
-@docs Internal
+@docs toFile, include
 
-@docs toFile
+@docs Internal
 
 -}
 
 import Elm exposing (Expression)
 import Elm.Annotation
 import Elm.Arg
+import Internal.Compiler as Compiler
 import Internal.Format as Format
 
 
@@ -311,6 +309,21 @@ fnArg arg builder =
 
 
 {-| -}
+fnBody :
+    (args -> Expression)
+    ->
+        { name : String
+        , builder : Elm.Fn args
+        , call : Expression -> List Expression -> res
+        }
+    -> Function res
+fnBody renderer builder =
+    innerFunction builder.name
+        (Elm.body renderer builder.builder)
+        (\expr -> builder.call expr [])
+
+
+{-| -}
 fnDone :
     { name : String
     , builder : Elm.Fn Expression
@@ -318,7 +331,9 @@ fnDone :
     }
     -> Function res
 fnDone builder =
-    innerFunction builder.name (Elm.fnDone builder.builder) (\expr -> builder.call expr [])
+    innerFunction builder.name
+        (Elm.fnDone builder.builder)
+        (\expr -> builder.call expr [])
 
 
 {-| -}
@@ -398,3 +413,13 @@ toFile : Module val -> Elm.File
 toFile mod =
     Elm.file mod.name
         (List.reverse mod.declarations)
+
+
+{-| -}
+include : { title : String, docs : String } -> Module val -> Elm.Declaration
+include docs mod =
+    Compiler.Group
+        { title = docs.title
+        , docs = docs.docs
+        , decls = mod.declarations
+        }
