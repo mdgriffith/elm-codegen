@@ -1,10 +1,30 @@
 module OperatorPrecedence exposing (get, operators)
 
 import Elm
+import Elm.Annotation as Type
 import Elm.Expect
 import Elm.Op exposing (equal, multiply, or, plus)
-import Gen.Debug
 import Test exposing (Test, describe, test)
+
+
+todo : String -> Elm.Expression
+todo todoArg =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Debug" ]
+            , name = "todo"
+            , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
+            }
+        )
+        [ Elm.string todoArg ]
+
+
+valueTodo =
+    Elm.value
+        { importFrom = [ "Debug" ]
+        , name = "todo"
+        , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
+        }
 
 
 get : Test
@@ -12,11 +32,11 @@ get =
     describe "Elm.get"
         [ test "Works correctly if the argument is a function call" <|
             \_ ->
-                Elm.Expect.renderedAs (Elm.get "field" (Gen.Debug.todo "todo"))
+                Elm.Expect.renderedAs (Elm.get "field" (todo "todo"))
                     """(Debug.todo "todo").field"""
         , test "Works correctly if the argument is a value" <|
             \_ ->
-                Elm.Expect.renderedAs (Elm.get "field" Gen.Debug.values_.todo)
+                Elm.Expect.renderedAs (Elm.get "field" valueTodo)
                     """Debug.todo.field"""
         , test "Works correctly if the argument is a record" <|
             \_ ->
