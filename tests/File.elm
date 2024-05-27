@@ -3,6 +3,7 @@ module File exposing (suite)
 {-| -}
 
 import Elm
+import Elm.Arg as Arg
 import Elm.Expect
 import Test exposing (Test, describe, test)
 
@@ -10,7 +11,7 @@ import Test exposing (Test, describe, test)
 testFn1 : Elm.Declaration
 testFn1 =
     Elm.declaration "testFn1" <|
-        Elm.fn ( "arg", Nothing ) <|
+        Elm.fn (Arg.var "arg") <|
             \arg ->
                 arg
 
@@ -18,7 +19,7 @@ testFn1 =
 testFn2 : Elm.Declaration
 testFn2 =
     Elm.declaration "testFn2" <|
-        Elm.fn ( "arg", Nothing ) <|
+        Elm.fn (Arg.var "arg") <|
             \arg ->
                 arg
 
@@ -33,7 +34,7 @@ suite =
                         """
 module Test exposing (testFn1)
 
-{-| 
+{-|
 @docs testFn1
 -}
 
@@ -60,7 +61,7 @@ testFn1 arg =
                         """
 module Test exposing (testFn1, testFn2)
 
-{-| 
+{-|
 @docs testFn1, testFn2
 -}
 
