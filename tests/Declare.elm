@@ -4,6 +4,7 @@ module Declare exposing (suite)
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg
 import Elm.Declare
 import Elm.Expect
 import Elm.Op
@@ -18,13 +19,46 @@ suite =
         , aliasWithTest
         , customTypeTest
         , customTypeWithTest
+        , newStyleTest
         ]
 
 
-myFn : { declaration : Elm.Declaration, call : Elm.Expression -> Elm.Expression, callFrom : List String -> Elm.Expression -> Elm.Expression, value : List String -> Elm.Expression }
+newStyleTest : Test
+newStyleTest =
+    describe "New style"
+        [ test "usage" <|
+            \_ ->
+                Elm.Expect.renderedAs inner
+                    """\\( a, b ) c -> ( a, b, c )"""
+        , test "declaration" <|
+            \_ ->
+                Elm.Expect.declarationAs newStyle.declaration
+                    """name : ( a, b ) -> c -> ( a, b, c )
+name ( a, b ) c =
+    ( a, b, c )"""
+        ]
+
+
+inner : Elm.Expression
+inner =
+    Elm.fnBuilder (\( a, b ) c -> Elm.triple a b c)
+        |> Elm.fnArg (Elm.Arg.tuple (Elm.Arg.var "a") (Elm.Arg.var "b"))
+        |> Elm.fnArg (Elm.Arg.var "c")
+        |> Elm.fnDone
+
+
+newStyle : Elm.Declare.Function (Elm.Expression -> Elm.Expression -> Elm.Expression)
+newStyle =
+    Elm.Declare.fnBuilder "name" (\( a, b ) c -> Elm.triple a b c)
+        |> Elm.Declare.fnArg (Elm.Arg.tuple (Elm.Arg.var "a") (Elm.Arg.var "b"))
+        |> Elm.Declare.fnArg (Elm.Arg.var "c")
+        |> Elm.Declare.fnDone
+
+
+myFn : Elm.Declare.Function (Elm.Expression -> Elm.Expression)
 myFn =
     Elm.Declare.fn "myFn"
-        ( "myInt", Nothing )
+        (Elm.Arg.var "myInt")
         (Elm.Op.plus (Elm.int 5))
 
 
