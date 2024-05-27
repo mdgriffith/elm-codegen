@@ -2,13 +2,12 @@ module Pattern exposing (suite)
 
 import Elm exposing (Expression)
 import Elm.Annotation as Type
+import Elm.Arg as Arg
 import Elm.Case
-import Elm.Case.Branch as Pattern
 import Elm.Expect
 import Elm.Op
 import Elm.ToString
 import Expect
-import Gen.String
 import Internal.Compiler as Compiler
 import Internal.Index as Index
 import Set
@@ -39,64 +38,62 @@ suite =
                     expression =
                         Elm.Case.custom
                             (Elm.tuple
-                                (Elm.just (Elm.int 1))
-                                (Elm.just (Elm.int 2))
+                                (Elm.just (Elm.char 'a'))
+                                (Elm.just (Elm.char 'b'))
                             )
                             (Type.maybe Type.int)
-                            [ Pattern.tuple
-                                (Pattern.customType "Just"
-                                    (\literalInt -> literalInt)
-                                    |> Pattern.withParam (Pattern.int 1 1)
-                                    |> Pattern.toPattern
-                                )
-                                (Pattern.just (Pattern.int 2 2))
-                                |> Pattern.map
-                                    (\( left, right ) ->
-                                        Elm.int (left + right)
+                            [ Elm.Case.branch
+                                (Arg.tuple
+                                    (Arg.customType "Just" identity
+                                        |> Arg.item (Arg.char 'a')
                                     )
-                            , Pattern.tuple
-                                (Pattern.customType "Just"
-                                    (\literalInt -> literalInt)
-                                    |> Pattern.withParam (Pattern.var "left")
-                                    |> Pattern.toPattern
-                                )
-                                (Pattern.customType "Just"
-                                    (\literalInt -> literalInt)
-                                    |> Pattern.withParam (Pattern.var "right")
-                                    |> Pattern.toPattern
-                                )
-                                |> Pattern.map
-                                    (\( left, right ) ->
-                                        Elm.Op.plus left right
+                                    (Arg.customType "Just" identity
+                                        |> Arg.item (Arg.char 'b')
                                     )
-                            , Elm.Case.otherwise (\_ -> Elm.int 0)
+                                )
+                                (\( left, right ) ->
+                                    Elm.int 5
+                                )
+                            , Elm.Case.branch
+                                (Arg.tuple
+                                    (Arg.customType "Just" identity
+                                        |> Arg.item (Arg.var "left")
+                                    )
+                                    (Arg.customType "Just" identity
+                                        |> Arg.item (Arg.var "right")
+                                    )
+                                )
+                                (\( left, right ) ->
+                                    Elm.int 8
+                                )
+                            , Elm.Case.branch Arg.ignore (\_ -> Elm.int 0)
                             ]
                 in
                 Elm.Expect.renderedAs
                     expression
-                    """case ( Just 1, Just 2 ) of
-    ( Just 1, Just 2 ) ->
-        3
+                    """case ( Just 'a', Just 'b' ) of
+    ( Just 'a', Just 'b' ) ->
+        5
 
     ( Just left, Just right ) ->
-        left + right
+        8
 
-    otherwise ->
+    _ ->
         0"""
         , test "triple" <|
             \() ->
                 Elm.Case.custom (Elm.val "foo")
                     Type.unit
-                    [ Pattern.triple (Pattern.unit ()) (Pattern.var "name") (Pattern.int 123 (Elm.int 123))
-                        |> Pattern.map
-                            (\( (), _, _ ) ->
-                                Elm.unit
-                            )
+                    [ Elm.Case.branch
+                        (Arg.triple Arg.unit (Arg.var "name") (Arg.char 'a'))
+                        (\( _, _, _ ) ->
+                            Elm.unit
+                        )
                     ]
                     |> renderedAs
                         """
 case foo of
-    ( (), name, 123 ) ->
+    ( (), name, 'a' ) ->
         ()
 """
         , test "record destructure" <|
@@ -108,12 +105,14 @@ case foo of
                         ]
                     )
                     Type.unit
-                    [ Pattern.record2
-                        (\first last ->
+                    [ Elm.Case.branch
+                        (Arg.record Tuple.pair
+                            |> Arg.field "first"
+                            |> Arg.field "last"
+                        )
+                        (\( first, last ) ->
                             Elm.Op.append first last
                         )
-                        "first"
-                        "last"
                     ]
                     |> renderedAs
                         """
@@ -130,12 +129,20 @@ case { first = "Jane", last = "Doe" } of
                         ]
                     )
                     Type.unit
-                    [ Pattern.record2 Tuple.pair "first" "last"
-                        |> Pattern.aliasAs "record"
-                            (\record ( first, last ) ->
-                                Elm.tuple record
-                                    (Elm.Op.append first last)
-                            )
+                    [ Elm.Case.branch
+                        (Arg.record Tuple.pair
+                            |> Arg.field "first"
+                            |> Arg.field "last"
+                        )
+                        (\( first, second ) ->
+                            Elm.tuple first second
+                        )
+
+                    -- |> Pattern.aliasAs "record")
+                    --     (\record ( first, last ) ->
+                    --         Elm.tuple record
+                    --             (Elm.Op.append first last)
+                    --     )
                     ]
                     |> renderedAs
                         """
@@ -147,29 +154,30 @@ case { first = "Jane", last = "Doe" } of
             \() ->
                 Elm.Case.custom
                     Elm.nothing
-                    Type.unit
-                    [ Pattern.just (Pattern.int 1 (Elm.string "There is 1 item"))
-                    , Pattern.just
-                        (Pattern.var "n")
-                        |> Pattern.map
-                            (\n ->
-                                Elm.Op.append
-                                    (Elm.Op.append
-                                        (Elm.string "There are ")
-                                        (Gen.String.call_.fromInt n)
-                                    )
-                                    (Elm.string " items")
-                            )
-                    , Pattern.nothing (Elm.string "Oh, it's nothing.")
+                    (Type.maybe Type.char)
+                    [ Elm.Case.branch
+                        (Arg.customType "Just" identity
+                            |> Arg.item (Arg.char 'c')
+                        )
+                        (\_ -> Elm.string "There is 1 item")
+                    , Elm.Case.branch
+                        (Arg.customType "Just" identity
+                            |> Arg.item (Arg.var "n")
+                        )
+                        (\n ->
+                            Elm.string "There are more items"
+                        )
+                    , Elm.Case.branch (Arg.customType "Nothing" ())
+                        (\_ -> Elm.string "Oh, it's nothing.")
                     ]
                     |> renderedAs
                         """
 case Nothing of
-    Just 1 ->
+    Just 'c' ->
         "There is 1 item"
 
     Just n ->
-        ("There are " ++ String.fromInt n) ++ " items"
+        "There are more items"
 
     Nothing ->
         "Oh, it's nothing."
@@ -179,7 +187,11 @@ case Nothing of
                 \() ->
                     Elm.Case.custom Elm.unit
                         Type.unit
-                        [ Pattern.unit Elm.unit
+                        [ Elm.Case.branch
+                            Arg.unit
+                            (\_ ->
+                                Elm.unit
+                            )
                         ]
                         |> renderedAs
                             """
@@ -190,9 +202,9 @@ case () of
             , test "string" <|
                 \() ->
                     Elm.Case.custom (Elm.string "Hi!")
-                        Type.unit
-                        [ Pattern.string "Hi!" (Elm.string "Hello to you!")
-                        , Pattern.ignore (Elm.string "Excuse me?")
+                        Type.string
+                        [ Elm.Case.branch (Arg.string "Hi!") (\_ -> Elm.string "Hello to you!")
+                        , Elm.Case.branch Arg.ignore (\_ -> Elm.string "Excuse me?")
                         ]
                         |> renderedAs
                             """
@@ -207,8 +219,8 @@ case "Hi!" of
                 \() ->
                     Elm.Case.custom (Elm.char 'z')
                         Type.unit
-                        [ Pattern.char 'z' (Elm.int 26)
-                        , Pattern.ignore (Elm.int 0)
+                        [ Elm.Case.branch (Arg.char 'z') (\_ -> Elm.int 26)
+                        , Elm.Case.branch Arg.ignore (\_ -> Elm.int 0)
                         ]
                         |> renderedAs
                             """
@@ -223,7 +235,11 @@ case 'z' of
                 \() ->
                     Elm.Case.custom (Elm.char 'z')
                         Type.unit
-                        [ Pattern.var "a.b" ]
+                        [ Elm.Case.branch (Arg.var "a.b")
+                            (\arg ->
+                                arg
+                            )
+                        ]
                         |> renderedAs """
 case 'z' of
     ab ->
@@ -233,13 +249,24 @@ case 'z' of
         ]
 
 
+fromInt fromIntArg =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "String" ]
+            , name = "fromInt"
+            , annotation = Just (Type.function [ Type.int ] Type.string)
+            }
+        )
+        [ fromIntArg ]
+
+
 expectImports :
     List (List String)
     -> Compiler.Expression
     -> Expect.Expectation
 expectImports expectedImports expression =
     expression
-        |> Compiler.toExpressionDetails Index.startIndex
+        |> Compiler.toExpressionDetails (Index.startIndex Nothing)
         |> Tuple.second
         |> Compiler.getImports
         |> List.filter (not << List.isEmpty)
