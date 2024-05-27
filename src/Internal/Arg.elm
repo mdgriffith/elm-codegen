@@ -233,15 +233,20 @@ tuple (Arg arg1) (Arg arg2) =
                             }
                         )
                         details1.annotation
-                        details1.annotation
+                        details2.annotation
 
                 imports =
-                    List.concat [ details1.imports, details2.imports ]
+                    details1.imports ++ details2.imports
             in
             { details =
                 { imports = imports
                 , pattern =
-                    Compiler.nodify (Pattern.TuplePattern [ details1.pattern, details2.pattern ])
+                    Compiler.nodify
+                        (Pattern.TuplePattern
+                            [ details1.pattern
+                            , details2.pattern
+                            ]
+                        )
                 , annotation = annotation
                 }
             , index = Index.next two.index
@@ -334,15 +339,14 @@ val :
         )
 val index name =
     let
+        typename : String
+        typename =
+            Index.protectTypeName name index
+
         type_ =
-            Annotation.GenericType name
+            Annotation.GenericType typename
 
         annotation =
-            let
-                typename : String
-                typename =
-                    Index.protectTypeName name index
-            in
             Ok
                 { type_ = type_
                 , inferences = Dict.empty
