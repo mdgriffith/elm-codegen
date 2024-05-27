@@ -15,11 +15,14 @@ This module will help you do that.
 
 Here's an example, let's define a new function called `add42`
 
+    import Elm.Arg as Arg
+    import Elm.Declare as Declare
+
     renderFile =
         let
             add42 =
-                Elm.Declare.fn "add42"
-                    ( "firstInt", Nothing )
+                Declare.fn "add42"
+                    (Arg.value "firstInt")
                     (\firstArgument ->
                         Elm.plus
                             (Elm.int 42)
@@ -34,32 +37,6 @@ Here's an example, let's define a new function called `add42`
             , Elm.declaration "mySweetNumber"
                 (add42.call (Elm.int 82))
             ]
-
-Depending on your situation, you may want to define a function in one file, but call it from another.
-
-In that case you can do something like this using `callFrom`:
-
-    renderFileList =
-        let
-            add42 =
-                Elm.Declare.fn "add42"
-                    (Elm.Arg.var "firstInt")
-                    (\firstArgument ->
-                        Elm.plus
-                            (Elm.int 42)
-                            firstArgument
-                    )
-        in
-        [ Elm.file [ "MyFile" ]
-            -- add our declaration to our file
-            [ add42.declaration
-            ]
-        , Elm.file [ "MyOtherFile" ]
-            -- and call from another file
-            [ Elm.declaration "mySweetNumber"
-                (add42.call (Elm.int 82))
-            ]
-        ]
 
 @docs Function, fn, fn2, fn3, fn4, fn5, fn6
 
@@ -152,14 +129,20 @@ customType name variants =
 
 
 {-| -}
-with : { a | declaration : Elm.Declaration, internal : Internal required } -> Module (required -> val) -> Module val
+with :
+    { a
+        | declaration : Elm.Declaration
+        , internal : Internal required
+    }
+    -> Module (required -> val)
+    -> Module val
 with decl mod =
     let
         (Internal call) =
             decl.internal
     in
     { name = mod.name
-    , declarations = decl.declaration :: mod.declarations
+    , declarations = Elm.expose decl.declaration :: mod.declarations
     , call = mod.call (call mod.name)
     }
 
