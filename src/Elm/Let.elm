@@ -109,7 +109,7 @@ Here's an example of declaring functions in a let expression:
             myFn (Elm.bool True)
         )
         |> Let.fn "myFn"
-            ( "arg", Just Type.bool )
+            (Arg.varWith "arg" Type.bool )
             (\arg ->
                 Elm.ifThen arg
                     (Elm.string "True")
@@ -205,7 +205,11 @@ unpack argument bodyExpression (Let toLetScope) =
             { letDecls = decl :: previousLet.letDecls
             , index = previousLet.index
             , return = previousLet.return argDetails.value
-            , imports = argDetails.details.imports ++ previousLet.imports
+            , imports =
+                bodyDetails.imports
+                    ++ previousLet.imports
+                    ++ argDetails.details.imports
+                    ++ previousLet.imports
             }
         )
 
@@ -291,7 +295,7 @@ fn :
     String
     -> Elm.Arg.Arg arg
     -> (arg -> Expression)
-    -> Let ((arg -> Expression) -> a)
+    -> Let ((Expression -> Expression) -> a)
     -> Let a
 fn desiredName arg toInnerFn sourceLet =
     sourceLet
@@ -306,7 +310,8 @@ fn desiredName arg toInnerFn sourceLet =
                             Internal.Arg.toDetails secondIndex arg
 
                         ( finalIndex, innerFnDetails ) =
-                            Compiler.toExpressionDetails argDetails.index
+                            Compiler.toExpressionDetails
+                                argDetails.index
                                 (toInnerFn argDetails.value)
                     in
                     { letDecls =
@@ -339,7 +344,7 @@ fn desiredName arg toInnerFn sourceLet =
                                         }
                                     )
                                 )
-                                [ toInnerFn callerArg
+                                [ callerArg
                                 ]
                     }
                 )
@@ -352,7 +357,7 @@ fn2 :
     -> Elm.Arg.Arg one
     -> Elm.Arg.Arg two
     -> (one -> two -> Expression)
-    -> Let ((one -> two -> Expression) -> a)
+    -> Let ((Expression -> Expression -> Expression) -> a)
     -> Let a
 fn2 desiredName argOne argTwo toInnerFn sourceLet =
     with
@@ -403,7 +408,8 @@ fn2 desiredName argOne argTwo toInnerFn sourceLet =
                                     }
                                 )
                             )
-                            [ toInnerFn oneIncoming twoIncoming
+                            [ oneIncoming
+                            , twoIncoming
                             ]
                 }
             )
@@ -418,7 +424,7 @@ fn3 :
     -> Elm.Arg.Arg two
     -> Elm.Arg.Arg three
     -> (one -> two -> three -> Expression)
-    -> Let ((one -> two -> three -> Expression) -> a)
+    -> Let ((Expression -> Expression -> Expression -> Expression) -> a)
     -> Let a
 fn3 desiredName argOne argTwo argThree toInnerFn sourceLet =
     with
@@ -476,7 +482,9 @@ fn3 desiredName argOne argTwo argThree toInnerFn sourceLet =
                                     }
                                 )
                             )
-                            [ toInnerFn oneIncoming twoIncoming threeIncoming
+                            [ oneIncoming
+                            , twoIncoming
+                            , threeIncoming
                             ]
                 }
             )
