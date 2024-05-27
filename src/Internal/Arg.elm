@@ -16,7 +16,6 @@ module Internal.Arg exposing
     , triple
     , tuple
     , unit
-    , val
     , var
     , varWith
     )
@@ -368,12 +367,15 @@ val index name =
 
 {-| -}
 var : String -> Arg Expression
-var name =
+var rawName =
     Arg
         (\index ->
             let
+                ( name, nameIndex ) =
+                    Index.getName rawName index
+
                 ( value, annotation, _ ) =
-                    val index name
+                    val nameIndex name
 
                 imports =
                     []
@@ -383,7 +385,7 @@ var name =
                 , pattern = Compiler.nodify (Pattern.VarPattern name)
                 , annotation = annotation
                 }
-            , index = Index.next index
+            , index = Index.next nameIndex
             , value = value
             }
         )
@@ -391,12 +393,15 @@ var name =
 
 {-| -}
 varWith : String -> Compiler.Annotation -> Arg Expression
-varWith name ann =
+varWith rawName ann =
     Arg
         (\index ->
             let
+                ( name, nameIndex ) =
+                    Index.getName rawName index
+
                 annotation =
-                    Ok (Compiler.getInnerInference index ann)
+                    Ok (Compiler.getInnerInference nameIndex ann)
 
                 imports =
                     Compiler.getAnnotationImports ann
@@ -406,7 +411,7 @@ varWith name ann =
                 , pattern = Compiler.nodify (Pattern.VarPattern name)
                 , annotation = annotation
                 }
-            , index = Index.next index
+            , index = Index.next nameIndex
             , value =
                 Compiler.Expression <|
                     \_ ->
