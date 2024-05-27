@@ -1,6 +1,6 @@
 module Elm.Declare exposing
     ( Function, fn, fn2, fn3, fn4, fn5, fn6
-    , fnBuilder, fnArg, fnDone, placeholder
+    , fnBuilder, fnArg, fnDone, fnBody, placeholder
     , Value, value
     , function
     , Module, module_, with, withUnexposed
@@ -63,7 +63,7 @@ In that case you can do something like this using `callFrom`:
 
 @docs Function, fn, fn2, fn3, fn4, fn5, fn6
 
-@docs fnBuilder, fnArg, fnDone, placeholder
+@docs fnBuilder, fnArg, fnDone, fnBody, placeholder
 
 @docs Value, value
 
