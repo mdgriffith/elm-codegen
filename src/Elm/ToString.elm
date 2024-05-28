@@ -66,7 +66,7 @@ expressionWith options (Compiler.Expression toExp) =
     { imports =
         expresh
             |> Compiler.getImports
-            |> List.filterMap (Compiler.makeImport options.aliases)
+            |> List.filterMap (Compiler.makeImport [] options.aliases)
             |> Internal.Write.writeImports
     , body = Internal.Write.writeExpressionWith options.aliases expresh.expression
     , signature =
@@ -133,7 +133,7 @@ declarationWith options decl =
             [ { imports =
                     imports
                         ++ rendered.additionalImports
-                        |> List.filterMap (Compiler.makeImport options.aliases)
+                        |> List.filterMap (Compiler.makeImport [] options.aliases)
                         |> Internal.Write.writeImports
               , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedDecl rendered.declaration)
               , docs =
@@ -200,7 +200,7 @@ annotationWith :
         }
 annotationWith options (Compiler.Annotation ann) =
     { imports =
-        List.filterMap (Compiler.makeImport options.aliases) ann.imports
+        List.filterMap (Compiler.makeImport [] options.aliases) ann.imports
             |> Internal.Write.writeImports
     , signature =
         Internal.Write.writeAnnotationWith options.aliases ann.annotation

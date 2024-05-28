@@ -710,7 +710,8 @@ type alias Module =
 
 
 makeImport :
-    List ( Module, String )
+    Module
+    -> List ( Module, String )
     -> Module
     ->
         Maybe
@@ -718,21 +719,53 @@ makeImport :
             , moduleAlias : Maybe (Node (List String))
             , exposingList : Maybe (Node Expose.Exposing)
             }
-makeImport aliases name =
-    case name of
-        [] ->
-            Nothing
+makeImport thisModule aliases name =
+    if thisModule == name then
+        Nothing
 
-        _ ->
-            case findAlias name aliases of
-                Nothing ->
-                    if builtIn name then
-                        Nothing
+    else
+        case name of
+            [] ->
+                Nothing
 
-                    else
+            _ ->
+                case findAlias name aliases of
+                    Nothing ->
+                        if builtIn name then
+                            Nothing
+
+                        else
+                            Just
+                                { moduleName = nodify name
+                                , moduleAlias = Nothing
+                                , exposingList =
+                                    if isUrlParser name then
+                                        Just
+                                            (nodify <|
+                                                Expose.Explicit
+                                                    [ nodify (Expose.InfixExpose "</>")
+                                                    , nodify (Expose.InfixExpose "<?>")
+                                                    ]
+                                            )
+
+                                    else if isParser name then
+                                        Just
+                                            (nodify <|
+                                                Expose.Explicit
+                                                    [ nodify (Expose.InfixExpose "|=")
+                                                    , nodify (Expose.InfixExpose "|.")
+                                                    ]
+                                            )
+
+                                    else
+                                        Nothing
+                                }
+
+                    Just alias ->
                         Just
                             { moduleName = nodify name
-                            , moduleAlias = Nothing
+                            , moduleAlias =
+                                Just (nodify [ alias ])
                             , exposingList =
                                 if isUrlParser name then
                                     Just
@@ -755,34 +788,6 @@ makeImport aliases name =
                                 else
                                     Nothing
                             }
-
-                Just alias ->
-                    Just
-                        { moduleName = nodify name
-                        , moduleAlias =
-                            Just (nodify [ alias ])
-                        , exposingList =
-                            if isUrlParser name then
-                                Just
-                                    (nodify <|
-                                        Expose.Explicit
-                                            [ nodify (Expose.InfixExpose "</>")
-                                            , nodify (Expose.InfixExpose "<?>")
-                                            ]
-                                    )
-
-                            else if isParser name then
-                                Just
-                                    (nodify <|
-                                        Expose.Explicit
-                                            [ nodify (Expose.InfixExpose "|=")
-                                            , nodify (Expose.InfixExpose "|.")
-                                            ]
-                                    )
-
-                            else
-                                Nothing
-                        }
 
 
 findAlias : List String -> List ( Module, String ) -> Maybe String

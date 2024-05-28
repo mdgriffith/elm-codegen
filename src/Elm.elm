@@ -167,7 +167,7 @@ fnArg argument (Fn toFnDetails) =
             in
             { args = fnDetails.args ++ [ argDetails.details ]
             , body = fnDetails.body argDetails.value
-            , imports = fnDetails.imports
+            , imports = fnDetails.imports ++ argDetails.details.imports
             }
         )
 
@@ -226,7 +226,8 @@ fnDone (Fn toFnDetails) =
                             )
                             return.annotation
                             fnDetails.args
-            , imports = fnDetails.imports
+            , imports =
+                fnDetails.imports ++ return.imports
             }
         )
 

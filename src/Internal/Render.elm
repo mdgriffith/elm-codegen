@@ -171,7 +171,7 @@ render toDocComment fileDetails =
                 , imports =
                     rendered.imports
                         |> dedupImports
-                        |> List.filterMap (Compiler.makeImport fileDetails.aliases)
+                        |> List.filterMap (Compiler.makeImport fileDetails.moduleName fileDetails.aliases)
                 , declarations =
                     List.reverse rendered.declarations
                 , comments =
