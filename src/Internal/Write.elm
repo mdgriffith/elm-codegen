@@ -340,22 +340,30 @@ prettyExposing exposing_ =
         exposings =
             case exposing_ of
                 All _ ->
-                    Pretty.string ".." |> Pretty.parens
+                    Pretty.string ".."
+                        |> Pretty.surround
+                            (Pretty.string " (")
+                            (Pretty.string ")")
 
                 Explicit tll ->
-                    ImportsAndExposing.sortAndDedupExposings (denodeAll tll)
-                        |> prettyTopLevelExposes
-                        |> Pretty.parens
+                    if List.length tll <= 5 then
+                        ImportsAndExposing.sortAndDedupExposings (denodeAll tll)
+                            |> List.map prettyTopLevelExpose
+                            |> Pretty.join (Pretty.string ", ")
+                            |> Pretty.surround
+                                (Pretty.string " (")
+                                (Pretty.string ")")
+
+                    else
+                        ImportsAndExposing.sortAndDedupExposings (denodeAll tll)
+                            |> List.map prettyTopLevelExpose
+                            |> Pretty.join (Pretty.string "\n    , ")
+                            |> Pretty.surround
+                                (Pretty.string "\n    ( ")
+                                (Pretty.string "\n    )")
     in
     Pretty.string "exposing"
-        |> Pretty.a Pretty.space
         |> Pretty.a exposings
-
-
-prettyTopLevelExposes : List TopLevelExpose -> Doc t
-prettyTopLevelExposes exposes =
-    List.map prettyTopLevelExpose exposes
-        |> Pretty.join (Pretty.string ", ")
 
 
 prettyTopLevelExpose : TopLevelExpose -> Doc t
