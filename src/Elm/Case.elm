@@ -170,7 +170,7 @@ captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
         ( _, exp ) =
             Compiler.toExpressionDetails branchIndex caseExpression
     in
-    { index = accum.index
+    { index = Index.next accum.index
     , cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
     , imports = accum.imports ++ exp.imports
     , annotation =
