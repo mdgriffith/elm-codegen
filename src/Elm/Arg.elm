@@ -2,6 +2,7 @@ module Elm.Arg exposing
     ( Arg, unit, var, varWith
     , tuple, triple
     , record, field
+    , aliasAs
     , ignore, string, char
     , list, item, listRemaining
     , customType
@@ -14,6 +15,8 @@ module Elm.Arg exposing
 @docs tuple, triple
 
 @docs record, field
+
+@docs aliasAs
 
 
 ## Useful for case expressions
@@ -57,6 +60,12 @@ varWith =
 unit : Arg Expression
 unit =
     Internal.Arg.unit
+
+
+{-| -}
+aliasAs : String -> Arg arg -> Arg ( arg, Expression )
+aliasAs =
+    Internal.Arg.aliasAs
 
 
 {-| -}

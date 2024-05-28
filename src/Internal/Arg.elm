@@ -1,24 +1,33 @@
 module Internal.Arg exposing
-    ( Arg(..)
-    , ArgDetails
-    , Expression
-    , Module
-    , char
+    ( Arg(..), ArgDetails, Expression, Module, toDetails
+    , aliasAs
+    , var, varWith
+    , triple, tuple
+    , char, string
     , customType
-    , field
-    , ignore
-    , item
-    , list
-    , listRemaining
-    , record
-    , string
-    , toDetails
-    , triple
-    , tuple
-    , unit
-    , var
-    , varWith
+    , item, list, listRemaining, record, field
+    , ignore, unit
     )
+
+{-|
+
+@docs Arg, ArgDetails, Expression, Module, toDetails
+
+@docs aliasAs
+
+@docs var, varWith
+
+@docs triple, tuple
+
+@docs char, string
+
+@docs customType
+
+@docs item, list, listRemaining, record, field
+
+@docs ignore, unit
+
+-}
 
 import Dict
 import Elm.Syntax.Expression as Exp
@@ -130,6 +139,36 @@ string str =
                         , annotation = annotation
                         , imports = imports
                         }
+            }
+        )
+
+
+{-| -}
+aliasAs : String -> Arg arg -> Arg ( arg, Expression )
+aliasAs aliasName (Arg toArgDetails) =
+    Arg
+        (\index ->
+            let
+                innerArgDetails =
+                    toArgDetails index
+
+                ( aliasVal, _, _ ) =
+                    val innerArgDetails.index aliasName
+            in
+            { details =
+                { imports = innerArgDetails.details.imports
+                , pattern =
+                    Pattern.AsPattern
+                        innerArgDetails.details.pattern
+                        (Compiler.nodify aliasName)
+                        |> Compiler.nodify
+                , annotation = innerArgDetails.details.annotation
+                }
+            , index = Index.next innerArgDetails.index
+            , value =
+                ( innerArgDetails.value
+                , aliasVal
+                )
             }
         )
 
