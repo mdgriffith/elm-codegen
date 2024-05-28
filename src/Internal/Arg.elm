@@ -89,12 +89,9 @@ unit =
             let
                 annotation =
                     Ok (Compiler.inference Annotation.Unit)
-
-                imports =
-                    []
             in
             { details =
-                { imports = imports
+                { imports = []
                 , pattern = Compiler.nodify Pattern.UnitPattern
                 , annotation = annotation
                 }
@@ -104,7 +101,7 @@ unit =
                     \_ ->
                         { expression = Exp.UnitExpr
                         , annotation = Ok (Compiler.inference Annotation.Unit)
-                        , imports = imports
+                        , imports = []
                         }
             }
         )
@@ -526,7 +523,7 @@ customType name toType =
                         )
                 , annotation = annotation
                 }
-            , index = Index.next index
+            , index = Index.dive index
             , value =
                 toType
             }
@@ -598,17 +595,6 @@ item (Arg itemArg) (Arg arg) =
                     Result.map
                         (\ann ->
                             { type_ =
-                                -- case ann.type_ of
-                                --     Annotation.Record fields ->
-                                --         Annotation.Record
-                                --             (fields
-                                --                 ++ [ Compiler.nodify
-                                --                         ( Compiler.nodify name
-                                --                         , Compiler.nodify fieldType
-                                --                         )
-                                --                    ]
-                                --             )
-                                --     _ ->
                                 ann.type_
                             , inferences = ann.inferences
                             , aliases = ann.aliases
@@ -633,7 +619,7 @@ item (Arg itemArg) (Arg arg) =
                             details.pattern
                 , annotation = newAnnotation
                 }
-            , index = Index.next index
+            , index = Index.next itemDetails.index
             , value =
                 toSequence.value itemDetails.value
             }

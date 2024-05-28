@@ -224,7 +224,7 @@ myMap =
                 (Type.namedWith [] "Optional" [ Type.var "a" ])
                 [ Elm.Case.branch
                     (Arg.customType "Present" identity
-                        |> Arg.item (Arg.var "present")
+                        |> Arg.item (Arg.var "a")
                     )
                     (\a ->
                         present []
@@ -248,9 +248,9 @@ present optionalModuleName a =
             , name = "Present"
             , annotation =
                 Just
-                    (Type.function [ Type.var "a2" ] (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ]))
-
-            -- Nothing
+                    (Type.function [ Type.var "a2" ]
+                        (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ])
+                    )
             }
         )
         [ a ]
