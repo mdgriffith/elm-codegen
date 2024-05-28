@@ -374,7 +374,13 @@ valWithType importFrom name fnExp =
                 Exp.FunctionOrValue qualifiedImport
                     (Format.sanitize name)
             , annotation = one.annotation
-            , imports = one.imports
+            , imports =
+                case qualifiedImport of
+                    [] ->
+                        one.imports
+
+                    qual ->
+                        one.imports ++ [ qual ]
             }
         )
 
