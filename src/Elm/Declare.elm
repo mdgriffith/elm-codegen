@@ -59,8 +59,10 @@ Here's an example, let's define a new function called `add42`
 import Elm exposing (Expression)
 import Elm.Annotation
 import Elm.Arg
+import Elm.Syntax.Expression as Exp
 import Internal.Compiler as Compiler
 import Internal.Format as Format
+import Internal.Index as Index
 
 
 {-| -}
@@ -335,21 +337,46 @@ innerFunction :
     -> (Expression -> tipe)
     -> Function tipe
 innerFunction name funcExp call =
-    { value = Elm.val name
-    , call = call (Elm.val name)
+    let
+        functionVal =
+            valWithType [] name funcExp
+    in
+    { value = functionVal
+    , call = call functionVal
     , declaration = Elm.declaration name funcExp
     , internal =
         Internal
             (\modName ->
-                call
-                    (Elm.value
-                        { importFrom = modName
-                        , name = Format.sanitize name
-                        , annotation = Nothing
-                        }
-                    )
+                call (valWithType modName name funcExp)
             )
     }
+
+
+valWithType :
+    List String
+    -> String
+    -> Elm.Expression
+    -> Elm.Expression
+valWithType importFrom name fnExp =
+    Compiler.Expression
+        (\index ->
+            let
+                ( oneIndex, one ) =
+                    Compiler.toExpressionDetails index fnExp
+
+                qualifiedImport =
+                    Index.getImport index importFrom
+            in
+            { expression =
+                -- This *must* be an un-protected name, where we only use
+                -- literally what the dev gives us, because we are trying
+                -- to refer to something that already exists.
+                Exp.FunctionOrValue qualifiedImport
+                    (Format.sanitize name)
+            , annotation = one.annotation
+            , imports = one.imports
+            }
+        )
 
 
 {-| -}
