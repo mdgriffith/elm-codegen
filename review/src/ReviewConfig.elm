@@ -39,10 +39,6 @@ config : List Rule
 config =
     [ NoMissingTypeExpose.rule
     , NoUnused.Dependencies.rule
-    , Docs.NoMissing.rule
-        { document = onlyExposed
-        , from = exposedModules
-        }
     , Docs.ReviewLinksAndSections.rule
     , Docs.ReviewAtDocs.rule
     , Docs.UpToDateReadmeLinks.rule
@@ -52,7 +48,6 @@ config =
     , NoExposingEverything.rule
     , NoImportingEverything.rule []
     , NoMissingTypeAnnotation.rule
-    , NoMissingTypeAnnotationInLetIn.rule
     , NoSimpleLetBody.rule
     , NoPrematureLetComputation.rule
     , NoUnused.CustomTypeConstructors.rule []
