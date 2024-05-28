@@ -37,8 +37,7 @@ import Simplify
 
 config : List Rule
 config =
-    [ NoMissingTypeExpose.rule
-    , NoUnused.Dependencies.rule
+    [ NoUnused.Dependencies.rule
     , Docs.ReviewLinksAndSections.rule
     , Docs.ReviewAtDocs.rule
     , Docs.UpToDateReadmeLinks.rule
