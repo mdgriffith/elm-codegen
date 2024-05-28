@@ -182,7 +182,7 @@ fnDone (Fn toFnDetails) =
                     toFnDetails index
 
                 ( _, return ) =
-                    Compiler.toExpressionDetails index fnDetails.body
+                    Compiler.toExpressionDetails (Index.next index) fnDetails.body
             in
             { expression =
                 Exp.LambdaExpression
