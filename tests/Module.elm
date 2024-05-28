@@ -6,7 +6,6 @@ import Elm
 import Elm.Annotation as Type
 import Elm.Arg as Arg
 import Elm.Declare as Declare
-import Elm.Expect
 import Elm.Op
 import Expect
 import Test exposing (Test, describe, test)
@@ -25,9 +24,24 @@ mod =
         |> Declare.with (Declare.customType "MyType" [ Elm.variant "MyType" ])
         |> Declare.with
             (Declare.fn2 "myFn"
-                (Arg.varWith "a" Type.int)
-                (Arg.varWith "b" Type.int)
-                (\a b -> Elm.Op.plus a b)
+                (Arg.varWith "firstArg" Type.int)
+                (Arg.varWith "secondArg" Type.int)
+                (\a b ->
+                    Elm.apply (Elm.val "testFn")
+                        [ Elm.apply
+                            (Elm.val "Test")
+                            [ Elm.record
+                                [ ( "one", a )
+                                , ( "two", a )
+                                , ( "three", a )
+                                , ( "four", a )
+                                , ( "five", a )
+                                , ( "six", a )
+                                ]
+                            ]
+                        ]
+                        |> Elm.withType (Type.named [] "Test")
+                )
             )
 
 
@@ -40,12 +54,11 @@ mod =
 
 suite : Test
 suite =
-    Test.only <|
-        describe "Virtual modules"
-            [ fileGeneration
-            , usageInsideModule
-            , usageOutsideModule
-            ]
+    describe "Virtual modules"
+        [ fileGeneration
+        , usageInsideModule
+        , usageOutsideModule
+        ]
 
 
 usageInsideModule : Test
@@ -86,7 +99,7 @@ test a =
                 Expect.equal file.contents """module Virtual.Module exposing (..)
 
 
-test : Int -> Int
+test : Int -> Test
 test a =
     myFn a a"""
         ]
@@ -131,8 +144,10 @@ test a =
                 in
                 Expect.equal file.contents """module My.Module exposing (..)
 
+import Virtual.Module
 
-test : Int -> Int
+
+test : Int -> Test
 test a =
     Virtual.Module.myFn a a"""
         ]
@@ -143,9 +158,7 @@ fileGeneration =
     test "File Generation" <|
         \_ ->
             Expect.equal (Declare.toFile mod |> .contents)
-                (String.trim """
-
-module Virtual.Module exposing (MyInt, MyType, myFn)
+                (String.trim """module Virtual.Module exposing (MyInt, MyType, myFn)
 
 {-|
 @docs MyInt, MyType, myFn
@@ -161,6 +174,15 @@ type MyType
     = MyType
 
 
-myFn : Int -> Int -> Int
-myFn a b =
-    a + b""")
+myFn : Int -> Int -> Test
+myFn firstArg secondArg =
+    testFn
+        (Test
+            { one = firstArg
+            , two = firstArg
+            , three = firstArg
+            , four = firstArg
+            , five = firstArg
+            , six = firstArg
+            }
+        )""")
