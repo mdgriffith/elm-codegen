@@ -41,8 +41,22 @@ type alias FileDetails =
 renderDecls :
     FileDetails
     -> Compiler.Declaration
-    -> { declarations : List Compiler.RenderedDeclaration, imports : List Compiler.Module, exposed : List Expose.TopLevelExpose, exposedGroups : List ( Maybe String, String ), hasPorts : Bool, warnings : List Compiler.Warning }
-    -> { declarations : List Compiler.RenderedDeclaration, imports : List Compiler.Module, exposed : List Expose.TopLevelExpose, exposedGroups : List ( Maybe String, String ), hasPorts : Bool, warnings : List Compiler.Warning }
+    ->
+        { declarations : List Compiler.RenderedDeclaration
+        , imports : List Compiler.Module
+        , exposed : List Expose.TopLevelExpose
+        , exposedGroups : List ( Maybe String, String )
+        , hasPorts : Bool
+        , warnings : List Compiler.Warning
+        }
+    ->
+        { declarations : List Compiler.RenderedDeclaration
+        , imports : List Compiler.Module
+        , exposed : List Expose.TopLevelExpose
+        , exposedGroups : List ( Maybe String, String )
+        , hasPorts : Bool
+        , warnings : List Compiler.Warning
+        }
 renderDecls fileDetails decl gathered =
     case decl of
         Compiler.Comment comm ->
@@ -53,7 +67,11 @@ renderDecls fileDetails decl gathered =
 
         Compiler.Declaration decDetails ->
             let
-                result : { declaration : Elm.Syntax.Declaration.Declaration, additionalImports : List Compiler.Module, warning : Maybe Compiler.Warning }
+                result :
+                    { declaration : Elm.Syntax.Declaration.Declaration
+                    , additionalImports : List Compiler.Module
+                    , warning : Maybe Compiler.Warning
+                    }
                 result =
                     decDetails.toBody fileDetails.index
             in
@@ -106,7 +124,14 @@ render :
     -> File
 render toDocComment fileDetails =
     let
-        rendered : { declarations : List Compiler.RenderedDeclaration, imports : List Compiler.Module, exposed : List Expose.TopLevelExpose, exposedGroups : List ( Maybe String, String ), hasPorts : Bool, warnings : List Compiler.Warning }
+        rendered :
+            { declarations : List Compiler.RenderedDeclaration
+            , imports : List Compiler.Module
+            , exposed : List Expose.TopLevelExpose
+            , exposedGroups : List ( Maybe String, String )
+            , hasPorts : Bool
+            , warnings : List Compiler.Warning
+            }
         rendered =
             List.foldl
                 (renderDecls fileDetails)
