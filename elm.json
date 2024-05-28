@@ -10,9 +10,9 @@
         "Elm.Annotation",
         "Elm.Declare",
         "Elm.Case",
-        "Elm.Case.Branch",
         "Elm.Let",
-        "Elm.ToString"
+        "Elm.ToString",
+        "Elm.Arg"
     ],
     "elm-version": "0.19.0 <= v < 0.20.0",
     "dependencies": {

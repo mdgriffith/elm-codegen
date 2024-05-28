@@ -5,7 +5,7 @@ module Generate exposing (main)
 import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
-import Elm.Case
+import Elm.Arg
 import Elm.Docs
 import Elm.Gen
 import Elm.Syntax.TypeAnnotation
@@ -317,8 +317,9 @@ block2Case thisModule union =
 
         _ ->
             Just
-                (Elm.fn2 ( union.name ++ "Expression", Nothing )
-                    ( union.name ++ "Tags", Nothing )
+                (Elm.fn2
+                    (Elm.Arg.var (union.name ++ "Expression"))
+                    (Elm.Arg.var (union.name ++ "Tags"))
                     (\express tagRecord ->
                         Gen.Elm.Case.custom express
                             (unionToAnnotation thisModule union)
@@ -584,7 +585,7 @@ block2Maker thisModule block =
                                     )
                                 |> Gen.Elm.record
                     in
-                    Elm.fn ( name ++ "arg", Just lambdaArgType ) lambdaValue
+                    Elm.fn (Elm.Arg.varWith (name ++ "arg") lambdaArgType) lambdaValue
                         |> Just
 
                 _ ->
@@ -885,7 +886,7 @@ typeCreation thisModule block =
                                 |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
                                 |> Annotation.record
                     in
-                    [ Elm.fn ( alias.name ++ "_args", Nothing )
+                    [ Elm.fn (Elm.Arg.var (alias.name ++ "_args"))
                         (\val ->
                             let
                                 arg =

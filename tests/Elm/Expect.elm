@@ -29,8 +29,8 @@ declarationAs : Elm.Declaration -> String -> Expectation
 declarationAs decl str =
     Expect.equal
         (Elm.ToString.declaration decl
-            |> .body
-            |> String.trim
+            |> List.map (\{ body } -> String.trim body)
+            |> String.join "\n\n"
         )
         (String.trim str)
 
@@ -49,7 +49,7 @@ infersType : Elm.Expression -> Expectation
 infersType expression =
     let
         ( _, details ) =
-            Compiler.toExpressionDetails Index.startIndex expression
+            Compiler.toExpressionDetails (Index.startIndex Nothing) expression
     in
     case details.annotation of
         Ok _ ->

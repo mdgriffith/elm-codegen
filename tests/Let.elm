@@ -2,6 +2,7 @@ module Let exposing (suite)
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg as Arg
 import Elm.Expect
 import Elm.Let
 import Elm.Op
@@ -62,8 +63,8 @@ imports =
                         (\( one, two ) ->
                             Elm.Op.append one two
                         )
-                        |> Elm.Let.tuple "one"
-                            "two"
+                        |> Elm.Let.unpack
+                            (Arg.tuple (Arg.var "one") (Arg.var "two"))
                             (Elm.tuple
                                 (Elm.value
                                     { importFrom = [ "Module" ]
@@ -80,15 +81,14 @@ imports =
             \_ ->
                 Elm.Expect.importAs
                     (Elm.Let.letIn
-                        (\fields ->
-                            case fields of
-                                [ one, two ] ->
-                                    Elm.Op.append one two
-
-                                _ ->
-                                    Elm.string "ERRORR"
+                        (\( one, two ) ->
+                            Elm.Op.append one two
                         )
-                        |> Elm.Let.record [ "one", "two" ]
+                        |> Elm.Let.unpack
+                            (Arg.record Tuple.pair
+                                |> Arg.field "one"
+                                |> Arg.field "two"
+                            )
                             (Elm.record
                                 [ ( "one"
                                   , Elm.value
@@ -198,7 +198,12 @@ in
                         (\( first, second ) ->
                             Elm.Op.append first second
                         )
-                        |> Elm.Let.tuple "first" "second" (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
+                        |> Elm.Let.unpack
+                            (Arg.tuple
+                                (Arg.var "first")
+                                (Arg.var "second")
+                            )
+                            (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
                         |> Elm.Let.toExpression
                     )
                     """
@@ -212,15 +217,14 @@ first ++ second
             \_ ->
                 Elm.Expect.renderedAs
                     (Elm.Let.letIn
-                        (\fields ->
-                            case fields of
-                                [ first, second ] ->
-                                    Elm.Op.append first second
-
-                                _ ->
-                                    Elm.unit
+                        (\( first, second ) ->
+                            Elm.Op.append first second
                         )
-                        |> Elm.Let.record [ "first", "second" ]
+                        |> Elm.Let.unpack
+                            (Arg.record Tuple.pair
+                                |> Arg.field "first"
+                                |> Arg.field "second"
+                            )
                             (Elm.record
                                 [ ( "first", Elm.string "Hello" )
                                 , ( "second", Elm.string "world!" )
@@ -244,7 +248,7 @@ first ++ second
                         )
                         |> Elm.Let.value "myFn"
                             (Elm.fn
-                                ( "arg", Just Type.bool )
+                                (Arg.varWith "arg" Type.bool)
                                 (\arg ->
                                     Elm.ifThen arg
                                         (Elm.string "True")
@@ -272,7 +276,7 @@ myFn True
                             myFn (Elm.bool True)
                         )
                         |> Elm.Let.fn "myFn"
-                            ( "arg", Just Type.bool )
+                            (Arg.varWith "arg" Type.bool)
                             (\arg ->
                                 Elm.ifThen arg
                                     (Elm.string "True")
