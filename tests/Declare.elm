@@ -8,7 +8,6 @@ import Elm.Arg
 import Elm.Declare
 import Elm.Expect
 import Elm.Op
-import Internal.Debug
 import Test exposing (Test, describe, test)
 
 

@@ -19,6 +19,7 @@ todo todoArg =
         [ Elm.string todoArg ]
 
 
+valueTodo : Elm.Expression
 valueTodo =
     Elm.value
         { importFrom = [ "Debug" ]

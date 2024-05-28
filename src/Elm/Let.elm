@@ -139,7 +139,6 @@ will generate
 -}
 
 import Elm exposing (Expression)
-import Elm.Annotation
 import Elm.Arg
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node

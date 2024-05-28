@@ -365,7 +365,7 @@ valWithType importFrom name fnExp =
                     Compiler.toExpressionDetails index fnExp
 
                 qualifiedImport =
-                    Index.getImport index importFrom
+                    Index.getImport oneIndex importFrom
             in
             { expression =
                 -- This *must* be an un-protected name, where we only use

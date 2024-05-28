@@ -555,7 +555,7 @@ listRemaining variableName (Arg toRemaining) =
                 imports =
                     []
 
-                ( variable, variableAnnotation, innerAnnotation ) =
+                ( variable, _, _ ) =
                     val toSequence.index variableName
             in
             { details =
@@ -693,7 +693,7 @@ field name (Arg arg) =
                 imports =
                     details.imports
 
-                ( fieldExpression, fieldAnnotation, fieldType ) =
+                ( fieldExpression, _, fieldType ) =
                     val index name
             in
             { details =

@@ -153,7 +153,7 @@ protectTypeName base ((Index _ _ tail _ _) as index) =
 
 
 indexToString : Index -> String
-indexToString (Index modName top tail _ _) =
+indexToString (Index _ top tail _ _) =
     (if top == 0 then
         ""
 

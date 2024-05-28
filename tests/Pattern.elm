@@ -51,7 +51,7 @@ suite =
                                         |> Arg.item (Arg.char 'b')
                                     )
                                 )
-                                (\( left, right ) ->
+                                (\_ ->
                                     Elm.int 5
                                 )
                             , Elm.Case.branch
@@ -63,7 +63,7 @@ suite =
                                         |> Arg.item (Arg.var "right")
                                     )
                                 )
-                                (\( left, right ) ->
+                                (\_ ->
                                     Elm.int 8
                                 )
                             , Elm.Case.branch Arg.ignore (\_ -> Elm.int 0)
@@ -86,7 +86,7 @@ suite =
                     Type.unit
                     [ Elm.Case.branch
                         (Arg.triple Arg.unit (Arg.var "name") (Arg.char 'a'))
-                        (\( _, _, _ ) ->
+                        (\_ ->
                             Elm.unit
                         )
                     ]
@@ -159,7 +159,7 @@ case { first = "Jane", last = "Doe" } of
                         (Arg.customType "Just" identity
                             |> Arg.item (Arg.var "n")
                         )
-                        (\n ->
+                        (\_ ->
                             Elm.string "There are more items"
                         )
                     , Elm.Case.branch (Arg.customType "Nothing" ())
@@ -242,17 +242,6 @@ case 'z' of
 """
             ]
         ]
-
-
-fromInt fromIntArg =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "String" ]
-            , name = "fromInt"
-            , annotation = Just (Type.function [ Type.int ] Type.string)
-            }
-        )
-        [ fromIntArg ]
 
 
 expectImports :
