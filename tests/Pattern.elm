@@ -133,22 +133,17 @@ case { first = "Jane", last = "Doe" } of
                         (Arg.record Tuple.pair
                             |> Arg.field "first"
                             |> Arg.field "last"
+                            |> Arg.aliasAs "record"
                         )
-                        (\( first, second ) ->
-                            Elm.tuple first second
+                        (\( ( first, second ), record ) ->
+                            Elm.triple record first second
                         )
-
-                    -- |> Pattern.aliasAs "record")
-                    --     (\record ( first, last ) ->
-                    --         Elm.tuple record
-                    --             (Elm.Op.append first last)
-                    --     )
                     ]
                     |> renderedAs
                         """
 case { first = "Jane", last = "Doe" } of
     { first, last } as record ->
-        ( record, first ++ last )
+        ( record, first, last )
 """
         , test "custom type helpers" <|
             \() ->
