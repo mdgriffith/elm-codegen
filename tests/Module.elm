@@ -6,7 +6,6 @@ import Elm
 import Elm.Annotation as Type
 import Elm.Arg as Arg
 import Elm.Declare as Declare
-import Elm.Op
 import Expect
 import Test exposing (Test, describe, test)
 
@@ -18,6 +17,7 @@ type alias Mod =
     }
 
 
+mod : Declare.Module Mod
 mod =
     Declare.module_ [ "Virtual", "Module" ] Mod
         |> Declare.with (Declare.alias "MyInt" Type.int)
