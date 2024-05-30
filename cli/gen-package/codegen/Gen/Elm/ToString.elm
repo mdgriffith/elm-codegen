@@ -1,6 +1,16 @@
-module Gen.Elm.ToString exposing (annotation, annotationWith, call_, declaration, declarationWith, expression, expressionWith, moduleName_, values_)
+module Gen.Elm.ToString exposing
+    ( annotation
+    , annotationWith
+    , call_
+    , declaration
+    , declarationWith
+    , expression
+    , expressionWith
+    , moduleName_
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, expression, annotation, declaration, expressionWith, annotationWith, declarationWith, call_, values_
 -}
 

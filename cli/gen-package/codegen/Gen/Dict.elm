@@ -1,6 +1,33 @@
-module Gen.Dict exposing (annotation_, call_, diff, empty, filter, foldl, foldr, fromList, get, insert, intersect, isEmpty, keys, map, member, merge, moduleName_, partition, remove, singleton, size, toList, union, update, values, values_)
+module Gen.Dict exposing
+    ( annotation_
+    , call_
+    , diff
+    , empty
+    , filter
+    , foldl
+    , foldr
+    , fromList
+    , get
+    , insert
+    , intersect
+    , isEmpty
+    , keys
+    , map
+    , member
+    , merge
+    , moduleName_
+    , partition
+    , remove
+    , singleton
+    , size
+    , toList
+    , union
+    , update
+    , values
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, empty, singleton, insert, update, remove, isEmpty, member, get, size, keys, values, toList, fromList, map, foldl, foldr, filter, partition, union, intersect, diff, merge, annotation_, call_, values_
 -}
 

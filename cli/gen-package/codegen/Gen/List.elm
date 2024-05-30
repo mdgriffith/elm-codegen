@@ -1,6 +1,46 @@
-module Gen.List exposing (all, any, append, call_, concat, concatMap, drop, filter, filterMap, foldl, foldr, head, indexedMap, intersperse, isEmpty, length, map, map2, map3, map4, map5, maximum, member, minimum, moduleName_, partition, product, range, repeat, reverse, singleton, sort, sortBy, sortWith, sum, tail, take, unzip, values_)
+module Gen.List exposing
+    ( all
+    , any
+    , append
+    , call_
+    , concat
+    , concatMap
+    , drop
+    , filter
+    , filterMap
+    , foldl
+    , foldr
+    , head
+    , indexedMap
+    , intersperse
+    , isEmpty
+    , length
+    , map
+    , map2
+    , map3
+    , map4
+    , map5
+    , maximum
+    , member
+    , minimum
+    , moduleName_
+    , partition
+    , product
+    , range
+    , repeat
+    , reverse
+    , singleton
+    , sort
+    , sortBy
+    , sortWith
+    , sum
+    , tail
+    , take
+    , unzip
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, singleton, repeat, range, map, indexedMap, foldl, foldr, filter, filterMap, length, reverse, member, all, any, maximum, minimum, sum, product, append, concat, concatMap, intersperse, map2, map3, map4, map5, sort, sortBy, sortWith, isEmpty, head, tail, take, drop, partition, unzip, call_, values_
 -}
 

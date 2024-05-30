@@ -1,6 +1,29 @@
-module Gen.Array exposing (annotation_, append, call_, empty, filter, foldl, foldr, fromList, get, indexedMap, initialize, isEmpty, length, map, moduleName_, push, repeat, set, slice, toIndexedList, toList, values_)
+module Gen.Array exposing
+    ( annotation_
+    , append
+    , call_
+    , empty
+    , filter
+    , foldl
+    , foldr
+    , fromList
+    , get
+    , indexedMap
+    , initialize
+    , isEmpty
+    , length
+    , map
+    , moduleName_
+    , push
+    , repeat
+    , set
+    , slice
+    , toIndexedList
+    , toList
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, empty, initialize, repeat, fromList, isEmpty, length, get, set, push, append, slice, toList, toIndexedList, map, indexedMap, foldl, foldr, filter, annotation_, call_, values_
 -}
 

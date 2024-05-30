@@ -1,6 +1,15 @@
-module Gen.Elm.Case exposing (annotation_, branch, call_, custom, maybe, moduleName_, result, values_)
+module Gen.Elm.Case exposing
+    ( annotation_
+    , branch
+    , call_
+    , custom
+    , maybe
+    , moduleName_
+    , result
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, maybe, result, custom, branch, annotation_, call_, values_
 -}
 

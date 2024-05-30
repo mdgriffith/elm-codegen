@@ -1,6 +1,55 @@
-module Gen.String exposing (all, annotation_, any, append, call_, concat, cons, contains, dropLeft, dropRight, endsWith, filter, foldl, foldr, fromChar, fromFloat, fromInt, fromList, indexes, indices, isEmpty, join, left, length, lines, map, moduleName_, pad, padLeft, padRight, repeat, replace, reverse, right, slice, split, startsWith, toFloat, toInt, toList, toLower, toUpper, trim, trimLeft, trimRight, uncons, values_, words)
+module Gen.String exposing
+    ( all
+    , annotation_
+    , any
+    , append
+    , call_
+    , concat
+    , cons
+    , contains
+    , dropLeft
+    , dropRight
+    , endsWith
+    , filter
+    , foldl
+    , foldr
+    , fromChar
+    , fromFloat
+    , fromInt
+    , fromList
+    , indexes
+    , indices
+    , isEmpty
+    , join
+    , left
+    , length
+    , lines
+    , map
+    , moduleName_
+    , pad
+    , padLeft
+    , padRight
+    , repeat
+    , replace
+    , reverse
+    , right
+    , slice
+    , split
+    , startsWith
+    , toFloat
+    , toInt
+    , toList
+    , toLower
+    , toUpper
+    , trim
+    , trimLeft
+    , trimRight
+    , uncons
+    , values_
+    , words
+    )
 
-{-| 
+{-|
 @docs moduleName_, isEmpty, length, reverse, repeat, replace, append, concat, split, join, words, lines, slice, left, right, dropLeft, dropRight, contains, startsWith, endsWith, indexes, indices, toInt, fromInt, toFloat, fromFloat, fromChar, cons, uncons, toList, fromList, toUpper, toLower, pad, padLeft, padRight, trim, trimLeft, trimRight, map, filter, foldl, foldr, any, all, annotation_, call_, values_
 -}
 

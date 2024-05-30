@@ -1,6 +1,16 @@
-module Gen.Tuple exposing (call_, first, mapBoth, mapFirst, mapSecond, moduleName_, pair, second, values_)
+module Gen.Tuple exposing
+    ( call_
+    , first
+    , mapBoth
+    , mapFirst
+    , mapSecond
+    , moduleName_
+    , pair
+    , second
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, pair, first, second, mapFirst, mapSecond, mapBoth, call_, values_
 -}
 

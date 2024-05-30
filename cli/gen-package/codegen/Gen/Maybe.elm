@@ -1,6 +1,20 @@
-module Gen.Maybe exposing (andThen, annotation_, call_, caseOf_, make_, map, map2, map3, map4, map5, moduleName_, values_, withDefault)
+module Gen.Maybe exposing
+    ( andThen
+    , annotation_
+    , call_
+    , caseOf_
+    , make_
+    , map
+    , map2
+    , map3
+    , map4
+    , map5
+    , moduleName_
+    , values_
+    , withDefault
+    )
 
-{-| 
+{-|
 @docs moduleName_, withDefault, map, map2, map3, map4, map5, andThen, annotation_, make_, caseOf_, call_, values_
 -}
 
@@ -405,10 +419,10 @@ make_ =
 caseOf_ :
     { maybe :
         Elm.Expression
-       -> { maybeTags
+        -> { maybeTags
             | just : Elm.Expression -> Elm.Expression
             , nothing : Elm.Expression
-        }
+         }
         -> Elm.Expression
     }
 caseOf_ =

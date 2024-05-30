@@ -1,6 +1,64 @@
-module Gen.Elm exposing (alias, aliasWith, annotation_, apply, body, bool, call_, char, comment, customType, customTypeWith, declaration, docs, expose, exposeConstructor, file, fileWith, float, fn, fn2, fn3, fnArg, fnBuilder, fnDone, function, functionReduced, get, group, hex, ifThen, int, just, list, make_, maybe, moduleName_, nothing, parse, portIncoming, portOutgoing, record, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, val, value, values_, variant, variantWith, withDocumentation, withType)
+module Gen.Elm exposing
+    ( alias
+    , aliasWith
+    , annotation_
+    , apply
+    , body
+    , bool
+    , call_
+    , char
+    , comment
+    , customType
+    , customTypeWith
+    , declaration
+    , docs
+    , expose
+    , exposeConstructor
+    , file
+    , fileWith
+    , float
+    , fn
+    , fn2
+    , fn3
+    , fnArg
+    , fnBuilder
+    , fnDone
+    , function
+    , functionReduced
+    , get
+    , group
+    , hex
+    , ifThen
+    , int
+    , just
+    , list
+    , make_
+    , maybe
+    , moduleName_
+    , nothing
+    , parse
+    , portIncoming
+    , portOutgoing
+    , record
+    , string
+    , toString
+    , triple
+    , tuple
+    , unit
+    , unsafe
+    , unwrap
+    , unwrapper
+    , updateRecord
+    , val
+    , value
+    , values_
+    , variant
+    , variantWith
+    , withDocumentation
+    , withType
+    )
 
-{-| 
+{-|
 @docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, group, expose, exposeConstructor, fileWith, docs, fnBuilder, fnArg, fnDone, body, fn, fn2, fn3, function, functionReduced, customType, customTypeWith, variant, variantWith, alias, aliasWith, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 

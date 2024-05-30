@@ -1,7 +1,27 @@
-module Gen.Elm.Arg exposing (annotation_, call_, char, customType, field, ignore, item, list, listRemaining, moduleName_, record, string, triple, tuple, unit, values_, var, varWith)
+module Gen.Elm.Arg exposing
+    ( aliasAs
+    , annotation_
+    , call_
+    , char
+    , customType
+    , field
+    , ignore
+    , item
+    , list
+    , listRemaining
+    , moduleName_
+    , record
+    , string
+    , triple
+    , tuple
+    , unit
+    , values_
+    , var
+    , varWith
+    )
 
-{-| 
-@docs moduleName_, unit, var, varWith, tuple, triple, record, field, ignore, string, char, list, item, listRemaining, customType, annotation_, call_, values_
+{-|
+@docs moduleName_, unit, var, varWith, tuple, triple, record, field, aliasAs, ignore, string, char, list, item, listRemaining, customType, annotation_, call_, values_
 -}
 
 
@@ -209,6 +229,40 @@ field fieldArg fieldArg0 =
              }
         )
         [ Elm.string fieldArg, fieldArg0 ]
+
+
+{-| aliasAs: String -> Elm.Arg.Arg arg -> Elm.Arg.Arg ( arg, Elm.Arg.Expression ) -}
+aliasAs : String -> Elm.Expression -> Elm.Expression
+aliasAs aliasAsArg aliasAsArg0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Arg" ]
+             , name = "aliasAs"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.namedWith
+                              [ "Elm", "Arg" ]
+                              "Arg"
+                              [ Type.var "arg" ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Arg" ]
+                               "Arg"
+                               [ Type.tuple
+                                   (Type.var "arg")
+                                   (Type.namedWith
+                                      [ "Elm", "Arg" ]
+                                      "Expression"
+                                      []
+                                   )
+                               ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string aliasAsArg, aliasAsArg0 ]
 
 
 {-| ignore: Elm.Arg.Arg Elm.Arg.Expression -}
@@ -437,6 +491,7 @@ call_ :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , record : Elm.Expression -> Elm.Expression
     , field : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , aliasAs : Elm.Expression -> Elm.Expression -> Elm.Expression
     , string : Elm.Expression -> Elm.Expression
     , char : Elm.Expression -> Elm.Expression
     , list : Elm.Expression -> Elm.Expression
@@ -611,6 +666,37 @@ call_ =
                      }
                 )
                 [ fieldArg, fieldArg0 ]
+    , aliasAs =
+        \aliasAsArg aliasAsArg0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Arg" ]
+                     , name = "aliasAs"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.namedWith
+                                      [ "Elm", "Arg" ]
+                                      "Arg"
+                                      [ Type.var "arg" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Arg" ]
+                                       "Arg"
+                                       [ Type.tuple
+                                           (Type.var "arg")
+                                           (Type.namedWith
+                                              [ "Elm", "Arg" ]
+                                              "Expression"
+                                              []
+                                           )
+                                       ]
+                                  )
+                             )
+                     }
+                )
+                [ aliasAsArg, aliasAsArg0 ]
     , string =
         \stringArg ->
             Elm.apply
@@ -767,6 +853,7 @@ values_ :
     , triple : Elm.Expression
     , record : Elm.Expression
     , field : Elm.Expression
+    , aliasAs : Elm.Expression
     , ignore : Elm.Expression
     , string : Elm.Expression
     , char : Elm.Expression
@@ -915,6 +1002,33 @@ values_ =
                              ]
                          ]
                          (Type.namedWith [ "Elm", "Arg" ] "Arg" [ Type.var "a" ]
+                         )
+                    )
+            }
+    , aliasAs =
+        Elm.value
+            { importFrom = [ "Elm", "Arg" ]
+            , name = "aliasAs"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.namedWith
+                             [ "Elm", "Arg" ]
+                             "Arg"
+                             [ Type.var "arg" ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Arg" ]
+                              "Arg"
+                              [ Type.tuple
+                                  (Type.var "arg")
+                                  (Type.namedWith
+                                     [ "Elm", "Arg" ]
+                                     "Expression"
+                                     []
+                                  )
+                              ]
                          )
                     )
             }

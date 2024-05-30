@@ -1,6 +1,24 @@
-module Gen.Task exposing (andThen, annotation_, attempt, call_, fail, map, map2, map3, map4, map5, mapError, moduleName_, onError, perform, sequence, succeed, values_)
+module Gen.Task exposing
+    ( andThen
+    , annotation_
+    , attempt
+    , call_
+    , fail
+    , map
+    , map2
+    , map3
+    , map4
+    , map5
+    , mapError
+    , moduleName_
+    , onError
+    , perform
+    , sequence
+    , succeed
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, perform, attempt, andThen, succeed, fail, sequence, map, map2, map3, map4, map5, onError, mapError, annotation_, call_, values_
 -}
 

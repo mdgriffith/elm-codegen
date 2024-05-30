@@ -1,7 +1,34 @@
-module Gen.Elm.Op exposing (and, append, call_, cons, divide, equal, gt, gte, intDivide, keep, lt, lte, minus, moduleName_, multiply, notEqual, or, parens, pipe, plus, power, query, skip, slash, values_)
+module Gen.Elm.Op exposing
+    ( and
+    , append
+    , call_
+    , cons
+    , divide
+    , equal
+    , gt
+    , gte
+    , intDivide
+    , keep
+    , lt
+    , lte
+    , minus
+    , moduleName_
+    , multiply
+    , notEqual
+    , or
+    , parens
+    , pipe
+    , pipeLeft
+    , plus
+    , power
+    , query
+    , skip
+    , slash
+    , values_
+    )
 
-{-| 
-@docs moduleName_, equal, notEqual, and, or, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, pipe, parens, keep, skip, slash, query, call_, values_
+{-|
+@docs moduleName_, equal, notEqual, and, or, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, pipe, pipeLeft, parens, keep, skip, slash, query, call_, values_
 -}
 
 
@@ -420,6 +447,29 @@ pipe pipeArg pipeArg0 =
         [ pipeArg, pipeArg0 ]
 
 
+{-| `<|`
+
+pipeLeft: Elm.Expression -> Elm.Expression -> Elm.Expression
+-}
+pipeLeft : Elm.Expression -> Elm.Expression -> Elm.Expression
+pipeLeft pipeLeftArg pipeLeftArg0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Op" ]
+             , name = "pipeLeft"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
+        )
+        [ pipeLeftArg, pipeLeftArg0 ]
+
+
 {-| Wrap an expression in parentheses.
 
 Generally you won't need this as `elm-codegen` handles parens for you, but it can be useful to semantically group operations from this module.
@@ -555,6 +605,7 @@ call_ :
     , lte : Elm.Expression -> Elm.Expression -> Elm.Expression
     , gte : Elm.Expression -> Elm.Expression -> Elm.Expression
     , pipe : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , pipeLeft : Elm.Expression -> Elm.Expression -> Elm.Expression
     , parens : Elm.Expression -> Elm.Expression
     , keep : Elm.Expression -> Elm.Expression -> Elm.Expression
     , skip : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -851,6 +902,23 @@ call_ =
                      }
                 )
                 [ pipeArg, pipeArg0 ]
+    , pipeLeft =
+        \pipeLeftArg pipeLeftArg0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Op" ]
+                     , name = "pipeLeft"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
+                )
+                [ pipeLeftArg, pipeLeftArg0 ]
     , parens =
         \parensArg ->
             Elm.apply
@@ -955,6 +1023,7 @@ values_ :
     , lte : Elm.Expression
     , gte : Elm.Expression
     , pipe : Elm.Expression
+    , pipeLeft : Elm.Expression
     , parens : Elm.Expression
     , keep : Elm.Expression
     , skip : Elm.Expression
@@ -1174,6 +1243,19 @@ values_ =
         Elm.value
             { importFrom = [ "Elm", "Op" ]
             , name = "pipe"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+    , pipeLeft =
+        Elm.value
+            { importFrom = [ "Elm", "Op" ]
+            , name = "pipeLeft"
             , annotation =
                 Just
                     (Type.function

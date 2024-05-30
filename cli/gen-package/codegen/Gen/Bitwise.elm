@@ -1,6 +1,17 @@
-module Gen.Bitwise exposing (and, call_, complement, moduleName_, or, shiftLeftBy, shiftRightBy, shiftRightZfBy, values_, xor)
+module Gen.Bitwise exposing
+    ( and
+    , call_
+    , complement
+    , moduleName_
+    , or
+    , shiftLeftBy
+    , shiftRightBy
+    , shiftRightZfBy
+    , values_
+    , xor
+    )
 
-{-| 
+{-|
 @docs moduleName_, and, or, xor, complement, shiftLeftBy, shiftRightBy, shiftRightZfBy, call_, values_
 -}
 

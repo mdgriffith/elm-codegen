@@ -1,7 +1,33 @@
-module Gen.Elm.Declare exposing (alias, annotation_, call_, customType, fn, fn2, fn3, fn4, fn5, fn6, fnArg, fnBuilder, fnDone, function, make_, moduleName_, module_, placeholder, toFile, value, values_, with, withUnexposed)
+module Gen.Elm.Declare exposing
+    ( alias
+    , annotation_
+    , call_
+    , customType
+    , fn
+    , fn2
+    , fn3
+    , fn4
+    , fn5
+    , fn6
+    , fnArg
+    , fnBody
+    , fnBuilder
+    , fnDone
+    , function
+    , include
+    , make_
+    , moduleName_
+    , module_
+    , placeholder
+    , toFile
+    , value
+    , values_
+    , with
+    , withUnexposed
+    )
 
-{-| 
-@docs moduleName_, fn, fn2, fn3, fn4, fn5, fn6, fnBuilder, fnArg, fnDone, value, function, module_, with, withUnexposed, placeholder, alias, customType, toFile, annotation_, make_, call_, values_
+{-|
+@docs moduleName_, fn, fn2, fn3, fn4, fn5, fn6, fnBuilder, fnArg, fnDone, fnBody, placeholder, value, function, module_, with, withUnexposed, alias, customType, toFile, include, annotation_, make_, call_, values_
 -}
 
 
@@ -771,6 +797,97 @@ fnDone fnDoneArg =
         ]
 
 
+{-| fnBody: 
+    (args -> Elm.Expression)
+    -> { name : String
+    , builder : Elm.Fn args
+    , call : Elm.Expression -> List Elm.Expression -> res
+    }
+    -> Elm.Declare.Function res
+-}
+fnBody :
+    (Elm.Expression -> Elm.Expression)
+    -> { name : String
+    , builder : Elm.Expression
+    , call : Elm.Expression -> Elm.Expression -> Elm.Expression
+    }
+    -> Elm.Expression
+fnBody fnBodyArg fnBodyArg0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "fnBody"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "args" ]
+                              (Type.namedWith [ "Elm" ] "Expression" [])
+                          , Type.record
+                              [ ( "name", Type.string )
+                              , ( "builder"
+                                , Type.namedWith
+                                    [ "Elm" ]
+                                    "Fn"
+                                    [ Type.var "args" ]
+                                )
+                              , ( "call"
+                                , Type.function
+                                    [ Type.namedWith [ "Elm" ] "Expression" []
+                                    , Type.list
+                                          (Type.namedWith
+                                               [ "Elm" ]
+                                               "Expression"
+                                               []
+                                          )
+                                    ]
+                                    (Type.var "res")
+                                )
+                              ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "Function"
+                               [ Type.var "res" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.functionReduced "fnBodyUnpack" fnBodyArg
+        , Elm.record
+            [ Tuple.pair "name" (Elm.string fnBodyArg0.name)
+            , Tuple.pair "builder" fnBodyArg0.builder
+            , Tuple.pair
+                  "call"
+                  (Elm.functionReduced
+                       "fnBodyUnpack"
+                       (\functionReducedUnpack ->
+                            Elm.functionReduced
+                                "unpack"
+                                (fnBodyArg0.call functionReducedUnpack)
+                       )
+                  )
+            ]
+        ]
+
+
+{-| You may want a placeholder function body if you're defining a function using `Declare` with the intention of _calling_ the function instead of defining it.
+
+In that case you can use `placeholder`!
+
+Of note, if you generate the actual body of `placeholder`, it'll generate `Debug.todo "Placeholder function body"`.
+
+placeholder: Elm.Expression
+-}
+placeholder : Elm.Expression
+placeholder =
+    Elm.value
+        { importFrom = [ "Elm", "Declare" ]
+        , name = "placeholder"
+        , annotation = Just (Type.namedWith [ "Elm" ] "Expression" [])
+        }
+
+
 {-| value: String -> Elm.Expression -> Elm.Declare.Value -}
 value : String -> Elm.Expression -> Elm.Expression
 value valueArg valueArg0 =
@@ -965,23 +1082,6 @@ withUnexposed withUnexposedArg withUnexposedArg0 =
         ]
 
 
-{-| You may want a placeholder function body if you're defining a function using `Declare` with the intention of _calling_ the function instead of defining it.
-
-In that case you can use `placeholder`!
-
-Of note, if you generate the actual body of `placeholder`, it'll generate `Debug.todo "Placeholder function body"`.
-
-placeholder: Elm.Expression
--}
-placeholder : Elm.Expression
-placeholder =
-    Elm.value
-        { importFrom = [ "Elm", "Declare" ]
-        , name = "placeholder"
-        , annotation = Just (Type.namedWith [ "Elm" ] "Expression" [])
-        }
-
-
 {-| alias: String -> Elm.Annotation.Annotation -> Elm.Declare.Annotation -}
 alias : String -> Elm.Expression -> Elm.Expression
 alias aliasArg aliasArg0 =
@@ -1045,6 +1145,37 @@ toFile toFileArg =
              }
         )
         [ toFileArg ]
+
+
+{-| include: { title : String, docs : String } -> Elm.Declare.Module val -> Elm.Declaration -}
+include : { title : String, docs : String } -> Elm.Expression -> Elm.Expression
+include includeArg includeArg0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "include"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.record
+                              [ ( "title", Type.string )
+                              , ( "docs", Type.string )
+                              ]
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.var "val" ]
+                          ]
+                          (Type.namedWith [ "Elm" ] "Declaration" [])
+                     )
+             }
+        )
+        [ Elm.record
+            [ Tuple.pair "title" (Elm.string includeArg.title)
+            , Tuple.pair "docs" (Elm.string includeArg.docs)
+            ]
+        , includeArg0
+        ]
 
 
 annotation_ :
@@ -1328,6 +1459,7 @@ call_ :
     , fnBuilder : Elm.Expression -> Elm.Expression -> Elm.Expression
     , fnArg : Elm.Expression -> Elm.Expression -> Elm.Expression
     , fnDone : Elm.Expression -> Elm.Expression
+    , fnBody : Elm.Expression -> Elm.Expression -> Elm.Expression
     , value : Elm.Expression -> Elm.Expression -> Elm.Expression
     , function :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -1337,6 +1469,7 @@ call_ :
     , alias : Elm.Expression -> Elm.Expression -> Elm.Expression
     , customType : Elm.Expression -> Elm.Expression -> Elm.Expression
     , toFile : Elm.Expression -> Elm.Expression
+    , include : Elm.Expression -> Elm.Expression -> Elm.Expression
     }
 call_ =
     { fn =
@@ -1877,6 +2010,52 @@ call_ =
                      }
                 )
                 [ fnDoneArg ]
+    , fnBody =
+        \fnBodyArg fnBodyArg0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "fnBody"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "args" ]
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
+                                  , Type.record
+                                      [ ( "name", Type.string )
+                                      , ( "builder"
+                                        , Type.namedWith
+                                            [ "Elm" ]
+                                            "Fn"
+                                            [ Type.var "args" ]
+                                        )
+                                      , ( "call"
+                                        , Type.function
+                                            [ Type.namedWith
+                                                  [ "Elm" ]
+                                                  "Expression"
+                                                  []
+                                            , Type.list
+                                                  (Type.namedWith
+                                                       [ "Elm" ]
+                                                       "Expression"
+                                                       []
+                                                  )
+                                            ]
+                                            (Type.var "res")
+                                        )
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "Function"
+                                       [ Type.var "res" ]
+                                  )
+                             )
+                     }
+                )
+                [ fnBodyArg, fnBodyArg0 ]
     , value =
         \valueArg valueArg0 ->
             Elm.apply
@@ -2108,6 +2287,29 @@ call_ =
                      }
                 )
                 [ toFileArg ]
+    , include =
+        \includeArg includeArg0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "include"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.record
+                                      [ ( "title", Type.string )
+                                      , ( "docs", Type.string )
+                                      ]
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "Module"
+                                      [ Type.var "val" ]
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Declaration" [])
+                             )
+                     }
+                )
+                [ includeArg, includeArg0 ]
     }
 
 
@@ -2121,15 +2323,17 @@ values_ :
     , fnBuilder : Elm.Expression
     , fnArg : Elm.Expression
     , fnDone : Elm.Expression
+    , fnBody : Elm.Expression
+    , placeholder : Elm.Expression
     , value : Elm.Expression
     , function : Elm.Expression
     , module_ : Elm.Expression
     , with : Elm.Expression
     , withUnexposed : Elm.Expression
-    , placeholder : Elm.Expression
     , alias : Elm.Expression
     , customType : Elm.Expression
     , toFile : Elm.Expression
+    , include : Elm.Expression
     }
 values_ =
     { fn =
@@ -2515,6 +2719,51 @@ values_ =
                          )
                     )
             }
+    , fnBody =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "fnBody"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.function
+                             [ Type.var "args" ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                         , Type.record
+                             [ ( "name", Type.string )
+                             , ( "builder"
+                               , Type.namedWith
+                                   [ "Elm" ]
+                                   "Fn"
+                                   [ Type.var "args" ]
+                               )
+                             , ( "call"
+                               , Type.function
+                                   [ Type.namedWith [ "Elm" ] "Expression" []
+                                   , Type.list
+                                         (Type.namedWith
+                                              [ "Elm" ]
+                                              "Expression"
+                                              []
+                                         )
+                                   ]
+                                   (Type.var "res")
+                               )
+                             ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Function"
+                              [ Type.var "res" ]
+                         )
+                    )
+            }
+    , placeholder =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "placeholder"
+            , annotation = Just (Type.namedWith [ "Elm" ] "Expression" [])
+            }
     , value =
         Elm.value
             { importFrom = [ "Elm", "Declare" ]
@@ -2643,12 +2892,6 @@ values_ =
                          )
                     )
             }
-    , placeholder =
-        Elm.value
-            { importFrom = [ "Elm", "Declare" ]
-            , name = "placeholder"
-            , annotation = Just (Type.namedWith [ "Elm" ] "Expression" [])
-            }
     , alias =
         Elm.value
             { importFrom = [ "Elm", "Declare" ]
@@ -2691,6 +2934,25 @@ values_ =
                              [ Type.var "val" ]
                          ]
                          (Type.namedWith [ "Elm" ] "File" [])
+                    )
+            }
+    , include =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "include"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.record
+                             [ ( "title", Type.string )
+                             , ( "docs", Type.string )
+                             ]
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "Module"
+                             [ Type.var "val" ]
+                         ]
+                         (Type.namedWith [ "Elm" ] "Declaration" [])
                     )
             }
     }

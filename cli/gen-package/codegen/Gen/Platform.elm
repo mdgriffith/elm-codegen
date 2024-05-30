@@ -1,6 +1,14 @@
-module Gen.Platform exposing (annotation_, call_, moduleName_, sendToApp, sendToSelf, values_, worker)
+module Gen.Platform exposing
+    ( annotation_
+    , call_
+    , moduleName_
+    , sendToApp
+    , sendToSelf
+    , values_
+    , worker
+    )
 
-{-| 
+{-|
 @docs moduleName_, worker, sendToApp, sendToSelf, annotation_, call_, values_
 -}
 

@@ -1,6 +1,28 @@
-module Gen.Set exposing (annotation_, call_, diff, empty, filter, foldl, foldr, fromList, insert, intersect, isEmpty, map, member, moduleName_, partition, remove, singleton, size, toList, union, values_)
+module Gen.Set exposing
+    ( annotation_
+    , call_
+    , diff
+    , empty
+    , filter
+    , foldl
+    , foldr
+    , fromList
+    , insert
+    , intersect
+    , isEmpty
+    , map
+    , member
+    , moduleName_
+    , partition
+    , remove
+    , singleton
+    , size
+    , toList
+    , union
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, empty, singleton, insert, remove, isEmpty, member, size, union, intersect, diff, toList, fromList, map, foldl, foldr, filter, partition, annotation_, call_, values_
 -}
 

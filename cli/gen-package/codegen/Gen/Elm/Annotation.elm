@@ -1,6 +1,34 @@
-module Gen.Elm.Annotation exposing (alias, annotation_, bool, call_, char, cmd, dict, extensible, float, function, int, list, maybe, moduleName_, named, namedWith, record, result, set, string, sub, toString, triple, tuple, unit, values_, var)
+module Gen.Elm.Annotation exposing
+    ( alias
+    , annotation_
+    , bool
+    , call_
+    , char
+    , cmd
+    , dict
+    , extensible
+    , float
+    , function
+    , int
+    , list
+    , maybe
+    , moduleName_
+    , named
+    , namedWith
+    , record
+    , result
+    , set
+    , string
+    , sub
+    , toString
+    , triple
+    , tuple
+    , unit
+    , values_
+    , var
+    )
 
-{-| 
+{-|
 @docs moduleName_, var, bool, int, float, string, char, unit, cmd, sub, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, alias, function, toString, annotation_, call_, values_
 -}
 

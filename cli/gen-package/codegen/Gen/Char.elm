@@ -1,6 +1,24 @@
-module Gen.Char exposing (annotation_, call_, fromCode, isAlpha, isAlphaNum, isDigit, isHexDigit, isLower, isOctDigit, isUpper, moduleName_, toCode, toLocaleLower, toLocaleUpper, toLower, toUpper, values_)
+module Gen.Char exposing
+    ( annotation_
+    , call_
+    , fromCode
+    , isAlpha
+    , isAlphaNum
+    , isDigit
+    , isHexDigit
+    , isLower
+    , isOctDigit
+    , isUpper
+    , moduleName_
+    , toCode
+    , toLocaleLower
+    , toLocaleUpper
+    , toLower
+    , toUpper
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, isUpper, isLower, isAlpha, isAlphaNum, isDigit, isOctDigit, isHexDigit, toUpper, toLower, toLocaleUpper, toLocaleLower, toCode, fromCode, annotation_, call_, values_
 -}
 
