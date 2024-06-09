@@ -4,7 +4,7 @@ module Elm.Arg exposing
     , record, field
     , aliasAs
     , ignore, string, char
-    , list, item, listRemaining
+    , list, item, items, listRemaining
     , customType
     )
 
@@ -23,7 +23,7 @@ module Elm.Arg exposing
 
 @docs ignore, string, char
 
-@docs list, item, listRemaining
+@docs list, item, items, listRemaining
 
 @docs customType
 
@@ -153,6 +153,12 @@ listRemaining =
 item : Arg arg -> Arg (arg -> a) -> Arg a
 item =
     Internal.Arg.item
+
+
+{-| -}
+items : List (Arg arg) -> Arg (List arg -> a) -> Arg a
+items =
+    Internal.Arg.items
 
 
 {-|
