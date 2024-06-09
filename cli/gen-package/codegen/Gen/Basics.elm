@@ -934,15 +934,11 @@ make_ =
 caseOf_ :
     { order :
         Elm.Expression
-        -> { orderTags
-            | lT : Elm.Expression
-            , eQ : Elm.Expression
-            , gT : Elm.Expression
-        }
+        -> { lT : Elm.Expression, eQ : Elm.Expression, gT : Elm.Expression }
         -> Elm.Expression
     , bool :
         Elm.Expression
-        -> { boolTags | true : Elm.Expression, false : Elm.Expression }
+        -> { true : Elm.Expression, false : Elm.Expression }
         -> Elm.Expression
     }
 caseOf_ =

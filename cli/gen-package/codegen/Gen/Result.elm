@@ -633,9 +633,8 @@ make_ =
 caseOf_ :
     { result :
         Elm.Expression
-        -> { resultTags
-            | ok : Elm.Expression -> Elm.Expression
-            , err : Elm.Expression -> Elm.Expression
+        -> { ok : Elm.Expression -> Elm.Expression
+        , err : Elm.Expression -> Elm.Expression
         }
         -> Elm.Expression
     }

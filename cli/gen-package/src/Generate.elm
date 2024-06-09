@@ -304,19 +304,39 @@ block2Case thisModule union =
             Nothing
 
         _ ->
-            Just
-                (Elm.fn2
-                    (Elm.Arg.var (union.name ++ "Expression"))
-                    (Elm.Arg.var (union.name ++ "Tags"))
-                    (\express tagRecord ->
-                        Gen.Elm.Case.custom express
-                            (unionToAnnotation thisModule union)
-                            (List.map
-                                (toBranch thisModule tagRecord)
-                                union.tags
+            let
+                tagsAnnotation : Annotation.Annotation
+                tagsAnnotation =
+                    union.tags
+                        |> List.map
+                            (\( fieldName, fieldTypes ) ->
+                                ( fieldName
+                                , Annotation.function
+                                    (List.map typeToGeneratedAnnotation fieldTypes)
+                                    Gen.Elm.annotation_.expression
+                                )
                             )
-                    )
+                        |> Annotation.record
+            in
+            Elm.fn2
+                (Elm.Arg.var (union.name ++ "Expression"))
+                (Elm.Arg.var (union.name ++ "Tags"))
+                (\express tagRecord ->
+                    Gen.Elm.Case.custom express
+                        (unionToAnnotation thisModule union)
+                        (List.map
+                            (toBranch thisModule tagRecord)
+                            union.tags
+                        )
                 )
+                |> Elm.withType
+                    (Annotation.function
+                        [ Gen.Elm.annotation_.expression
+                        , tagsAnnotation
+                        ]
+                        Gen.Elm.annotation_.expression
+                    )
+                |> Just
 
 
 toBranch : List String -> Elm.Expression -> ( String, List Elm.Type.Type ) -> Elm.Expression
@@ -477,24 +497,24 @@ recordWithFieldList recordName blocks makeField =
 caseOf : List String -> Elm.Docs.Block -> Maybe Field
 caseOf thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
-            Nothing
-
         Elm.Docs.UnionBlock union ->
             Maybe.map
                 (Tuple.pair union.name)
                 (block2Case thisModule union)
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
-        Elm.Docs.ValueBlock value ->
+        Elm.Docs.AliasBlock _ ->
             Nothing
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.ValueBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.BinopBlock _ ->
+            Nothing
+
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
