@@ -325,7 +325,7 @@ docs groups =
 
 Pass in a function that determines how to render a `@docs` comment.
 
-Each exposed item is grouped based on the string used in [exposeWith](#exposeWith).
+Each exposed item is grouped based on the use of [group](#group).
 
 **aliases** allow you to specify a module alias to be used.
 

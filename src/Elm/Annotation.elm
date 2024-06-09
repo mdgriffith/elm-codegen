@@ -270,7 +270,7 @@ extensible base fields =
             fields
                 |> List.map
                     (\( name, ann ) ->
-                        ( Compiler.nodify name
+                        ( Compiler.nodify (Format.formatValue name)
                         , Compiler.nodify (Compiler.getInnerAnnotation ann)
                         )
                     )

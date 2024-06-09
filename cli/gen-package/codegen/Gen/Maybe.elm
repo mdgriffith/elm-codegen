@@ -1,12 +1,27 @@
-module Gen.Maybe exposing (andThen, annotation_, call_, caseOf_, make_, map, map2, map3, map4, map5, moduleName_, values_, withDefault)
+module Gen.Maybe exposing
+    ( andThen
+    , annotation_
+    , call_
+    , caseOf_
+    , make_
+    , map
+    , map2
+    , map3
+    , map4
+    , map5
+    , moduleName_
+    , values_
+    , withDefault
+    )
 
-{-| 
+{-|
 @docs moduleName_, withDefault, map, map2, map3, map4, map5, andThen, annotation_, make_, caseOf_, call_, values_
 -}
 
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg
 import Elm.Case
 
 
@@ -37,15 +52,15 @@ withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
 withDefault withDefaultArg withDefaultArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Maybe" ]
-            , name = "withDefault"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "a", Type.maybe (Type.var "a") ]
-                        (Type.var "a")
-                    )
-            }
+             { importFrom = [ "Maybe" ]
+             , name = "withDefault"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "a", Type.maybe (Type.var "a") ]
+                          (Type.var "a")
+                     )
+             }
         )
         [ withDefaultArg, withDefaultArg0 ]
 
@@ -64,17 +79,17 @@ map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map mapArg mapArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Maybe" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "b")
-                        , Type.maybe (Type.var "a")
-                        ]
-                        (Type.maybe (Type.var "b"))
-                    )
-            }
+             { importFrom = [ "Maybe" ]
+             , name = "map"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.var "a" ] (Type.var "b")
+                          , Type.maybe (Type.var "a")
+                          ]
+                          (Type.maybe (Type.var "b"))
+                     )
+             }
         )
         [ Elm.functionReduced "mapUnpack" mapArg, mapArg0 ]
 
@@ -99,25 +114,25 @@ map2 :
 map2 map2Arg map2Arg0 map2Arg1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Maybe" ]
-            , name = "map2"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b" ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        ]
-                        (Type.maybe (Type.var "value"))
-                    )
-            }
+             { importFrom = [ "Maybe" ]
+             , name = "map2"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a", Type.var "b" ]
+                              (Type.var "value")
+                          , Type.maybe (Type.var "a")
+                          , Type.maybe (Type.var "b")
+                          ]
+                          (Type.maybe (Type.var "value"))
+                     )
+             }
         )
         [ Elm.functionReduced
             "map2Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced "unpack" (map2Arg functionReducedUnpack)
+               Elm.functionReduced "unpack" (map2Arg functionReducedUnpack)
             )
         , map2Arg0
         , map2Arg1
@@ -134,34 +149,34 @@ map3 :
 map3 map3Arg map3Arg0 map3Arg1 map3Arg2 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Maybe" ]
-            , name = "map3"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b", Type.var "c" ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        , Type.maybe (Type.var "c")
-                        ]
-                        (Type.maybe (Type.var "value"))
-                    )
-            }
+             { importFrom = [ "Maybe" ]
+             , name = "map3"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a", Type.var "b", Type.var "c" ]
+                              (Type.var "value")
+                          , Type.maybe (Type.var "a")
+                          , Type.maybe (Type.var "b")
+                          , Type.maybe (Type.var "c")
+                          ]
+                          (Type.maybe (Type.var "value"))
+                     )
+             }
         )
         [ Elm.functionReduced
             "map3Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (map3Arg functionReducedUnpack
-                                functionReducedUnpack0
+                            ((map3Arg functionReducedUnpack)
+                                 functionReducedUnpack0
                             )
-                    )
+                   )
             )
         , map3Arg0
         , map3Arg1
@@ -191,44 +206,45 @@ map4 :
 map4 map4Arg map4Arg0 map4Arg1 map4Arg2 map4Arg3 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Maybe" ]
-            , name = "map4"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        , Type.maybe (Type.var "c")
-                        , Type.maybe (Type.var "d")
-                        ]
-                        (Type.maybe (Type.var "value"))
-                    )
-            }
+             { importFrom = [ "Maybe" ]
+             , name = "map4"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a"
+                              , Type.var "b"
+                              , Type.var "c"
+                              , Type.var "d"
+                              ]
+                              (Type.var "value")
+                          , Type.maybe (Type.var "a")
+                          , Type.maybe (Type.var "b")
+                          , Type.maybe (Type.var "c")
+                          , Type.maybe (Type.var "d")
+                          ]
+                          (Type.maybe (Type.var "value"))
+                     )
+             }
         )
         [ Elm.functionReduced
             "map4Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
                             (\functionReducedUnpack_2_1_2_0_2_0_2_0_0 ->
-                                Elm.functionReduced
-                                    "unpack"
-                                    (map4Arg functionReducedUnpack
-                                         functionReducedUnpack0
-                                        functionReducedUnpack_2_1_2_0_2_0_2_0_0
-                                    )
+                                 Elm.functionReduced
+                                     "unpack"
+                                     (((map4Arg functionReducedUnpack)
+                                           functionReducedUnpack0
+                                      )
+                                          functionReducedUnpack_2_1_2_0_2_0_2_0_0
+                                     )
                             )
-                    )
+                   )
             )
         , map4Arg0
         , map4Arg1
@@ -262,51 +278,53 @@ map5 :
 map5 map5Arg map5Arg0 map5Arg1 map5Arg2 map5Arg3 map5Arg4 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Maybe" ]
-            , name = "map5"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            , Type.var "e"
-                            ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        , Type.maybe (Type.var "c")
-                        , Type.maybe (Type.var "d")
-                        , Type.maybe (Type.var "e")
-                        ]
-                        (Type.maybe (Type.var "value"))
-                    )
-            }
+             { importFrom = [ "Maybe" ]
+             , name = "map5"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a"
+                              , Type.var "b"
+                              , Type.var "c"
+                              , Type.var "d"
+                              , Type.var "e"
+                              ]
+                              (Type.var "value")
+                          , Type.maybe (Type.var "a")
+                          , Type.maybe (Type.var "b")
+                          , Type.maybe (Type.var "c")
+                          , Type.maybe (Type.var "d")
+                          , Type.maybe (Type.var "e")
+                          ]
+                          (Type.maybe (Type.var "value"))
+                     )
+             }
         )
         [ Elm.functionReduced
             "map5Unpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
                             (\functionReducedUnpack_2_1_2_0_2_0_2_0_0 ->
-                                Elm.functionReduced
-                                    "unpack"
-                                    (\functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0 ->
-                                        Elm.functionReduced
-                                            "unpack"
-                                            (map5Arg functionReducedUnpack
-                                                 functionReducedUnpack0
-                                                 functionReducedUnpack_2_1_2_0_2_0_2_0_0
-                                                functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0
-                                            )
-                                    )
+                                 Elm.functionReduced
+                                     "unpack"
+                                     (\functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0 ->
+                                          Elm.functionReduced
+                                              "unpack"
+                                              ((((map5Arg functionReducedUnpack)
+                                                     functionReducedUnpack0
+                                                )
+                                                    functionReducedUnpack_2_1_2_0_2_0_2_0_0
+                                               )
+                                                   functionReducedUnpack_2_1_2_1_2_0_2_0_2_0_0
+                                              )
+                                     )
                             )
-                    )
+                   )
             )
         , map5Arg0
         , map5Arg1
@@ -354,19 +372,19 @@ andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen andThenArg andThenArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Maybe" ]
-            , name = "andThen"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a" ]
-                            (Type.maybe (Type.var "b"))
-                        , Type.maybe (Type.var "a")
-                        ]
-                        (Type.maybe (Type.var "b"))
-                    )
-            }
+             { importFrom = [ "Maybe" ]
+             , name = "andThen"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "a" ]
+                              (Type.maybe (Type.var "b"))
+                          , Type.maybe (Type.var "a")
+                          ]
+                          (Type.maybe (Type.var "b"))
+                     )
+             }
         )
         [ Elm.functionReduced "andThenUnpack" andThenArg, andThenArg0 ]
 
@@ -382,11 +400,11 @@ make_ =
         \ar0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = []
-                    , name = "Just"
-                    , annotation =
-                        Just (Type.namedWith [] "Maybe" [ Type.var "a" ])
-                    }
+                     { importFrom = []
+                     , name = "Just"
+                     , annotation =
+                         Just (Type.namedWith [] "Maybe" [ Type.var "a" ])
+                     }
                 )
                 [ ar0 ]
     , nothing =
@@ -401,10 +419,7 @@ make_ =
 caseOf_ :
     { maybe :
         Elm.Expression
-        -> { maybeTags_0_0
-            | just : Elm.Expression -> Elm.Expression
-            , nothing : Elm.Expression
-        }
+        -> { just : Elm.Expression -> Elm.Expression, nothing : Elm.Expression }
         -> Elm.Expression
     }
 caseOf_ =
@@ -413,8 +428,15 @@ caseOf_ =
             Elm.Case.custom
                 maybeExpression
                 (Type.namedWith [ "Maybe" ] "Maybe" [ Type.var "a" ])
-                [ Elm.Case.branch1 "Just" ( "a", Type.var "a" ) maybeTags.just
-                , Elm.Case.branch0 "Nothing" maybeTags.nothing
+                [ Elm.Case.branch
+                    (Elm.Arg.item
+                       (Elm.Arg.varWith "arg0" (Type.var "a"))
+                       (Elm.Arg.customType "Just" maybeTags.just)
+                    )
+                    (\branchUnpack -> branchUnpack)
+                , Elm.Case.branch
+                    (Elm.Arg.customType "Nothing" maybeTags.nothing)
+                    (\branchUnpack -> branchUnpack)
                 ]
     }
 
@@ -452,146 +474,151 @@ call_ =
         \withDefaultArg withDefaultArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
-                    , name = "withDefault"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "a", Type.maybe (Type.var "a") ]
-                                (Type.var "a")
-                            )
-                    }
+                     { importFrom = [ "Maybe" ]
+                     , name = "withDefault"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "a", Type.maybe (Type.var "a") ]
+                                  (Type.var "a")
+                             )
+                     }
                 )
                 [ withDefaultArg, withDefaultArg0 ]
     , map =
         \mapArg mapArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
-                    , name = "map"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function [ Type.var "a" ] (Type.var "b")
-                                , Type.maybe (Type.var "a")
-                                ]
-                                (Type.maybe (Type.var "b"))
-                            )
-                    }
+                     { importFrom = [ "Maybe" ]
+                     , name = "map"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a" ]
+                                      (Type.var "b")
+                                  , Type.maybe (Type.var "a")
+                                  ]
+                                  (Type.maybe (Type.var "b"))
+                             )
+                     }
                 )
                 [ mapArg, mapArg0 ]
     , map2 =
         \map2Arg map2Arg0 map2Arg1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
-                    , name = "map2"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a", Type.var "b" ]
-                                    (Type.var "value")
-                                , Type.maybe (Type.var "a")
-                                , Type.maybe (Type.var "b")
-                                ]
-                                (Type.maybe (Type.var "value"))
-                            )
-                    }
+                     { importFrom = [ "Maybe" ]
+                     , name = "map2"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a", Type.var "b" ]
+                                      (Type.var "value")
+                                  , Type.maybe (Type.var "a")
+                                  , Type.maybe (Type.var "b")
+                                  ]
+                                  (Type.maybe (Type.var "value"))
+                             )
+                     }
                 )
                 [ map2Arg, map2Arg0, map2Arg1 ]
     , map3 =
         \map3Arg map3Arg0 map3Arg1 map3Arg2 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
-                    , name = "map3"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a", Type.var "b", Type.var "c" ]
-                                    (Type.var "value")
-                                , Type.maybe (Type.var "a")
-                                , Type.maybe (Type.var "b")
-                                , Type.maybe (Type.var "c")
-                                ]
-                                (Type.maybe (Type.var "value"))
-                            )
-                    }
+                     { importFrom = [ "Maybe" ]
+                     , name = "map3"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a"
+                                      , Type.var "b"
+                                      , Type.var "c"
+                                      ]
+                                      (Type.var "value")
+                                  , Type.maybe (Type.var "a")
+                                  , Type.maybe (Type.var "b")
+                                  , Type.maybe (Type.var "c")
+                                  ]
+                                  (Type.maybe (Type.var "value"))
+                             )
+                     }
                 )
                 [ map3Arg, map3Arg0, map3Arg1, map3Arg2 ]
     , map4 =
         \map4Arg map4Arg0 map4Arg1 map4Arg2 map4Arg3 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
-                    , name = "map4"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a"
-                                    , Type.var "b"
-                                    , Type.var "c"
-                                    , Type.var "d"
-                                    ]
-                                    (Type.var "value")
-                                , Type.maybe (Type.var "a")
-                                , Type.maybe (Type.var "b")
-                                , Type.maybe (Type.var "c")
-                                , Type.maybe (Type.var "d")
-                                ]
-                                (Type.maybe (Type.var "value"))
-                            )
-                    }
+                     { importFrom = [ "Maybe" ]
+                     , name = "map4"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a"
+                                      , Type.var "b"
+                                      , Type.var "c"
+                                      , Type.var "d"
+                                      ]
+                                      (Type.var "value")
+                                  , Type.maybe (Type.var "a")
+                                  , Type.maybe (Type.var "b")
+                                  , Type.maybe (Type.var "c")
+                                  , Type.maybe (Type.var "d")
+                                  ]
+                                  (Type.maybe (Type.var "value"))
+                             )
+                     }
                 )
                 [ map4Arg, map4Arg0, map4Arg1, map4Arg2, map4Arg3 ]
     , map5 =
         \map5Arg map5Arg0 map5Arg1 map5Arg2 map5Arg3 map5Arg4 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
-                    , name = "map5"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a"
-                                    , Type.var "b"
-                                    , Type.var "c"
-                                    , Type.var "d"
-                                    , Type.var "e"
-                                    ]
-                                    (Type.var "value")
-                                , Type.maybe (Type.var "a")
-                                , Type.maybe (Type.var "b")
-                                , Type.maybe (Type.var "c")
-                                , Type.maybe (Type.var "d")
-                                , Type.maybe (Type.var "e")
-                                ]
-                                (Type.maybe (Type.var "value"))
-                            )
-                    }
+                     { importFrom = [ "Maybe" ]
+                     , name = "map5"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a"
+                                      , Type.var "b"
+                                      , Type.var "c"
+                                      , Type.var "d"
+                                      , Type.var "e"
+                                      ]
+                                      (Type.var "value")
+                                  , Type.maybe (Type.var "a")
+                                  , Type.maybe (Type.var "b")
+                                  , Type.maybe (Type.var "c")
+                                  , Type.maybe (Type.var "d")
+                                  , Type.maybe (Type.var "e")
+                                  ]
+                                  (Type.maybe (Type.var "value"))
+                             )
+                     }
                 )
                 [ map5Arg, map5Arg0, map5Arg1, map5Arg2, map5Arg3, map5Arg4 ]
     , andThen =
         \andThenArg andThenArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
-                    , name = "andThen"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a" ]
-                                    (Type.maybe (Type.var "b"))
-                                , Type.maybe (Type.var "a")
-                                ]
-                                (Type.maybe (Type.var "b"))
-                            )
-                    }
+                     { importFrom = [ "Maybe" ]
+                     , name = "andThen"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a" ]
+                                      (Type.maybe (Type.var "b"))
+                                  , Type.maybe (Type.var "a")
+                                  ]
+                                  (Type.maybe (Type.var "b"))
+                             )
+                     }
                 )
                 [ andThenArg, andThenArg0 ]
     }
@@ -614,8 +641,8 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "a", Type.maybe (Type.var "a") ]
-                        (Type.var "a")
+                         [ Type.var "a", Type.maybe (Type.var "a") ]
+                         (Type.var "a")
                     )
             }
     , map =
@@ -625,10 +652,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "b")
-                        , Type.maybe (Type.var "a")
-                        ]
-                        (Type.maybe (Type.var "b"))
+                         [ Type.function [ Type.var "a" ] (Type.var "b")
+                         , Type.maybe (Type.var "a")
+                         ]
+                         (Type.maybe (Type.var "b"))
                     )
             }
     , map2 =
@@ -638,13 +665,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b" ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        ]
-                        (Type.maybe (Type.var "value"))
+                         [ Type.function
+                             [ Type.var "a", Type.var "b" ]
+                             (Type.var "value")
+                         , Type.maybe (Type.var "a")
+                         , Type.maybe (Type.var "b")
+                         ]
+                         (Type.maybe (Type.var "value"))
                     )
             }
     , map3 =
@@ -654,14 +681,14 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b", Type.var "c" ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        , Type.maybe (Type.var "c")
-                        ]
-                        (Type.maybe (Type.var "value"))
+                         [ Type.function
+                             [ Type.var "a", Type.var "b", Type.var "c" ]
+                             (Type.var "value")
+                         , Type.maybe (Type.var "a")
+                         , Type.maybe (Type.var "b")
+                         , Type.maybe (Type.var "c")
+                         ]
+                         (Type.maybe (Type.var "value"))
                     )
             }
     , map4 =
@@ -671,19 +698,19 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        , Type.maybe (Type.var "c")
-                        , Type.maybe (Type.var "d")
-                        ]
-                        (Type.maybe (Type.var "value"))
+                         [ Type.function
+                             [ Type.var "a"
+                             , Type.var "b"
+                             , Type.var "c"
+                             , Type.var "d"
+                             ]
+                             (Type.var "value")
+                         , Type.maybe (Type.var "a")
+                         , Type.maybe (Type.var "b")
+                         , Type.maybe (Type.var "c")
+                         , Type.maybe (Type.var "d")
+                         ]
+                         (Type.maybe (Type.var "value"))
                     )
             }
     , map5 =
@@ -693,21 +720,21 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            , Type.var "e"
-                            ]
-                            (Type.var "value")
-                        , Type.maybe (Type.var "a")
-                        , Type.maybe (Type.var "b")
-                        , Type.maybe (Type.var "c")
-                        , Type.maybe (Type.var "d")
-                        , Type.maybe (Type.var "e")
-                        ]
-                        (Type.maybe (Type.var "value"))
+                         [ Type.function
+                             [ Type.var "a"
+                             , Type.var "b"
+                             , Type.var "c"
+                             , Type.var "d"
+                             , Type.var "e"
+                             ]
+                             (Type.var "value")
+                         , Type.maybe (Type.var "a")
+                         , Type.maybe (Type.var "b")
+                         , Type.maybe (Type.var "c")
+                         , Type.maybe (Type.var "d")
+                         , Type.maybe (Type.var "e")
+                         ]
+                         (Type.maybe (Type.var "value"))
                     )
             }
     , andThen =
@@ -717,12 +744,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "a" ]
-                            (Type.maybe (Type.var "b"))
-                        , Type.maybe (Type.var "a")
-                        ]
-                        (Type.maybe (Type.var "b"))
+                         [ Type.function
+                             [ Type.var "a" ]
+                             (Type.maybe (Type.var "b"))
+                         , Type.maybe (Type.var "a")
+                         ]
+                         (Type.maybe (Type.var "b"))
                     )
             }
     }

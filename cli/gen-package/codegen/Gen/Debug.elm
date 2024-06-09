@@ -1,6 +1,13 @@
-module Gen.Debug exposing (call_, log, moduleName_, toString, todo, values_)
+module Gen.Debug exposing
+    ( call_
+    , log
+    , moduleName_
+    , toString
+    , todo
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, toString, log, todo, call_, values_
 -}
 
@@ -38,10 +45,10 @@ toString : Elm.Expression -> Elm.Expression
 toString toStringArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Debug" ]
-            , name = "toString"
-            , annotation = Just (Type.function [ Type.var "a" ] Type.string)
-            }
+             { importFrom = [ "Debug" ]
+             , name = "toString"
+             , annotation = Just (Type.function [ Type.var "a" ] Type.string)
+             }
         )
         [ toStringArg ]
 
@@ -70,12 +77,13 @@ log : String -> Elm.Expression -> Elm.Expression
 log logArg logArg0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Debug" ]
-            , name = "log"
-            , annotation =
-                Just
-                    (Type.function [ Type.string, Type.var "a" ] (Type.var "a"))
-            }
+             { importFrom = [ "Debug" ]
+             , name = "log"
+             , annotation =
+                 Just
+                     (Type.function [ Type.string, Type.var "a" ] (Type.var "a")
+                     )
+             }
         )
         [ Elm.string logArg, logArg0 ]
 
@@ -116,10 +124,10 @@ todo : String -> Elm.Expression
 todo todoArg =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Debug" ]
-            , name = "todo"
-            , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
-            }
+             { importFrom = [ "Debug" ]
+             , name = "todo"
+             , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
+             }
         )
         [ Elm.string todoArg ]
 
@@ -134,37 +142,37 @@ call_ =
         \toStringArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Debug" ]
-                    , name = "toString"
-                    , annotation =
-                        Just (Type.function [ Type.var "a" ] Type.string)
-                    }
+                     { importFrom = [ "Debug" ]
+                     , name = "toString"
+                     , annotation =
+                         Just (Type.function [ Type.var "a" ] Type.string)
+                     }
                 )
                 [ toStringArg ]
     , log =
         \logArg logArg0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Debug" ]
-                    , name = "log"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string, Type.var "a" ]
-                                (Type.var "a")
-                            )
-                    }
+                     { importFrom = [ "Debug" ]
+                     , name = "log"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string, Type.var "a" ]
+                                  (Type.var "a")
+                             )
+                     }
                 )
                 [ logArg, logArg0 ]
     , todo =
         \todoArg ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Debug" ]
-                    , name = "todo"
-                    , annotation =
-                        Just (Type.function [ Type.string ] (Type.var "a"))
-                    }
+                     { importFrom = [ "Debug" ]
+                     , name = "todo"
+                     , annotation =
+                         Just (Type.function [ Type.string ] (Type.var "a"))
+                     }
                 )
                 [ todoArg ]
     }
