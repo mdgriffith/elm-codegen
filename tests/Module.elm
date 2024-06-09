@@ -26,7 +26,7 @@ mod =
             (Declare.fn2 "myFn"
                 (Arg.varWith "firstArg" Type.int)
                 (Arg.varWith "secondArg" Type.int)
-                (\a b ->
+                (\a _ ->
                     Elm.apply (Elm.val "testFn")
                         [ Elm.apply
                             (Elm.val "Test")
