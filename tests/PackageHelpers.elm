@@ -14,17 +14,16 @@ import Internal.Write
 import Test exposing (Test, describe, test)
 
 
-detectCycles : List ( String, TypeAnnotation ) -> List Bool
+detectCycles : List ( String, TypeAnnotation ) -> Bool
 detectCycles list =
     let
         dict : Dict String TypeAnnotation
         dict =
             Dict.fromList list
     in
-    dict
-        |> Dict.keys
-        |> List.map
-            (\key ->
+    list
+        |> List.any
+            (\( key, _ ) ->
                 hasCycles dict key []
             )
 
@@ -36,10 +35,9 @@ countCycles list =
         dict =
             Dict.fromList list
     in
-    dict
-        |> Dict.keys
+    list
         |> List.map
-            (\key ->
+            (\( key, _ ) ->
                 findDepth dict key [] 0
             )
 
@@ -117,7 +115,7 @@ packageHelpers =
                     cycles =
                         layout
                             |> Compiler.facts
-                            |> Result.map (List.member True << detectCycles)
+                            |> Result.map detectCycles
                             |> Result.withDefault True
                 in
                 Expect.equal False cycles

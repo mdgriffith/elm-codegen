@@ -5,7 +5,6 @@ module Generate exposing (main)
 import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
-import Elm.Case
 import Elm.Docs
 import Elm.Gen
 import Elm.Syntax.TypeAnnotation
@@ -59,7 +58,7 @@ main =
                                     }
                                 )
         , update =
-            \msg model ->
+            \_ model ->
                 ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
@@ -99,9 +98,11 @@ flagsDecoder =
 moduleToFile : Elm.Docs.Module -> Elm.File
 moduleToFile docs =
     let
+        blocks : List Elm.Docs.Block
         blocks =
             Elm.Docs.toBlocks docs
 
+        sourceModName : List String
         sourceModName =
             -- Platform.Sub and Platform.Cmd are always imported aliased as Sub and Cmd
             -- Which makes things kinda awkward.
@@ -117,9 +118,11 @@ moduleToFile docs =
                 _ ->
                     String.split "." docs.name
 
+        modName : List String
         modName =
             "Gen" :: String.split "." docs.name
 
+        modNameBlock : Elm.Declaration
         modNameBlock =
             Elm.declaration "moduleName_"
                 (Elm.list (List.map Elm.string sourceModName))
@@ -210,19 +213,20 @@ expressionType =
 blockToCall : List String -> Elm.Docs.Block -> Maybe Field
 blockToCall thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
-        Elm.Docs.UnionBlock union ->
+        Elm.Docs.UnionBlock _ ->
             Nothing
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             Nothing
 
         Elm.Docs.ValueBlock value ->
             case value.tipe of
-                Elm.Type.Lambda one two ->
+                Elm.Type.Lambda _ _ ->
                     let
+                        captured : { arguments : List ( String, Maybe Annotation.Annotation ), unpackers : List (Elm.Expression -> Elm.Expression) }
                         captured =
                             captureFunction value.name
                                 value.tipe
@@ -231,25 +235,12 @@ blockToCall thisModule block =
                                 , unpackers = []
                                 }
 
+                        arguments : List ( String, Maybe Annotation.Annotation )
                         arguments =
                             List.drop 1 captured.arguments
                                 |> List.foldl
                                     (\( name, _ ) args ->
                                         ( name, Just expressionType ) :: args
-                                    )
-                                    []
-
-                        vals =
-                            List.drop 1 captured.arguments
-                                |> List.foldl
-                                    (\( name, _ ) args ->
-                                        Elm.value
-                                            { importFrom = []
-                                            , name = name
-                                            , annotation =
-                                                Just expressionType
-                                            }
-                                            :: args
                                     )
                                     []
                     in
@@ -271,23 +262,23 @@ blockToCall thisModule block =
                 _ ->
                     Nothing
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
 blockToIdField : List String -> Elm.Docs.Block -> Maybe Field
 blockToIdField thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
-        Elm.Docs.UnionBlock union ->
+        Elm.Docs.UnionBlock _ ->
             Nothing
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             Nothing
 
         Elm.Docs.ValueBlock value ->
@@ -300,10 +291,10 @@ blockToIdField thisModule block =
                     )
                 )
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
@@ -330,11 +321,10 @@ block2Case thisModule union =
                 )
 
 
+toBranch : List String -> Elm.Expression -> ( String, List Elm.Type.Type ) -> Maybe Elm.Expression
 toBranch thisModule tagRecord ( tagname, subtypes ) =
     let
-        moduleName =
-            Elm.list (List.map Elm.string thisModule)
-
+        tagString : Elm.Expression
         tagString =
             Elm.string tagname
     in
@@ -511,95 +501,6 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
             Nothing
 
 
-block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
-block2Maker thisModule block =
-    case block of
-        Elm.Docs.MarkdownBlock str ->
-            Nothing
-
-        Elm.Docs.UnionBlock union ->
-            case union.tags of
-                [] ->
-                    -- This type has not been exposed and can't be constructed
-                    Nothing
-
-                _ ->
-                    Just
-                        (Elm.record
-                            (List.map
-                                (\( name, tags ) ->
-                                    case tags of
-                                        [] ->
-                                            Tuple.pair name
-                                                (valueWith thisModule
-                                                    name
-                                                    (Elm.Type.Type union.name
-                                                        (List.map Elm.Type.Var union.args)
-                                                    )
-                                                )
-
-                                        _ ->
-                                            Tuple.pair name
-                                                (Elm.function
-                                                    (List.indexedMap
-                                                        (\i tag ->
-                                                            ( "ar" ++ String.fromInt i
-                                                            , Just expressionType
-                                                            )
-                                                        )
-                                                        tags
-                                                    )
-                                                    (\vars ->
-                                                        apply
-                                                            (valueWith thisModule
-                                                                name
-                                                                (Elm.Type.Type union.name
-                                                                    (List.map Elm.Type.Var union.args)
-                                                                )
-                                                            )
-                                                            vars
-                                                    )
-                                                )
-                                )
-                                union.tags
-                            )
-                        )
-
-        Elm.Docs.AliasBlock { name, tipe } ->
-            case tipe of
-                Elm.Type.Record fields Nothing ->
-                    let
-                        lambdaArgType =
-                            fields
-                                |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
-                                |> Annotation.record
-
-                        lambdaValue arg =
-                            fields
-                                |> List.map
-                                    (\( fieldName, _ ) ->
-                                        Gen.Tuple.pair
-                                            (Elm.string fieldName)
-                                            (Elm.get fieldName arg)
-                                    )
-                                |> Gen.Elm.record
-                    in
-                    Elm.fn ( name ++ "arg", Just lambdaArgType ) lambdaValue
-                        |> Just
-
-                _ ->
-                    Nothing
-
-        Elm.Docs.ValueBlock value ->
-            Nothing
-
-        Elm.Docs.BinopBlock binop ->
-            Nothing
-
-        Elm.Docs.UnknownBlock str ->
-            Nothing
-
-
 type alias Field =
     ( String, Elm.Expression )
 
@@ -607,6 +508,7 @@ type alias Field =
 record : String -> List Elm.Docs.Block -> (Elm.Docs.Block -> Maybe Field) -> Maybe Elm.Declaration
 record recordName blocks makeField =
     let
+        fields : List Field
         fields =
             blocks
                 |> List.filterMap makeField
@@ -626,6 +528,7 @@ record recordName blocks makeField =
 recordWithFieldList : String -> List Elm.Docs.Block -> (Elm.Docs.Block -> List Field) -> Maybe Elm.Declaration
 recordWithFieldList recordName blocks makeField =
     let
+        fields : List Field
         fields =
             blocks
                 |> List.concatMap makeField
@@ -645,7 +548,7 @@ recordWithFieldList recordName blocks makeField =
 caseOf : List String -> Elm.Docs.Block -> Maybe Field
 caseOf thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
         Elm.Docs.UnionBlock union ->
@@ -653,23 +556,23 @@ caseOf thisModule block =
                 (Tuple.pair union.name)
                 (block2Case thisModule union)
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             Nothing
 
-        Elm.Docs.ValueBlock value ->
+        Elm.Docs.ValueBlock _ ->
             Nothing
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
 annotation : List String -> Elm.Docs.Block -> Maybe Field
 annotation thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
         Elm.Docs.UnionBlock union ->
@@ -682,13 +585,13 @@ annotation thisModule block =
                 (aliasNamed alias)
                 |> Just
 
-        Elm.Docs.ValueBlock value ->
+        Elm.Docs.ValueBlock _ ->
             Nothing
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
@@ -701,7 +604,7 @@ annotationNamed thisModule name tags =
         nonEmpty ->
             Elm.function
                 (List.indexedMap
-                    (\i arg ->
+                    (\i _ ->
                         ( name ++ "Arg" ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
@@ -715,28 +618,30 @@ annotationNamed thisModule name tags =
 
 localType : List String -> String -> List Elm.Expression -> Elm.Expression
 localType thisModule typeName args =
-    case preludeTypeName thisModule typeName of
-        ( mod, name ) ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "namedWith"
-                    , annotation =
-                        Just
-                            (Annotation.function
-                                [ Annotation.list Annotation.string
-                                , Annotation.string
-                                , Annotation.list
-                                    (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                                ]
-                                (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                            )
-                    }
-                )
-                [ Elm.list (List.map Elm.string mod)
-                , Elm.string name
-                , Elm.list args
-                ]
+    let
+        ( mod, name ) =
+            preludeTypeName thisModule typeName
+    in
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "namedWith"
+            , annotation =
+                Just
+                    (Annotation.function
+                        [ Annotation.list Annotation.string
+                        , Annotation.string
+                        , Annotation.list
+                            (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                        ]
+                        (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
+            }
+        )
+        [ Elm.list (List.map Elm.string mod)
+        , Elm.string name
+        , Elm.list args
+        ]
 
 
 preludeTypeName : List String -> String -> ( List String, String )
@@ -797,7 +702,7 @@ aliasNamed docAlias =
         nonEmpty ->
             Elm.function
                 (List.indexedMap
-                    (\i arg ->
+                    (\i _ ->
                         ( docAlias.name ++ "Arg" ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
@@ -826,7 +731,7 @@ withBuiltInModules modName =
 typeCreation : List String -> Elm.Docs.Block -> List Field
 typeCreation thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             []
 
         Elm.Docs.UnionBlock union ->
@@ -855,7 +760,7 @@ typeCreation thisModule block =
                                     Tuple.pair name
                                         (Elm.function
                                             (List.indexedMap
-                                                (\i tag ->
+                                                (\i _ ->
                                                     ( "ar" ++ String.fromInt i
                                                     , Just expressionType
                                                     )
@@ -880,6 +785,7 @@ typeCreation thisModule block =
             case alias.tipe of
                 Elm.Type.Record fields Nothing ->
                     let
+                        lambdaArgType : Annotation.Annotation
                         lambdaArgType =
                             fields
                                 |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
@@ -888,6 +794,7 @@ typeCreation thisModule block =
                     [ Elm.fn ( alias.name ++ "_args", Nothing )
                         (\val ->
                             let
+                                arg : Elm.Expression
                                 arg =
                                     val
                                         |> Elm.withType lambdaArgType
@@ -896,6 +803,7 @@ typeCreation thisModule block =
                                 |> List.map
                                     (\( fieldName, _ ) ->
                                         let
+                                            builder : Elm.Expression
                                             builder =
                                                 Elm.get fieldName arg
                                         in
@@ -929,39 +837,38 @@ typeCreation thisModule block =
                 _ ->
                     []
 
-        Elm.Docs.ValueBlock value ->
+        Elm.Docs.ValueBlock _ ->
             []
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             []
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             []
 
 
 generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
 generateBlocks thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             []
 
-        Elm.Docs.UnionBlock union ->
+        Elm.Docs.UnionBlock _ ->
             []
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             []
 
         Elm.Docs.ValueBlock value ->
             case value.tipe of
-                Elm.Type.Lambda one two ->
+                Elm.Type.Lambda _ _ ->
                     let
+                        captured : { arguments : List ( String, Maybe Annotation.Annotation ), unpackers : List (Elm.Expression -> Elm.Expression) }
                         captured =
                             captureFunction value.name
                                 value.tipe
-                                { arguments =
-                                    []
-                                , unpackers =
-                                    []
+                                { arguments = []
+                                , unpackers = []
                                 }
                     in
                     [ Elm.function
@@ -1001,11 +908,11 @@ generateBlocks thisModule block =
                         |> Elm.expose
                     ]
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             --All binops are defined in the top level `Elm` library
             []
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             []
 
 
@@ -1047,6 +954,7 @@ captureFunction baseName tipe captured =
     case tipe of
         Elm.Type.Lambda one two ->
             let
+                unpacked : { annotation : Annotation.Annotation, unpacker : Elm.Expression -> Elm.Expression }
                 unpacked =
                     unpackArg baseName one
             in
@@ -1058,6 +966,7 @@ captureFunction baseName tipe captured =
 
         _ ->
             let
+                unpacked : { annotation : Annotation.Annotation, unpacker : Elm.Expression -> Elm.Expression }
                 unpacked =
                     unpackArg baseName tipe
             in
@@ -1077,6 +986,7 @@ unpackArgForLambdas name tipe =
     case tipe of
         Elm.Type.Lambda one two ->
             let
+                unpacked : { annotation : Annotation.Annotation, unpacker : Elm.Expression -> Elm.Expression }
                 unpacked =
                     unpackArgForLambdas name two
             in
@@ -1089,6 +999,7 @@ unpackArgForLambdas name tipe =
                         "unpack"
                         (\val ->
                             let
+                                full : Elm.Expression
                                 full =
                                     val
                                         |> Elm.withType (typeToGeneratedAnnotationExpression one)
@@ -1114,8 +1025,9 @@ unpackArg :
         }
 unpackArg fnName tipe =
     case tipe of
-        Elm.Type.Lambda one two ->
+        Elm.Type.Lambda _ two ->
             let
+                unpacked : { annotation : Annotation.Annotation, unpacker : Elm.Expression -> Elm.Expression }
                 unpacked =
                     unpackArgForLambdas fnName two
             in
@@ -1137,6 +1049,7 @@ unpackArg fnName tipe =
         Elm.Type.Type "List.List" [ inner ] ->
             if needsUnpacking inner then
                 let
+                    unpacked : { annotation : Annotation.Annotation, unpacker : Elm.Expression -> Elm.Expression }
                     unpacked =
                         unpackArg fnName inner
                 in
@@ -1186,13 +1099,14 @@ unpackArg fnName tipe =
             , unpacker = Gen.Elm.call_.char
             }
 
-        Elm.Type.Type modAndName typeVars ->
+        Elm.Type.Type _ _ ->
             { annotation = expressionType
             , unpacker = identity
             }
 
         Elm.Type.Record fields Nothing ->
             let
+                unpackedFields : List ( String, { annotation : Annotation.Annotation, unpacker : Elm.Expression -> Elm.Expression } )
                 unpackedFields =
                     List.map
                         (Tuple.mapSecond (unpackArg fnName))
@@ -1214,6 +1128,7 @@ unpackArg fnName tipe =
 
         Elm.Type.Record fields (Just genName) ->
             let
+                unpackedFields : List ( String, { annotation : Annotation.Annotation, unpacker : Elm.Expression -> Elm.Expression } )
                 unpackedFields =
                     List.map
                         (Tuple.mapSecond (unpackArg fnName))
@@ -1233,12 +1148,12 @@ unpackArg fnName tipe =
                         |> Gen.Elm.record
             }
 
-        Elm.Type.Tuple tuples ->
+        Elm.Type.Tuple _ ->
             { annotation = expressionType
             , unpacker = identity
             }
 
-        Elm.Type.Var name ->
+        Elm.Type.Var _ ->
             { annotation = expressionType
             , unpacker = identity
             }
@@ -1272,28 +1187,6 @@ needsUnpacking tipe =
             False
 
 
-getArity : Int -> Elm.Type.Type -> Int
-getArity i tipe =
-    case tipe of
-        Elm.Type.Lambda one two ->
-            getArity (i + 1) two
-
-        _ ->
-            i
-
-
-functionArgTypes : Elm.Type.Type -> List Elm.Type.Type -> { args : List Elm.Type.Type, return : Elm.Type.Type }
-functionArgTypes fnType args =
-    case fnType of
-        Elm.Type.Lambda one two ->
-            functionArgTypes two (one :: args)
-
-        _ ->
-            { args = List.reverse args
-            , return = fnType
-            }
-
-
 unpackFunction : String -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
 unpackFunction baseName renderer tipe =
     case tipe of
@@ -1302,6 +1195,7 @@ unpackFunction baseName renderer tipe =
                 baseName
                 (\val ->
                     let
+                        full : Elm.Expression
                         full =
                             val
                                 |> Elm.withType (typeToGeneratedAnnotationExpression one)
@@ -1315,75 +1209,24 @@ unpackFunction baseName renderer tipe =
             renderer
 
 
-{-|
-
-    type Type
-        = Var String
-        | Lambda Type Type
-        | Tuple (List Type)
-        | Type String (List Type)
-        | Record (List ( String, Type )) (Maybe String)
-
-
-    This is the *generated* type annotation.
-
-    So, normally, the type for a Type "String" []
-    would be a `String`
-
-    This function would list that as an `Expression`
-
--}
-typeToGeneratedAnnotation : Elm.Type.Type -> Annotation.Annotation
-typeToGeneratedAnnotation elmType =
-    case elmType of
-        Elm.Type.Var string ->
-            Annotation.namedWith [ "Elm" ] "Expression" []
-
-        Elm.Type.Lambda one two ->
-            Annotation.function
-                [ Annotation.namedWith [ "Elm" ] "Expression" []
-                ]
-                (typeToGeneratedAnnotationExpression two)
-
-        Elm.Type.Tuple types ->
-            Annotation.namedWith [ "Elm" ] "Expression" []
-
-        Elm.Type.Type "List.List" [ inner ] ->
-            Annotation.list (typeToGeneratedAnnotation inner)
-
-        Elm.Type.Type name types ->
-            Annotation.namedWith [ "Elm" ] "Expression" []
-
-        Elm.Type.Record fields maybeExtensible ->
-            case maybeExtensible of
-                Nothing ->
-                    Annotation.record (List.map (Tuple.mapSecond typeToGeneratedAnnotation) fields)
-
-                Just base ->
-                    Annotation.extensible base (List.map (Tuple.mapSecond typeToGeneratedAnnotation) fields)
-
-
 typeToGeneratedAnnotationExpression : Elm.Type.Type -> Annotation.Annotation
 typeToGeneratedAnnotationExpression elmType =
     case elmType of
-        Elm.Type.Var string ->
-            Annotation.namedWith [ "Elm" ] "Expression" []
-
         Elm.Type.Lambda one two ->
             Annotation.function
                 [ typeToGeneratedAnnotationExpression one ]
                 (typeToGeneratedAnnotationExpression two)
 
-        Elm.Type.Tuple types ->
+        Elm.Type.Var _ ->
             Annotation.namedWith [ "Elm" ] "Expression" []
 
-        Elm.Type.Type "List.List" [ inner ] ->
+        Elm.Type.Tuple _ ->
             Annotation.namedWith [ "Elm" ] "Expression" []
 
-        Elm.Type.Type name types ->
+        Elm.Type.Type _ _ ->
             Annotation.namedWith [ "Elm" ] "Expression" []
 
-        Elm.Type.Record fields maybeExtensible ->
+        Elm.Type.Record _ _ ->
             Annotation.namedWith [ "Elm" ] "Expression" []
 
 
@@ -1414,16 +1257,16 @@ typeToName elmType =
         Elm.Type.Var string ->
             Just string
 
-        Elm.Type.Lambda one two ->
+        Elm.Type.Lambda _ _ ->
             Nothing
 
-        Elm.Type.Tuple types ->
+        Elm.Type.Tuple _ ->
             Nothing
 
-        Elm.Type.Type name types ->
+        Elm.Type.Type name _ ->
             Just (Format.formatValue name)
 
-        Elm.Type.Record fields maybeExtensible ->
+        Elm.Type.Record _ maybeExtensible ->
             maybeExtensible
 
 
@@ -1494,11 +1337,7 @@ typeToExpression thisModule elmType =
 
 namedWithType : List String -> String -> List Elm.Type.Type -> Elm.Expression
 namedWithType thisModule name types =
-    let
-        frags =
-            String.split "." name
-    in
-    case frags of
+    case String.split "." name of
         [ "List", "List" ] ->
             case types of
                 [ inner ] ->
@@ -1540,11 +1379,13 @@ namedWithType thisModule name types =
                 "Sub"
                 (List.map (typeToExpression thisModule) types)
 
-        _ ->
+        frags ->
             let
+                fragsLength : Int
                 fragsLength =
                     List.length frags
 
+                typeName : String
                 typeName =
                     List.drop (fragsLength - 1) frags
                         |> List.head
@@ -1559,6 +1400,7 @@ namedWithType thisModule name types =
 typeToString : Elm.Type.Type -> String
 typeToString type_ =
     let
+        lines : List String
         lines =
             docTypeToAnnotation type_
                 |> Write.writeAnnotation
@@ -1583,34 +1425,35 @@ docTypeToAnnotation tipe =
 
         Elm.Type.Type typeName inner ->
             let
+                modName : ( List String, String )
                 modName =
                     case List.reverse (String.split "." typeName) of
                         [] ->
-                            Compiler.nodify ( [], "()" )
+                            ( [], "()" )
 
                         [ "Int", "Basics" ] ->
-                            Compiler.nodify ( [], "Int" )
+                            ( [], "Int" )
 
                         [ "Float", "Basics" ] ->
-                            Compiler.nodify ( [], "Float" )
+                            ( [], "Float" )
 
                         [ "Bool", "Basics" ] ->
-                            Compiler.nodify ( [], "Bool" )
+                            ( [], "Bool" )
 
                         [ "String", "String" ] ->
-                            Compiler.nodify ( [], "String" )
+                            ( [], "String" )
 
                         [ "List", "List" ] ->
-                            Compiler.nodify ( [], "List" )
+                            ( [], "List" )
 
                         [ "Maybe", "Maybe" ] ->
-                            Compiler.nodify ( [], "Maybe" )
+                            ( [], "Maybe" )
 
                         top :: tail ->
-                            Compiler.nodify ( List.reverse tail, top )
+                            ( List.reverse tail, top )
             in
             Elm.Syntax.TypeAnnotation.Typed
-                modName
+                (Compiler.nodify modName)
                 (List.map (docTypeToAnnotation >> Compiler.nodify) inner)
 
         Elm.Type.Tuple [] ->
