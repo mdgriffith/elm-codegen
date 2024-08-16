@@ -427,7 +427,11 @@ query =
 
 {-| `|>`
 
-    Elm.value "thang"
+    Elm.value
+        { importFrom = []
+        , name = "thang"
+        , annotation = Nothing
+        }
         |> Elm.Op.pipe (Elm.value "thang2")
         |> Elm.Op.pipe (Elm.value "thang3")
 

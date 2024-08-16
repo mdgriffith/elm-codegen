@@ -1,5 +1,5 @@
 module Internal.Comments exposing
-    ( Comment, CommentPart(..), DocComment, FileComment
+    ( Comment, CommentPart(..), FileComment
     , emptyComment, addPart
     , prettyFileComment
     )
@@ -12,7 +12,7 @@ can be extracted to order the exposing clause by.
 
 # Structured comments
 
-@docs Comment, CommentPart, DocComment, FileComment
+@docs Comment, CommentPart, FileComment
 
 
 # Building comments
@@ -27,10 +27,6 @@ can be extracted to order the exposing clause by.
 -}
 
 import Pretty exposing (Doc)
-
-
-type DocComment
-    = DocComment
 
 
 type FileComment
@@ -66,17 +62,6 @@ addPart (Comment parts) part =
 getParts : Comment a -> List CommentPart
 getParts (Comment parts) =
     List.reverse parts
-
-
-{-| Pretty prints a document comment.
-Where possible the comment will be re-flowed to fit the specified page width.
--}
-prettyDocComment : Int -> Comment DocComment -> String
-prettyDocComment width comment =
-    List.map prettyCommentPart (getParts comment)
-        |> Pretty.lines
-        |> delimeters
-        |> Pretty.pretty width
 
 
 {-| Pretty prints a file comment.
@@ -234,7 +219,7 @@ partToStringAndTags _ part =
 
 delimeters : Doc t -> Doc t
 delimeters doc =
-    Pretty.string "{-| "
+    Pretty.string "{-|"
         |> Pretty.a doc
         |> Pretty.a Pretty.line
         |> Pretty.a (Pretty.string "-}")

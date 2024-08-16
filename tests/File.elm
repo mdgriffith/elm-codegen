@@ -33,7 +33,7 @@ suite =
                         """
 module Test exposing (testFn1)
 
-{-| 
+{-|
 @docs testFn1
 -}
 
@@ -60,7 +60,7 @@ testFn1 arg =
                         """
 module Test exposing (testFn1, testFn2)
 
-{-| 
+{-|
 @docs testFn1, testFn2
 -}
 
