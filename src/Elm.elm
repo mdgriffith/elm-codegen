@@ -1568,7 +1568,7 @@ Here's what's happening for the `fn*` functions —
 
 So, this
 
-    Elm.fn ( "firstInt", Nothing )
+    Elm.fn (Elm.Arg.var "firstInt")
         (\firstArgument ->
             Elm.Op.plus
                 (Elm.int 42)
@@ -1582,7 +1582,7 @@ Generates
 If you want to generate a **top level** function instead of an anonymous function, use `Elm.declaration`.
 
     Elm.declaration "add42" <|
-        Elm.fn ( "firstInt", Nothing )
+        Elm.fn (Elm.Arg.var "firstInt")
             (\firstArgument ->
                 Elm.Op.plus
                     (Elm.int 42)
