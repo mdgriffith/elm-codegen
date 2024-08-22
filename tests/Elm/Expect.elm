@@ -1,10 +1,8 @@
-module Elm.Expect exposing (declarationAs, equal, fileContentAs, importAs, renderedAs)
+module Elm.Expect exposing (declarationAs, fileContentAs, importAs, renderedAs)
 
 import Elm
 import Elm.ToString
 import Expect exposing (Expectation)
-import Internal.Compiler as Compiler
-import Internal.Index as Index
 
 
 renderedAs : Elm.Expression -> String -> Expectation
@@ -43,32 +41,3 @@ fileContentAs file str =
             |> String.trim
         )
         (String.trim str)
-
-
-infersType : Elm.Expression -> Expectation
-infersType expression =
-    let
-        ( _, details ) =
-            Compiler.toExpressionDetails (Index.startIndex Nothing) expression
-    in
-    case details.annotation of
-        Ok _ ->
-            Expect.pass
-
-        Err errs ->
-            Expect.fail
-                ("Failed to typecheck"
-                    ++ String.join "\n"
-                        (List.map Compiler.inferenceErrorToString errs)
-                )
-
-
-equal : Elm.Expression -> Elm.Expression -> Expectation
-equal one two =
-    Expect.equal
-        (Elm.ToString.expression one
-            |> .body
-        )
-        (Elm.ToString.expression two
-            |> .body
-        )

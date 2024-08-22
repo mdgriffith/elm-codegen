@@ -26,7 +26,6 @@ module Internal.Compiler exposing
     , expose
     , exposeWith
     , expression
-    , facts
     , findAlias
     , fullModName
     , getAliases
@@ -287,25 +286,25 @@ parens expr =
             Exp.ParenthesizedExpression (nodify expr)
 
 
-{-| -}
-facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
-facts (Expression exp) =
-    let
-        expresh : ExpressionDetails
-        expresh =
-            exp (Index.startIndex Nothing)
-    in
-    case expresh.annotation of
-        Ok sig ->
-            sig.inferences
-                |> Dict.toList
-                |> Ok
 
-        Err inferenceError ->
-            inferenceError
-                |> List.map inferenceErrorToString
-                |> String.join "\n\n"
-                |> Err
+-- {-| -}
+-- facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
+-- facts (Expression exp) =
+--     let
+--         expresh : ExpressionDetails
+--         expresh =
+--             exp (Index.startIndex Nothing)
+--     in
+--     case expresh.annotation of
+--         Ok sig ->
+--             sig.inferences
+--                 |> Dict.toList
+--                 |> Ok
+--         Err inferenceError ->
+--             inferenceError
+--                 |> List.map inferenceErrorToString
+--                 |> String.join "\n\n"
+--                 |> Err
 
 
 {-| Remove duplicate values, keeping the first instance of each element which appears more than once.
@@ -623,11 +622,6 @@ getImports exp =
     exp.imports
 
 
-getInnerExpression : ExpressionDetails -> Exp.Expression
-getInnerExpression exp =
-    exp.expression
-
-
 getAnnotation : ExpressionDetails -> Result (List InferenceError) Inference
 getAnnotation exp =
     exp.annotation
@@ -939,16 +933,6 @@ nodify exp =
 nodifyAll : List a -> List (Node a)
 nodifyAll =
     List.map nodify
-
-
-nodifyMaybe : Maybe a -> Maybe (Node a)
-nodifyMaybe =
-    Maybe.map nodify
-
-
-nodifyTuple : ( a, b ) -> ( Node a, Node b )
-nodifyTuple ( a, b ) =
-    ( nodify a, nodify b )
 
 
 
@@ -2144,78 +2128,6 @@ unifiableLists aliases vars one two unified =
 
         _ ->
             ( vars, Err MismatchedTypeVariables )
-
-
-unifyNumber :
-    VariableCache
-    -> String
-    -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result String Annotation.TypeAnnotation )
-unifyNumber vars numberName two =
-    case two of
-        Annotation.Typed (Node.Node _ ( [], "Int" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.Typed (Node.Node _ ( [], "Float" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.GenericType _ ->
-            -- We don't know how this will resolve
-            -- So, for now we say this is fine
-            -- and in the resolveVariables step, we need to check that everything works
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        _ ->
-            ( Dict.insert numberName two vars
-            , Err
-                ((Elm.Writer.writeTypeAnnotation (nodify two)
-                    |> Elm.Writer.write
-                 )
-                    ++ " is not a number, but it needs to be!"
-                )
-            )
-
-
-unifyAppendable :
-    VariableCache
-    -> String
-    -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result String Annotation.TypeAnnotation )
-unifyAppendable vars numberName two =
-    case two of
-        Annotation.Typed (Node.Node _ ( [], "String" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.Typed (Node.Node _ ( [], "List" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.GenericType _ ->
-            -- We don't know how this will resolve
-            -- So, for now we say this is fine
-            -- and in the resolveVariables step, we need to check that everything works
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        _ ->
-            ( Dict.insert numberName two vars
-            , Err
-                ((Elm.Writer.writeTypeAnnotation (nodify two)
-                    |> Elm.Writer.write
-                 )
-                    ++ " is not appendable.  Only Strings and Lists are appendable"
-                )
-            )
 
 
 isNumber : Annotation.TypeAnnotation -> Bool
