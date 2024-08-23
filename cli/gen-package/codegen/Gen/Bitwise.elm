@@ -1,6 +1,17 @@
-module Gen.Bitwise exposing (and, call_, complement, moduleName_, or, shiftLeftBy, shiftRightBy, shiftRightZfBy, values_, xor)
+module Gen.Bitwise exposing
+    ( and
+    , call_
+    , complement
+    , moduleName_
+    , or
+    , shiftLeftBy
+    , shiftRightBy
+    , shiftRightZfBy
+    , values_
+    , xor
+    )
 
-{-| 
+{-|
 @docs moduleName_, and, or, xor, complement, shiftLeftBy, shiftRightBy, shiftRightZfBy, call_, values_
 -}
 
@@ -20,15 +31,15 @@ moduleName_ =
 and: Int -> Int -> Int
 -}
 and : Int -> Int -> Elm.Expression
-and andArg andArg0 =
+and andArg_ andArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Bitwise" ]
-            , name = "and"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
+             { importFrom = [ "Bitwise" ]
+             , name = "and"
+             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+             }
         )
-        [ Elm.int andArg, Elm.int andArg0 ]
+        [ Elm.int andArg_, Elm.int andArg_0 ]
 
 
 {-| Bitwise OR
@@ -36,15 +47,15 @@ and andArg andArg0 =
 or: Int -> Int -> Int
 -}
 or : Int -> Int -> Elm.Expression
-or orArg orArg0 =
+or orArg_ orArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Bitwise" ]
-            , name = "or"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
+             { importFrom = [ "Bitwise" ]
+             , name = "or"
+             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+             }
         )
-        [ Elm.int orArg, Elm.int orArg0 ]
+        [ Elm.int orArg_, Elm.int orArg_0 ]
 
 
 {-| Bitwise XOR
@@ -52,15 +63,15 @@ or orArg orArg0 =
 xor: Int -> Int -> Int
 -}
 xor : Int -> Int -> Elm.Expression
-xor xorArg xorArg0 =
+xor xorArg_ xorArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Bitwise" ]
-            , name = "xor"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
+             { importFrom = [ "Bitwise" ]
+             , name = "xor"
+             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+             }
         )
-        [ Elm.int xorArg, Elm.int xorArg0 ]
+        [ Elm.int xorArg_, Elm.int xorArg_0 ]
 
 
 {-| Flip each bit individually, often called bitwise NOT
@@ -68,15 +79,15 @@ xor xorArg xorArg0 =
 complement: Int -> Int
 -}
 complement : Int -> Elm.Expression
-complement complementArg =
+complement complementArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Bitwise" ]
-            , name = "complement"
-            , annotation = Just (Type.function [ Type.int ] Type.int)
-            }
+             { importFrom = [ "Bitwise" ]
+             , name = "complement"
+             , annotation = Just (Type.function [ Type.int ] Type.int)
+             }
         )
-        [ Elm.int complementArg ]
+        [ Elm.int complementArg_ ]
 
 
 {-| Shift bits to the left by a given offset, filling new bits with zeros.
@@ -88,15 +99,15 @@ This can be used to multiply numbers by powers of two.
 shiftLeftBy: Int -> Int -> Int
 -}
 shiftLeftBy : Int -> Int -> Elm.Expression
-shiftLeftBy shiftLeftByArg shiftLeftByArg0 =
+shiftLeftBy shiftLeftByArg_ shiftLeftByArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Bitwise" ]
-            , name = "shiftLeftBy"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
+             { importFrom = [ "Bitwise" ]
+             , name = "shiftLeftBy"
+             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+             }
         )
-        [ Elm.int shiftLeftByArg, Elm.int shiftLeftByArg0 ]
+        [ Elm.int shiftLeftByArg_, Elm.int shiftLeftByArg_0 ]
 
 
 {-| Shift bits to the right by a given offset, filling new bits with
@@ -115,15 +126,15 @@ with copies of the highest bit.
 shiftRightBy: Int -> Int -> Int
 -}
 shiftRightBy : Int -> Int -> Elm.Expression
-shiftRightBy shiftRightByArg shiftRightByArg0 =
+shiftRightBy shiftRightByArg_ shiftRightByArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Bitwise" ]
-            , name = "shiftRightBy"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
+             { importFrom = [ "Bitwise" ]
+             , name = "shiftRightBy"
+             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+             }
         )
-        [ Elm.int shiftRightByArg, Elm.int shiftRightByArg0 ]
+        [ Elm.int shiftRightByArg_, Elm.int shiftRightByArg_0 ]
 
 
 {-| Shift bits to the right by a given offset, filling new bits with zeros.
@@ -141,15 +152,15 @@ zeros.
 shiftRightZfBy: Int -> Int -> Int
 -}
 shiftRightZfBy : Int -> Int -> Elm.Expression
-shiftRightZfBy shiftRightZfByArg shiftRightZfByArg0 =
+shiftRightZfBy shiftRightZfByArg_ shiftRightZfByArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Bitwise" ]
-            , name = "shiftRightZfBy"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
+             { importFrom = [ "Bitwise" ]
+             , name = "shiftRightZfBy"
+             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+             }
         )
-        [ Elm.int shiftRightZfByArg, Elm.int shiftRightZfByArg0 ]
+        [ Elm.int shiftRightZfByArg_, Elm.int shiftRightZfByArg_0 ]
 
 
 call_ :
@@ -163,81 +174,81 @@ call_ :
     }
 call_ =
     { and =
-        \andArg andArg0 ->
+        \andArg_ andArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Bitwise" ]
-                    , name = "and"
-                    , annotation =
-                        Just (Type.function [ Type.int, Type.int ] Type.int)
-                    }
+                     { importFrom = [ "Bitwise" ]
+                     , name = "and"
+                     , annotation =
+                         Just (Type.function [ Type.int, Type.int ] Type.int)
+                     }
                 )
-                [ andArg, andArg0 ]
+                [ andArg_, andArg_0 ]
     , or =
-        \orArg orArg0 ->
+        \orArg_ orArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Bitwise" ]
-                    , name = "or"
-                    , annotation =
-                        Just (Type.function [ Type.int, Type.int ] Type.int)
-                    }
+                     { importFrom = [ "Bitwise" ]
+                     , name = "or"
+                     , annotation =
+                         Just (Type.function [ Type.int, Type.int ] Type.int)
+                     }
                 )
-                [ orArg, orArg0 ]
+                [ orArg_, orArg_0 ]
     , xor =
-        \xorArg xorArg0 ->
+        \xorArg_ xorArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Bitwise" ]
-                    , name = "xor"
-                    , annotation =
-                        Just (Type.function [ Type.int, Type.int ] Type.int)
-                    }
+                     { importFrom = [ "Bitwise" ]
+                     , name = "xor"
+                     , annotation =
+                         Just (Type.function [ Type.int, Type.int ] Type.int)
+                     }
                 )
-                [ xorArg, xorArg0 ]
+                [ xorArg_, xorArg_0 ]
     , complement =
-        \complementArg ->
+        \complementArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Bitwise" ]
-                    , name = "complement"
-                    , annotation = Just (Type.function [ Type.int ] Type.int)
-                    }
+                     { importFrom = [ "Bitwise" ]
+                     , name = "complement"
+                     , annotation = Just (Type.function [ Type.int ] Type.int)
+                     }
                 )
-                [ complementArg ]
+                [ complementArg_ ]
     , shiftLeftBy =
-        \shiftLeftByArg shiftLeftByArg0 ->
+        \shiftLeftByArg_ shiftLeftByArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Bitwise" ]
-                    , name = "shiftLeftBy"
-                    , annotation =
-                        Just (Type.function [ Type.int, Type.int ] Type.int)
-                    }
+                     { importFrom = [ "Bitwise" ]
+                     , name = "shiftLeftBy"
+                     , annotation =
+                         Just (Type.function [ Type.int, Type.int ] Type.int)
+                     }
                 )
-                [ shiftLeftByArg, shiftLeftByArg0 ]
+                [ shiftLeftByArg_, shiftLeftByArg_0 ]
     , shiftRightBy =
-        \shiftRightByArg shiftRightByArg0 ->
+        \shiftRightByArg_ shiftRightByArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Bitwise" ]
-                    , name = "shiftRightBy"
-                    , annotation =
-                        Just (Type.function [ Type.int, Type.int ] Type.int)
-                    }
+                     { importFrom = [ "Bitwise" ]
+                     , name = "shiftRightBy"
+                     , annotation =
+                         Just (Type.function [ Type.int, Type.int ] Type.int)
+                     }
                 )
-                [ shiftRightByArg, shiftRightByArg0 ]
+                [ shiftRightByArg_, shiftRightByArg_0 ]
     , shiftRightZfBy =
-        \shiftRightZfByArg shiftRightZfByArg0 ->
+        \shiftRightZfByArg_ shiftRightZfByArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Bitwise" ]
-                    , name = "shiftRightZfBy"
-                    , annotation =
-                        Just (Type.function [ Type.int, Type.int ] Type.int)
-                    }
+                     { importFrom = [ "Bitwise" ]
+                     , name = "shiftRightZfBy"
+                     , annotation =
+                         Just (Type.function [ Type.int, Type.int ] Type.int)
+                     }
                 )
-                [ shiftRightZfByArg, shiftRightZfByArg0 ]
+                [ shiftRightZfByArg_, shiftRightZfByArg_0 ]
     }
 
 

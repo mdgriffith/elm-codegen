@@ -392,6 +392,7 @@ basicsIdentity =
       , annotation = Just (Annotation.function [ Annotation.var "a" ] (Annotation.var "a"))
       }
 
+
 block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
 block2Maker thisModule block =
     case block of

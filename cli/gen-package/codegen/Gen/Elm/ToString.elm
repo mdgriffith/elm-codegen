@@ -1,6 +1,16 @@
-module Gen.Elm.ToString exposing (annotation, annotationWith, call_, declaration, declarationWith, expression, expressionWith, moduleName_, values_)
+module Gen.Elm.ToString exposing
+    ( annotation
+    , annotationWith
+    , call_
+    , declaration
+    , declarationWith
+    , expression
+    , expressionWith
+    , moduleName_
+    , values_
+    )
 
-{-| 
+{-|
 @docs moduleName_, expression, annotation, declaration, expressionWith, annotationWith, declarationWith, call_, values_
 -}
 
@@ -17,75 +27,80 @@ moduleName_ =
 
 {-| expression: Elm.Expression -> { imports : String, body : String, signature : String } -}
 expression : Elm.Expression -> Elm.Expression
-expression expressionArg =
+expression expressionArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "ToString" ]
-            , name = "expression"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "body", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
-                    )
-            }
+             { importFrom = [ "Elm", "ToString" ]
+             , name = "expression"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                          (Type.record
+                               [ ( "imports", Type.string )
+                               , ( "body", Type.string )
+                               , ( "signature", Type.string )
+                               ]
+                          )
+                     )
+             }
         )
-        [ expressionArg ]
+        [ expressionArg_ ]
 
 
 {-| annotation: Elm.Annotation.Annotation -> { imports : String, signature : String } -}
 annotation : Elm.Expression -> Elm.Expression
-annotation annotationArg =
+annotation annotationArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "ToString" ]
-            , name = "annotation"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
-                    )
-            }
+             { importFrom = [ "Elm", "ToString" ]
+             , name = "annotation"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.record
+                               [ ( "imports", Type.string )
+                               , ( "signature", Type.string )
+                               ]
+                          )
+                     )
+             }
         )
-        [ annotationArg ]
+        [ annotationArg_ ]
 
 
 {-| declaration: 
     Elm.Declaration
-    -> { imports : String, docs : String, signature : String, body : String }
+    -> List { imports : String, docs : String, signature : String, body : String }
 -}
 declaration : Elm.Expression -> Elm.Expression
-declaration declarationArg =
+declaration declarationArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "ToString" ]
-            , name = "declaration"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "docs", Type.string )
-                            , ( "signature", Type.string )
-                            , ( "body", Type.string )
-                            ]
-                        )
-                    )
-            }
+             { importFrom = [ "Elm", "ToString" ]
+             , name = "declaration"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Declaration" [] ]
+                          (Type.list
+                               (Type.record
+                                    [ ( "imports", Type.string )
+                                    , ( "docs", Type.string )
+                                    , ( "signature", Type.string )
+                                    , ( "body", Type.string )
+                                    ]
+                               )
+                          )
+                     )
+             }
         )
-        [ declarationArg ]
+        [ declarationArg_ ]
 
 
 {-| expressionWith: 
@@ -95,37 +110,37 @@ declaration declarationArg =
 -}
 expressionWith :
     { aliases : List Elm.Expression } -> Elm.Expression -> Elm.Expression
-expressionWith expressionWithArg expressionWithArg0 =
+expressionWith expressionWithArg_ expressionWithArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "ToString" ]
-            , name = "expressionWith"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.record
-                            [ ( "aliases"
-                              , Type.list
+             { importFrom = [ "Elm", "ToString" ]
+             , name = "expressionWith"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.record
+                              [ ( "aliases"
+                                , Type.list
                                     (Type.tuple
-                                        (Type.list Type.string)
-                                        Type.string
+                                       (Type.list Type.string)
+                                       Type.string
                                     )
-                              )
-                            ]
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "body", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
-                    )
-            }
+                                )
+                              ]
+                          , Type.namedWith [ "Elm" ] "Expression" []
+                          ]
+                          (Type.record
+                               [ ( "imports", Type.string )
+                               , ( "body", Type.string )
+                               , ( "signature", Type.string )
+                               ]
+                          )
+                     )
+             }
         )
         [ Elm.record
-            [ Tuple.pair "aliases" (Elm.list expressionWithArg.aliases) ]
-        , expressionWithArg0
+            [ Tuple.pair "aliases" (Elm.list expressionWithArg_.aliases) ]
+        , expressionWithArg_0
         ]
 
 
@@ -136,78 +151,83 @@ expressionWith expressionWithArg expressionWithArg0 =
 -}
 annotationWith :
     { aliases : List Elm.Expression } -> Elm.Expression -> Elm.Expression
-annotationWith annotationWithArg annotationWithArg0 =
+annotationWith annotationWithArg_ annotationWithArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "ToString" ]
-            , name = "annotationWith"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.record
-                            [ ( "aliases"
-                              , Type.list
+             { importFrom = [ "Elm", "ToString" ]
+             , name = "annotationWith"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.record
+                              [ ( "aliases"
+                                , Type.list
                                     (Type.tuple
-                                        (Type.list Type.string)
-                                        Type.string
+                                       (Type.list Type.string)
+                                       Type.string
                                     )
-                              )
-                            ]
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
-                    )
-            }
+                                )
+                              ]
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.record
+                               [ ( "imports", Type.string )
+                               , ( "signature", Type.string )
+                               ]
+                          )
+                     )
+             }
         )
         [ Elm.record
-            [ Tuple.pair "aliases" (Elm.list annotationWithArg.aliases) ]
-        , annotationWithArg0
+            [ Tuple.pair "aliases" (Elm.list annotationWithArg_.aliases) ]
+        , annotationWithArg_0
         ]
 
 
 {-| declarationWith: 
     { aliases : List ( List String, String ) }
     -> Elm.Declaration
-    -> { imports : String, docs : String, signature : String, body : String }
+    -> List { imports : String, docs : String, signature : String, body : String }
 -}
 declarationWith :
     { aliases : List Elm.Expression } -> Elm.Expression -> Elm.Expression
-declarationWith declarationWithArg declarationWithArg0 =
+declarationWith declarationWithArg_ declarationWithArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "ToString" ]
-            , name = "declarationWith"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.record
-                            [ ( "aliases"
-                              , Type.list
+             { importFrom = [ "Elm", "ToString" ]
+             , name = "declarationWith"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.record
+                              [ ( "aliases"
+                                , Type.list
                                     (Type.tuple
-                                        (Type.list Type.string)
-                                        Type.string
+                                       (Type.list Type.string)
+                                       Type.string
                                     )
-                              )
-                            ]
-                        , Type.namedWith [ "Elm" ] "Declaration" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "docs", Type.string )
-                            , ( "signature", Type.string )
-                            , ( "body", Type.string )
-                            ]
-                        )
-                    )
-            }
+                                )
+                              ]
+                          , Type.namedWith [ "Elm" ] "Declaration" []
+                          ]
+                          (Type.list
+                               (Type.record
+                                    [ ( "imports", Type.string )
+                                    , ( "docs", Type.string )
+                                    , ( "signature", Type.string )
+                                    , ( "body", Type.string )
+                                    ]
+                               )
+                          )
+                     )
+             }
         )
         [ Elm.record
-            [ Tuple.pair "aliases" (Elm.list declarationWithArg.aliases) ]
-        , declarationWithArg0
+            [ Tuple.pair "aliases" (Elm.list declarationWithArg_.aliases) ]
+        , declarationWithArg_0
         ]
 
 
@@ -221,162 +241,166 @@ call_ :
     }
 call_ =
     { expression =
-        \expressionArg ->
+        \expressionArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "ToString" ]
-                    , name = "expression"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                                (Type.record
-                                    [ ( "imports", Type.string )
-                                    , ( "body", Type.string )
-                                    , ( "signature", Type.string )
-                                    ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "ToString" ]
+                     , name = "expression"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                                  (Type.record
+                                       [ ( "imports", Type.string )
+                                       , ( "body", Type.string )
+                                       , ( "signature", Type.string )
+                                       ]
+                                  )
+                             )
+                     }
                 )
-                [ expressionArg ]
+                [ expressionArg_ ]
     , annotation =
-        \annotationArg ->
+        \annotationArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "ToString" ]
-                    , name = "annotation"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.record
-                                    [ ( "imports", Type.string )
-                                    , ( "signature", Type.string )
-                                    ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "ToString" ]
+                     , name = "annotation"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.record
+                                       [ ( "imports", Type.string )
+                                       , ( "signature", Type.string )
+                                       ]
+                                  )
+                             )
+                     }
                 )
-                [ annotationArg ]
+                [ annotationArg_ ]
     , declaration =
-        \declarationArg ->
+        \declarationArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "ToString" ]
-                    , name = "declaration"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                                (Type.record
-                                    [ ( "imports", Type.string )
-                                    , ( "docs", Type.string )
-                                    , ( "signature", Type.string )
-                                    , ( "body", Type.string )
-                                    ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "ToString" ]
+                     , name = "declaration"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Declaration" [] ]
+                                  (Type.list
+                                       (Type.record
+                                            [ ( "imports", Type.string )
+                                            , ( "docs", Type.string )
+                                            , ( "signature", Type.string )
+                                            , ( "body", Type.string )
+                                            ]
+                                       )
+                                  )
+                             )
+                     }
                 )
-                [ declarationArg ]
+                [ declarationArg_ ]
     , expressionWith =
-        \expressionWithArg expressionWithArg0 ->
+        \expressionWithArg_ expressionWithArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "ToString" ]
-                    , name = "expressionWith"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.record
-                                    [ ( "aliases"
-                                      , Type.list
+                     { importFrom = [ "Elm", "ToString" ]
+                     , name = "expressionWith"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.record
+                                      [ ( "aliases"
+                                        , Type.list
                                             (Type.tuple
-                                                (Type.list Type.string)
-                                                Type.string
+                                               (Type.list Type.string)
+                                               Type.string
                                             )
-                                      )
-                                    ]
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.record
-                                    [ ( "imports", Type.string )
-                                    , ( "body", Type.string )
-                                    , ( "signature", Type.string )
-                                    ]
-                                )
-                            )
-                    }
+                                        )
+                                      ]
+                                  , Type.namedWith [ "Elm" ] "Expression" []
+                                  ]
+                                  (Type.record
+                                       [ ( "imports", Type.string )
+                                       , ( "body", Type.string )
+                                       , ( "signature", Type.string )
+                                       ]
+                                  )
+                             )
+                     }
                 )
-                [ expressionWithArg, expressionWithArg0 ]
+                [ expressionWithArg_, expressionWithArg_0 ]
     , annotationWith =
-        \annotationWithArg annotationWithArg0 ->
+        \annotationWithArg_ annotationWithArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "ToString" ]
-                    , name = "annotationWith"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.record
-                                    [ ( "aliases"
-                                      , Type.list
+                     { importFrom = [ "Elm", "ToString" ]
+                     , name = "annotationWith"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.record
+                                      [ ( "aliases"
+                                        , Type.list
                                             (Type.tuple
-                                                (Type.list Type.string)
-                                                Type.string
+                                               (Type.list Type.string)
+                                               Type.string
                                             )
-                                      )
-                                    ]
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.record
-                                    [ ( "imports", Type.string )
-                                    , ( "signature", Type.string )
-                                    ]
-                                )
-                            )
-                    }
+                                        )
+                                      ]
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.record
+                                       [ ( "imports", Type.string )
+                                       , ( "signature", Type.string )
+                                       ]
+                                  )
+                             )
+                     }
                 )
-                [ annotationWithArg, annotationWithArg0 ]
+                [ annotationWithArg_, annotationWithArg_0 ]
     , declarationWith =
-        \declarationWithArg declarationWithArg0 ->
+        \declarationWithArg_ declarationWithArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "ToString" ]
-                    , name = "declarationWith"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.record
-                                    [ ( "aliases"
-                                      , Type.list
+                     { importFrom = [ "Elm", "ToString" ]
+                     , name = "declarationWith"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.record
+                                      [ ( "aliases"
+                                        , Type.list
                                             (Type.tuple
-                                                (Type.list Type.string)
-                                                Type.string
+                                               (Type.list Type.string)
+                                               Type.string
                                             )
-                                      )
-                                    ]
-                                , Type.namedWith [ "Elm" ] "Declaration" []
-                                ]
-                                (Type.record
-                                    [ ( "imports", Type.string )
-                                    , ( "docs", Type.string )
-                                    , ( "signature", Type.string )
-                                    , ( "body", Type.string )
-                                    ]
-                                )
-                            )
-                    }
+                                        )
+                                      ]
+                                  , Type.namedWith [ "Elm" ] "Declaration" []
+                                  ]
+                                  (Type.list
+                                       (Type.record
+                                            [ ( "imports", Type.string )
+                                            , ( "docs", Type.string )
+                                            , ( "signature", Type.string )
+                                            , ( "body", Type.string )
+                                            ]
+                                       )
+                                  )
+                             )
+                     }
                 )
-                [ declarationWithArg, declarationWithArg0 ]
+                [ declarationWithArg_, declarationWithArg_0 ]
     }
 
 
@@ -396,13 +420,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "body", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
+                         [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                         (Type.record
+                              [ ( "imports", Type.string )
+                              , ( "body", Type.string )
+                              , ( "signature", Type.string )
+                              ]
+                         )
                     )
             }
     , annotation =
@@ -412,13 +436,16 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.record
+                              [ ( "imports", Type.string )
+                              , ( "signature", Type.string )
+                              ]
+                         )
                     )
             }
     , declaration =
@@ -428,14 +455,16 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "docs", Type.string )
-                            , ( "signature", Type.string )
-                            , ( "body", Type.string )
-                            ]
-                        )
+                         [ Type.namedWith [ "Elm" ] "Declaration" [] ]
+                         (Type.list
+                              (Type.record
+                                   [ ( "imports", Type.string )
+                                   , ( "docs", Type.string )
+                                   , ( "signature", Type.string )
+                                   , ( "body", Type.string )
+                                   ]
+                              )
+                         )
                     )
             }
     , expressionWith =
@@ -445,23 +474,23 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.record
-                            [ ( "aliases"
-                              , Type.list
-                                    (Type.tuple
-                                        (Type.list Type.string)
-                                        Type.string
-                                    )
-                              )
-                            ]
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "body", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
+                         [ Type.record
+                             [ ( "aliases"
+                               , Type.list
+                                   (Type.tuple
+                                      (Type.list Type.string)
+                                      Type.string
+                                   )
+                               )
+                             ]
+                         , Type.namedWith [ "Elm" ] "Expression" []
+                         ]
+                         (Type.record
+                              [ ( "imports", Type.string )
+                              , ( "body", Type.string )
+                              , ( "signature", Type.string )
+                              ]
+                         )
                     )
             }
     , annotationWith =
@@ -471,22 +500,25 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.record
-                            [ ( "aliases"
-                              , Type.list
-                                    (Type.tuple
-                                        (Type.list Type.string)
-                                        Type.string
-                                    )
-                              )
-                            ]
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "signature", Type.string )
-                            ]
-                        )
+                         [ Type.record
+                             [ ( "aliases"
+                               , Type.list
+                                   (Type.tuple
+                                      (Type.list Type.string)
+                                      Type.string
+                                   )
+                               )
+                             ]
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.record
+                              [ ( "imports", Type.string )
+                              , ( "signature", Type.string )
+                              ]
+                         )
                     )
             }
     , declarationWith =
@@ -496,24 +528,26 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.record
-                            [ ( "aliases"
-                              , Type.list
-                                    (Type.tuple
-                                        (Type.list Type.string)
-                                        Type.string
-                                    )
+                         [ Type.record
+                             [ ( "aliases"
+                               , Type.list
+                                   (Type.tuple
+                                      (Type.list Type.string)
+                                      Type.string
+                                   )
+                               )
+                             ]
+                         , Type.namedWith [ "Elm" ] "Declaration" []
+                         ]
+                         (Type.list
+                              (Type.record
+                                   [ ( "imports", Type.string )
+                                   , ( "docs", Type.string )
+                                   , ( "signature", Type.string )
+                                   , ( "body", Type.string )
+                                   ]
                               )
-                            ]
-                        , Type.namedWith [ "Elm" ] "Declaration" []
-                        ]
-                        (Type.record
-                            [ ( "imports", Type.string )
-                            , ( "docs", Type.string )
-                            , ( "signature", Type.string )
-                            , ( "body", Type.string )
-                            ]
-                        )
+                         )
                     )
             }
     }
