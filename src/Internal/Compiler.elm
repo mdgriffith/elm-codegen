@@ -24,7 +24,7 @@ module Internal.Compiler exposing
     , documentation
     , emptyAliases
     , expose
-    , exposeWith
+    , exposeConstructor
     , expression
     , facts
     , findAlias
@@ -693,8 +693,8 @@ expose decl =
 
 
 {-| -}
-exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
-exposeWith opts decl =
+exposeConstructor : Declaration -> Declaration
+exposeConstructor decl =
     case decl of
         Comment _ ->
             decl
@@ -703,10 +703,19 @@ exposeWith opts decl =
             decl
 
         Declaration details ->
-            Declaration { details | exposed = Exposed opts }
+            Declaration
+                { details
+                    | exposed =
+                        case details.exposed of
+                            NotExposed ->
+                                Exposed { exposeConstructor = True, group = Nothing }
+
+                            Exposed exposed ->
+                                Exposed { exposed | exposeConstructor = True }
+                }
 
         Group group ->
-            Group { group | decls = List.map (exposeWith opts) group.decls }
+            Group { group | decls = List.map exposeConstructor group.decls }
 
 
 type alias Module =
