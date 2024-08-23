@@ -38,6 +38,29 @@ type alias FileDetails =
     }
 
 
+getExposedGroups : Compiler.Declaration -> List ExposedGroup -> List ExposedGroup
+getExposedGroups decl groups =
+    case decl of
+        Compiler.Declaration decDetails ->
+            case decDetails.exposed of
+                Compiler.NotExposed ->
+                    ExposedImplicitly decDetails.name :: groups
+
+                Compiler.Exposed _ ->
+                    Exposed decDetails.name :: groups
+
+        Compiler.Group group ->
+            ExposedGroup
+                { title = group.title
+                , docs = group.docs
+                , items = List.foldl getExposedGroups [] group.decls
+                }
+                :: groups
+
+        _ ->
+            groups
+
+
 renderDecls :
     FileDetails
     -> Compiler.Declaration
@@ -45,7 +68,6 @@ renderDecls :
         { declarations : List Compiler.RenderedDeclaration
         , imports : List Compiler.Module
         , exposed : List Expose.TopLevelExpose
-        , exposedGroups : List ( Maybe String, String )
         , hasPorts : Bool
         , warnings : List Compiler.Warning
         }
@@ -53,7 +75,6 @@ renderDecls :
         { declarations : List Compiler.RenderedDeclaration
         , imports : List Compiler.Module
         , exposed : List Expose.TopLevelExpose
-        , exposedGroups : List ( Maybe String, String )
         , hasPorts : Bool
         , warnings : List Compiler.Warning
         }
@@ -81,13 +102,6 @@ renderDecls fileDetails decl gathered =
                 result.additionalImports ++ decDetails.imports ++ gathered.imports
             , exposed =
                 addExposed decDetails.exposed result.declaration gathered.exposed
-            , exposedGroups =
-                case decDetails.exposed of
-                    Compiler.NotExposed ->
-                        gathered.exposedGroups
-
-                    Compiler.Exposed details ->
-                        ( details.group, decDetails.name ) :: gathered.exposedGroups
             , hasPorts =
                 if gathered.hasPorts then
                     gathered.hasPorts
@@ -109,26 +123,32 @@ renderDecls fileDetails decl gathered =
             }
 
         Compiler.Group group ->
-            List.foldl (renderDecls fileDetails) gathered group.decls
+            List.foldl (renderDecls fileDetails)
+                gathered
+                group.decls
+
+
+type ExposedGroup
+    = Exposed String
+    | ExposedImplicitly String
+    | ExposedGroup
+        { title : String
+        , docs : String
+        , items : List ExposedGroup
+        }
 
 
 {-| -}
 render :
-    (List
-        { group : Maybe String
-        , members : List String
-        }
-     -> List String
-    )
+    String
     -> FileDetails
     -> File
-render toDocComment fileDetails =
+render initialDocs fileDetails =
     let
         rendered :
             { declarations : List Compiler.RenderedDeclaration
             , imports : List Compiler.Module
             , exposed : List Expose.TopLevelExpose
-            , exposedGroups : List ( Maybe String, String )
             , hasPorts : Bool
             , warnings : List Compiler.Warning
             }
@@ -138,11 +158,14 @@ render toDocComment fileDetails =
                 { imports = []
                 , hasPorts = False
                 , exposed = []
-                , exposedGroups = []
                 , declarations = []
                 , warnings = []
                 }
                 fileDetails.declarations
+
+        exposedGroups : List ExposedGroup
+        exposedGroups =
+            List.foldl getExposedGroups [] fileDetails.declarations
 
         body : String
         body =
@@ -175,33 +198,13 @@ render toDocComment fileDetails =
                 , declarations =
                     List.reverse rendered.declarations
                 , comments =
-                    case rendered.exposedGroups of
-                        [] ->
-                            Nothing
-
-                        _ ->
-                            Just
-                                (Internal.Comments.addPart
-                                    Internal.Comments.emptyComment
-                                    (Internal.Comments.Markdown
-                                        ("\n"
-                                            ++ (rendered.exposedGroups
-                                                    |> List.sortBy
-                                                        (\( group, _ ) ->
-                                                            case group of
-                                                                Nothing ->
-                                                                    "zzzzzzzzz"
-
-                                                                Just name ->
-                                                                    name
-                                                        )
-                                                    |> groupExposing
-                                                    |> toDocComment
-                                                    |> String.join "\n\n"
-                                               )
-                                        )
-                                    )
-                                )
+                    Just
+                        (Internal.Comments.addPart
+                            Internal.Comments.emptyComment
+                            (Internal.Comments.Markdown
+                                (exposedGroupToMarkdown (List.reverse exposedGroups) Normal initialDocs)
+                            )
+                        )
                 }
     in
     { path =
@@ -209,6 +212,73 @@ render toDocComment fileDetails =
     , contents = body
     , warnings = rendered.warnings
     }
+
+
+type RenderingMode
+    = Normal
+    | RenderingDocsLine
+
+
+exposedGroupToMarkdown : List ExposedGroup -> RenderingMode -> String -> String
+exposedGroupToMarkdown groups mode rendered =
+    case groups of
+        [] ->
+            rendered
+
+        (Exposed exposedName) :: rest ->
+            case mode of
+                Normal ->
+                    exposedGroupToMarkdown rest RenderingDocsLine (rendered ++ "@docs " ++ exposedName)
+
+                RenderingDocsLine ->
+                    exposedGroupToMarkdown rest mode (rendered ++ ", " ++ exposedName)
+
+        (ExposedImplicitly exposedName) :: rest ->
+            case mode of
+                Normal ->
+                    exposedGroupToMarkdown rest RenderingDocsLine (rendered ++ "@docs " ++ exposedName)
+
+                RenderingDocsLine ->
+                    exposedGroupToMarkdown rest mode (rendered ++ ", " ++ exposedName)
+
+        (ExposedGroup group) :: rest ->
+            let
+                renderedSection =
+                    exposedGroupToMarkdown (List.reverse group.items)
+                        Normal
+                        (let
+                            title =
+                                if String.isEmpty group.title then
+                                    ""
+
+                                else
+                                    "## " ++ group.title ++ "\n\n"
+
+                            docsString =
+                                if String.isEmpty group.docs then
+                                    ""
+
+                                else
+                                    group.docs ++ "\n\n"
+                         in
+                         title ++ docsString
+                        )
+
+                separator =
+                    case mode of
+                        Normal ->
+                            "\n\n"
+
+                        RenderingDocsLine ->
+                            "\n\n"
+            in
+            exposedGroupToMarkdown rest
+                Normal
+                (rendered
+                    ++ separator
+                    ++ renderedSection
+                    ++ "\n\n"
+                )
 
 
 dedupImports : List Module -> List Module
@@ -331,31 +401,3 @@ addExposed exposed declaration otherExposes =
 
                 Elm.Syntax.Declaration.Destructuring _ _ ->
                     otherExposes
-
-
-groupExposing : List ( Maybe String, String ) -> List { group : Maybe String, members : List String }
-groupExposing items =
-    items
-        |> List.foldr
-            (\( maybeGroup, name ) acc ->
-                case acc of
-                    [] ->
-                        [ { group = maybeGroup, members = [ name ] } ]
-
-                    top :: groups ->
-                        if matchName maybeGroup top.group then
-                            { group = top.group
-                            , members = name :: top.members
-                            }
-                                :: groups
-
-                        else
-                            { group = maybeGroup, members = [ name ] } :: acc
-            )
-            []
-        |> List.map (\doc -> { doc | members = List.reverse doc.members })
-
-
-matchName : Maybe a -> Maybe a -> Bool
-matchName one two =
-    one == two

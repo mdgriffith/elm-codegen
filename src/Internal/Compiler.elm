@@ -685,7 +685,7 @@ expose decl =
                                 details.exposed
 
                             NotExposed ->
-                                Exposed { group = Nothing, exposeConstructor = False }
+                                Exposed { exposeConstructor = False }
                 }
 
         Group group ->
@@ -708,7 +708,7 @@ exposeConstructor decl =
                     | exposed =
                         case details.exposed of
                             NotExposed ->
-                                Exposed { exposeConstructor = True, group = Nothing }
+                                Exposed { exposeConstructor = True }
 
                             Exposed exposed ->
                                 Exposed { exposed | exposeConstructor = True }
@@ -919,8 +919,7 @@ fullModName name =
 type Expose
     = NotExposed
     | Exposed
-        { group : Maybe String
-        , exposeConstructor : Bool
+        { exposeConstructor : Bool
         }
 
 

@@ -11,7 +11,7 @@ module Elm exposing
     , comment, declaration
     , withDocumentation, group
     , expose, exposeConstructor
-    , fileWith, docs
+    , fileWith
     , fnBuilder, fnArg, fnDone, body, Fn
     , fn, fn2, fn3, function, functionReduced
     , customType, customTypeWith, Variant, variant, variantWith
@@ -64,7 +64,7 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 @docs expose, exposeConstructor
 
-@docs fileWith, docs
+@docs fileWith
 
 
 ## Functions
@@ -272,53 +272,12 @@ toString (Compiler.Expression toExp) =
 -}
 file : List String -> List Declaration -> File
 file mod decs =
-    Render.render renderStandardComment
+    Render.render ""
         { moduleName = mod
         , declarations = decs
         , aliases = []
         , index = Index.startIndex (Just mod)
         }
-
-
-renderStandardComment :
-    List
-        { group : Maybe String
-        , members : List String
-        }
-    -> List String
-renderStandardComment groups =
-    if List.isEmpty groups then
-        []
-
-    else
-        List.map docs groups
-
-
-{-| Render a standard docstring.
-
-    @docs one, two, three
-
-If a `group` has been given, it will be rendered as a second level header.
-
-```markdown
-## Group name
-
-@docs one, two, three
-```
-
--}
-docs :
-    { group : Maybe String
-    , members : List String
-    }
-    -> String
-docs groups =
-    case groups.group of
-        Nothing ->
-            "@docs " ++ String.join ", " groups.members
-
-        Just groupName ->
-            "## " ++ groupName ++ "\n\n@docs " ++ String.join ", " groups.members
 
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
@@ -330,7 +289,7 @@ Each exposed item is grouped using [group](#group).
 **aliases** allow you to specify a module alias to be used.
 
     Elm.fileWith [ "MyModule" ]
-        { docs = List.map Elm.docs
+        { docs = "# Here's my cool module!"
         , aliases =
             [ ( [ "Json", "Encode" ], "Encode" )
             ]
@@ -348,12 +307,7 @@ All values rendered in this file that are from this module would also automatica
 fileWith :
     List String
     ->
-        { docs :
-            List
-                { group : Maybe String
-                , members : List String
-                }
-            -> List String
+        { docs : String
         , aliases : List ( List String, String )
         }
     -> List Declaration
@@ -2318,7 +2272,7 @@ determineExposure : Declaration.Declaration -> Expose.Exposing -> Compiler.Expos
 determineExposure dec exposedDec =
     case exposedDec of
         Expose.All _ ->
-            Compiler.Exposed { group = Nothing, exposeConstructor = True }
+            Compiler.Exposed { exposeConstructor = True }
 
         Expose.Explicit nodes ->
             case dec of
@@ -2333,7 +2287,7 @@ determineExposure dec exposedDec =
                             Compiler.denode implementation.name
                     in
                     if List.any (valueIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                        Compiler.Exposed { exposeConstructor = False }
 
                     else
                         Compiler.NotExposed
@@ -2345,7 +2299,7 @@ determineExposure dec exposedDec =
                             Compiler.denode typeAlias.name
                     in
                     if List.any (typeIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                        Compiler.Exposed { exposeConstructor = False }
 
                     else
                         Compiler.NotExposed
@@ -2357,10 +2311,10 @@ determineExposure dec exposedDec =
                             Compiler.denode type_.name
                     in
                     if List.any (typeIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                        Compiler.Exposed { exposeConstructor = False }
 
                     else if List.any (typeConstructorIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = True }
+                        Compiler.Exposed { exposeConstructor = True }
 
                     else
                         Compiler.NotExposed
