@@ -93,7 +93,7 @@ Or we can include it in another module:
 
 Secondly, we can use the virtual module in our Elm code:
 
-    myModule.runCalculation (Elm.int 42)
+    myModule.call.runCalculation (Elm.int 42)
 
 Which will generate
 
