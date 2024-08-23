@@ -8,7 +8,48 @@ module Elm.Arg exposing
     , customType
     )
 
-{-|
+{-| An `Arg` can be used
+
+They can be used to pattern match on the arguments of a function.
+
+    let
+        args =
+            Elm.Arg.tuple (Arg.var "first") (Arg.var "second")
+    in
+    Elm.fn args
+        (\( first, second ) ->
+            Elm.record
+                [ ( "first", first )
+                , ( "second", second )
+                ]
+        )
+
+Will generate
+
+    \( first, second ) ->
+        { first = first
+        , second = second
+        }
+
+Or they can be used to unpack values in the branch of a case expression.
+
+    Elm.Case.custom (Elm.val "myVar") (Elm.Annotation.named [] "MyCustomType)
+        [ Elm.branch "MyCustomType" (Arg.tuple (Arg.var "first") (Arg.var "second"))
+            (\( first, second ) ->
+                Elm.record
+                    [ ( "first", first )
+                    , ( "second", second )
+                    ]
+            )
+        ]
+
+Will generate
+
+      case myVar of
+          MyCustomType first second ->
+              { first = first
+              , second = second
+              }
 
 @docs Arg, unit, var, varWith
 
@@ -56,13 +97,40 @@ varWith =
     Internal.Arg.varWith
 
 
-{-| -}
+{-| An empty tuple `()` is generally called "unit".
+-}
 unit : Arg Expression
 unit =
     Internal.Arg.unit
 
 
-{-| -}
+{-| Unpack a pattern, but keep a reference to the original value.
+
+    let
+        args =
+            Elm.Arg.customType "MyCustomType" Tuple.pair
+                |> Elm.Arg.item (Arg.var "first")
+                |> Elm.Arg.item (Arg.var "second")
+                |> Elm.Arg.aliasAs "myAlias"
+    in
+    Elm.fn args
+        (\( ( first, second ), myAlias ) ->
+            Elm.record
+                [ ( "first", first )
+                , ( "second", second )
+                , ( "myAlias", myAlias )
+                ]
+        )
+
+Will generate
+
+    \((MyCustomType first second) as myAlias) ->
+        { first = first
+        , second = second
+        , myAlias = myAlias
+        }
+
+-}
 aliasAs : String -> Arg arg -> Arg ( arg, Expression )
 aliasAs =
     Internal.Arg.aliasAs
@@ -80,7 +148,30 @@ triple =
     Internal.Arg.triple
 
 
-{-| -}
+{-| Unpack record fields.
+
+    let
+        args =
+            Elm.Arg.record
+                |> Elm.Arg.field "first" (Arg.var "first")
+                |> Elm.Arg.field "second" (Arg.var "second")
+    in
+    Elm.fn args
+        (\{ first, second } ->
+            Elm.record
+                [ ( "first", first )
+                , ( "second", second )
+                ]
+        )
+
+Would generate
+
+    \{ first, second } ->
+        { first = first
+        , second = second
+        }
+
+-}
 record : fields -> Arg fields
 record =
     Internal.Arg.record
@@ -104,7 +195,8 @@ char =
     Internal.Arg.char
 
 
-{-| -}
+{-| Will generate `_` to ignore an argument or pattern.
+-}
 ignore : Arg Expression
 ignore =
     Internal.Arg.ignore
@@ -155,15 +247,33 @@ item =
     Internal.Arg.item
 
 
-{-|
+{-| Let's say you have a custom type like
 
-    Arg.customType "MyCustomType" Tuple.pair
-        |> Arg.item (Arg.var "first")
-        |> Arg.item (Arg.var "second")
+    type MyCustomType
+        = MyCustomType String Int
 
-Will generate
+And you want to extract the String and Int
 
-    MyCustomType first second
+    let
+        args =
+            Elm.Arg.customType "MyCustomType" Tuple.pair
+                |> Elm.Arg.item (Arg.var "first")
+                |> Elm.Arg.item (Arg.var "second")
+    in
+    Elm.fn args
+        (\( first, second ) ->
+            Elm.record
+                [ ( "first", first )
+                , ( "second", second )
+                ]
+        )
+
+Which will generate
+
+    \(MyCustomType first second) ->
+        { first = first
+        , second = second
+        }
 
 -}
 customType : String -> a -> Arg a

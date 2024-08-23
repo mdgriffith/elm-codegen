@@ -325,7 +325,7 @@ docs groups =
 
 Pass in a function that determines how to render a `@docs` comment.
 
-Each exposed item is grouped based on the string used in [exposeWith](#exposeWith).
+Each exposed item is grouped using [group](#group).
 
 **aliases** allow you to specify a module alias to be used.
 
@@ -1597,8 +1597,6 @@ Results in
 
 **Note** — Elm CodeGen will protect variable names if they're used in a nested `fn*` by adding a string of numbers to the end of the name. So, you may see a variable name be something like `myVariable_0_1`.
 
-If you absolutely don't want this behavior, you'll need to use [`functionAdvanced`](#functionAdvanced).
-
 -}
 fn : Elm.Arg.Arg arg -> (arg -> Expression) -> Expression
 fn arg1 toExpression =
@@ -1921,68 +1919,6 @@ declaration nameStr (Compiler.Expression toBody) =
         }
 
 
-{-| For when you want the most control over a function being generated.
-
-This is for when:
-
-1.  You want your variable names to be exactly as provided
-    (i.e. you don't want the variable name collision protection)
-2.  You know exactly what type each variable should be.
-
--}
-functionAdvanced : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
-functionAdvanced args fullExpression =
-    case args of
-        [] ->
-            fullExpression
-
-        _ ->
-            Compiler.expression <|
-                \index ->
-                    let
-                        expr : Compiler.ExpressionDetails
-                        expr =
-                            case fullExpression of
-                                Compiler.Expression toExpr ->
-                                    toExpr index
-                    in
-                    { expression =
-                        Exp.LambdaExpression
-                            { args =
-                                List.map
-                                    (\( name, _ ) -> Compiler.nodify (Pattern.VarPattern name))
-                                    args
-                            , expression = Compiler.nodify expr.expression
-                            }
-                    , annotation =
-                        case expr.annotation of
-                            Err err ->
-                                Err err
-
-                            Ok return ->
-                                Ok
-                                    { type_ =
-                                        List.foldr
-                                            (\( _, Compiler.Annotation ann ) fnbody ->
-                                                Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify ann.annotation)
-                                                    (Compiler.nodify fnbody)
-                                            )
-                                            return.type_
-                                            args
-                                    , inferences = return.inferences
-                                    , aliases =
-                                        List.foldl
-                                            (\( _, ann ) gathered ->
-                                                Compiler.mergeAliases (Compiler.getAliases ann) gathered
-                                            )
-                                            return.aliases
-                                            args
-                                    }
-                    , imports = expr.imports
-                    }
-
-
 {-| You may run into situations where you don't know the number of arguments for a function at compile-time.
 
 In that case you can use `function`. It follows the same pattern as the `fn*` functions.
@@ -2125,10 +2061,14 @@ expose =
 {-| -}
 exposeConstructor : Declaration -> Declaration
 exposeConstructor =
-    Compiler.exposeWith { exposeConstructor = True, group = Nothing }
+    Compiler.exposeWith
+        { exposeConstructor = True
+        , group = Nothing
+        }
 
 
-{-| -}
+{-| Group declarations under a title together in the doc comment at the top of the generated module.
+-}
 group : { title : String, docs : String } -> List Declaration -> Declaration
 group options decls =
     Compiler.Group
