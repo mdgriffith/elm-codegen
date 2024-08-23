@@ -153,7 +153,8 @@ type alias Value =
     }
 
 
-{-| -}
+{-| You can safely ignore this type. It's used internally for some type bookkeeping, but you should never have it in your type signatures or anything.
+-}
 type Internal val
     = Internal (List String -> val)
 
