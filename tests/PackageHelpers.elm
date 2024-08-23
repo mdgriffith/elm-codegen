@@ -2,6 +2,7 @@ module PackageHelpers exposing (suite)
 
 import Dict exposing (Dict)
 import Elm
+import Elm.Arg
 import Elm.Expect
 import Elm.Op
 import Elm.Syntax.TypeAnnotation exposing (TypeAnnotation)
@@ -125,12 +126,12 @@ packageHelpers =
             \_ ->
                 Expect.equal
                     (Elm.record
-                        [ Elm.fn ( "arg", Nothing )
+                        [ Elm.fn (Elm.Arg.var "arg")
                             (\arg ->
                                 Elm.Op.plus arg (Elm.int 5)
                             )
                             |> Tuple.pair "one"
-                        , Elm.fn ( "arg", Nothing )
+                        , Elm.fn (Elm.Arg.var "arg")
                             (\arg ->
                                 Elm.Op.append arg (Elm.string "World")
                             )
@@ -138,7 +139,8 @@ packageHelpers =
                         ]
                         |> Elm.declaration "test"
                         |> Elm.ToString.declaration
-                        |> .body
+                        |> List.map .body
+                        |> String.join "\n"
                         |> String.trim
                     )
                     """test : { one : Int -> Int, two : String -> String }
@@ -153,7 +155,7 @@ stringifying =
         [ test "expressionWith applies aliases as expected" <|
             \_ ->
                 Elm.record
-                    [ Elm.fn ( "arg", Nothing )
+                    [ Elm.fn (Elm.Arg.var "arg")
                         (\arg ->
                             Elm.apply
                                 (Elm.value
@@ -177,7 +179,7 @@ stringifying =
         , test "expressionWith generates aliases as expected" <|
             \_ ->
                 Elm.record
-                    [ Elm.fn ( "arg", Nothing )
+                    [ Elm.fn (Elm.Arg.var "arg")
                         (\arg ->
                             Elm.apply
                                 (Elm.value

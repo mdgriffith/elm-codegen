@@ -178,11 +178,11 @@ myFn : Int -> Int -> Test
 myFn firstArg secondArg =
     testFn
         (Test
-            { one = firstArg
-            , two = firstArg
-            , three = firstArg
-            , four = firstArg
-            , five = firstArg
-            , six = firstArg
-            }
+             { one = firstArg
+             , two = firstArg
+             , three = firstArg
+             , four = firstArg
+             , five = firstArg
+             , six = firstArg
+             }
         )""")

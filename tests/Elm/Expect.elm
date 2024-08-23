@@ -1,4 +1,4 @@
-module Elm.Expect exposing (declarationAs, fileContentAs, importAs, renderedAs)
+module Elm.Expect exposing (declarationAs, equal, fileContentAs, importAs, renderedAs)
 
 import Elm
 import Elm.ToString
@@ -41,3 +41,14 @@ fileContentAs file str =
             |> String.trim
         )
         (String.trim str)
+
+
+equal : Elm.Expression -> Elm.Expression -> Expectation
+equal one two =
+    Expect.equal
+        (Elm.ToString.expression one
+            |> .body
+        )
+        (Elm.ToString.expression two
+            |> .body
+        )

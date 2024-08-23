@@ -26,6 +26,7 @@ module Internal.Compiler exposing
     , expose
     , exposeWith
     , expression
+    , facts
     , findAlias
     , fullModName
     , getAliases
@@ -286,25 +287,25 @@ parens expr =
             Exp.ParenthesizedExpression (nodify expr)
 
 
+{-| -}
+facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
+facts (Expression exp) =
+    let
+        expresh : ExpressionDetails
+        expresh =
+            exp (Index.startIndex Nothing)
+    in
+    case expresh.annotation of
+        Ok sig ->
+            sig.inferences
+                |> Dict.toList
+                |> Ok
 
--- {-| -}
--- facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
--- facts (Expression exp) =
---     let
---         expresh : ExpressionDetails
---         expresh =
---             exp (Index.startIndex Nothing)
---     in
---     case expresh.annotation of
---         Ok sig ->
---             sig.inferences
---                 |> Dict.toList
---                 |> Ok
---         Err inferenceError ->
---             inferenceError
---                 |> List.map inferenceErrorToString
---                 |> String.join "\n\n"
---                 |> Err
+        Err inferenceError ->
+            inferenceError
+                |> List.map inferenceErrorToString
+                |> String.join "\n\n"
+                |> Err
 
 
 {-| Remove duplicate values, keeping the first instance of each element which appears more than once.
