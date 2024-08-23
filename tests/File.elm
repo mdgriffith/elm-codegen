@@ -16,6 +16,14 @@ testFn1 =
                 arg
 
 
+placeholder : String -> Elm.Declaration
+placeholder name =
+    Elm.declaration name <|
+        Elm.fn (Arg.var "arg") <|
+            \arg ->
+                arg
+
+
 testFn2 : Elm.Declaration
 testFn2 =
     Elm.declaration "testFn2" <|
@@ -27,7 +35,8 @@ testFn2 =
 suite : Test
 suite =
     describe "Elm.file"
-        [ describe "module doc"
+        [ grouping
+        , describe "module doc"
             [ test "present when has content" <|
                 \_ ->
                     Elm.Expect.fileContentAs (Elm.file [ "Test" ] [ Elm.expose testFn1 ])
@@ -96,3 +105,68 @@ testFn2 arg =
 """
             ]
         ]
+
+
+grouping : Test
+grouping =
+    Test.only <|
+        describe "Grouping exposed"
+            [ test "no extra lines at the end of the file" <|
+                \_ ->
+                    Elm.Expect.fileContentAs
+                        (Elm.file [ "Test" ]
+                            [ placeholder "one"
+                            , placeholder "two"
+                            , Elm.group { title = "My group", docs = "Here's how to use it" }
+                                [ placeholder "three"
+                                , placeholder "four"
+                                ]
+                            , placeholder "five"
+                            , placeholder "six"
+                            ]
+                        )
+                        """module Test exposing (..)
+
+{-|@docs one, two
+
+## My group
+
+Here's how to use it
+
+@docs three, four
+
+@docs five, six
+-}
+
+
+
+one : arg -> arg
+one arg =
+    arg
+
+
+two : arg -> arg
+two arg =
+    arg
+
+
+three : arg -> arg
+three arg =
+    arg
+
+
+four : arg -> arg
+four arg =
+    arg
+
+
+five : arg -> arg
+five arg =
+    arg
+
+
+six : arg -> arg
+six arg =
+    arg
+"""
+            ]
