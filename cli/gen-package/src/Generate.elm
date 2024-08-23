@@ -323,11 +323,14 @@ block2Case thisModule union =
                     (Elm.Arg.varWith (union.name ++ "Tags")
                       (Annotation.record
                         (List.map
-                          (\(tagname, _) ->
+                          (\(tagname, subtypes) ->
                             ( tagname
                             , Annotation.function
-                                [Gen.Elm.annotation_.expression]
-                                (Annotation.var "a")
+                                (List.map
+                                  (\_ ->  Gen.Elm.annotation_.expression)
+                                  subtypes
+                                )
+                                Gen.Elm.annotation_.expression
                             )
                           )
                           union.tags
@@ -365,7 +368,10 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
 
                 newExp =
                   exp
-                    |> Elm.Op.pipe (Elm.apply Gen.Elm.Arg.values_.item [ Gen.Elm.Arg.var tagname ])
+                    |> Elm.Op.pipe
+                        (Elm.apply Gen.Elm.Arg.values_.item
+                            [ Gen.Elm.Arg.var (Format.formatValue tagname) ]
+                        )
               in
               extractSubTypes (i + 1) remain newExp
 
@@ -374,11 +380,17 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
         (Gen.Elm.Arg.customType tagname (Elm.get tagname tagRecord)
           |> extractSubTypes 0 subtypes
         )
-        (Elm.fn (Elm.Arg.var tagname)
-          identity
-        )
+        basicsIdentity
         |> Just
 
+
+basicsIdentity : Elm.Expression
+basicsIdentity =
+    Elm.value
+      { importFrom = [ "Basics" ]
+      , name = "identity"
+      , annotation = Just (Annotation.function [ Annotation.var "a" ] (Annotation.var "a"))
+      }
 
 block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
 block2Maker thisModule block =
@@ -859,7 +871,11 @@ generateBlocks thisModule block =
                     ]
 
                 _ ->
-                    [ Elm.declaration value.name
+                  let
+                    name =
+                      Format.formatValue value.name
+                  in
+                    [ Elm.declaration name
                         (valueWith thisModule
                             value.name
                             value.tipe
