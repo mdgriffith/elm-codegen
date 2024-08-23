@@ -1,7 +1,8 @@
-module Declare exposing (makeAndCaseGeneration, suite)
+module Declare exposing (makeAndCaseGeneration, makeAndCaseGenerationFullyDynamic, suite)
 
 {-| -}
 
+import Dict
 import Elm
 import Elm.Annotation as Type
 import Elm.Arg
@@ -9,6 +10,7 @@ import Elm.Declare
 import Elm.Expect
 import Elm.Op
 import Expect
+import Gen.Debug
 import Test exposing (Test, describe, test)
 
 
@@ -262,6 +264,133 @@ makeAndCaseGeneration =
 
                             MyMaybe.Just arg0 ->
                                 arg0
+                        """
+                ]
+                ()
+
+
+makeAndCaseGenerationFullyDynamic : Test
+makeAndCaseGenerationFullyDynamic =
+    test "Elm.Declare.customTypeAdvanced - fully dynamic" <|
+        \_ ->
+            let
+                semaphore : Elm.Declare.CustomType (String -> Elm.Expression)
+                semaphore =
+                    List.foldl
+                        (\name ->
+                            Elm.Declare.customVariant name
+                                []
+                                (\dict -> dict name)
+                                identity
+                                (\ctor dict valueName ->
+                                    if name == valueName then
+                                        ctor []
+
+                                    else
+                                        dict valueName
+                                )
+                        )
+                        (Elm.Declare.customTypeAdvanced "Semaphore"
+                            { exposeConstructor = True }
+                            (\_ -> Elm.unit)
+                        )
+                        [ "Red", "Yellow", "Green" ]
+                        |> Elm.Declare.finishCustomType
+
+                external =
+                    Elm.Declare.module_ [ "Semaphore" ] identity
+                        |> Elm.Declare.with semaphore
+            in
+            Expect.all
+                [ \_ ->
+                    Elm.Expect.declarationAs semaphore.declaration
+                        """
+                        type Semaphore
+                            = Red
+                            | Yellow
+                            | Green
+                        """
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (semaphore.make_ "Red")
+                        "Red"
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (semaphore.make_ "Yellow")
+                        "Yellow"
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (semaphore.make_ "Green")
+                        "Green"
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (semaphore.case_ (Elm.val "a")
+                            (\color ->
+                                case color of
+                                    "Red" ->
+                                        Elm.string "Red"
+
+                                    "Green" ->
+                                        Elm.string "Green"
+
+                                    "Yellow" ->
+                                        Elm.string "Yellow"
+
+                                    _ ->
+                                        Gen.Debug.todo "This doesn't happen"
+                            )
+                        )
+                        """
+                        case a of
+                            Red ->
+                                "Red"
+
+                            Yellow ->
+                                "Yellow"
+
+                            Green ->
+                                "Green"
+                        """
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (external.call.make_ "Red")
+                        "Semaphore.Red"
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (external.call.make_ "Yellow")
+                        "Semaphore.Yellow"
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (external.call.make_ "Green")
+                        "Semaphore.Green"
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        (external.call.case_ (Elm.val "a")
+                            (\color ->
+                                case color of
+                                    "Red" ->
+                                        Elm.string "Red"
+
+                                    "Green" ->
+                                        Elm.string "Green"
+
+                                    "Yellow" ->
+                                        Elm.string "Yellow"
+
+                                    _ ->
+                                        Gen.Debug.todo "This doesn't happen"
+                            )
+                        )
+                        """
+                        case a of
+                            Semaphore.Red ->
+                                "Red"
+
+                            Semaphore.Yellow ->
+                                "Yellow"
+
+                            Semaphore.Green ->
+                                "Green"
                         """
                 ]
                 ()
