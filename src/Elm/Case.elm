@@ -33,13 +33,13 @@ Generates
 
     Elm.Case.custom maybeString
         (Elm.Annotation.maybe Elm.Annotation.string)
-        [ Elm.Case.branch (Arg.customType "Nothing" ())
+        [ Elm.Case.branch (Elm.Arg.customType "Nothing" ())
             (\_ ->
                 Elm.string "It's nothing, I swear!"
             )
         , Elm.Case.branch
-            (Arg.customType "Just" identity
-                |> Arg.item (Arg.string "val"
+            (Elm.Arg.customType "Just" identity
+                |> Arg.item (Arg.var "val")
             )
             (\val ->
                 Elm.append (Elm.string "Actually, it's: ") val

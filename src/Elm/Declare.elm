@@ -46,6 +46,61 @@ Here's an example, let's define a new function called `add42`
 
 @docs function
 
+
+# Virtual Modules
+
+It's very common to have some modules that you both need to _generate_ and _use_ in your generated Elm code.
+
+Here's an example, let's define a new module called `MyModule`:
+
+    import Elm
+    import Elm.Annotation
+    import Elm.Declare
+    import Elm.Op
+
+    type alias MyModule =
+        { runCalculation : Elm.Expression -> Elm.Expression
+        , myType : Elm.Annotation.Annotation
+        }
+
+    myModule =
+        Elm.Declare.module_ [ "MyModule" ] MyModule
+            |> Elm.Declare.with
+                (Elm.Declare.fn "runCalculation"
+                    (Elm.Arg.var "input")
+                    (\input -> Elm.Op.plus input (Elm.int 42))
+                )
+            |> Elm.Declare.with
+                (Elm.Declare.customType "MyType"
+                    [ Elm.variant "One"
+                    , Elm.variant "Two"
+                    ]
+                )
+
+Once we've declared our module, we can do 2 things.
+
+First, we can generate the Elm code for the module:
+
+    Elm.toFile myModule
+
+Or we can include it in another module:
+
+    Elm.file [ "MyInternalFile" ]
+        [ Elm.include { title = "", docs = "" } myModule
+
+        --... Whatever other declarations you want in this file.
+        ]
+
+Secondly, we can use the virtual module in our Elm code:
+
+    myModule.runCalculation (Elm.int 42)
+
+Which will generate
+
+    MyModule.runCalculation 42
+
+And handle the imports and everything.
+
 @docs Module, module_, with, withUnexposed
 
 @docs Annotation, alias, customType
