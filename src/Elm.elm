@@ -2061,10 +2061,7 @@ expose =
 {-| -}
 exposeConstructor : Declaration -> Declaration
 exposeConstructor =
-    Compiler.exposeWith
-        { exposeConstructor = True
-        , group = Nothing
-        }
+    Compiler.exposeConstructor
 
 
 {-| Group declarations under a title together in the doc comment at the top of the generated module.
