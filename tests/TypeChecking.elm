@@ -10,6 +10,7 @@ import Elm.ToString
 import Expect
 import Internal.Compiler as Compiler
 import Internal.Index as Index
+import String.Multiline
 import Test exposing (Test, describe, test)
 
 
@@ -177,19 +178,21 @@ generatedCode =
                 Elm.Expect.declarationAs
                     (Elm.declaration "map" myMap2)
                     """
-map : (optional -> fn) -> optional -> Optional fn
-map fn optional =
-    Present (fn optional)
-
-"""
+                    map : (optional -> fn) -> optional -> Optional fn
+                    map fn optional =
+                        Present (fn optional)
+                    """
         , test "Map function generates corrections " <|
             \_ ->
                 (Elm.ToString.expression myMap
                     |> .signature
                 )
-                    |> Expect.equal (String.trim """
-(a -> fn) -> Optional a -> Optional fn
-""")
+                    |> Expect.equal
+                        (String.Multiline.here
+                            """
+                            (a -> fn) -> Optional a -> Optional fn
+                            """
+                        )
         , test "Multiply used type variable in record only appears once in signature" <|
             \_ ->
                 Elm.Expect.declarationAs
