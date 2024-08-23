@@ -677,7 +677,16 @@ expose decl =
             decl
 
         Declaration details ->
-            Declaration { details | exposed = Exposed { group = Nothing, exposeConstructor = False } }
+            Declaration
+                { details
+                    | exposed =
+                        case details.exposed of
+                            Exposed _ ->
+                                details.exposed
+
+                            NotExposed ->
+                                Exposed { group = Nothing, exposeConstructor = False }
+                }
 
         Group group ->
             Group { group | decls = List.map expose group.decls }
