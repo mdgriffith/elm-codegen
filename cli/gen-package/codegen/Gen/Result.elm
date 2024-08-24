@@ -654,14 +654,14 @@ caseOf_ =
                 [ Elm.Case.branch
                     (Elm.Arg.customType "Ok" resultTags.ok |> Elm.Arg.item
                                                                     (Elm.Arg.var
-                                                                           "ok"
+                                                                           "value"
                                                                     )
                     )
                     Basics.identity
                 , Elm.Case.branch
                     (Elm.Arg.customType "Err" resultTags.err |> Elm.Arg.item
                                                                       (Elm.Arg.var
-                                                                             "err"
+                                                                             "error"
                                                                       )
                     )
                     Basics.identity

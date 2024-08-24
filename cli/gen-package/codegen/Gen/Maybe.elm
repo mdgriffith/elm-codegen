@@ -434,7 +434,7 @@ caseOf_ =
                 [ Elm.Case.branch
                     (Elm.Arg.customType "Just" maybeTags.just |> Elm.Arg.item
                                                                        (Elm.Arg.var
-                                                                              "just"
+                                                                              "a"
                                                                        )
                     )
                     Basics.identity

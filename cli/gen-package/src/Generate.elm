@@ -370,7 +370,7 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
                   exp
                     |> Elm.Op.pipe
                         (Elm.apply Gen.Elm.Arg.values_.item
-                            [ Gen.Elm.Arg.var (Format.formatValue tagname) ]
+                            [ Gen.Elm.Arg.var (Format.formatValue subtypeName) ]
                         )
               in
               extractSubTypes (i + 1) remain newExp
