@@ -2,7 +2,6 @@ module Declare exposing (makeAndCaseGeneration, makeAndCaseGenerationFullyDynami
 
 {-| -}
 
-import Dict
 import Elm
 import Elm.Annotation as Type
 import Elm.Arg

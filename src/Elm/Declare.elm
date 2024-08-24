@@ -5,8 +5,10 @@ module Elm.Declare exposing
     , function
     , Module, module_, with, withUnexposed
     , Annotation, alias, customType
-    , customTypeAdvanced, CustomType, CustomTypeBuilder, variant0, variant1, variant2, customVariant, finishCustomType
     , toFile, include
+    , customTypeAdvanced, CustomType
+    , variant0, variant1, variant2
+    , CustomTypeBuilder, customVariant, finishCustomType
     , Internal
     )
 
@@ -106,9 +108,58 @@ And handle the imports and everything.
 
 @docs Annotation, alias, customType
 
-@docs customTypeAdvanced, CustomType, CustomTypeBuilder, variant0, variant1, variant2, customVariant, finishCustomType
-
 @docs toFile, include
+
+
+## Advanced Custom Types
+
+In some cases you may want to generate a custom type and also have some helpers to
+
+1.  Create an instance of that type
+2.  Pattern match on that type
+
+`customTypeAdvanced` is a helper function that will let you do that!
+
+But it does get a little involved, so if you don't need it, trying something simpler may be the way to go.
+
+As an example, here's how to create a helper for the `Maybe` type.
+
+    maybe =
+        Elm.Declare.customTypeAdvanced "Maybe"
+            { exposeConstructor = True }
+            (\nothing just ->
+                { nothing = nothing
+                , just = just
+                }
+            )
+            |> Elm.Declare.variant0 "Nothing" .nothing
+            |> Elm.Declare.variant1 "Just" (Elm.Annotation.var "a") .just
+            |> Elm.Declare.finishCustomType
+
+    -- Which then allows you to create an instance of the type via
+    maybe.make_.just (Elm.int 42)
+    -- Which would generate `Just 42`
+
+    -- And if you want to use it as a case expression, you can do this:
+
+    maybe.case_ (Elm.val "a")
+        { just = \a -> a
+        , nothing = Elm.string ""
+        }
+
+    -- Which would generate
+    case a of
+       Just a -> a
+       Nothing -> ""
+
+@docs customTypeAdvanced, CustomType
+
+@docs variant0, variant1, variant2
+
+@docs CustomTypeBuilder, customVariant, finishCustomType
+
+
+## Internal things
 
 @docs Internal
 
@@ -205,6 +256,7 @@ customType name variants =
     }
 
 
+{-| -}
 type CustomTypeBuilder case_ make_
     = CustomTypeBuilder
         { exposeConstructor : Bool
@@ -229,6 +281,7 @@ customTypeAdvanced name { exposeConstructor } make_ =
         }
 
 
+{-| -}
 finishCustomType : CustomTypeBuilder make_ make_ -> CustomType make_
 finishCustomType (CustomTypeBuilder custom) =
     let
@@ -278,6 +331,7 @@ finishCustomType (CustomTypeBuilder custom) =
     }
 
 
+{-| -}
 variant0 :
     String
     -> (case_ -> Expression)
@@ -292,6 +346,7 @@ variant0 name toBranch custom =
     standardVariant name [] toBranch identity make custom
 
 
+{-| -}
 variant1 :
     String
     -> Elm.Annotation.Annotation
@@ -312,6 +367,7 @@ variant1 name type0 toBranch custom =
     standardVariant name [ type0 ] toBranch args make custom
 
 
+{-| -}
 variant2 :
     String
     -> Elm.Annotation.Annotation
@@ -346,6 +402,7 @@ standardVariant name types branch args make custom =
     customVariant name types branch args (\mod previous -> previous (make mod)) custom
 
 
+{-| -}
 customVariant :
     String
     -> List Elm.Annotation.Annotation
