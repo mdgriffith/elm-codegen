@@ -5,6 +5,7 @@ module Elm.Declare exposing
     , function
     , Module, module_, with, withUnexposed
     , Annotation, alias, customType
+    , customTypeAdvanced, CustomType, CustomTypeBuilder, variant0, variant1, variant2, customVariant, finishCustomType
     , toFile, include
     , Internal
     )
@@ -105,6 +106,8 @@ And handle the imports and everything.
 
 @docs Annotation, alias, customType
 
+@docs customTypeAdvanced, CustomType, CustomTypeBuilder, variant0, variant1, variant2, customVariant, finishCustomType
+
 @docs toFile, include
 
 @docs Internal
@@ -114,6 +117,7 @@ And handle the imports and everything.
 import Elm exposing (Expression)
 import Elm.Annotation
 import Elm.Arg
+import Elm.Case
 import Elm.Syntax.Expression as Exp
 import Internal.Compiler as Compiler
 import Internal.Format as Format
@@ -137,9 +141,24 @@ type alias Annotation =
 
 
 {-| -}
+type alias CustomType make_ =
+    { declaration : Elm.Declaration
+    , annotation : Elm.Annotation.Annotation
+    , make_ : make_
+    , case_ : Expression -> make_ -> Expression
+    , internal :
+        Internal
+            { annotation : Elm.Annotation.Annotation
+            , make_ : make_
+            , case_ : Expression -> make_ -> Expression
+            }
+    }
+
+
+{-| -}
 type alias Function tipe =
     { call : tipe
-    , value : Elm.Expression
+    , value : Expression
     , declaration : Elm.Declaration
     , internal : Internal tipe
     }
@@ -147,9 +166,9 @@ type alias Function tipe =
 
 {-| -}
 type alias Value =
-    { value : Elm.Expression
+    { value : Expression
     , declaration : Elm.Declaration
-    , internal : Internal Elm.Expression
+    , internal : Internal Expression
     }
 
 
@@ -184,6 +203,195 @@ customType name variants =
     , declaration = Elm.customType name variants
     , internal = Internal (\mod -> Elm.Annotation.named mod name)
     }
+
+
+type CustomTypeBuilder case_ make_
+    = CustomTypeBuilder
+        { exposeConstructor : Bool
+        , name : String
+        , variants : List Elm.Variant
+        , make_ : make_
+        , case_ : case_ -> List Elm.Case.Branch
+        , internal : Internal make_
+        }
+
+
+{-| -}
+customTypeAdvanced : String -> { exposeConstructor : Bool } -> make_ -> CustomTypeBuilder case_ make_
+customTypeAdvanced name { exposeConstructor } make_ =
+    CustomTypeBuilder
+        { exposeConstructor = exposeConstructor
+        , name = name
+        , variants = []
+        , make_ = make_
+        , case_ = \_ -> []
+        , internal = Internal (\_ -> make_)
+        }
+
+
+finishCustomType : CustomTypeBuilder make_ make_ -> CustomType make_
+finishCustomType (CustomTypeBuilder custom) =
+    let
+        annotation : Elm.Annotation.Annotation
+        annotation =
+            Elm.Annotation.named [] custom.name
+
+        declaration : Elm.Declaration
+        declaration =
+            Elm.customType custom.name (List.reverse custom.variants)
+    in
+    { declaration =
+        if custom.exposeConstructor then
+            Elm.exposeConstructor declaration
+
+        else
+            declaration
+    , annotation = annotation
+    , make_ = custom.make_
+    , case_ =
+        \expr case_ ->
+            Elm.Case.custom
+                expr
+                annotation
+                (List.reverse (custom.case_ case_))
+    , internal =
+        Internal
+            (\mod ->
+                let
+                    (Internal internal) =
+                        custom.internal
+
+                    externalAnnotation : Elm.Annotation.Annotation
+                    externalAnnotation =
+                        Elm.Annotation.named mod custom.name
+                in
+                { annotation = externalAnnotation
+                , make_ = internal mod
+                , case_ =
+                    \expr case_ ->
+                        Elm.Case.custom
+                            expr
+                            externalAnnotation
+                            (List.reverse (custom.case_ case_))
+                }
+            )
+    }
+
+
+variant0 :
+    String
+    -> (case_ -> Expression)
+    -> CustomTypeBuilder case_ (Expression -> make_)
+    -> CustomTypeBuilder case_ make_
+variant0 name toBranch custom =
+    let
+        make : (List Expression -> Expression) -> Expression
+        make makeValue =
+            makeValue []
+    in
+    standardVariant name [] toBranch identity make custom
+
+
+variant1 :
+    String
+    -> Elm.Annotation.Annotation
+    -> (case_ -> (Expression -> Expression))
+    -> CustomTypeBuilder case_ ((Expression -> Expression) -> make_)
+    -> CustomTypeBuilder case_ make_
+variant1 name type0 toBranch custom =
+    let
+        args : Elm.Arg.Arg (Expression -> Expression) -> Elm.Arg.Arg Expression
+        args record =
+            record
+                |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
+
+        make : (List Expression -> Expression) -> Expression -> Expression
+        make makeValue arg0 =
+            makeValue [ arg0 ]
+    in
+    standardVariant name [ type0 ] toBranch args make custom
+
+
+variant2 :
+    String
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> (case_ -> (Expression -> Expression -> Expression))
+    -> CustomTypeBuilder case_ ((Expression -> Expression -> Expression) -> make_)
+    -> CustomTypeBuilder case_ make_
+variant2 name type0 type1 toBranch custom =
+    let
+        args : Elm.Arg.Arg (Expression -> Expression -> Expression) -> Elm.Arg.Arg Expression
+        args record =
+            record
+                |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
+                |> Elm.Arg.item (Elm.Arg.varWith "arg1" type1)
+
+        make : (List Expression -> Expression) -> Expression -> Expression -> Expression
+        make makeValue arg0 arg1 =
+            makeValue [ arg0, arg1 ]
+    in
+    standardVariant name [ type0, type1 ] toBranch args make custom
+
+
+standardVariant :
+    String
+    -> List Elm.Annotation.Annotation
+    -> (case_ -> branch)
+    -> (Elm.Arg.Arg branch -> Elm.Arg.Arg Expression)
+    -> ((List Expression -> Expression) -> branch)
+    -> CustomTypeBuilder case_ (branch -> make_)
+    -> CustomTypeBuilder case_ make_
+standardVariant name types branch args make custom =
+    customVariant name types branch args (\mod previous -> previous (make mod)) custom
+
+
+customVariant :
+    String
+    -> List Elm.Annotation.Annotation
+    -> (case_ -> branch)
+    -> (Elm.Arg.Arg branch -> Elm.Arg.Arg Expression)
+    -> ((List Expression -> Expression) -> previousMake_ -> make_)
+    -> CustomTypeBuilder case_ previousMake_
+    -> CustomTypeBuilder case_ make_
+customVariant name types branch arg make (CustomTypeBuilder custom) =
+    let
+        makeValue : List String -> List Expression -> Expression
+        makeValue mod list =
+            Elm.apply
+                (Elm.value
+                    { importFrom = mod
+                    , name = name
+                    , annotation = Nothing
+                    }
+                )
+                list
+                |> Elm.withType (Elm.Annotation.named mod custom.name)
+    in
+    CustomTypeBuilder
+        { exposeConstructor = custom.exposeConstructor
+        , name = custom.name
+        , variants = Elm.variantWith name types :: custom.variants
+        , make_ = make (makeValue []) custom.make_
+        , case_ =
+            \record ->
+                Elm.Case.branch
+                    (branch record
+                        |> Elm.Arg.customType name
+                        |> arg
+                    )
+                    identity
+                    :: custom.case_ record
+        , internal =
+            Internal
+                (\mod ->
+                    let
+                        (Internal internal) =
+                            custom.internal
+                    in
+                    make (makeValue mod) (internal mod)
+                )
+        }
 
 
 {-| -}
@@ -411,8 +619,8 @@ innerFunction name funcExp call =
 valWithType :
     List String
     -> String
-    -> Elm.Expression
-    -> Elm.Expression
+    -> Expression
+    -> Expression
 valWithType importFrom name fnExp =
     Compiler.Expression
         (\index ->
@@ -444,7 +652,7 @@ valWithType importFrom name fnExp =
 {-| -}
 value :
     String
-    -> Elm.Expression
+    -> Expression
     -> Value
 value name expression =
     { value = Elm.val name
@@ -468,7 +676,7 @@ In that case you can use `placeholder`!
 Of note, if you generate the actual body of `placeholder`, it'll generate `Debug.todo "Placeholder function body"`.
 
 -}
-placeholder : Elm.Expression
+placeholder : Expression
 placeholder =
     Elm.apply
         (Elm.value

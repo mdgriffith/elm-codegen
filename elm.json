@@ -23,6 +23,7 @@
     },
     "test-dependencies": {
         "elm/json": "1.1.3 <= v < 2.0.0",
-        "elm-explorations/test": "2.0.0 <= v < 3.0.0"
+        "elm-explorations/test": "2.0.0 <= v < 3.0.0",
+        "arowM/elm-multiline-string": "1.0.0 <= v < 2.0.0"
     }
 }
