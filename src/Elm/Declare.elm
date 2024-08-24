@@ -4,8 +4,9 @@ module Elm.Declare exposing
     , Value, value
     , function
     , Module, module_, with, withUnexposed
+    , withDocs, withTitle
     , Annotation, alias, customType
-    , toFile, include
+    , toFile, include, withSubmodule
     , customTypeAdvanced, CustomType
     , variant0, variant1, variant2
     , CustomTypeBuilder, customVariant, finishCustomType
@@ -106,9 +107,11 @@ And handle the imports and everything.
 
 @docs Module, module_, with, withUnexposed
 
+@docs withDocs, withTitle
+
 @docs Annotation, alias, customType
 
-@docs toFile, include
+@docs toFile, include, withSubmodule
 
 
 ## Advanced Custom Types
@@ -178,6 +181,8 @@ import Internal.Index as Index
 {-| -}
 type alias Module val =
     { name : List String
+    , title : String
+    , docs : String
     , declarations : List Elm.Declaration
     , call : val
     }
@@ -233,6 +238,8 @@ type Internal val
 module_ : List String -> val -> Module val
 module_ name call =
     { name = name
+    , title = ""
+    , docs = ""
     , call = call
     , declarations = []
     }
@@ -451,6 +458,25 @@ customVariant name types branch arg make (CustomTypeBuilder custom) =
         }
 
 
+{-| Add a module-level title to the module.
+
+This will be rendered as a markdown header.
+
+-}
+withTitle : String -> Module val -> Module val
+withTitle title mod =
+    { mod | title = title }
+
+
+{-| Add some markdown as a module-level documentation comment.
+-}
+withDocs : String -> Module val -> Module val
+withDocs docs mod =
+    { mod
+        | docs = mod.docs ++ docs
+    }
+
+
 {-| -}
 with :
     { a
@@ -465,6 +491,8 @@ with decl mod =
             decl.internal
     in
     { name = mod.name
+    , title = mod.title
+    , docs = mod.docs
     , declarations = Elm.expose decl.declaration :: mod.declarations
     , call = mod.call (call mod.name)
     }
@@ -752,11 +780,34 @@ toFile mod =
         (List.reverse mod.declarations)
 
 
-{-| -}
-include : { title : String, docs : String } -> Module val -> Elm.Declaration
-include docs mod =
+{-| Add a module as a "submodule".
+
+This can be useful for organizing particularly complex modules.
+
+The only thing to be aware of here is that the module name for both of these modules must be the same or you're going to have a bad time.
+
+'
+
+-}
+withSubmodule : Module submod -> Module (submod -> mod) -> Module mod
+withSubmodule submod mod =
+    { name = mod.name
+    , title = mod.title
+    , docs = mod.docs
+    , declarations = mod.declarations ++ [ include submod ]
+    , call = mod.call submod.call
+    }
+
+
+{-| Include a module as a declaration in another module.
+
+**Note** - Be aware that the modulename of the included module must match the module name of the module you're including it in!
+
+-}
+include : Module val -> Elm.Declaration
+include mod =
     Compiler.Group
-        { title = docs.title
-        , docs = docs.docs
+        { title = mod.title
+        , docs = mod.docs
         , decls = mod.declarations
         }
