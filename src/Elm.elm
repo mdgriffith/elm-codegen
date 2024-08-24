@@ -141,7 +141,19 @@ type Fn value
         )
 
 
-{-| -}
+{-| Build a function with any number of arguments.
+
+Here's how you'd implement a function which adds two numbers together:
+
+    Elm.fnBuilder
+        (\arg1 arg2 ->
+            Elm.Op.plus arg1 arg2
+        )
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.fnDone
+
+-}
 fnBuilder : value -> Fn value
 fnBuilder innerValue =
     Fn
@@ -232,7 +244,35 @@ fnDone (Fn toFnDetails) =
         )
 
 
-{-| -}
+{-| `body` allows you to define the funciton body _after_ defining the args.
+
+So, normally, we'd have this.
+
+    Elm.fnBuilder
+        (\arg1 arg2 ->
+            Elm.Op.plus arg1 arg2
+        )
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.fnDone
+
+But, that's sorta weird because you're defining the body before the args.
+
+You can also do this:
+
+    Elm.fnBuilder Tuple.pair
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.body
+            (\( arg1, arg2 ) ->
+                Elm.Op.plus arg1 arg2
+            )
+
+Which more closely mirrors the way you'd write a function in Elm.
+
+The downside is that you need to capture the arguments in a data strucutre(in this example, we used `Tuple.pair`).
+
+-}
 body : (args -> Expression) -> Fn args -> Expression
 body toBody (Fn toFnDetails) =
     Compiler.Expression
