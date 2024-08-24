@@ -254,33 +254,32 @@ suite =
 
 destructuringItems : Test
 destructuringItems =
-    Test.only <|
-        describe "Item and items"
-            [ test "list destructuring" <|
-                \() ->
-                    let
-                        expression : Elm.Expression
-                        expression =
-                            Elm.Case.custom
-                                (Elm.list [ Elm.char 'a' ])
-                                (Type.maybe Type.int)
-                                [ Elm.Case.branch
-                                    (Arg.list identity
-                                        |> Arg.items
-                                            [ Arg.var "first"
-                                            , Arg.var "second"
-                                            , Arg.var "third"
-                                            ]
-                                    )
-                                    (\allVars ->
-                                        Elm.list allVars
-                                    )
-                                , Elm.Case.branch Arg.ignore (\_ -> Elm.int 0)
-                                ]
-                    in
-                    Elm.Expect.renderedAs
-                        expression
-                        """
+    describe "Item and items"
+        [ test "list destructuring" <|
+            \() ->
+                let
+                    expression : Elm.Expression
+                    expression =
+                        Elm.Case.custom
+                            (Elm.list [ Elm.char 'a' ])
+                            (Type.maybe Type.int)
+                            [ Elm.Case.branch
+                                (Arg.list identity
+                                    |> Arg.items
+                                        [ Arg.var "first"
+                                        , Arg.var "second"
+                                        , Arg.var "third"
+                                        ]
+                                )
+                                (\allVars ->
+                                    Elm.list allVars
+                                )
+                            , Elm.Case.branch Arg.ignore (\_ -> Elm.int 0)
+                            ]
+                in
+                Elm.Expect.renderedAs
+                    expression
+                    """
                         case [ 'a' ] of
                             [ first, second, third ] ->
                                 [ first, second, third ]
@@ -288,31 +287,31 @@ destructuringItems =
                             _ ->
                                 0
                 """
-            , test "type destructuring" <|
-                \() ->
-                    let
-                        expression : Elm.Expression
-                        expression =
-                            Elm.Case.custom
-                                (Elm.val "Test")
-                                (Type.maybe Type.int)
-                                [ Elm.Case.branch
-                                    (Arg.customType "MyType" identity
-                                        |> Arg.items
-                                            [ Arg.var "first"
-                                            , Arg.var "second"
-                                            , Arg.var "third"
-                                            ]
-                                    )
-                                    (\allVars ->
-                                        Elm.list allVars
-                                    )
-                                , Elm.Case.branch Arg.ignore (\_ -> Elm.int 0)
-                                ]
-                    in
-                    Elm.Expect.renderedAs
-                        expression
-                        """
+        , test "type destructuring" <|
+            \() ->
+                let
+                    expression : Elm.Expression
+                    expression =
+                        Elm.Case.custom
+                            (Elm.val "Test")
+                            (Type.maybe Type.int)
+                            [ Elm.Case.branch
+                                (Arg.customType "MyType" identity
+                                    |> Arg.items
+                                        [ Arg.var "first"
+                                        , Arg.var "second"
+                                        , Arg.var "third"
+                                        ]
+                                )
+                                (\allVars ->
+                                    Elm.list allVars
+                                )
+                            , Elm.Case.branch Arg.ignore (\_ -> Elm.int 0)
+                            ]
+                in
+                Elm.Expect.renderedAs
+                    expression
+                    """
                         case Test of
                             MyType first second third ->
                                 [ first, second, third ]
@@ -320,4 +319,4 @@ destructuringItems =
                             _ ->
                                 0
                 """
-            ]
+        ]
