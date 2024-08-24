@@ -44,7 +44,7 @@ getExposedGroups decl groups =
         Compiler.Declaration decDetails ->
             case decDetails.exposed of
                 Compiler.NotExposed ->
-                    ExposedImplicitly decDetails.name :: groups
+                    groups
 
                 Compiler.Exposed _ ->
                     Exposed decDetails.name :: groups
@@ -130,7 +130,6 @@ renderDecls fileDetails decl gathered =
 
 type ExposedGroup
     = Exposed String
-    | ExposedImplicitly String
     | ExposedGroup
         { title : String
         , docs : String
@@ -163,10 +162,6 @@ render initialDocs fileDetails =
                 }
                 fileDetails.declarations
 
-        exposedGroups : List ExposedGroup
-        exposedGroups =
-            List.foldl getExposedGroups [] fileDetails.declarations
-
         body : String
         body =
             Internal.Write.write
@@ -198,13 +193,36 @@ render initialDocs fileDetails =
                 , declarations =
                     List.reverse rendered.declarations
                 , comments =
-                    Just
-                        (Internal.Comments.addPart
-                            Internal.Comments.emptyComment
-                            (Internal.Comments.Markdown
-                                (exposedGroupToMarkdown (List.reverse exposedGroups) Normal initialDocs)
+                    let
+                        exposedGroups : List ExposedGroup
+                        exposedGroups =
+                            List.foldl getExposedGroups [] fileDetails.declarations
+
+                        docCommentString : String
+                        docCommentString =
+                            exposedGroupToMarkdown
+                                (case rendered.exposed of
+                                    [] ->
+                                        OnlyGroups
+
+                                    _ ->
+                                        Everything
+                                )
+                                (List.reverse exposedGroups)
+                                Normal
+                                initialDocs
+                    in
+                    if String.trim docCommentString == "" then
+                        Nothing
+
+                    else
+                        Just
+                            (Internal.Comments.addPart
+                                Internal.Comments.emptyComment
+                                (Internal.Comments.Markdown
+                                    (docCommentString ++ "\n")
+                                )
                             )
-                        )
                 }
     in
     { path =
@@ -219,65 +237,87 @@ type RenderingMode
     | RenderingDocsLine
 
 
-exposedGroupToMarkdown : List ExposedGroup -> RenderingMode -> String -> String
-exposedGroupToMarkdown groups mode rendered =
+type DocMode
+    = Everything
+    | OnlyGroups
+
+
+exposedGroupToMarkdown : DocMode -> List ExposedGroup -> RenderingMode -> String -> String
+exposedGroupToMarkdown docMode groups mode rendered =
     case groups of
         [] ->
-            rendered
+            case mode of
+                Normal ->
+                    rendered
+
+                RenderingDocsLine ->
+                    rendered
 
         (Exposed exposedName) :: rest ->
-            case mode of
-                Normal ->
-                    exposedGroupToMarkdown rest RenderingDocsLine (rendered ++ "@docs " ++ exposedName)
+            case docMode of
+                Everything ->
+                    case mode of
+                        Normal ->
+                            if String.isEmpty rendered then
+                                exposedGroupToMarkdown docMode rest RenderingDocsLine ("\n@docs " ++ exposedName)
 
-                RenderingDocsLine ->
-                    exposedGroupToMarkdown rest mode (rendered ++ ", " ++ exposedName)
+                            else
+                                exposedGroupToMarkdown docMode rest RenderingDocsLine (rendered ++ "\n\n@docs " ++ exposedName)
 
-        (ExposedImplicitly exposedName) :: rest ->
-            case mode of
-                Normal ->
-                    exposedGroupToMarkdown rest RenderingDocsLine (rendered ++ "@docs " ++ exposedName)
+                        RenderingDocsLine ->
+                            exposedGroupToMarkdown docMode rest mode (rendered ++ ", " ++ exposedName)
 
-                RenderingDocsLine ->
-                    exposedGroupToMarkdown rest mode (rendered ++ ", " ++ exposedName)
+                OnlyGroups ->
+                    exposedGroupToMarkdown docMode rest mode rendered
 
         (ExposedGroup group) :: rest ->
             let
                 renderedSection =
-                    exposedGroupToMarkdown (List.reverse group.items)
+                    exposedGroupToMarkdown docMode
+                        (List.reverse group.items)
                         Normal
                         (let
+                            hasTitle =
+                                not (String.isEmpty group.title)
+
                             title =
-                                if String.isEmpty group.title then
-                                    ""
+                                if hasTitle then
+                                    "## " ++ group.title
 
                                 else
-                                    "## " ++ group.title ++ "\n\n"
+                                    ""
 
                             docsString =
                                 if String.isEmpty group.docs then
                                     ""
 
+                                else if hasTitle then
+                                    "\n\n" ++ group.docs
+
                                 else
-                                    group.docs ++ "\n\n"
+                                    group.docs
                          in
                          title ++ docsString
                         )
 
                 separator =
-                    case mode of
-                        Normal ->
-                            "\n\n"
+                    if String.isEmpty rendered then
+                        "\n"
 
-                        RenderingDocsLine ->
-                            "\n\n"
+                    else
+                        case mode of
+                            Normal ->
+                                "\n\n"
+
+                            RenderingDocsLine ->
+                                "\n\n"
             in
-            exposedGroupToMarkdown rest
+            exposedGroupToMarkdown docMode
+                rest
                 Normal
                 (rendered
                     ++ separator
                     ++ renderedSection
-                    ++ "\n\n"
                 )
 
 
