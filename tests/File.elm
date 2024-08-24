@@ -109,31 +109,88 @@ testFn2 arg =
 
 grouping : Test
 grouping =
-    Test.only <|
-        describe "Grouping exposed"
-            [ test "no extra lines at the end of the file" <|
-                \_ ->
-                    Elm.Expect.fileContentAs
-                        (Elm.file [ "Test" ]
-                            [ placeholder "one"
-                            , placeholder "two"
-                            , Elm.group { title = "My group", docs = "Here's how to use it" }
-                                [ placeholder "three"
-                                , placeholder "four"
-                                ]
-                            , placeholder "five"
-                            , placeholder "six"
+    describe "Grouping exposed"
+        [ test "Group items into sections" <|
+            \_ ->
+                Elm.Expect.fileContentAs
+                    (Elm.file [ "Test" ]
+                        [ placeholder "one"
+                        , placeholder "two"
+                        , Elm.group { title = "My group", docs = "Here's how to use it" }
+                            [ placeholder "three"
+                            , placeholder "four"
                             ]
-                        )
-                        """module Test exposing (..)
+                        , placeholder "five"
+                        , placeholder "six"
+                        ]
+                    )
+                    """module Test exposing (..)
 
-{-|@docs one, two
+{-|
+## My group
+
+Here's how to use it
+-}
+
+
+
+one : arg -> arg
+one arg =
+    arg
+
+
+two : arg -> arg
+two arg =
+    arg
+
+
+three : arg -> arg
+three arg =
+    arg
+
+
+four : arg -> arg
+four arg =
+    arg
+
+
+five : arg -> arg
+five arg =
+    arg
+
+
+six : arg -> arg
+six arg =
+    arg
+"""
+        , test "only include @docs if something is specifically exposed" <|
+            \_ ->
+                Elm.Expect.fileContentAs
+                    (Elm.file [ "Test" ]
+                        [ placeholder "one"
+                            |> Elm.expose
+                        , placeholder "two"
+                        , Elm.group { title = "My group", docs = "Here's how to use it" }
+                            [ placeholder "three"
+                            , placeholder "four"
+                                |> Elm.expose
+                            ]
+                        , placeholder "five"
+                            |> Elm.expose
+                        , placeholder "six"
+                            |> Elm.expose
+                        ]
+                    )
+                    """module Test exposing (five, four, one, six)
+
+{-|
+@docs one
 
 ## My group
 
 Here's how to use it
 
-@docs three, four
+@docs four
 
 @docs five, six
 -}
@@ -169,4 +226,4 @@ six : arg -> arg
 six arg =
     arg
 """
-            ]
+        ]
