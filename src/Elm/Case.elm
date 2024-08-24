@@ -1,5 +1,5 @@
 module Elm.Case exposing
-    ( maybe, result
+    ( maybe, result, string
     , custom
     , Branch, branch
     )
@@ -26,7 +26,7 @@ Generates
         Just value ->
             value + 5
 
-@docs maybe, result
+@docs maybe, result, string
 
 
 ## Case on a Custom Type
@@ -338,4 +338,23 @@ branch arg toBody =
             , Compiler.denode argDetails.details.pattern
             , toBody argDetails.value
             )
+        )
+
+
+string :
+    Expression
+    ->
+        { cases : List ( String, Expression )
+        , otherwise : Expression
+        }
+    -> Expression
+string mainExpression config =
+    custom mainExpression
+        Type.string
+        (List.map
+            (\( key, value ) ->
+                branch (Elm.Arg.string key) (\_ -> value)
+            )
+            config.cases
+            ++ [ branch Elm.Arg.ignore (\_ -> config.otherwise) ]
         )
