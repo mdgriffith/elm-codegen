@@ -1,5 +1,5 @@
 module Elm.Arg exposing
-    ( Arg, unit, var, varWith
+    ( unit, var, varWith
     , tuple, triple
     , record, field
     , aliasAs
@@ -8,9 +8,7 @@ module Elm.Arg exposing
     , customType
     )
 
-{-| An `Arg` can be used
-
-They can be used to pattern match on the arguments of a function.
+{-| An `Arg` can be used to pattern match on the arguments of a function.
 
     let
         args =
@@ -51,7 +49,7 @@ Will generate
               , second = second
               }
 
-@docs Arg, unit, var, varWith
+@docs unit, var, varWith
 
 @docs tuple, triple
 
@@ -70,19 +68,9 @@ Will generate
 
 -}
 
+import Elm exposing (Arg, Expression)
 import Elm.Annotation
 import Internal.Arg
-import Internal.Compiler as Compiler
-
-
-{-| -}
-type alias Expression =
-    Compiler.Expression
-
-
-{-| -}
-type alias Arg val =
-    Internal.Arg.Arg val
 
 
 {-| -}

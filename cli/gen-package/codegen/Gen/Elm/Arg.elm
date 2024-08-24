@@ -1,12 +1,12 @@
 module Gen.Elm.Arg exposing
     ( aliasAs
-    , annotation_
     , call_
     , char
     , customType
     , field
     , ignore
     , item
+    , items
     , list
     , listRemaining
     , moduleName_
@@ -21,7 +21,9 @@ module Gen.Elm.Arg exposing
     )
 
 {-|
-@docs moduleName_, unit, var, varWith, tuple, triple, record, field, aliasAs, ignore, string, char, list, item, listRemaining, customType, annotation_, call_, values_
+# Generated bindings for Elm.Arg
+
+@docs moduleName_, unit, var, varWith, tuple, triple, record, field, aliasAs, ignore, string, char, list, item, items, listRemaining, customType, call_, values_
 -}
 
 
@@ -35,7 +37,10 @@ moduleName_ =
     [ "Elm", "Arg" ]
 
 
-{-| unit: Elm.Arg.Arg Elm.Arg.Expression -}
+{-| An empty tuple `()` is generally called "unit".
+
+unit: Elm.Arg Elm.Expression
+-}
 unit : Elm.Expression
 unit =
     Elm.value
@@ -44,14 +49,14 @@ unit =
         , annotation =
             Just
                 (Type.namedWith
-                     [ "Elm", "Arg" ]
+                     [ "Elm" ]
                      "Arg"
-                     [ Type.namedWith [ "Elm", "Arg" ] "Expression" [] ]
+                     [ Type.namedWith [ "Elm" ] "Expression" [] ]
                 )
         }
 
 
-{-| var: String -> Elm.Arg.Arg Elm.Arg.Expression -}
+{-| var: String -> Elm.Arg Elm.Expression -}
 var : String -> Elm.Expression
 var varArg_ =
     Elm.apply
@@ -63,10 +68,9 @@ var varArg_ =
                      (Type.function
                           [ Type.string ]
                           (Type.namedWith
-                               [ "Elm", "Arg" ]
+                               [ "Elm" ]
                                "Arg"
-                               [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                               ]
+                               [ Type.namedWith [ "Elm" ] "Expression" [] ]
                           )
                      )
              }
@@ -74,7 +78,7 @@ var varArg_ =
         [ Elm.string varArg_ ]
 
 
-{-| varWith: String -> Elm.Annotation.Annotation -> Elm.Arg.Arg Elm.Arg.Expression -}
+{-| varWith: String -> Elm.Annotation.Annotation -> Elm.Arg Elm.Expression -}
 varWith : String -> Elm.Expression -> Elm.Expression
 varWith varWithArg_ varWithArg_0 =
     Elm.apply
@@ -91,10 +95,9 @@ varWith varWithArg_ varWithArg_0 =
                               []
                           ]
                           (Type.namedWith
-                               [ "Elm", "Arg" ]
+                               [ "Elm" ]
                                "Arg"
-                               [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                               ]
+                               [ Type.namedWith [ "Elm" ] "Expression" [] ]
                           )
                      )
              }
@@ -102,7 +105,7 @@ varWith varWithArg_ varWithArg_0 =
         [ Elm.string varWithArg_, varWithArg_0 ]
 
 
-{-| tuple: Elm.Arg.Arg one -> Elm.Arg.Arg two -> Elm.Arg.Arg ( one, two ) -}
+{-| tuple: Elm.Arg one -> Elm.Arg two -> Elm.Arg ( one, two ) -}
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple tupleArg_ tupleArg_0 =
     Elm.apply
@@ -112,17 +115,11 @@ tuple tupleArg_ tupleArg_0 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
                           ]
                           (Type.namedWith
-                               [ "Elm", "Arg" ]
+                               [ "Elm" ]
                                "Arg"
                                [ Type.tuple (Type.var "one") (Type.var "two") ]
                           )
@@ -132,12 +129,7 @@ tuple tupleArg_ tupleArg_0 =
         [ tupleArg_, tupleArg_0 ]
 
 
-{-| triple: 
-    Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
-    -> Elm.Arg.Arg ( one, two, three )
--}
+{-| triple: Elm.Arg one -> Elm.Arg two -> Elm.Arg three -> Elm.Arg ( one, two, three ) -}
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 triple tripleArg_ tripleArg_0 tripleArg_1 =
     Elm.apply
@@ -147,21 +139,12 @@ triple tripleArg_ tripleArg_0 tripleArg_1 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "three" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
                           ]
                           (Type.namedWith
-                               [ "Elm", "Arg" ]
+                               [ "Elm" ]
                                "Arg"
                                [ Type.triple
                                    (Type.var "one")
@@ -175,7 +158,31 @@ triple tripleArg_ tripleArg_0 tripleArg_1 =
         [ tripleArg_, tripleArg_0, tripleArg_1 ]
 
 
-{-| record: fields -> Elm.Arg.Arg fields -}
+{-| Unpack record fields.
+
+    let
+        args =
+            Elm.Arg.record
+                |> Elm.Arg.field "first" (Arg.var "first")
+                |> Elm.Arg.field "second" (Arg.var "second")
+    in
+    Elm.fn args
+        (\{ first, second } ->
+            Elm.record
+                [ ( "first", first )
+                , ( "second", second )
+                ]
+        )
+
+Would generate
+
+    \{ first, second } ->
+        { first = first
+        , second = second
+        }
+
+record: fields -> Elm.Arg fields
+-}
 record : Elm.Expression -> Elm.Expression
 record recordArg_ =
     Elm.apply
@@ -186,18 +193,14 @@ record recordArg_ =
                  Just
                      (Type.function
                           [ Type.var "fields" ]
-                          (Type.namedWith
-                               [ "Elm", "Arg" ]
-                               "Arg"
-                               [ Type.var "fields" ]
-                          )
+                          (Type.namedWith [ "Elm" ] "Arg" [ Type.var "fields" ])
                      )
              }
         )
         [ recordArg_ ]
 
 
-{-| field: String -> Elm.Arg.Arg (Elm.Arg.Expression -> a) -> Elm.Arg.Arg a -}
+{-| field: String -> Elm.Arg (Elm.Expression -> a) -> Elm.Arg a -}
 field : String -> Elm.Expression -> Elm.Expression
 field fieldArg_ fieldArg_0 =
     Elm.apply
@@ -209,29 +212,48 @@ field fieldArg_ fieldArg_0 =
                      (Type.function
                           [ Type.string
                           , Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
                               [ Type.function
-                                    [ Type.namedWith
-                                        [ "Elm", "Arg" ]
-                                        "Expression"
-                                        []
-                                    ]
+                                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
                                     (Type.var "a")
                               ]
                           ]
-                          (Type.namedWith
-                               [ "Elm", "Arg" ]
-                               "Arg"
-                               [ Type.var "a" ]
-                          )
+                          (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                      )
              }
         )
         [ Elm.string fieldArg_, fieldArg_0 ]
 
 
-{-| aliasAs: String -> Elm.Arg.Arg arg -> Elm.Arg.Arg ( arg, Elm.Arg.Expression ) -}
+{-| Unpack a pattern, but keep a reference to the original value.
+
+    let
+        args =
+            Elm.Arg.customType "MyCustomType" Tuple.pair
+                |> Elm.Arg.item (Arg.var "first")
+                |> Elm.Arg.item (Arg.var "second")
+                |> Elm.Arg.aliasAs "myAlias"
+    in
+    Elm.fn args
+        (\( ( first, second ), myAlias ) ->
+            Elm.record
+                [ ( "first", first )
+                , ( "second", second )
+                , ( "myAlias", myAlias )
+                ]
+        )
+
+Will generate
+
+    \((MyCustomType first second) as myAlias) ->
+        { first = first
+        , second = second
+        , myAlias = myAlias
+        }
+
+aliasAs: String -> Elm.Arg arg -> Elm.Arg ( arg, Elm.Expression )
+-}
 aliasAs : String -> Elm.Expression -> Elm.Expression
 aliasAs aliasAsArg_ aliasAsArg_0 =
     Elm.apply
@@ -242,21 +264,14 @@ aliasAs aliasAsArg_ aliasAsArg_0 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "arg" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                           ]
                           (Type.namedWith
-                               [ "Elm", "Arg" ]
+                               [ "Elm" ]
                                "Arg"
                                [ Type.tuple
                                    (Type.var "arg")
-                                   (Type.namedWith
-                                      [ "Elm", "Arg" ]
-                                      "Expression"
-                                      []
-                                   )
+                                   (Type.namedWith [ "Elm" ] "Expression" [])
                                ]
                           )
                      )
@@ -265,7 +280,10 @@ aliasAs aliasAsArg_ aliasAsArg_0 =
         [ Elm.string aliasAsArg_, aliasAsArg_0 ]
 
 
-{-| ignore: Elm.Arg.Arg Elm.Arg.Expression -}
+{-| Will generate `_` to ignore an argument or pattern.
+
+ignore: Elm.Arg Elm.Expression
+-}
 ignore : Elm.Expression
 ignore =
     Elm.value
@@ -274,14 +292,14 @@ ignore =
         , annotation =
             Just
                 (Type.namedWith
-                     [ "Elm", "Arg" ]
+                     [ "Elm" ]
                      "Arg"
-                     [ Type.namedWith [ "Elm", "Arg" ] "Expression" [] ]
+                     [ Type.namedWith [ "Elm" ] "Expression" [] ]
                 )
         }
 
 
-{-| string: String -> Elm.Arg.Arg Elm.Arg.Expression -}
+{-| string: String -> Elm.Arg Elm.Expression -}
 string : String -> Elm.Expression
 string stringArg_ =
     Elm.apply
@@ -293,10 +311,9 @@ string stringArg_ =
                      (Type.function
                           [ Type.string ]
                           (Type.namedWith
-                               [ "Elm", "Arg" ]
+                               [ "Elm" ]
                                "Arg"
-                               [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                               ]
+                               [ Type.namedWith [ "Elm" ] "Expression" [] ]
                           )
                      )
              }
@@ -304,7 +321,7 @@ string stringArg_ =
         [ Elm.string stringArg_ ]
 
 
-{-| char: Char.Char -> Elm.Arg.Arg Elm.Arg.Expression -}
+{-| char: Char.Char -> Elm.Arg Elm.Expression -}
 char : Char.Char -> Elm.Expression
 char charArg_ =
     Elm.apply
@@ -316,10 +333,9 @@ char charArg_ =
                      (Type.function
                           [ Type.char ]
                           (Type.namedWith
-                               [ "Elm", "Arg" ]
+                               [ "Elm" ]
                                "Arg"
-                               [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                               ]
+                               [ Type.namedWith [ "Elm" ] "Expression" [] ]
                           )
                      )
              }
@@ -352,7 +368,7 @@ Will generate
 
     first :: second :: remaining
 
-list: a -> Elm.Arg.Arg a
+list: a -> Elm.Arg a
 -}
 list : Elm.Expression -> Elm.Expression
 list listArg_ =
@@ -364,18 +380,14 @@ list listArg_ =
                  Just
                      (Type.function
                           [ Type.var "a" ]
-                          (Type.namedWith
-                               [ "Elm", "Arg" ]
-                               "Arg"
-                               [ Type.var "a" ]
-                          )
+                          (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                      )
              }
         )
         [ listArg_ ]
 
 
-{-| item: Elm.Arg.Arg arg -> Elm.Arg.Arg (arg -> a) -> Elm.Arg.Arg a -}
+{-| item: Elm.Arg arg -> Elm.Arg (arg -> a) -> Elm.Arg a -}
 item : Elm.Expression -> Elm.Expression -> Elm.Expression
 item itemArg_ itemArg_0 =
     Elm.apply
@@ -385,28 +397,54 @@ item itemArg_ itemArg_0 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "arg" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                           , Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
                               [ Type.function [ Type.var "arg" ] (Type.var "a")
                               ]
                           ]
-                          (Type.namedWith
-                               [ "Elm", "Arg" ]
-                               "Arg"
-                               [ Type.var "a" ]
-                          )
+                          (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                      )
              }
         )
         [ itemArg_, itemArg_0 ]
 
 
-{-| listRemaining: String -> Elm.Arg.Arg (Elm.Arg.Expression -> a) -> Elm.Arg.Arg a -}
+{-| This is for the situation where you only know the number of arguments when you run the generator.
+
+This isn't super common.
+
+items: List (Elm.Arg arg) -> Elm.Arg (List arg -> a) -> Elm.Arg a
+-}
+items : List Elm.Expression -> Elm.Expression -> Elm.Expression
+items itemsArg_ itemsArg_0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Arg" ]
+             , name = "items"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list
+                              (Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
+                              )
+                          , Type.namedWith
+                              [ "Elm" ]
+                              "Arg"
+                              [ Type.function
+                                    [ Type.list (Type.var "arg") ]
+                                    (Type.var "a")
+                              ]
+                          ]
+                          (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
+                     )
+             }
+        )
+        [ Elm.list itemsArg_, itemsArg_0 ]
+
+
+{-| listRemaining: String -> Elm.Arg (Elm.Expression -> a) -> Elm.Arg a -}
 listRemaining : String -> Elm.Expression -> Elm.Expression
 listRemaining listRemainingArg_ listRemainingArg_0 =
     Elm.apply
@@ -418,37 +456,49 @@ listRemaining listRemainingArg_ listRemainingArg_0 =
                      (Type.function
                           [ Type.string
                           , Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
                               [ Type.function
-                                    [ Type.namedWith
-                                        [ "Elm", "Arg" ]
-                                        "Expression"
-                                        []
-                                    ]
+                                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
                                     (Type.var "a")
                               ]
                           ]
-                          (Type.namedWith
-                               [ "Elm", "Arg" ]
-                               "Arg"
-                               [ Type.var "a" ]
-                          )
+                          (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                      )
              }
         )
         [ Elm.string listRemainingArg_, listRemainingArg_0 ]
 
 
-{-| Arg.customType "MyCustomType" Tuple.pair
-        |> Arg.item (Arg.var "first")
-        |> Arg.item (Arg.var "second")
+{-| Let's say you have a custom type like
 
-Will generate
+    type MyCustomType
+        = MyCustomType String Int
 
-    MyCustomType first second
+And you want to extract the String and Int
 
-customType: String -> a -> Elm.Arg.Arg a
+    let
+        args =
+            Elm.Arg.customType "MyCustomType" Tuple.pair
+                |> Elm.Arg.item (Arg.var "first")
+                |> Elm.Arg.item (Arg.var "second")
+    in
+    Elm.fn args
+        (\( first, second ) ->
+            Elm.record
+                [ ( "first", first )
+                , ( "second", second )
+                ]
+        )
+
+Which will generate
+
+    \(MyCustomType first second) ->
+        { first = first
+        , second = second
+        }
+
+customType: String -> a -> Elm.Arg a
 -}
 customType : String -> Elm.Expression -> Elm.Expression
 customType customTypeArg_ customTypeArg_0 =
@@ -460,27 +510,11 @@ customType customTypeArg_ customTypeArg_0 =
                  Just
                      (Type.function
                           [ Type.string, Type.var "a" ]
-                          (Type.namedWith
-                               [ "Elm", "Arg" ]
-                               "Arg"
-                               [ Type.var "a" ]
-                          )
+                          (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                      )
              }
         )
         [ Elm.string customTypeArg_, customTypeArg_0 ]
-
-
-annotation_ : { arg : Type.Annotation -> Type.Annotation }
-annotation_ =
-    { arg =
-        \argArg0 ->
-            Type.alias
-                moduleName_
-                "Arg"
-                [ argArg0 ]
-                (Type.namedWith [ "Internal", "Arg" ] "Arg" [ Type.var "val" ])
-    }
 
 
 call_ :
@@ -496,6 +530,7 @@ call_ :
     , char : Elm.Expression -> Elm.Expression
     , list : Elm.Expression -> Elm.Expression
     , item : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , items : Elm.Expression -> Elm.Expression -> Elm.Expression
     , listRemaining : Elm.Expression -> Elm.Expression -> Elm.Expression
     , customType : Elm.Expression -> Elm.Expression -> Elm.Expression
     }
@@ -511,10 +546,10 @@ call_ =
                              (Type.function
                                   [ Type.string ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.namedWith
-                                           [ "Elm", "Arg" ]
+                                           [ "Elm" ]
                                            "Expression"
                                            []
                                        ]
@@ -539,10 +574,10 @@ call_ =
                                       []
                                   ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.namedWith
-                                           [ "Elm", "Arg" ]
+                                           [ "Elm" ]
                                            "Expression"
                                            []
                                        ]
@@ -561,16 +596,16 @@ call_ =
                          Just
                              (Type.function
                                   [ Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.tuple
                                            (Type.var "one")
@@ -591,20 +626,20 @@ call_ =
                          Just
                              (Type.function
                                   [ Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "three" ]
                                   ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.triple
                                            (Type.var "one")
@@ -627,7 +662,7 @@ call_ =
                              (Type.function
                                   [ Type.var "fields" ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.var "fields" ]
                                   )
@@ -646,11 +681,11 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.function
                                             [ Type.namedWith
-                                                [ "Elm", "Arg" ]
+                                                [ "Elm" ]
                                                 "Expression"
                                                 []
                                             ]
@@ -658,7 +693,7 @@ call_ =
                                       ]
                                   ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.var "a" ]
                                   )
@@ -677,17 +712,17 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "arg" ]
                                   ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.tuple
                                            (Type.var "arg")
                                            (Type.namedWith
-                                              [ "Elm", "Arg" ]
+                                              [ "Elm" ]
                                               "Expression"
                                               []
                                            )
@@ -708,10 +743,10 @@ call_ =
                              (Type.function
                                   [ Type.string ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.namedWith
-                                           [ "Elm", "Arg" ]
+                                           [ "Elm" ]
                                            "Expression"
                                            []
                                        ]
@@ -731,10 +766,10 @@ call_ =
                              (Type.function
                                   [ Type.char ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.namedWith
-                                           [ "Elm", "Arg" ]
+                                           [ "Elm" ]
                                            "Expression"
                                            []
                                        ]
@@ -754,7 +789,7 @@ call_ =
                              (Type.function
                                   [ Type.var "a" ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.var "a" ]
                                   )
@@ -772,11 +807,11 @@ call_ =
                          Just
                              (Type.function
                                   [ Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "arg" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.function
                                             [ Type.var "arg" ]
@@ -784,7 +819,7 @@ call_ =
                                       ]
                                   ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.var "a" ]
                                   )
@@ -792,6 +827,38 @@ call_ =
                      }
                 )
                 [ itemArg_, itemArg_0 ]
+    , items =
+        \itemsArg_ itemsArg_0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Arg" ]
+                     , name = "items"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list
+                                      (Type.namedWith
+                                         [ "Elm" ]
+                                         "Arg"
+                                         [ Type.var "arg" ]
+                                      )
+                                  , Type.namedWith
+                                      [ "Elm" ]
+                                      "Arg"
+                                      [ Type.function
+                                            [ Type.list (Type.var "arg") ]
+                                            (Type.var "a")
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm" ]
+                                       "Arg"
+                                       [ Type.var "a" ]
+                                  )
+                             )
+                     }
+                )
+                [ itemsArg_, itemsArg_0 ]
     , listRemaining =
         \listRemainingArg_ listRemainingArg_0 ->
             Elm.apply
@@ -803,11 +870,11 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.function
                                             [ Type.namedWith
-                                                [ "Elm", "Arg" ]
+                                                [ "Elm" ]
                                                 "Expression"
                                                 []
                                             ]
@@ -815,7 +882,7 @@ call_ =
                                       ]
                                   ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.var "a" ]
                                   )
@@ -834,7 +901,7 @@ call_ =
                              (Type.function
                                   [ Type.string, Type.var "a" ]
                                   (Type.namedWith
-                                       [ "Elm", "Arg" ]
+                                       [ "Elm" ]
                                        "Arg"
                                        [ Type.var "a" ]
                                   )
@@ -859,6 +926,7 @@ values_ :
     , char : Elm.Expression
     , list : Elm.Expression
     , item : Elm.Expression
+    , items : Elm.Expression
     , listRemaining : Elm.Expression
     , customType : Elm.Expression
     }
@@ -870,9 +938,9 @@ values_ =
             , annotation =
                 Just
                     (Type.namedWith
-                         [ "Elm", "Arg" ]
+                         [ "Elm" ]
                          "Arg"
-                         [ Type.namedWith [ "Elm", "Arg" ] "Expression" [] ]
+                         [ Type.namedWith [ "Elm" ] "Expression" [] ]
                     )
             }
     , var =
@@ -884,10 +952,9 @@ values_ =
                     (Type.function
                          [ Type.string ]
                          (Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
-                              [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                              ]
+                              [ Type.namedWith [ "Elm" ] "Expression" [] ]
                          )
                     )
             }
@@ -905,10 +972,9 @@ values_ =
                              []
                          ]
                          (Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
-                              [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                              ]
+                              [ Type.namedWith [ "Elm" ] "Expression" [] ]
                          )
                     )
             }
@@ -919,17 +985,11 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
                          ]
                          (Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
                               [ Type.tuple (Type.var "one") (Type.var "two") ]
                          )
@@ -942,21 +1002,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "three" ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
                          ]
                          (Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
                               [ Type.triple
                                   (Type.var "one")
@@ -974,11 +1025,7 @@ values_ =
                 Just
                     (Type.function
                          [ Type.var "fields" ]
-                         (Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "fields" ]
-                         )
+                         (Type.namedWith [ "Elm" ] "Arg" [ Type.var "fields" ])
                     )
             }
     , field =
@@ -990,19 +1037,14 @@ values_ =
                     (Type.function
                          [ Type.string
                          , Type.namedWith
-                             [ "Elm", "Arg" ]
+                             [ "Elm" ]
                              "Arg"
                              [ Type.function
-                                   [ Type.namedWith
-                                       [ "Elm", "Arg" ]
-                                       "Expression"
-                                       []
-                                   ]
+                                   [ Type.namedWith [ "Elm" ] "Expression" [] ]
                                    (Type.var "a")
                              ]
                          ]
-                         (Type.namedWith [ "Elm", "Arg" ] "Arg" [ Type.var "a" ]
-                         )
+                         (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                     )
             }
     , aliasAs =
@@ -1013,21 +1055,14 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "arg" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                          ]
                          (Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
                               [ Type.tuple
                                   (Type.var "arg")
-                                  (Type.namedWith
-                                     [ "Elm", "Arg" ]
-                                     "Expression"
-                                     []
-                                  )
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
                               ]
                          )
                     )
@@ -1039,9 +1074,9 @@ values_ =
             , annotation =
                 Just
                     (Type.namedWith
-                         [ "Elm", "Arg" ]
+                         [ "Elm" ]
                          "Arg"
-                         [ Type.namedWith [ "Elm", "Arg" ] "Expression" [] ]
+                         [ Type.namedWith [ "Elm" ] "Expression" [] ]
                     )
             }
     , string =
@@ -1053,10 +1088,9 @@ values_ =
                     (Type.function
                          [ Type.string ]
                          (Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
-                              [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                              ]
+                              [ Type.namedWith [ "Elm" ] "Expression" [] ]
                          )
                     )
             }
@@ -1069,10 +1103,9 @@ values_ =
                     (Type.function
                          [ Type.char ]
                          (Type.namedWith
-                              [ "Elm", "Arg" ]
+                              [ "Elm" ]
                               "Arg"
-                              [ Type.namedWith [ "Elm", "Arg" ] "Expression" []
-                              ]
+                              [ Type.namedWith [ "Elm" ] "Expression" [] ]
                          )
                     )
             }
@@ -1084,8 +1117,7 @@ values_ =
                 Just
                     (Type.function
                          [ Type.var "a" ]
-                         (Type.namedWith [ "Elm", "Arg" ] "Arg" [ Type.var "a" ]
-                         )
+                         (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                     )
             }
     , item =
@@ -1095,17 +1127,33 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "arg" ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                          , Type.namedWith
-                             [ "Elm", "Arg" ]
+                             [ "Elm" ]
                              "Arg"
                              [ Type.function [ Type.var "arg" ] (Type.var "a") ]
                          ]
-                         (Type.namedWith [ "Elm", "Arg" ] "Arg" [ Type.var "a" ]
-                         )
+                         (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
+                    )
+            }
+    , items =
+        Elm.value
+            { importFrom = [ "Elm", "Arg" ]
+            , name = "items"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.list
+                             (Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ])
+                         , Type.namedWith
+                             [ "Elm" ]
+                             "Arg"
+                             [ Type.function
+                                   [ Type.list (Type.var "arg") ]
+                                   (Type.var "a")
+                             ]
+                         ]
+                         (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                     )
             }
     , listRemaining =
@@ -1117,19 +1165,14 @@ values_ =
                     (Type.function
                          [ Type.string
                          , Type.namedWith
-                             [ "Elm", "Arg" ]
+                             [ "Elm" ]
                              "Arg"
                              [ Type.function
-                                   [ Type.namedWith
-                                       [ "Elm", "Arg" ]
-                                       "Expression"
-                                       []
-                                   ]
+                                   [ Type.namedWith [ "Elm" ] "Expression" [] ]
                                    (Type.var "a")
                              ]
                          ]
-                         (Type.namedWith [ "Elm", "Arg" ] "Arg" [ Type.var "a" ]
-                         )
+                         (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                     )
             }
     , customType =
@@ -1140,8 +1183,7 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string, Type.var "a" ]
-                         (Type.namedWith [ "Elm", "Arg" ] "Arg" [ Type.var "a" ]
-                         )
+                         (Type.namedWith [ "Elm" ] "Arg" [ Type.var "a" ])
                     )
             }
     }

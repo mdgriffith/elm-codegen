@@ -24,6 +24,8 @@ module Gen.Array exposing
     )
 
 {-|
+# Generated bindings for Array
+
 @docs moduleName_, empty, initialize, repeat, fromList, isEmpty, length, get, set, push, append, slice, toList, toIndexedList, map, indexedMap, foldl, foldr, filter, annotation_, call_, values_
 -}
 

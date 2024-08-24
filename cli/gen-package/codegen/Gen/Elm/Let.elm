@@ -14,6 +14,8 @@ module Gen.Elm.Let exposing
     )
 
 {-|
+# Generated bindings for Elm.Let
+
 @docs moduleName_, letIn, value, unpack, fn, fn2, fn3, toExpression, withBody, annotation_, call_, values_
 -}
 
@@ -81,7 +83,7 @@ value valueArg_ valueArg_0 valueArg_1 =
         [ Elm.string valueArg_, valueArg_0, valueArg_1 ]
 
 
-{-| unpack: Elm.Arg.Arg arg -> Elm.Expression -> Elm.Let.Let (arg -> b) -> Elm.Let.Let b -}
+{-| unpack: Elm.Arg arg -> Elm.Expression -> Elm.Let.Let (arg -> b) -> Elm.Let.Let b -}
 unpack : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 unpack unpackArg_ unpackArg_0 unpackArg_1 =
     Elm.apply
@@ -91,10 +93,7 @@ unpack unpackArg_ unpackArg_0 unpackArg_1 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "arg" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                           , Type.namedWith [ "Elm" ] "Expression" []
                           , Type.namedWith
                               [ "Elm", "Let" ]
@@ -115,7 +114,7 @@ unpack unpackArg_ unpackArg_0 unpackArg_1 =
 
 {-| fn: 
     String
-    -> Elm.Arg.Arg arg
+    -> Elm.Arg arg
     -> (arg -> Elm.Expression)
     -> Elm.Let.Let ((Elm.Expression -> Elm.Expression) -> a)
     -> Elm.Let.Let a
@@ -135,10 +134,7 @@ fn fnArg_ fnArg_0 fnArg_1 fnArg_2 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "arg" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                           , Type.function
                               [ Type.var "arg" ]
                               (Type.namedWith [ "Elm" ] "Expression" [])
@@ -178,8 +174,8 @@ fn fnArg_ fnArg_0 fnArg_1 fnArg_2 =
 
 {-| fn2: 
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
+    -> Elm.Arg one
+    -> Elm.Arg two
     -> (one -> two -> Elm.Expression)
     -> Elm.Let.Let ((Elm.Expression -> Elm.Expression -> Elm.Expression) -> a)
     -> Elm.Let.Let a
@@ -200,14 +196,8 @@ fn2 fn2Arg_ fn2Arg_0 fn2Arg_1 fn2Arg_2 fn2Arg_3 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
                           , Type.function
                               [ Type.var "one", Type.var "two" ]
                               (Type.namedWith [ "Elm" ] "Expression" [])
@@ -256,9 +246,9 @@ fn2 fn2Arg_ fn2Arg_0 fn2Arg_1 fn2Arg_2 fn2Arg_3 =
 
 {-| fn3: 
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
     -> (one -> two -> three -> Elm.Expression)
     -> Elm.Let.Let ((Elm.Expression
     -> Elm.Expression
@@ -284,18 +274,9 @@ fn3 fn3Arg_ fn3Arg_0 fn3Arg_1 fn3Arg_2 fn3Arg_3 fn3Arg_4 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "three" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
                           , Type.function
                               [ Type.var "one"
                               , Type.var "two"
@@ -535,7 +516,7 @@ call_ =
                          Just
                              (Type.function
                                   [ Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "arg" ]
                                   , Type.namedWith [ "Elm" ] "Expression" []
@@ -567,7 +548,7 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "arg" ]
                                   , Type.function
@@ -612,11 +593,11 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.function
@@ -665,15 +646,15 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "three" ]
                                   , Type.function
@@ -814,10 +795,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "arg" ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                          , Type.namedWith [ "Elm" ] "Expression" []
                          , Type.namedWith
                              [ "Elm", "Let" ]
@@ -836,10 +814,7 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "arg" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                          , Type.function
                              [ Type.var "arg" ]
                              (Type.namedWith [ "Elm" ] "Expression" [])
@@ -871,14 +846,8 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
                          , Type.function
                              [ Type.var "one", Type.var "two" ]
                              (Type.namedWith [ "Elm" ] "Expression" [])
@@ -914,18 +883,9 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "three" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
                          , Type.function
                              [ Type.var "one"
                              , Type.var "two"

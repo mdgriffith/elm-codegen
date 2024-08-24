@@ -9,6 +9,8 @@ module Gen.Process exposing
     )
 
 {-|
+# Generated bindings for Process
+
 @docs moduleName_, spawn, sleep, kill, annotation_, call_, values_
 -}
 

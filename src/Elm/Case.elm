@@ -326,7 +326,7 @@ type alias Branch =
 
 
 {-| -}
-branch : Elm.Arg.Arg val -> (val -> Expression) -> Branch
+branch : Elm.Arg val -> (val -> Expression) -> Branch
 branch arg toBody =
     Branch
         (\index ->

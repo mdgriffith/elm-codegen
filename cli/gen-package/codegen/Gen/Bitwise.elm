@@ -12,6 +12,8 @@ module Gen.Bitwise exposing
     )
 
 {-|
+# Generated bindings for Bitwise
+
 @docs moduleName_, and, or, xor, complement, shiftLeftBy, shiftRightBy, shiftRightZfBy, call_, values_
 -}
 

@@ -6,11 +6,14 @@ module Gen.Elm.Case exposing
     , maybe
     , moduleName_
     , result
+    , string
     , values_
     )
 
 {-|
-@docs moduleName_, maybe, result, custom, branch, annotation_, call_, values_
+# Generated bindings for Elm.Case
+
+@docs moduleName_, maybe, result, string, custom, branch, annotation_, call_, values_
 -}
 
 
@@ -154,6 +157,50 @@ result resultArg_ resultArg_0 =
         ]
 
 
+{-| string: 
+    Elm.Expression
+    -> { cases : List ( String, Elm.Expression ), otherwise : Elm.Expression }
+    -> Elm.Expression
+-}
+string :
+    Elm.Expression
+    -> { cases : List Elm.Expression, otherwise : Elm.Expression }
+    -> Elm.Expression
+string stringArg_ stringArg_0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Case" ]
+             , name = "string"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Expression" []
+                          , Type.record
+                              [ ( "cases"
+                                , Type.list
+                                    (Type.tuple
+                                       Type.string
+                                       (Type.namedWith [ "Elm" ] "Expression" []
+                                       )
+                                    )
+                                )
+                              , ( "otherwise"
+                                , Type.namedWith [ "Elm" ] "Expression" []
+                                )
+                              ]
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
+        )
+        [ stringArg_
+        , Elm.record
+            [ Tuple.pair "cases" (Elm.list stringArg_0.cases)
+            , Tuple.pair "otherwise" stringArg_0.otherwise
+            ]
+        ]
+
+
 {-| custom: 
     Elm.Expression
     -> Elm.Annotation.Annotation
@@ -185,7 +232,7 @@ custom customArg_ customArg_0 customArg_1 =
         [ customArg_, customArg_0, Elm.list customArg_1 ]
 
 
-{-| branch: Elm.Arg.Arg val -> (val -> Elm.Expression) -> Elm.Case.Branch -}
+{-| branch: Elm.Arg val -> (val -> Elm.Expression) -> Elm.Case.Branch -}
 branch : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 branch branchArg_ branchArg_0 =
     Elm.apply
@@ -195,10 +242,7 @@ branch branchArg_ branchArg_0 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "val" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "val" ]
                           , Type.function
                               [ Type.var "val" ]
                               (Type.namedWith [ "Elm" ] "Expression" [])
@@ -224,6 +268,7 @@ annotation_ =
 call_ :
     { maybe : Elm.Expression -> Elm.Expression -> Elm.Expression
     , result : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , string : Elm.Expression -> Elm.Expression -> Elm.Expression
     , custom :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , branch : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -319,6 +364,41 @@ call_ =
                      }
                 )
                 [ resultArg_, resultArg_0 ]
+    , string =
+        \stringArg_ stringArg_0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Case" ]
+                     , name = "string"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.record
+                                      [ ( "cases"
+                                        , Type.list
+                                            (Type.tuple
+                                               Type.string
+                                               (Type.namedWith
+                                                  [ "Elm" ]
+                                                  "Expression"
+                                                  []
+                                               )
+                                            )
+                                        )
+                                      , ( "otherwise"
+                                        , Type.namedWith
+                                            [ "Elm" ]
+                                            "Expression"
+                                            []
+                                        )
+                                      ]
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
+                )
+                [ stringArg_, stringArg_0 ]
     , custom =
         \customArg_ customArg_0 customArg_1 ->
             Elm.apply
@@ -355,7 +435,7 @@ call_ =
                          Just
                              (Type.function
                                   [ Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "val" ]
                                   , Type.function
@@ -373,6 +453,7 @@ call_ =
 values_ :
     { maybe : Elm.Expression
     , result : Elm.Expression
+    , string : Elm.Expression
     , custom : Elm.Expression
     , branch : Elm.Expression
     }
@@ -435,6 +516,30 @@ values_ =
                          (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
+    , string =
+        Elm.value
+            { importFrom = [ "Elm", "Case" ]
+            , name = "string"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.namedWith [ "Elm" ] "Expression" []
+                         , Type.record
+                             [ ( "cases"
+                               , Type.list
+                                   (Type.tuple
+                                      Type.string
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
+                                   )
+                               )
+                             , ( "otherwise"
+                               , Type.namedWith [ "Elm" ] "Expression" []
+                               )
+                             ]
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
     , custom =
         Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -460,10 +565,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "val" ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "val" ]
                          , Type.function
                              [ Type.var "val" ]
                              (Type.namedWith [ "Elm" ] "Expression" [])

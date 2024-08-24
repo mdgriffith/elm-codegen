@@ -11,7 +11,6 @@ module Gen.Elm exposing
     , customType
     , customTypeWith
     , declaration
-    , docs
     , expose
     , exposeConstructor
     , file
@@ -59,7 +58,9 @@ module Gen.Elm exposing
     )
 
 {-|
-@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, group, expose, exposeConstructor, fileWith, docs, fnBuilder, fnArg, fnDone, body, fn, fn2, fn3, function, functionReduced, customType, customTypeWith, variant, variantWith, alias, aliasWith, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
+# Generated bindings for Elm
+
+@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, group, expose, exposeConstructor, fileWith, fn, fn2, fn3, fnBuilder, fnArg, fnDone, body, function, functionReduced, customType, customTypeWith, variant, variantWith, alias, aliasWith, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 
 
@@ -605,7 +606,26 @@ withDocumentation withDocumentationArg_ withDocumentationArg_0 =
         [ Elm.string withDocumentationArg_, withDocumentationArg_0 ]
 
 
-{-| group: { title : String, docs : String } -> List Elm.Declaration -> Elm.Declaration -}
+{-| Group declarations under a title in the doc comment at the top of the generated module.
+
+This will also add a `@docs` tag to the module doc comment for any exposed functions in the group.
+
+    Elm.group
+        { title = "MyGroup"
+        , docs = "This is a group of functions that do things"
+        }
+        [ myFunction, myOtherFunction ]
+
+Will create the following module doc comment:
+
+    ## My Group
+
+    This is a group of functions that do things
+
+    @docs myFunction, myOtherFunction
+
+group: { title : String, docs : String } -> List Elm.Declaration -> Elm.Declaration
+-}
 group :
     { title : String, docs : String } -> List Elm.Expression -> Elm.Expression
 group groupArg_ groupArg_0 =
@@ -680,12 +700,12 @@ exposeConstructor exposeConstructorArg_ =
 
 Pass in a function that determines how to render a `@docs` comment.
 
-Each exposed item is grouped based on the string used in [exposeWith](#exposeWith).
+Each exposed item is grouped using [group](#group).
 
 **aliases** allow you to specify a module alias to be used.
 
     Elm.fileWith [ "MyModule" ]
-        { docs = List.map Elm.docs
+        { docs = "# Here's my cool module!"
         , aliases =
             [ ( [ "Json", "Encode" ], "Encode" )
             ]
@@ -701,17 +721,13 @@ All values rendered in this file that are from this module would also automatica
 
 fileWith: 
     List String
-    -> { docs : List { group : Maybe String, members : List String } -> List String
-    , aliases : List ( List String, String )
-    }
+    -> { docs : String, aliases : List ( List String, String ) }
     -> List Elm.Declaration
     -> Elm.File
 -}
 fileWith :
     List String
-    -> { docs : Elm.Expression -> Elm.Expression
-    , aliases : List Elm.Expression
-    }
+    -> { docs : String, aliases : List Elm.Expression }
     -> List Elm.Expression
     -> Elm.Expression
 fileWith fileWithArg_ fileWithArg_0 fileWithArg_1 =
@@ -724,21 +740,7 @@ fileWith fileWithArg_ fileWithArg_0 fileWithArg_1 =
                      (Type.function
                           [ Type.list Type.string
                           , Type.record
-                              [ ( "docs"
-                                , Type.function
-                                    [ Type.list
-                                          (Type.record
-                                               [ ( "group"
-                                                 , Type.maybe Type.string
-                                                 )
-                                               , ( "members"
-                                                 , Type.list Type.string
-                                                 )
-                                               ]
-                                          )
-                                    ]
-                                    (Type.list Type.string)
-                                )
+                              [ ( "docs", Type.string )
                               , ( "aliases"
                                 , Type.list
                                     (Type.tuple
@@ -756,145 +758,11 @@ fileWith fileWithArg_ fileWithArg_0 fileWithArg_1 =
         )
         [ Elm.list (List.map Elm.string fileWithArg_)
         , Elm.record
-            [ Tuple.pair
-                  "docs"
-                  (Elm.functionReduced "fileWithUnpack" fileWithArg_0.docs)
+            [ Tuple.pair "docs" (Elm.string fileWithArg_0.docs)
             , Tuple.pair "aliases" (Elm.list fileWithArg_0.aliases)
             ]
         , Elm.list fileWithArg_1
         ]
-
-
-{-| Render a standard docstring.
-
-    @docs one, two, three
-
-If a `group` has been given, it will be rendered as a second level header.
-
-```markdown
-## Group name
-
-@docs one, two, three
-```
-
-docs: { group : Maybe String, members : List String } -> String
--}
-docs : { group : Elm.Expression, members : List String } -> Elm.Expression
-docs docsArg_ =
-    Elm.apply
-        (Elm.value
-             { importFrom = [ "Elm" ]
-             , name = "docs"
-             , annotation =
-                 Just
-                     (Type.function
-                          [ Type.record
-                              [ ( "group", Type.maybe Type.string )
-                              , ( "members", Type.list Type.string )
-                              ]
-                          ]
-                          Type.string
-                     )
-             }
-        )
-        [ Elm.record
-            [ Tuple.pair "group" docsArg_.group
-            , Tuple.pair
-                  "members"
-                  (Elm.list (List.map Elm.string docsArg_.members))
-            ]
-        ]
-
-
-{-| fnBuilder: value -> Elm.Fn value -}
-fnBuilder : Elm.Expression -> Elm.Expression
-fnBuilder fnBuilderArg_ =
-    Elm.apply
-        (Elm.value
-             { importFrom = [ "Elm" ]
-             , name = "fnBuilder"
-             , annotation =
-                 Just
-                     (Type.function
-                          [ Type.var "value" ]
-                          (Type.namedWith [ "Elm" ] "Fn" [ Type.var "value" ])
-                     )
-             }
-        )
-        [ fnBuilderArg_ ]
-
-
-{-| fnArg: Elm.Arg.Arg arg -> Elm.Fn (arg -> value) -> Elm.Fn value -}
-fnArg : Elm.Expression -> Elm.Expression -> Elm.Expression
-fnArg fnArgArg_ fnArgArg_0 =
-    Elm.apply
-        (Elm.value
-             { importFrom = [ "Elm" ]
-             , name = "fnArg"
-             , annotation =
-                 Just
-                     (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "arg" ]
-                          , Type.namedWith
-                              [ "Elm" ]
-                              "Fn"
-                              [ Type.function
-                                    [ Type.var "arg" ]
-                                    (Type.var "value")
-                              ]
-                          ]
-                          (Type.namedWith [ "Elm" ] "Fn" [ Type.var "value" ])
-                     )
-             }
-        )
-        [ fnArgArg_, fnArgArg_0 ]
-
-
-{-| fnDone: Elm.Fn Elm.Expression -> Elm.Expression -}
-fnDone : Elm.Expression -> Elm.Expression
-fnDone fnDoneArg_ =
-    Elm.apply
-        (Elm.value
-             { importFrom = [ "Elm" ]
-             , name = "fnDone"
-             , annotation =
-                 Just
-                     (Type.function
-                          [ Type.namedWith
-                              [ "Elm" ]
-                              "Fn"
-                              [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                          ]
-                          (Type.namedWith [ "Elm" ] "Expression" [])
-                     )
-             }
-        )
-        [ fnDoneArg_ ]
-
-
-{-| body: (args -> Elm.Expression) -> Elm.Fn args -> Elm.Expression -}
-body : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-body bodyArg_ bodyArg_0 =
-    Elm.apply
-        (Elm.value
-             { importFrom = [ "Elm" ]
-             , name = "body"
-             , annotation =
-                 Just
-                     (Type.function
-                          [ Type.function
-                              [ Type.var "args" ]
-                              (Type.namedWith [ "Elm" ] "Expression" [])
-                          , Type.namedWith [ "Elm" ] "Fn" [ Type.var "args" ]
-                          ]
-                          (Type.namedWith [ "Elm" ] "Expression" [])
-                     )
-             }
-        )
-        [ Elm.functionReduced "bodyUnpack" bodyArg_, bodyArg_0 ]
 
 
 {-| Create a function with a single argument.
@@ -938,9 +806,7 @@ Results in
 
 **Note** — Elm CodeGen will protect variable names if they're used in a nested `fn*` by adding a string of numbers to the end of the name. So, you may see a variable name be something like `myVariable_0_1`.
 
-If you absolutely don't want this behavior, you'll need to use [`functionAdvanced`](#functionAdvanced).
-
-fn: Elm.Arg.Arg arg -> (arg -> Elm.Expression) -> Elm.Expression
+fn: Elm.Arg arg -> (arg -> Elm.Expression) -> Elm.Expression
 -}
 fn : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 fn fnArg_ fnArg_0 =
@@ -951,10 +817,7 @@ fn fnArg_ fnArg_0 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "arg" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                           , Type.function
                               [ Type.var "arg" ]
                               (Type.namedWith [ "Elm" ] "Expression" [])
@@ -966,12 +829,7 @@ fn fnArg_ fnArg_0 =
         [ fnArg_, Elm.functionReduced "fnUnpack" fnArg_0 ]
 
 
-{-| fn2: 
-    Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> (one -> two -> Elm.Expression)
-    -> Elm.Expression
--}
+{-| fn2: Elm.Arg one -> Elm.Arg two -> (one -> two -> Elm.Expression) -> Elm.Expression -}
 fn2 :
     Elm.Expression
     -> Elm.Expression
@@ -985,14 +843,8 @@ fn2 fn2Arg_ fn2Arg_0 fn2Arg_1 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
                           , Type.function
                               [ Type.var "one", Type.var "two" ]
                               (Type.namedWith [ "Elm" ] "Expression" [])
@@ -1012,9 +864,9 @@ fn2 fn2Arg_ fn2Arg_0 fn2Arg_1 =
 
 
 {-| fn3: 
-    Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
+    Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
     -> (one -> two -> three -> Elm.Expression)
     -> Elm.Expression
 -}
@@ -1032,18 +884,9 @@ fn3 fn3Arg_ fn3Arg_0 fn3Arg_1 fn3Arg_2 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "three" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
                           , Type.function
                               [ Type.var "one"
                               , Type.var "two"
@@ -1072,6 +915,136 @@ fn3 fn3Arg_ fn3Arg_0 fn3Arg_1 fn3Arg_2 =
                    )
             )
         ]
+
+
+{-| Build a function with any number of arguments.
+
+Here's how you'd implement a function which adds two numbers together:
+
+    Elm.fnBuilder
+        (\arg1 arg2 ->
+            Elm.Op.plus arg1 arg2
+        )
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.fnDone
+
+fnBuilder: value -> Elm.Fn value
+-}
+fnBuilder : Elm.Expression -> Elm.Expression
+fnBuilder fnBuilderArg_ =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm" ]
+             , name = "fnBuilder"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "value" ]
+                          (Type.namedWith [ "Elm" ] "Fn" [ Type.var "value" ])
+                     )
+             }
+        )
+        [ fnBuilderArg_ ]
+
+
+{-| fnArg: Elm.Arg arg -> Elm.Fn (arg -> value) -> Elm.Fn value -}
+fnArg : Elm.Expression -> Elm.Expression -> Elm.Expression
+fnArg fnArgArg_ fnArgArg_0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm" ]
+             , name = "fnArg"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
+                          , Type.namedWith
+                              [ "Elm" ]
+                              "Fn"
+                              [ Type.function
+                                    [ Type.var "arg" ]
+                                    (Type.var "value")
+                              ]
+                          ]
+                          (Type.namedWith [ "Elm" ] "Fn" [ Type.var "value" ])
+                     )
+             }
+        )
+        [ fnArgArg_, fnArgArg_0 ]
+
+
+{-| fnDone: Elm.Fn Elm.Expression -> Elm.Expression -}
+fnDone : Elm.Expression -> Elm.Expression
+fnDone fnDoneArg_ =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm" ]
+             , name = "fnDone"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm" ]
+                              "Fn"
+                              [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
+        )
+        [ fnDoneArg_ ]
+
+
+{-| `body` allows you to define the funciton body _after_ defining the args.
+
+So, normally, we'd have this.
+
+    Elm.fnBuilder
+        (\arg1 arg2 ->
+            Elm.Op.plus arg1 arg2
+        )
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.fnDone
+
+But, that's sorta weird because you're defining the body before the args.
+
+You can also do this:
+
+    Elm.fnBuilder Tuple.pair
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.body
+            (\( arg1, arg2 ) ->
+                Elm.Op.plus arg1 arg2
+            )
+
+Which more closely mirrors the way you'd write a function in Elm.
+
+The downside is that you need to capture the arguments in a data strucutre(in this example, we used `Tuple.pair`).
+
+body: (args -> Elm.Expression) -> Elm.Fn args -> Elm.Expression
+-}
+body : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
+body bodyArg_ bodyArg_0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm" ]
+             , name = "body"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "args" ]
+                              (Type.namedWith [ "Elm" ] "Expression" [])
+                          , Type.namedWith [ "Elm" ] "Fn" [ Type.var "args" ]
+                          ]
+                          (Type.namedWith [ "Elm" ] "Expression" [])
+                     )
+             }
+        )
+        [ Elm.functionReduced "bodyUnpack" bodyArg_, bodyArg_0 ]
 
 
 {-| You may run into situations where you don't know the number of arguments for a function at compile-time.
@@ -1667,6 +1640,7 @@ annotation_ :
     { file : Type.Annotation
     , expression : Type.Annotation
     , declaration : Type.Annotation
+    , arg : Type.Annotation -> Type.Annotation
     , fn : Type.Annotation -> Type.Annotation
     , variant : Type.Annotation
     }
@@ -1701,6 +1675,13 @@ annotation_ =
             "Declaration"
             []
             (Type.namedWith [ "Internal", "Compiler" ] "Declaration" [])
+    , arg =
+        \argArg0 ->
+            Type.alias
+                moduleName_
+                "Arg"
+                [ argArg0 ]
+                (Type.namedWith [ "Internal", "Arg" ] "Arg" [ Type.var "val" ])
     , fn = \fnArg0 -> Type.namedWith [ "Elm" ] "Fn" [ fnArg0 ]
     , variant = Type.namedWith [ "Elm" ] "Variant" []
     }
@@ -1774,11 +1755,6 @@ call_ :
     , exposeConstructor : Elm.Expression -> Elm.Expression
     , fileWith :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , docs : Elm.Expression -> Elm.Expression
-    , fnBuilder : Elm.Expression -> Elm.Expression
-    , fnArg : Elm.Expression -> Elm.Expression -> Elm.Expression
-    , fnDone : Elm.Expression -> Elm.Expression
-    , body : Elm.Expression -> Elm.Expression -> Elm.Expression
     , fn : Elm.Expression -> Elm.Expression -> Elm.Expression
     , fn2 : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , fn3 :
@@ -1787,6 +1763,10 @@ call_ :
         -> Elm.Expression
         -> Elm.Expression
         -> Elm.Expression
+    , fnBuilder : Elm.Expression -> Elm.Expression
+    , fnArg : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , fnDone : Elm.Expression -> Elm.Expression
+    , body : Elm.Expression -> Elm.Expression -> Elm.Expression
     , function : Elm.Expression -> Elm.Expression -> Elm.Expression
     , functionReduced : Elm.Expression -> Elm.Expression -> Elm.Expression
     , customType : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -2233,22 +2213,7 @@ call_ =
                              (Type.function
                                   [ Type.list Type.string
                                   , Type.record
-                                      [ ( "docs"
-                                        , Type.function
-                                            [ Type.list
-                                                  (Type.record
-                                                       [ ( "group"
-                                                         , Type.maybe
-                                                               Type.string
-                                                         )
-                                                       , ( "members"
-                                                         , Type.list Type.string
-                                                         )
-                                                       ]
-                                                  )
-                                            ]
-                                            (Type.list Type.string)
-                                        )
+                                      [ ( "docs", Type.string )
                                       , ( "aliases"
                                         , Type.list
                                             (Type.tuple
@@ -2266,25 +2231,87 @@ call_ =
                      }
                 )
                 [ fileWithArg_, fileWithArg_0, fileWithArg_1 ]
-    , docs =
-        \docsArg_ ->
+    , fn =
+        \fnArg_ fnArg_0 ->
             Elm.apply
                 (Elm.value
                      { importFrom = [ "Elm" ]
-                     , name = "docs"
+                     , name = "fn"
                      , annotation =
                          Just
                              (Type.function
-                                  [ Type.record
-                                      [ ( "group", Type.maybe Type.string )
-                                      , ( "members", Type.list Type.string )
-                                      ]
+                                  [ Type.namedWith
+                                      [ "Elm" ]
+                                      "Arg"
+                                      [ Type.var "arg" ]
+                                  , Type.function
+                                      [ Type.var "arg" ]
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
                                   ]
-                                  Type.string
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
                              )
                      }
                 )
-                [ docsArg_ ]
+                [ fnArg_, fnArg_0 ]
+    , fn2 =
+        \fn2Arg_ fn2Arg_0 fn2Arg_1 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm" ]
+                     , name = "fn2"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm" ]
+                                      "Arg"
+                                      [ Type.var "one" ]
+                                  , Type.namedWith
+                                      [ "Elm" ]
+                                      "Arg"
+                                      [ Type.var "two" ]
+                                  , Type.function
+                                      [ Type.var "one", Type.var "two" ]
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
+                )
+                [ fn2Arg_, fn2Arg_0, fn2Arg_1 ]
+    , fn3 =
+        \fn3Arg_ fn3Arg_0 fn3Arg_1 fn3Arg_2 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm" ]
+                     , name = "fn3"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm" ]
+                                      "Arg"
+                                      [ Type.var "one" ]
+                                  , Type.namedWith
+                                      [ "Elm" ]
+                                      "Arg"
+                                      [ Type.var "two" ]
+                                  , Type.namedWith
+                                      [ "Elm" ]
+                                      "Arg"
+                                      [ Type.var "three" ]
+                                  , Type.function
+                                      [ Type.var "one"
+                                      , Type.var "two"
+                                      , Type.var "three"
+                                      ]
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                             )
+                     }
+                )
+                [ fn3Arg_, fn3Arg_0, fn3Arg_1, fn3Arg_2 ]
     , fnBuilder =
         \fnBuilderArg_ ->
             Elm.apply
@@ -2314,7 +2341,7 @@ call_ =
                          Just
                              (Type.function
                                   [ Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "arg" ]
                                   , Type.namedWith
@@ -2376,87 +2403,6 @@ call_ =
                      }
                 )
                 [ bodyArg_, bodyArg_0 ]
-    , fn =
-        \fnArg_ fnArg_0 ->
-            Elm.apply
-                (Elm.value
-                     { importFrom = [ "Elm" ]
-                     , name = "fn"
-                     , annotation =
-                         Just
-                             (Type.function
-                                  [ Type.namedWith
-                                      [ "Elm", "Arg" ]
-                                      "Arg"
-                                      [ Type.var "arg" ]
-                                  , Type.function
-                                      [ Type.var "arg" ]
-                                      (Type.namedWith [ "Elm" ] "Expression" [])
-                                  ]
-                                  (Type.namedWith [ "Elm" ] "Expression" [])
-                             )
-                     }
-                )
-                [ fnArg_, fnArg_0 ]
-    , fn2 =
-        \fn2Arg_ fn2Arg_0 fn2Arg_1 ->
-            Elm.apply
-                (Elm.value
-                     { importFrom = [ "Elm" ]
-                     , name = "fn2"
-                     , annotation =
-                         Just
-                             (Type.function
-                                  [ Type.namedWith
-                                      [ "Elm", "Arg" ]
-                                      "Arg"
-                                      [ Type.var "one" ]
-                                  , Type.namedWith
-                                      [ "Elm", "Arg" ]
-                                      "Arg"
-                                      [ Type.var "two" ]
-                                  , Type.function
-                                      [ Type.var "one", Type.var "two" ]
-                                      (Type.namedWith [ "Elm" ] "Expression" [])
-                                  ]
-                                  (Type.namedWith [ "Elm" ] "Expression" [])
-                             )
-                     }
-                )
-                [ fn2Arg_, fn2Arg_0, fn2Arg_1 ]
-    , fn3 =
-        \fn3Arg_ fn3Arg_0 fn3Arg_1 fn3Arg_2 ->
-            Elm.apply
-                (Elm.value
-                     { importFrom = [ "Elm" ]
-                     , name = "fn3"
-                     , annotation =
-                         Just
-                             (Type.function
-                                  [ Type.namedWith
-                                      [ "Elm", "Arg" ]
-                                      "Arg"
-                                      [ Type.var "one" ]
-                                  , Type.namedWith
-                                      [ "Elm", "Arg" ]
-                                      "Arg"
-                                      [ Type.var "two" ]
-                                  , Type.namedWith
-                                      [ "Elm", "Arg" ]
-                                      "Arg"
-                                      [ Type.var "three" ]
-                                  , Type.function
-                                      [ Type.var "one"
-                                      , Type.var "two"
-                                      , Type.var "three"
-                                      ]
-                                      (Type.namedWith [ "Elm" ] "Expression" [])
-                                  ]
-                                  (Type.namedWith [ "Elm" ] "Expression" [])
-                             )
-                     }
-                )
-                [ fn3Arg_, fn3Arg_0, fn3Arg_1, fn3Arg_2 ]
     , function =
         \functionArg_ functionArg_0 ->
             Elm.apply
@@ -2838,14 +2784,13 @@ values_ :
     , expose : Elm.Expression
     , exposeConstructor : Elm.Expression
     , fileWith : Elm.Expression
-    , docs : Elm.Expression
+    , fn : Elm.Expression
+    , fn2 : Elm.Expression
+    , fn3 : Elm.Expression
     , fnBuilder : Elm.Expression
     , fnArg : Elm.Expression
     , fnDone : Elm.Expression
     , body : Elm.Expression
-    , fn : Elm.Expression
-    , fn2 : Elm.Expression
-    , fn3 : Elm.Expression
     , function : Elm.Expression
     , functionReduced : Elm.Expression
     , customType : Elm.Expression
@@ -3189,21 +3134,7 @@ values_ =
                     (Type.function
                          [ Type.list Type.string
                          , Type.record
-                             [ ( "docs"
-                               , Type.function
-                                   [ Type.list
-                                         (Type.record
-                                              [ ( "group"
-                                                , Type.maybe Type.string
-                                                )
-                                              , ( "members"
-                                                , Type.list Type.string
-                                                )
-                                              ]
-                                         )
-                                   ]
-                                   (Type.list Type.string)
-                               )
+                             [ ( "docs", Type.string )
                              , ( "aliases"
                                , Type.list
                                    (Type.tuple
@@ -3217,19 +3148,55 @@ values_ =
                          (Type.namedWith [ "Elm" ] "File" [])
                     )
             }
-    , docs =
+    , fn =
         Elm.value
             { importFrom = [ "Elm" ]
-            , name = "docs"
+            , name = "fn"
             , annotation =
                 Just
                     (Type.function
-                         [ Type.record
-                             [ ( "group", Type.maybe Type.string )
-                             , ( "members", Type.list Type.string )
-                             ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
+                         , Type.function
+                             [ Type.var "arg" ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
                          ]
-                         Type.string
+                         (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+    , fn2 =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "fn2"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.function
+                             [ Type.var "one", Type.var "two" ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+    , fn3 =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "fn3"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
+                         , Type.function
+                             [ Type.var "one"
+                             , Type.var "two"
+                             , Type.var "three"
+                             ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                         ]
+                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
     , fnBuilder =
@@ -3250,10 +3217,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "arg" ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                          , Type.namedWith
                              [ "Elm" ]
                              "Fn"
@@ -3291,75 +3255,6 @@ values_ =
                              [ Type.var "args" ]
                              (Type.namedWith [ "Elm" ] "Expression" [])
                          , Type.namedWith [ "Elm" ] "Fn" [ Type.var "args" ]
-                         ]
-                         (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
-    , fn =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "fn"
-            , annotation =
-                Just
-                    (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "arg" ]
-                         , Type.function
-                             [ Type.var "arg" ]
-                             (Type.namedWith [ "Elm" ] "Expression" [])
-                         ]
-                         (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
-    , fn2 =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "fn2"
-            , annotation =
-                Just
-                    (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.function
-                             [ Type.var "one", Type.var "two" ]
-                             (Type.namedWith [ "Elm" ] "Expression" [])
-                         ]
-                         (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
-    , fn3 =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "fn3"
-            , annotation =
-                Just
-                    (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "three" ]
-                         , Type.function
-                             [ Type.var "one"
-                             , Type.var "two"
-                             , Type.var "three"
-                             ]
-                             (Type.namedWith [ "Elm" ] "Expression" [])
                          ]
                          (Type.namedWith [ "Elm" ] "Expression" [])
                     )

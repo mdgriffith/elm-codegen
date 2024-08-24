@@ -3,6 +3,9 @@ module Gen.Elm.Declare exposing
     , annotation_
     , call_
     , customType
+    , customTypeAdvanced
+    , customVariant
+    , finishCustomType
     , fn
     , fn2
     , fn3
@@ -22,12 +25,20 @@ module Gen.Elm.Declare exposing
     , toFile
     , value
     , values_
+    , variant0
+    , variant1
+    , variant2
     , with
+    , withDocs
+    , withSubmodule
+    , withTitle
     , withUnexposed
     )
 
 {-|
-@docs moduleName_, fn, fn2, fn3, fn4, fn5, fn6, fnBuilder, fnArg, fnDone, fnBody, placeholder, value, function, module_, with, withUnexposed, alias, customType, toFile, include, annotation_, make_, call_, values_
+# Generated bindings for Elm.Declare
+
+@docs moduleName_, fn, fn2, fn3, fn4, fn5, fn6, fnBuilder, fnArg, fnDone, fnBody, placeholder, value, function, module_, with, withUnexposed, withDocs, withTitle, alias, customType, toFile, include, withSubmodule, customTypeAdvanced, variant0, variant1, variant2, customVariant, finishCustomType, annotation_, make_, call_, values_
 -}
 
 
@@ -43,7 +54,7 @@ moduleName_ =
 
 {-| fn: 
     String
-    -> Elm.Arg.Arg value
+    -> Elm.Arg value
     -> (value -> Elm.Expression)
     -> Elm.Declare.Function (Elm.Expression -> Elm.Expression)
 -}
@@ -61,10 +72,7 @@ fn fnArg_ fnArg_0 fnArg_1 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "value" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "value" ]
                           , Type.function
                               [ Type.var "value" ]
                               (Type.namedWith [ "Elm" ] "Expression" [])
@@ -85,8 +93,8 @@ fn fnArg_ fnArg_0 fnArg_1 =
 
 {-| fn2: 
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
+    -> Elm.Arg one
+    -> Elm.Arg two
     -> (one -> two -> Elm.Expression)
     -> Elm.Declare.Function (Elm.Expression -> Elm.Expression -> Elm.Expression)
 -}
@@ -105,14 +113,8 @@ fn2 fn2Arg_ fn2Arg_0 fn2Arg_1 fn2Arg_2 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
                           , Type.function
                               [ Type.var "one", Type.var "two" ]
                               (Type.namedWith [ "Elm" ] "Expression" [])
@@ -143,9 +145,9 @@ fn2 fn2Arg_ fn2Arg_0 fn2Arg_1 fn2Arg_2 =
 
 {-| fn3: 
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
     -> (one -> two -> three -> Elm.Expression)
     -> Elm.Declare.Function (Elm.Expression
     -> Elm.Expression
@@ -168,18 +170,9 @@ fn3 fn3Arg_ fn3Arg_0 fn3Arg_1 fn3Arg_2 fn3Arg_3 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "three" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
                           , Type.function
                               [ Type.var "one"
                               , Type.var "two"
@@ -223,10 +216,10 @@ fn3 fn3Arg_ fn3Arg_0 fn3Arg_1 fn3Arg_2 fn3Arg_3 =
 
 {-| fn4: 
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
-    -> Elm.Arg.Arg four
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
+    -> Elm.Arg four
     -> (one -> two -> three -> four -> Elm.Expression)
     -> Elm.Declare.Function (Elm.Expression
     -> Elm.Expression
@@ -255,22 +248,10 @@ fn4 fn4Arg_ fn4Arg_0 fn4Arg_1 fn4Arg_2 fn4Arg_3 fn4Arg_4 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "three" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "four" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "four" ]
                           , Type.function
                               [ Type.var "one"
                               , Type.var "two"
@@ -323,11 +304,11 @@ fn4 fn4Arg_ fn4Arg_0 fn4Arg_1 fn4Arg_2 fn4Arg_3 fn4Arg_4 =
 
 {-| fn5: 
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
-    -> Elm.Arg.Arg four
-    -> Elm.Arg.Arg five
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
+    -> Elm.Arg four
+    -> Elm.Arg five
     -> (one -> two -> three -> four -> five -> Elm.Expression)
     -> Elm.Declare.Function (Elm.Expression
     -> Elm.Expression
@@ -359,26 +340,11 @@ fn5 fn5Arg_ fn5Arg_0 fn5Arg_1 fn5Arg_2 fn5Arg_3 fn5Arg_4 fn5Arg_5 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "three" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "four" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "five" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "four" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "five" ]
                           , Type.function
                               [ Type.var "one"
                               , Type.var "two"
@@ -441,12 +407,12 @@ fn5 fn5Arg_ fn5Arg_0 fn5Arg_1 fn5Arg_2 fn5Arg_3 fn5Arg_4 fn5Arg_5 =
 
 {-| fn6: 
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
-    -> Elm.Arg.Arg four
-    -> Elm.Arg.Arg five
-    -> Elm.Arg.Arg six
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
+    -> Elm.Arg four
+    -> Elm.Arg five
+    -> Elm.Arg six
     -> (one -> two -> three -> four -> five -> six -> Elm.Expression)
     -> Elm.Declare.Function (Elm.Expression
     -> Elm.Expression
@@ -481,30 +447,12 @@ fn6 fn6Arg_ fn6Arg_0 fn6Arg_1 fn6Arg_2 fn6Arg_3 fn6Arg_4 fn6Arg_5 fn6Arg_6 =
                  Just
                      (Type.function
                           [ Type.string
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "one" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "two" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "three" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "four" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "five" ]
-                          , Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "six" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "four" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "five" ]
+                          , Type.namedWith [ "Elm" ] "Arg" [ Type.var "six" ]
                           , Type.function
                               [ Type.var "one"
                               , Type.var "two"
@@ -626,7 +574,7 @@ fnBuilder fnBuilderArg_ fnBuilderArg_0 =
 
 
 {-| fnArg: 
-    Elm.Arg.Arg arg
+    Elm.Arg arg
     -> { name : String
     , builder : Elm.Fn (arg -> value)
     , call : Elm.Expression -> List Elm.Expression -> e
@@ -651,10 +599,7 @@ fnArg fnArgArg_ fnArgArg_0 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.namedWith
-                              [ "Elm", "Arg" ]
-                              "Arg"
-                              [ Type.var "arg" ]
+                          [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                           , Type.record
                               [ ( "name", Type.string )
                               , ( "builder"
@@ -1083,6 +1028,68 @@ withUnexposed withUnexposedArg_ withUnexposedArg_0 =
         ]
 
 
+{-| Add some markdown as a module-level documentation comment.
+
+withDocs: String -> Elm.Declare.Module val -> Elm.Declare.Module val
+-}
+withDocs : String -> Elm.Expression -> Elm.Expression
+withDocs withDocsArg_ withDocsArg_0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "withDocs"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.var "val" ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "Module"
+                               [ Type.var "val" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string withDocsArg_, withDocsArg_0 ]
+
+
+{-| Add a module-level title to the module.
+
+This will be rendered as a markdown header.
+
+withTitle: String -> Elm.Declare.Module val -> Elm.Declare.Module val
+-}
+withTitle : String -> Elm.Expression -> Elm.Expression
+withTitle withTitleArg_ withTitleArg_0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "withTitle"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.var "val" ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "Module"
+                               [ Type.var "val" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string withTitleArg_, withTitleArg_0 ]
+
+
 {-| alias: String -> Elm.Annotation.Annotation -> Elm.Declare.Annotation -}
 alias : String -> Elm.Expression -> Elm.Expression
 alias aliasArg_ aliasArg_0 =
@@ -1148,9 +1155,14 @@ toFile toFileArg_ =
         [ toFileArg_ ]
 
 
-{-| include: { title : String, docs : String } -> Elm.Declare.Module val -> Elm.Declaration -}
-include : { title : String, docs : String } -> Elm.Expression -> Elm.Expression
-include includeArg_ includeArg_0 =
+{-| Include a module as a declaration in another module.
+
+**Note** - Be aware that the modulename of the included module must match the module name of the module you're including it in!
+
+include: Elm.Declare.Module val -> Elm.Declaration
+-}
+include : Elm.Expression -> Elm.Expression
+include includeArg_ =
     Elm.apply
         (Elm.value
              { importFrom = [ "Elm", "Declare" ]
@@ -1158,11 +1170,7 @@ include includeArg_ includeArg_0 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.record
-                              [ ( "title", Type.string )
-                              , ( "docs", Type.string )
-                              ]
-                          , Type.namedWith
+                          [ Type.namedWith
                               [ "Elm", "Declare" ]
                               "Module"
                               [ Type.var "val" ]
@@ -1171,12 +1179,415 @@ include includeArg_ includeArg_0 =
                      )
              }
         )
-        [ Elm.record
-            [ Tuple.pair "title" (Elm.string includeArg_.title)
-            , Tuple.pair "docs" (Elm.string includeArg_.docs)
+        [ includeArg_ ]
+
+
+{-| Add a module as a "submodule".
+
+This can be useful for organizing particularly complex modules.
+
+The only thing to be aware of here is that the module name for both of these modules must be the same or you're going to have a bad time.
+
+'
+
+withSubmodule: 
+    Elm.Declare.Module submod
+    -> Elm.Declare.Module (submod -> mod)
+    -> Elm.Declare.Module mod
+-}
+withSubmodule : Elm.Expression -> Elm.Expression -> Elm.Expression
+withSubmodule withSubmoduleArg_ withSubmoduleArg_0 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "withSubmodule"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.var "submod" ]
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.function
+                                    [ Type.var "submod" ]
+                                    (Type.var "mod")
+                              ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "Module"
+                               [ Type.var "mod" ]
+                          )
+                     )
+             }
+        )
+        [ withSubmoduleArg_, withSubmoduleArg_0 ]
+
+
+{-| customTypeAdvanced: 
+    String
+    -> { exposeConstructor : Bool }
+    -> make_
+    -> Elm.Declare.CustomTypeBuilder case_ make_
+-}
+customTypeAdvanced :
+    String -> { exposeConstructor : Bool } -> Elm.Expression -> Elm.Expression
+customTypeAdvanced customTypeAdvancedArg_ customTypeAdvancedArg_0 customTypeAdvancedArg_1 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "customTypeAdvanced"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.record [ ( "exposeConstructor", Type.bool ) ]
+                          , Type.var "make_"
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "CustomTypeBuilder"
+                               [ Type.var "case_", Type.var "make_" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string customTypeAdvancedArg_
+        , Elm.record
+            [ Tuple.pair
+                  "exposeConstructor"
+                  (Elm.bool customTypeAdvancedArg_0.exposeConstructor)
             ]
-        , includeArg_0
+        , customTypeAdvancedArg_1
         ]
+
+
+{-| variant0: 
+    String
+    -> (case_ -> Elm.Expression)
+    -> Elm.Declare.CustomTypeBuilder case_ (Elm.Expression -> make_)
+    -> Elm.Declare.CustomTypeBuilder case_ make_
+-}
+variant0 :
+    String
+    -> (Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
+    -> Elm.Expression
+variant0 variant0Arg_ variant0Arg_0 variant0Arg_1 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "variant0"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.function
+                              [ Type.var "case_" ]
+                              (Type.namedWith [ "Elm" ] "Expression" [])
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_"
+                              , Type.function
+                                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                                    (Type.var "make_")
+                              ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "CustomTypeBuilder"
+                               [ Type.var "case_", Type.var "make_" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string variant0Arg_
+        , Elm.functionReduced "variant0Unpack" variant0Arg_0
+        , variant0Arg_1
+        ]
+
+
+{-| variant1: 
+    String
+    -> Elm.Annotation.Annotation
+    -> (case_ -> Elm.Expression -> Elm.Expression)
+    -> Elm.Declare.CustomTypeBuilder case_ ((Elm.Expression -> Elm.Expression)
+    -> make_)
+    -> Elm.Declare.CustomTypeBuilder case_ make_
+-}
+variant1 :
+    String
+    -> Elm.Expression
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
+    -> Elm.Expression
+variant1 variant1Arg_ variant1Arg_0 variant1Arg_1 variant1Arg_2 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "variant1"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.function
+                              [ Type.var "case_"
+                              , Type.namedWith [ "Elm" ] "Expression" []
+                              ]
+                              (Type.namedWith [ "Elm" ] "Expression" [])
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_"
+                              , Type.function
+                                    [ Type.function
+                                        [ Type.namedWith
+                                              [ "Elm" ]
+                                              "Expression"
+                                              []
+                                        ]
+                                        (Type.namedWith
+                                           [ "Elm" ]
+                                           "Expression"
+                                           []
+                                        )
+                                    ]
+                                    (Type.var "make_")
+                              ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "CustomTypeBuilder"
+                               [ Type.var "case_", Type.var "make_" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string variant1Arg_
+        , variant1Arg_0
+        , Elm.functionReduced
+            "variant1Unpack"
+            (\functionReducedUnpack ->
+               Elm.functionReduced
+                   "unpack"
+                   (variant1Arg_1 functionReducedUnpack)
+            )
+        , variant1Arg_2
+        ]
+
+
+{-| variant2: 
+    String
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> (case_ -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Declare.CustomTypeBuilder case_ ((Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> make_)
+    -> Elm.Declare.CustomTypeBuilder case_ make_
+-}
+variant2 :
+    String
+    -> Elm.Expression
+    -> Elm.Expression
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
+    -> Elm.Expression
+variant2 variant2Arg_ variant2Arg_0 variant2Arg_1 variant2Arg_2 variant2Arg_3 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "variant2"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.function
+                              [ Type.var "case_"
+                              , Type.namedWith [ "Elm" ] "Expression" []
+                              , Type.namedWith [ "Elm" ] "Expression" []
+                              ]
+                              (Type.namedWith [ "Elm" ] "Expression" [])
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_"
+                              , Type.function
+                                    [ Type.function
+                                        [ Type.namedWith
+                                              [ "Elm" ]
+                                              "Expression"
+                                              []
+                                        , Type.namedWith
+                                              [ "Elm" ]
+                                              "Expression"
+                                              []
+                                        ]
+                                        (Type.namedWith
+                                           [ "Elm" ]
+                                           "Expression"
+                                           []
+                                        )
+                                    ]
+                                    (Type.var "make_")
+                              ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "CustomTypeBuilder"
+                               [ Type.var "case_", Type.var "make_" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string variant2Arg_
+        , variant2Arg_0
+        , variant2Arg_1
+        , Elm.functionReduced
+            "variant2Unpack"
+            (\functionReducedUnpack ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            ((variant2Arg_2 functionReducedUnpack)
+                                 functionReducedUnpack0
+                            )
+                   )
+            )
+        , variant2Arg_3
+        ]
+
+
+{-| customVariant: 
+    String
+    -> List Elm.Annotation.Annotation
+    -> (case_ -> branch)
+    -> (Elm.Arg branch -> Elm.Arg Elm.Expression)
+    -> ((List Elm.Expression -> Elm.Expression) -> previousMake_ -> make_)
+    -> Elm.Declare.CustomTypeBuilder case_ previousMake_
+    -> Elm.Declare.CustomTypeBuilder case_ make_
+-}
+customVariant :
+    String
+    -> List Elm.Expression
+    -> (Elm.Expression -> Elm.Expression)
+    -> (Elm.Expression -> Elm.Expression)
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
+    -> Elm.Expression
+customVariant customVariantArg_ customVariantArg_0 customVariantArg_1 customVariantArg_2 customVariantArg_3 customVariantArg_4 =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "customVariant"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.list
+                              (Type.namedWith
+                                 [ "Elm", "Annotation" ]
+                                 "Annotation"
+                                 []
+                              )
+                          , Type.function
+                              [ Type.var "case_" ]
+                              (Type.var "branch")
+                          , Type.function
+                              [ Type.namedWith
+                                    [ "Elm" ]
+                                    "Arg"
+                                    [ Type.var "branch" ]
+                              ]
+                              (Type.namedWith
+                                 [ "Elm" ]
+                                 "Arg"
+                                 [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                              )
+                          , Type.function
+                              [ Type.function
+                                    [ Type.list
+                                        (Type.namedWith
+                                           [ "Elm" ]
+                                           "Expression"
+                                           []
+                                        )
+                                    ]
+                                    (Type.namedWith [ "Elm" ] "Expression" [])
+                              , Type.var "previousMake_"
+                              ]
+                              (Type.var "make_")
+                          , Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_", Type.var "previousMake_" ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "CustomTypeBuilder"
+                               [ Type.var "case_", Type.var "make_" ]
+                          )
+                     )
+             }
+        )
+        [ Elm.string customVariantArg_
+        , Elm.list customVariantArg_0
+        , Elm.functionReduced "customVariantUnpack" customVariantArg_1
+        , Elm.functionReduced "customVariantUnpack" customVariantArg_2
+        , Elm.functionReduced
+            "customVariantUnpack"
+            (\functionReducedUnpack ->
+               Elm.functionReduced
+                   "unpack"
+                   (customVariantArg_3 functionReducedUnpack)
+            )
+        , customVariantArg_4
+        ]
+
+
+{-| finishCustomType: Elm.Declare.CustomTypeBuilder make_ make_ -> Elm.Declare.CustomType make_ -}
+finishCustomType : Elm.Expression -> Elm.Expression
+finishCustomType finishCustomTypeArg_ =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm", "Declare" ]
+             , name = "finishCustomType"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "make_", Type.var "make_" ]
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Declare" ]
+                               "CustomType"
+                               [ Type.var "make_" ]
+                          )
+                     )
+             }
+        )
+        [ finishCustomTypeArg_ ]
 
 
 annotation_ :
@@ -1184,6 +1595,8 @@ annotation_ :
     , value : Type.Annotation
     , module_ : Type.Annotation -> Type.Annotation
     , annotation : Type.Annotation
+    , customType : Type.Annotation -> Type.Annotation
+    , customTypeBuilder : Type.Annotation -> Type.Annotation -> Type.Annotation
     , internal : Type.Annotation -> Type.Annotation
     }
 annotation_ =
@@ -1231,6 +1644,8 @@ annotation_ =
                 [ moduleArg0 ]
                 (Type.record
                      [ ( "name", Type.list Type.string )
+                     , ( "title", Type.string )
+                     , ( "docs", Type.string )
                      , ( "declarations"
                        , Type.list (Type.namedWith [ "Elm" ] "Declaration" [])
                        )
@@ -1259,6 +1674,61 @@ annotation_ =
                    )
                  ]
             )
+    , customType =
+        \customTypeArg0 ->
+            Type.alias
+                moduleName_
+                "CustomType"
+                [ customTypeArg0 ]
+                (Type.record
+                     [ ( "declaration"
+                       , Type.namedWith [ "Elm" ] "Declaration" []
+                       )
+                     , ( "annotation"
+                       , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                       )
+                     , ( "make_", Type.var "make_" )
+                     , ( "case_"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" []
+                             , Type.var "make_"
+                             ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     , ( "internal"
+                       , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "Internal"
+                             [ Type.record
+                                 [ ( "annotation"
+                                   , Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                   )
+                                 , ( "make_", Type.var "make_" )
+                                 , ( "case_"
+                                   , Type.function
+                                       [ Type.namedWith
+                                             [ "Elm" ]
+                                             "Expression"
+                                             []
+                                       , Type.var "make_"
+                                       ]
+                                       (Type.namedWith [ "Elm" ] "Expression" []
+                                       )
+                                   )
+                                 ]
+                             ]
+                       )
+                     ]
+                )
+    , customTypeBuilder =
+        \customTypeBuilderArg0 customTypeBuilderArg1 ->
+            Type.namedWith
+                [ "Elm", "Declare" ]
+                "CustomTypeBuilder"
+                [ customTypeBuilderArg0, customTypeBuilderArg1 ]
     , internal =
         \internalArg0 ->
             Type.namedWith [ "Elm", "Declare" ] "Internal" [ internalArg0 ]
@@ -1281,6 +1751,8 @@ make_ :
         -> Elm.Expression
     , module_ :
         { name : Elm.Expression
+        , title : Elm.Expression
+        , docs : Elm.Expression
         , declarations : Elm.Expression
         , call : Elm.Expression
         }
@@ -1288,6 +1760,14 @@ make_ :
     , annotation :
         { annotation : Elm.Expression
         , declaration : Elm.Expression
+        , internal : Elm.Expression
+        }
+        -> Elm.Expression
+    , customType :
+        { declaration : Elm.Expression
+        , annotation : Elm.Expression
+        , make_ : Elm.Expression
+        , case_ : Elm.Expression
         , internal : Elm.Expression
         }
         -> Elm.Expression
@@ -1362,6 +1842,8 @@ make_ =
                      [ Type.var "val" ]
                      (Type.record
                           [ ( "name", Type.list Type.string )
+                          , ( "title", Type.string )
+                          , ( "docs", Type.string )
                           , ( "declarations"
                             , Type.list
                                   (Type.namedWith [ "Elm" ] "Declaration" [])
@@ -1372,6 +1854,8 @@ make_ =
                 )
                 (Elm.record
                      [ Tuple.pair "name" module_args.name
+                     , Tuple.pair "title" module_args.title
+                     , Tuple.pair "docs" module_args.docs
                      , Tuple.pair "declarations" module_args.declarations
                      , Tuple.pair "call" module_args.call
                      ]
@@ -1410,6 +1894,71 @@ make_ =
                      [ Tuple.pair "annotation" annotation_args.annotation
                      , Tuple.pair "declaration" annotation_args.declaration
                      , Tuple.pair "internal" annotation_args.internal
+                     ]
+                )
+    , customType =
+        \customType_args ->
+            Elm.withType
+                (Type.alias
+                     [ "Elm", "Declare" ]
+                     "CustomType"
+                     [ Type.var "make_" ]
+                     (Type.record
+                          [ ( "declaration"
+                            , Type.namedWith [ "Elm" ] "Declaration" []
+                            )
+                          , ( "annotation"
+                            , Type.namedWith
+                                  [ "Elm", "Annotation" ]
+                                  "Annotation"
+                                  []
+                            )
+                          , ( "make_", Type.var "make_" )
+                          , ( "case_"
+                            , Type.function
+                                  [ Type.namedWith [ "Elm" ] "Expression" []
+                                  , Type.var "make_"
+                                  ]
+                                  (Type.namedWith [ "Elm" ] "Expression" [])
+                            )
+                          , ( "internal"
+                            , Type.namedWith
+                                  [ "Elm", "Declare" ]
+                                  "Internal"
+                                  [ Type.record
+                                      [ ( "annotation"
+                                        , Type.namedWith
+                                            [ "Elm", "Annotation" ]
+                                            "Annotation"
+                                            []
+                                        )
+                                      , ( "make_", Type.var "make_" )
+                                      , ( "case_"
+                                        , Type.function
+                                            [ Type.namedWith
+                                                  [ "Elm" ]
+                                                  "Expression"
+                                                  []
+                                            , Type.var "make_"
+                                            ]
+                                            (Type.namedWith
+                                               [ "Elm" ]
+                                               "Expression"
+                                               []
+                                            )
+                                        )
+                                      ]
+                                  ]
+                            )
+                          ]
+                     )
+                )
+                (Elm.record
+                     [ Tuple.pair "declaration" customType_args.declaration
+                     , Tuple.pair "annotation" customType_args.annotation
+                     , Tuple.pair "make_" customType_args.make_
+                     , Tuple.pair "case_" customType_args.case_
+                     , Tuple.pair "internal" customType_args.internal
                      ]
                 )
     }
@@ -1467,10 +2016,39 @@ call_ :
     , module_ : Elm.Expression -> Elm.Expression -> Elm.Expression
     , with : Elm.Expression -> Elm.Expression -> Elm.Expression
     , withUnexposed : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , withDocs : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , withTitle : Elm.Expression -> Elm.Expression -> Elm.Expression
     , alias : Elm.Expression -> Elm.Expression -> Elm.Expression
     , customType : Elm.Expression -> Elm.Expression -> Elm.Expression
     , toFile : Elm.Expression -> Elm.Expression
-    , include : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , include : Elm.Expression -> Elm.Expression
+    , withSubmodule : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , customTypeAdvanced :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , variant0 :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , variant1 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , variant2 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , customVariant :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , finishCustomType : Elm.Expression -> Elm.Expression
     }
 call_ =
     { fn =
@@ -1484,7 +2062,7 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "value" ]
                                   , Type.function
@@ -1522,11 +2100,11 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.function
@@ -1568,15 +2146,15 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "three" ]
                                   , Type.function
@@ -1625,19 +2203,19 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "three" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "four" ]
                                   , Type.function
@@ -1691,23 +2269,23 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "three" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "four" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "five" ]
                                   , Type.function
@@ -1773,27 +2351,27 @@ call_ =
                              (Type.function
                                   [ Type.string
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "one" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "two" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "three" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "four" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "five" ]
                                   , Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "six" ]
                                   , Type.function
@@ -1907,7 +2485,7 @@ call_ =
                          Just
                              (Type.function
                                   [ Type.namedWith
-                                      [ "Elm", "Arg" ]
+                                      [ "Elm" ]
                                       "Arg"
                                       [ Type.var "arg" ]
                                   , Type.record
@@ -2230,6 +2808,54 @@ call_ =
                      }
                 )
                 [ withUnexposedArg_, withUnexposedArg_0 ]
+    , withDocs =
+        \withDocsArg_ withDocsArg_0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "withDocs"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "Module"
+                                      [ Type.var "val" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "Module"
+                                       [ Type.var "val" ]
+                                  )
+                             )
+                     }
+                )
+                [ withDocsArg_, withDocsArg_0 ]
+    , withTitle =
+        \withTitleArg_ withTitleArg_0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "withTitle"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "Module"
+                                      [ Type.var "val" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "Module"
+                                       [ Type.var "val" ]
+                                  )
+                             )
+                     }
+                )
+                [ withTitleArg_, withTitleArg_0 ]
     , alias =
         \aliasArg_ aliasArg_0 ->
             Elm.apply
@@ -2296,7 +2922,7 @@ call_ =
                 )
                 [ toFileArg_ ]
     , include =
-        \includeArg_ includeArg_0 ->
+        \includeArg_ ->
             Elm.apply
                 (Elm.value
                      { importFrom = [ "Elm", "Declare" ]
@@ -2304,11 +2930,7 @@ call_ =
                      , annotation =
                          Just
                              (Type.function
-                                  [ Type.record
-                                      [ ( "title", Type.string )
-                                      , ( "docs", Type.string )
-                                      ]
-                                  , Type.namedWith
+                                  [ Type.namedWith
                                       [ "Elm", "Declare" ]
                                       "Module"
                                       [ Type.var "val" ]
@@ -2317,7 +2939,304 @@ call_ =
                              )
                      }
                 )
-                [ includeArg_, includeArg_0 ]
+                [ includeArg_ ]
+    , withSubmodule =
+        \withSubmoduleArg_ withSubmoduleArg_0 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "withSubmodule"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "Module"
+                                      [ Type.var "submod" ]
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "Module"
+                                      [ Type.function
+                                            [ Type.var "submod" ]
+                                            (Type.var "mod")
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "Module"
+                                       [ Type.var "mod" ]
+                                  )
+                             )
+                     }
+                )
+                [ withSubmoduleArg_, withSubmoduleArg_0 ]
+    , customTypeAdvanced =
+        \customTypeAdvancedArg_ customTypeAdvancedArg_0 customTypeAdvancedArg_1 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "customTypeAdvanced"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.record
+                                      [ ( "exposeConstructor", Type.bool ) ]
+                                  , Type.var "make_"
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "CustomTypeBuilder"
+                                       [ Type.var "case_", Type.var "make_" ]
+                                  )
+                             )
+                     }
+                )
+                [ customTypeAdvancedArg_
+                , customTypeAdvancedArg_0
+                , customTypeAdvancedArg_1
+                ]
+    , variant0 =
+        \variant0Arg_ variant0Arg_0 variant0Arg_1 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "variant0"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.function
+                                      [ Type.var "case_" ]
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "CustomTypeBuilder"
+                                      [ Type.var "case_"
+                                      , Type.function
+                                            [ Type.namedWith
+                                                [ "Elm" ]
+                                                "Expression"
+                                                []
+                                            ]
+                                            (Type.var "make_")
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "CustomTypeBuilder"
+                                       [ Type.var "case_", Type.var "make_" ]
+                                  )
+                             )
+                     }
+                )
+                [ variant0Arg_, variant0Arg_0, variant0Arg_1 ]
+    , variant1 =
+        \variant1Arg_ variant1Arg_0 variant1Arg_1 variant1Arg_2 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "variant1"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.function
+                                      [ Type.var "case_"
+                                      , Type.namedWith [ "Elm" ] "Expression" []
+                                      ]
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "CustomTypeBuilder"
+                                      [ Type.var "case_"
+                                      , Type.function
+                                            [ Type.function
+                                                [ Type.namedWith
+                                                      [ "Elm" ]
+                                                      "Expression"
+                                                      []
+                                                ]
+                                                (Type.namedWith
+                                                   [ "Elm" ]
+                                                   "Expression"
+                                                   []
+                                                )
+                                            ]
+                                            (Type.var "make_")
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "CustomTypeBuilder"
+                                       [ Type.var "case_", Type.var "make_" ]
+                                  )
+                             )
+                     }
+                )
+                [ variant1Arg_, variant1Arg_0, variant1Arg_1, variant1Arg_2 ]
+    , variant2 =
+        \variant2Arg_ variant2Arg_0 variant2Arg_1 variant2Arg_2 variant2Arg_3 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "variant2"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.function
+                                      [ Type.var "case_"
+                                      , Type.namedWith [ "Elm" ] "Expression" []
+                                      , Type.namedWith [ "Elm" ] "Expression" []
+                                      ]
+                                      (Type.namedWith [ "Elm" ] "Expression" [])
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "CustomTypeBuilder"
+                                      [ Type.var "case_"
+                                      , Type.function
+                                            [ Type.function
+                                                [ Type.namedWith
+                                                      [ "Elm" ]
+                                                      "Expression"
+                                                      []
+                                                , Type.namedWith
+                                                      [ "Elm" ]
+                                                      "Expression"
+                                                      []
+                                                ]
+                                                (Type.namedWith
+                                                   [ "Elm" ]
+                                                   "Expression"
+                                                   []
+                                                )
+                                            ]
+                                            (Type.var "make_")
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "CustomTypeBuilder"
+                                       [ Type.var "case_", Type.var "make_" ]
+                                  )
+                             )
+                     }
+                )
+                [ variant2Arg_
+                , variant2Arg_0
+                , variant2Arg_1
+                , variant2Arg_2
+                , variant2Arg_3
+                ]
+    , customVariant =
+        \customVariantArg_ customVariantArg_0 customVariantArg_1 customVariantArg_2 customVariantArg_3 customVariantArg_4 ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "customVariant"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.list
+                                      (Type.namedWith
+                                         [ "Elm", "Annotation" ]
+                                         "Annotation"
+                                         []
+                                      )
+                                  , Type.function
+                                      [ Type.var "case_" ]
+                                      (Type.var "branch")
+                                  , Type.function
+                                      [ Type.namedWith
+                                            [ "Elm" ]
+                                            "Arg"
+                                            [ Type.var "branch" ]
+                                      ]
+                                      (Type.namedWith
+                                         [ "Elm" ]
+                                         "Arg"
+                                         [ Type.namedWith
+                                               [ "Elm" ]
+                                               "Expression"
+                                               []
+                                         ]
+                                      )
+                                  , Type.function
+                                      [ Type.function
+                                            [ Type.list
+                                                (Type.namedWith
+                                                   [ "Elm" ]
+                                                   "Expression"
+                                                   []
+                                                )
+                                            ]
+                                            (Type.namedWith
+                                                 [ "Elm" ]
+                                                 "Expression"
+                                                 []
+                                            )
+                                      , Type.var "previousMake_"
+                                      ]
+                                      (Type.var "make_")
+                                  , Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "CustomTypeBuilder"
+                                      [ Type.var "case_"
+                                      , Type.var "previousMake_"
+                                      ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "CustomTypeBuilder"
+                                       [ Type.var "case_", Type.var "make_" ]
+                                  )
+                             )
+                     }
+                )
+                [ customVariantArg_
+                , customVariantArg_0
+                , customVariantArg_1
+                , customVariantArg_2
+                , customVariantArg_3
+                , customVariantArg_4
+                ]
+    , finishCustomType =
+        \finishCustomTypeArg_ ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm", "Declare" ]
+                     , name = "finishCustomType"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Declare" ]
+                                      "CustomTypeBuilder"
+                                      [ Type.var "make_", Type.var "make_" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Declare" ]
+                                       "CustomType"
+                                       [ Type.var "make_" ]
+                                  )
+                             )
+                     }
+                )
+                [ finishCustomTypeArg_ ]
     }
 
 
@@ -2338,10 +3257,19 @@ values_ :
     , module_ : Elm.Expression
     , with : Elm.Expression
     , withUnexposed : Elm.Expression
+    , withDocs : Elm.Expression
+    , withTitle : Elm.Expression
     , alias : Elm.Expression
     , customType : Elm.Expression
     , toFile : Elm.Expression
     , include : Elm.Expression
+    , withSubmodule : Elm.Expression
+    , customTypeAdvanced : Elm.Expression
+    , variant0 : Elm.Expression
+    , variant1 : Elm.Expression
+    , variant2 : Elm.Expression
+    , customVariant : Elm.Expression
+    , finishCustomType : Elm.Expression
     }
 values_ =
     { fn =
@@ -2352,10 +3280,7 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "value" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "value" ]
                          , Type.function
                              [ Type.var "value" ]
                              (Type.namedWith [ "Elm" ] "Expression" [])
@@ -2378,14 +3303,8 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
                          , Type.function
                              [ Type.var "one", Type.var "two" ]
                              (Type.namedWith [ "Elm" ] "Expression" [])
@@ -2410,18 +3329,9 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "three" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
                          , Type.function
                              [ Type.var "one"
                              , Type.var "two"
@@ -2450,22 +3360,10 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "three" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "four" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "four" ]
                          , Type.function
                              [ Type.var "one"
                              , Type.var "two"
@@ -2496,26 +3394,11 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "three" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "four" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "five" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "four" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "five" ]
                          , Type.function
                              [ Type.var "one"
                              , Type.var "two"
@@ -2548,30 +3431,12 @@ values_ =
                 Just
                     (Type.function
                          [ Type.string
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "one" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "two" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "three" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "four" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "five" ]
-                         , Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "six" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "one" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "two" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "three" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "four" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "five" ]
+                         , Type.namedWith [ "Elm" ] "Arg" [ Type.var "six" ]
                          , Type.function
                              [ Type.var "one"
                              , Type.var "two"
@@ -2637,10 +3502,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.namedWith
-                             [ "Elm", "Arg" ]
-                             "Arg"
-                             [ Type.var "arg" ]
+                         [ Type.namedWith [ "Elm" ] "Arg" [ Type.var "arg" ]
                          , Type.record
                              [ ( "name", Type.string )
                              , ( "builder"
@@ -2900,6 +3762,46 @@ values_ =
                          )
                     )
             }
+    , withDocs =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "withDocs"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "Module"
+                             [ Type.var "val" ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.var "val" ]
+                         )
+                    )
+            }
+    , withTitle =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "withTitle"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "Module"
+                             [ Type.var "val" ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.var "val" ]
+                         )
+                    )
+            }
     , alias =
         Elm.value
             { importFrom = [ "Elm", "Declare" ]
@@ -2951,16 +3853,243 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.record
-                             [ ( "title", Type.string )
-                             , ( "docs", Type.string )
-                             ]
-                         , Type.namedWith
+                         [ Type.namedWith
                              [ "Elm", "Declare" ]
                              "Module"
                              [ Type.var "val" ]
                          ]
                          (Type.namedWith [ "Elm" ] "Declaration" [])
+                    )
+            }
+    , withSubmodule =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "withSubmodule"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "Module"
+                             [ Type.var "submod" ]
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "Module"
+                             [ Type.function
+                                   [ Type.var "submod" ]
+                                   (Type.var "mod")
+                             ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "Module"
+                              [ Type.var "mod" ]
+                         )
+                    )
+            }
+    , customTypeAdvanced =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "customTypeAdvanced"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.record [ ( "exposeConstructor", Type.bool ) ]
+                         , Type.var "make_"
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_", Type.var "make_" ]
+                         )
+                    )
+            }
+    , variant0 =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "variant0"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.function
+                             [ Type.var "case_" ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "CustomTypeBuilder"
+                             [ Type.var "case_"
+                             , Type.function
+                                   [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                                   (Type.var "make_")
+                             ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_", Type.var "make_" ]
+                         )
+                    )
+            }
+    , variant1 =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "variant1"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.function
+                             [ Type.var "case_"
+                             , Type.namedWith [ "Elm" ] "Expression" []
+                             ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "CustomTypeBuilder"
+                             [ Type.var "case_"
+                             , Type.function
+                                   [ Type.function
+                                       [ Type.namedWith
+                                             [ "Elm" ]
+                                             "Expression"
+                                             []
+                                       ]
+                                       (Type.namedWith [ "Elm" ] "Expression" []
+                                       )
+                                   ]
+                                   (Type.var "make_")
+                             ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_", Type.var "make_" ]
+                         )
+                    )
+            }
+    , variant2 =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "variant2"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.function
+                             [ Type.var "case_"
+                             , Type.namedWith [ "Elm" ] "Expression" []
+                             , Type.namedWith [ "Elm" ] "Expression" []
+                             ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "CustomTypeBuilder"
+                             [ Type.var "case_"
+                             , Type.function
+                                   [ Type.function
+                                       [ Type.namedWith
+                                             [ "Elm" ]
+                                             "Expression"
+                                             []
+                                       , Type.namedWith
+                                             [ "Elm" ]
+                                             "Expression"
+                                             []
+                                       ]
+                                       (Type.namedWith [ "Elm" ] "Expression" []
+                                       )
+                                   ]
+                                   (Type.var "make_")
+                             ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_", Type.var "make_" ]
+                         )
+                    )
+            }
+    , customVariant =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "customVariant"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string
+                         , Type.list
+                             (Type.namedWith
+                                [ "Elm", "Annotation" ]
+                                "Annotation"
+                                []
+                             )
+                         , Type.function
+                             [ Type.var "case_" ]
+                             (Type.var "branch")
+                         , Type.function
+                             [ Type.namedWith
+                                   [ "Elm" ]
+                                   "Arg"
+                                   [ Type.var "branch" ]
+                             ]
+                             (Type.namedWith
+                                [ "Elm" ]
+                                "Arg"
+                                [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             )
+                         , Type.function
+                             [ Type.function
+                                   [ Type.list
+                                       (Type.namedWith [ "Elm" ] "Expression" []
+                                       )
+                                   ]
+                                   (Type.namedWith [ "Elm" ] "Expression" [])
+                             , Type.var "previousMake_"
+                             ]
+                             (Type.var "make_")
+                         , Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "CustomTypeBuilder"
+                             [ Type.var "case_", Type.var "previousMake_" ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomTypeBuilder"
+                              [ Type.var "case_", Type.var "make_" ]
+                         )
+                    )
+            }
+    , finishCustomType =
+        Elm.value
+            { importFrom = [ "Elm", "Declare" ]
+            , name = "finishCustomType"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.namedWith
+                             [ "Elm", "Declare" ]
+                             "CustomTypeBuilder"
+                             [ Type.var "make_", Type.var "make_" ]
+                         ]
+                         (Type.namedWith
+                              [ "Elm", "Declare" ]
+                              "CustomType"
+                              [ Type.var "make_" ]
+                         )
                     )
             }
     }

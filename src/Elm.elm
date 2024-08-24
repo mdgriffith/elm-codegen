@@ -12,8 +12,9 @@ module Elm exposing
     , withDocumentation, group
     , expose, exposeConstructor
     , fileWith
-    , fnBuilder, fnArg, fnDone, body, Fn
-    , fn, fn2, fn3, function, functionReduced
+    , fn, fn2, fn3
+    , fnBuilder, fnArg, Arg, fnDone, body, Fn
+    , function, functionReduced
     , customType, customTypeWith, Variant, variant, variantWith
     , alias, aliasWith
     , portIncoming, portOutgoing
@@ -69,9 +70,11 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 ## Functions
 
-@docs fnBuilder, fnArg, fnDone, body, Fn
+@docs fn, fn2, fn3
 
-@docs fn, fn2, fn3, function, functionReduced
+@docs fnBuilder, fnArg, Arg, fnDone, body, Fn
+
+@docs function, functionReduced
 
 
 ## Custom Types
@@ -101,7 +104,6 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 import Dict
 import Elm.Annotation
-import Elm.Arg
 import Elm.Parser
 import Elm.Processing
 import Elm.Syntax.Declaration as Declaration
@@ -165,8 +167,14 @@ fnBuilder innerValue =
         )
 
 
+{-| Check out the `Elm.Arg` module for more information on how to create one of these.
+-}
+type alias Arg val =
+    Internal.Arg.Arg val
+
+
 {-| -}
-fnArg : Elm.Arg.Arg arg -> Fn (arg -> value) -> Fn value
+fnArg : Arg arg -> Fn (arg -> value) -> Fn value
 fnArg argument (Fn toFnDetails) =
     Fn
         (\index ->
@@ -1592,7 +1600,7 @@ Results in
 **Note** — Elm CodeGen will protect variable names if they're used in a nested `fn*` by adding a string of numbers to the end of the name. So, you may see a variable name be something like `myVariable_0_1`.
 
 -}
-fn : Elm.Arg.Arg arg -> (arg -> Expression) -> Expression
+fn : Arg arg -> (arg -> Expression) -> Expression
 fn arg1 toExpression =
     fnBuilder toExpression
         |> fnArg arg1
@@ -1757,8 +1765,8 @@ betaReduce e =
 
 {-| -}
 fn2 :
-    Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
+    Arg one
+    -> Arg two
     -> (one -> two -> Expression)
     -> Expression
 fn2 arg1 arg2 toExpression =
@@ -1770,9 +1778,9 @@ fn2 arg1 arg2 toExpression =
 
 {-| -}
 fn3 :
-    Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
+    Arg one
+    -> Arg two
+    -> Arg three
     -> (one -> two -> three -> Expression)
     -> Expression
 fn3 arg1 arg2 arg3 toExpression =

@@ -29,6 +29,8 @@ module Gen.Elm.Annotation exposing
     )
 
 {-|
+# Generated bindings for Elm.Annotation
+
 @docs moduleName_, var, bool, int, float, string, char, unit, cmd, sub, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, alias, function, toString, annotation_, call_, values_
 -}
 

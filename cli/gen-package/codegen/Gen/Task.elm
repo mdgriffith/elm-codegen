@@ -19,6 +19,8 @@ module Gen.Task exposing
     )
 
 {-|
+# Generated bindings for Task
+
 @docs moduleName_, perform, attempt, andThen, succeed, fail, sequence, map, map2, map3, map4, map5, onError, mapError, annotation_, call_, values_
 -}
 

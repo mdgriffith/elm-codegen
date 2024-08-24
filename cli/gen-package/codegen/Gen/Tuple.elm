@@ -11,6 +11,8 @@ module Gen.Tuple exposing
     )
 
 {-|
+# Generated bindings for Tuple
+
 @docs moduleName_, pair, first, second, mapFirst, mapSecond, mapBoth, call_, values_
 -}
 

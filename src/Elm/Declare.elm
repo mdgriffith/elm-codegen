@@ -362,7 +362,7 @@ variant1 :
     -> CustomTypeBuilder case_ make_
 variant1 name type0 toBranch custom =
     let
-        args : Elm.Arg.Arg (Expression -> Expression) -> Elm.Arg.Arg Expression
+        args : Elm.Arg (Expression -> Expression) -> Elm.Arg Expression
         args record =
             record
                 |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
@@ -384,7 +384,7 @@ variant2 :
     -> CustomTypeBuilder case_ make_
 variant2 name type0 type1 toBranch custom =
     let
-        args : Elm.Arg.Arg (Expression -> Expression -> Expression) -> Elm.Arg.Arg Expression
+        args : Elm.Arg (Expression -> Expression -> Expression) -> Elm.Arg Expression
         args record =
             record
                 |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
@@ -401,7 +401,7 @@ standardVariant :
     String
     -> List Elm.Annotation.Annotation
     -> (case_ -> branch)
-    -> (Elm.Arg.Arg branch -> Elm.Arg.Arg Expression)
+    -> (Elm.Arg branch -> Elm.Arg Expression)
     -> ((List Expression -> Expression) -> branch)
     -> CustomTypeBuilder case_ (branch -> make_)
     -> CustomTypeBuilder case_ make_
@@ -414,7 +414,7 @@ customVariant :
     String
     -> List Elm.Annotation.Annotation
     -> (case_ -> branch)
-    -> (Elm.Arg.Arg branch -> Elm.Arg.Arg Expression)
+    -> (Elm.Arg branch -> Elm.Arg Expression)
     -> ((List Expression -> Expression) -> previousMake_ -> make_)
     -> CustomTypeBuilder case_ previousMake_
     -> CustomTypeBuilder case_ make_
@@ -507,7 +507,7 @@ withUnexposed { declaration } mod =
 {-| -}
 fn :
     String
-    -> Elm.Arg.Arg value
+    -> Elm.Arg value
     -> (value -> Expression)
     -> Function (Expression -> Expression)
 fn name one toExp =
@@ -519,8 +519,8 @@ fn name one toExp =
 {-| -}
 fn2 :
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
+    -> Elm.Arg one
+    -> Elm.Arg two
     -> (one -> two -> Expression)
     -> Function (Expression -> Expression -> Expression)
 fn2 name one two toExp =
@@ -533,9 +533,9 @@ fn2 name one two toExp =
 {-| -}
 fn3 :
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
     -> (one -> two -> three -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression)
 fn3 name one two three toExp =
@@ -549,10 +549,10 @@ fn3 name one two three toExp =
 {-| -}
 fn4 :
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
-    -> Elm.Arg.Arg four
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
+    -> Elm.Arg four
     -> (one -> two -> three -> four -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression)
 fn4 name one two three four toExp =
@@ -567,11 +567,11 @@ fn4 name one two three four toExp =
 {-| -}
 fn5 :
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
-    -> Elm.Arg.Arg four
-    -> Elm.Arg.Arg five
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
+    -> Elm.Arg four
+    -> Elm.Arg five
     -> (one -> two -> three -> four -> five -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn5 name one two three four five toExp =
@@ -587,12 +587,12 @@ fn5 name one two three four five toExp =
 {-| -}
 fn6 :
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
-    -> Elm.Arg.Arg four
-    -> Elm.Arg.Arg five
-    -> Elm.Arg.Arg six
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
+    -> Elm.Arg four
+    -> Elm.Arg five
+    -> Elm.Arg six
     -> (one -> two -> three -> four -> five -> six -> Expression)
     -> Function (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
 fn6 name one two three four five six toExp =
@@ -624,7 +624,7 @@ fnBuilder name fun =
 
 {-| -}
 fnArg :
-    Elm.Arg.Arg arg
+    Elm.Arg arg
     ->
         { name : String
         , builder : Elm.Fn (arg -> value)

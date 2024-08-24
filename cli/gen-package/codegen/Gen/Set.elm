@@ -23,6 +23,8 @@ module Gen.Set exposing
     )
 
 {-|
+# Generated bindings for Set
+
 @docs moduleName_, empty, singleton, insert, remove, isEmpty, member, size, union, intersect, diff, toList, fromList, map, foldl, foldr, filter, partition, annotation_, call_, values_
 -}
 

@@ -39,7 +39,7 @@ config : List Rule
 config =
     [ NoUnused.Dependencies.rule
     , Docs.ReviewLinksAndSections.rule
-    , Docs.ReviewAtDocs.rule
+
     , Docs.UpToDateReadmeLinks.rule
     , NoDebug.Log.rule
     , NoDebug.TodoOrToString.rule

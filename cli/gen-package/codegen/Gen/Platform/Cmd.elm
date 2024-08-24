@@ -9,6 +9,8 @@ module Gen.Platform.Cmd exposing
     )
 
 {-|
+# Generated bindings for Cmd
+
 @docs moduleName_, none, batch, map, annotation_, call_, values_
 -}
 

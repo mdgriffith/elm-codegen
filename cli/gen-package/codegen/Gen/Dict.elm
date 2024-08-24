@@ -28,6 +28,8 @@ module Gen.Dict exposing
     )
 
 {-|
+# Generated bindings for Dict
+
 @docs moduleName_, empty, singleton, insert, update, remove, isEmpty, member, get, size, keys, values, toList, fromList, map, foldl, foldr, filter, partition, union, intersect, diff, merge, annotation_, call_, values_
 -}
 

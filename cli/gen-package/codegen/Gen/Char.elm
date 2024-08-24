@@ -19,6 +19,8 @@ module Gen.Char exposing
     )
 
 {-|
+# Generated bindings for Char
+
 @docs moduleName_, isUpper, isLower, isAlpha, isAlphaNum, isDigit, isOctDigit, isHexDigit, toUpper, toLower, toLocaleUpper, toLocaleLower, toCode, fromCode, annotation_, call_, values_
 -}
 

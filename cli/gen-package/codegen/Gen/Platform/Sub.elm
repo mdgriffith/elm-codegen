@@ -9,6 +9,8 @@ module Gen.Platform.Sub exposing
     )
 
 {-|
+# Generated bindings for Sub
+
 @docs moduleName_, none, batch, map, annotation_, call_, values_
 -}
 

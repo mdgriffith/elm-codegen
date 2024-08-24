@@ -15,6 +15,8 @@ module Gen.Maybe exposing
     )
 
 {-|
+# Generated bindings for Maybe
+
 @docs moduleName_, withDefault, map, map2, map3, map4, map5, andThen, annotation_, make_, caseOf_, call_, values_
 -}
 

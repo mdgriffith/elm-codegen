@@ -11,6 +11,8 @@ module Gen.Elm.ToString exposing
     )
 
 {-|
+# Generated bindings for Elm.ToString
+
 @docs moduleName_, expression, annotation, declaration, expressionWith, annotationWith, declarationWith, call_, values_
 -}
 

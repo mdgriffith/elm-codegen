@@ -139,7 +139,6 @@ will generate
 -}
 
 import Elm exposing (Expression)
-import Elm.Arg
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
@@ -175,7 +174,7 @@ letIn return =
 
 
 {-| -}
-unpack : Elm.Arg.Arg arg -> Expression -> Let (arg -> b) -> Let b
+unpack : Elm.Arg arg -> Expression -> Let (arg -> b) -> Let b
 unpack argument bodyExpression (Let toLetScope) =
     Let
         (\index ->
@@ -292,7 +291,7 @@ value desiredName valueExpr sourceLet =
 {-| -}
 fn :
     String
-    -> Elm.Arg.Arg arg
+    -> Elm.Arg arg
     -> (arg -> Expression)
     -> Let ((Expression -> Expression) -> a)
     -> Let a
@@ -353,8 +352,8 @@ fn desiredName arg toInnerFn sourceLet =
 {-| -}
 fn2 :
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
+    -> Elm.Arg one
+    -> Elm.Arg two
     -> (one -> two -> Expression)
     -> Let ((Expression -> Expression -> Expression) -> a)
     -> Let a
@@ -419,9 +418,9 @@ fn2 desiredName argOne argTwo toInnerFn sourceLet =
 {-| -}
 fn3 :
     String
-    -> Elm.Arg.Arg one
-    -> Elm.Arg.Arg two
-    -> Elm.Arg.Arg three
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
     -> (one -> two -> three -> Expression)
     -> Let ((Expression -> Expression -> Expression -> Expression) -> a)
     -> Let a

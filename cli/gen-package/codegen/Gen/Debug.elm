@@ -8,6 +8,8 @@ module Gen.Debug exposing
     )
 
 {-|
+# Generated bindings for Debug
+
 @docs moduleName_, toString, log, todo, call_, values_
 -}
 

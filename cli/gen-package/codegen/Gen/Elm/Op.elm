@@ -28,6 +28,8 @@ module Gen.Elm.Op exposing
     )
 
 {-|
+# Generated bindings for Elm.Op
+
 @docs moduleName_, equal, notEqual, and, or, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, pipe, pipeLeft, parens, keep, skip, slash, query, call_, values_
 -}
 
