@@ -5,7 +5,7 @@ module Internal.Arg exposing
     , triple, tuple
     , char, string
     , customType
-    , item, list, listRemaining, record, field
+    , item, items, list, listRemaining, record, field
     , ignore, unit
     )
 
@@ -23,7 +23,7 @@ module Internal.Arg exposing
 
 @docs customType
 
-@docs item, list, listRemaining, record, field
+@docs item, items, list, listRemaining, record, field
 
 @docs ignore, unit
 
@@ -622,6 +622,65 @@ item (Arg itemArg) (Arg arg) =
             , index = Index.next itemDetails.index
             , value =
                 toSequence.value itemDetails.value
+            }
+        )
+
+
+items : List (Arg arg) -> Arg (List arg -> a) -> Arg a
+items itemsArgs (Arg arg) =
+    Arg
+        (\index ->
+            let
+                toSequence =
+                    arg index
+
+                ( itemsDetails, lastIndex ) =
+                    List.foldr
+                        (\(Arg itemArg) ( dacc, iacc ) ->
+                            let
+                                itemDetails =
+                                    itemArg iacc
+                            in
+                            ( itemDetails :: dacc, itemDetails.index )
+                        )
+                        ( [], toSequence.index )
+                        itemsArgs
+
+                details =
+                    toSequence
+                        |> .details
+
+                newAnnotation =
+                    Result.map
+                        (\ann ->
+                            { type_ =
+                                ann.type_
+                            , inferences = ann.inferences
+                            , aliases = ann.aliases
+                            }
+                        )
+                        details.annotation
+
+                imports =
+                    details.imports
+            in
+            { details =
+                { imports = imports
+                , pattern =
+                    case Compiler.denode details.pattern of
+                        Pattern.ListPattern listItems ->
+                            Compiler.nodify (Pattern.ListPattern (listItems ++ List.map (\itemDetails -> itemDetails.details.pattern) itemsDetails))
+
+                        Pattern.NamedPattern base variantItems ->
+                            Compiler.nodify (Pattern.NamedPattern base (variantItems ++ List.map (\itemDetails -> itemDetails.details.pattern) itemsDetails))
+
+                        _ ->
+                            details.pattern
+                , annotation = newAnnotation
+                }
+            , index = Index.next lastIndex
+            , value =
+                toSequence.value (List.map .value itemsDetails)
             }
         )
 
