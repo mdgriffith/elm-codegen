@@ -1,4 +1,4 @@
-module Case exposing (..)
+module Case exposing (elmCaseString)
 
 import Elm
 import Elm.Case
