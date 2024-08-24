@@ -2058,7 +2058,24 @@ exposeConstructor =
     Compiler.exposeConstructor
 
 
-{-| Group declarations under a title together in the doc comment at the top of the generated module.
+{-| Group declarations under a title in the doc comment at the top of the generated module.
+
+This will also add a `@docs` tag to the module doc comment for any exposed functions in the group.
+
+    Elm.group
+        { title = "MyGroup"
+        , docs = "This is a group of functions that do things"
+        }
+        [ myFunction, myOtherFunction ]
+
+Will create the following module doc comment:
+
+    ## My Group
+
+    This is a group of functions that do things
+
+    @docs myFunction, myOtherFunction
+
 -}
 group : { title : String, docs : String } -> List Declaration -> Declaration
 group options decls =
