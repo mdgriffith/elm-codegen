@@ -11,6 +11,7 @@ module Gen.Elm exposing
     , customType
     , customTypeWith
     , declaration
+    , docs
     , expose
     , exposeConstructor
     , file
@@ -60,7 +61,7 @@ module Gen.Elm exposing
 {-|
 # Generated bindings for Elm
 
-@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, declaration, withDocumentation, group, expose, exposeConstructor, fileWith, fn, fn2, fn3, fnBuilder, fnArg, fnDone, body, function, functionReduced, customType, customTypeWith, variant, variantWith, alias, aliasWith, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
+@docs moduleName_, file, toString, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, get, updateRecord, ifThen, comment, docs, declaration, withDocumentation, group, expose, exposeConstructor, fileWith, fn, fn2, fn3, fnBuilder, fnArg, fnDone, body, function, functionReduced, customType, customTypeWith, variant, variantWith, alias, aliasWith, portIncoming, portOutgoing, parse, unsafe, apply, val, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 
 
@@ -563,6 +564,27 @@ comment commentArg_ =
         [ Elm.string commentArg_ ]
 
 
+{-| This will include some markdown in the module doc comment.
+
+docs: String -> Elm.Declaration
+-}
+docs : String -> Elm.Expression
+docs docsArg_ =
+    Elm.apply
+        (Elm.value
+             { importFrom = [ "Elm" ]
+             , name = "docs"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string ]
+                          (Type.namedWith [ "Elm" ] "Declaration" [])
+                     )
+             }
+        )
+        [ Elm.string docsArg_ ]
+
+
 {-| declaration: String -> Elm.Expression -> Elm.Declaration -}
 declaration : String -> Elm.Expression -> Elm.Expression
 declaration declarationArg_ declarationArg_0 =
@@ -606,29 +628,23 @@ withDocumentation withDocumentationArg_ withDocumentationArg_0 =
         [ Elm.string withDocumentationArg_, withDocumentationArg_0 ]
 
 
-{-| Group declarations under a title in the doc comment at the top of the generated module.
+{-| Group declarations in a module.
 
-This will also add a `@docs` tag to the module doc comment for any exposed functions in the group.
+This will add a `@docs` tag to the module doc comment for any exposed functions in the group.
 
     Elm.group
-        { title = "MyGroup"
-        , docs = "This is a group of functions that do things"
-        }
-        [ myFunction, myOtherFunction ]
+        [ myFunction
+        , myOtherFunction
+        ]
 
 Will create the following module doc comment:
 
-    ## My Group
-
-    This is a group of functions that do things
-
     @docs myFunction, myOtherFunction
 
-group: { title : String, docs : String } -> List Elm.Declaration -> Elm.Declaration
+group: List Elm.Declaration -> Elm.Declaration
 -}
-group :
-    { title : String, docs : String } -> List Elm.Expression -> Elm.Expression
-group groupArg_ groupArg_0 =
+group : List Elm.Expression -> Elm.Expression
+group groupArg_ =
     Elm.apply
         (Elm.value
              { importFrom = [ "Elm" ]
@@ -636,23 +652,14 @@ group groupArg_ groupArg_0 =
              , annotation =
                  Just
                      (Type.function
-                          [ Type.record
-                              [ ( "title", Type.string )
-                              , ( "docs", Type.string )
-                              ]
-                          , Type.list
+                          [ Type.list
                               (Type.namedWith [ "Elm" ] "Declaration" [])
                           ]
                           (Type.namedWith [ "Elm" ] "Declaration" [])
                      )
              }
         )
-        [ Elm.record
-            [ Tuple.pair "title" (Elm.string groupArg_.title)
-            , Tuple.pair "docs" (Elm.string groupArg_.docs)
-            ]
-        , Elm.list groupArg_0
-        ]
+        [ Elm.list groupArg_ ]
 
 
 {-| By default, everything is exposed for your module.
@@ -1748,9 +1755,10 @@ call_ :
     , ifThen :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , comment : Elm.Expression -> Elm.Expression
+    , docs : Elm.Expression -> Elm.Expression
     , declaration : Elm.Expression -> Elm.Expression -> Elm.Expression
     , withDocumentation : Elm.Expression -> Elm.Expression -> Elm.Expression
-    , group : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , group : Elm.Expression -> Elm.Expression
     , expose : Elm.Expression -> Elm.Expression
     , exposeConstructor : Elm.Expression -> Elm.Expression
     , fileWith :
@@ -2116,6 +2124,21 @@ call_ =
                      }
                 )
                 [ commentArg_ ]
+    , docs =
+        \docsArg_ ->
+            Elm.apply
+                (Elm.value
+                     { importFrom = [ "Elm" ]
+                     , name = "docs"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.namedWith [ "Elm" ] "Declaration" [])
+                             )
+                     }
+                )
+                [ docsArg_ ]
     , declaration =
         \declarationArg_ declarationArg_0 ->
             Elm.apply
@@ -2151,7 +2174,7 @@ call_ =
                 )
                 [ withDocumentationArg_, withDocumentationArg_0 ]
     , group =
-        \groupArg_ groupArg_0 ->
+        \groupArg_ ->
             Elm.apply
                 (Elm.value
                      { importFrom = [ "Elm" ]
@@ -2159,11 +2182,7 @@ call_ =
                      , annotation =
                          Just
                              (Type.function
-                                  [ Type.record
-                                      [ ( "title", Type.string )
-                                      , ( "docs", Type.string )
-                                      ]
-                                  , Type.list
+                                  [ Type.list
                                       (Type.namedWith [ "Elm" ] "Declaration" []
                                       )
                                   ]
@@ -2171,7 +2190,7 @@ call_ =
                              )
                      }
                 )
-                [ groupArg_, groupArg_0 ]
+                [ groupArg_ ]
     , expose =
         \exposeArg_ ->
             Elm.apply
@@ -2778,6 +2797,7 @@ values_ :
     , updateRecord : Elm.Expression
     , ifThen : Elm.Expression
     , comment : Elm.Expression
+    , docs : Elm.Expression
     , declaration : Elm.Expression
     , withDocumentation : Elm.Expression
     , group : Elm.Expression
@@ -3061,6 +3081,17 @@ values_ =
                          (Type.namedWith [ "Elm" ] "Declaration" [])
                     )
             }
+    , docs =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "docs"
+            , annotation =
+                Just
+                    (Type.function
+                         [ Type.string ]
+                         (Type.namedWith [ "Elm" ] "Declaration" [])
+                    )
+            }
     , declaration =
         Elm.value
             { importFrom = [ "Elm" ]
@@ -3094,11 +3125,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                         [ Type.record
-                             [ ( "title", Type.string )
-                             , ( "docs", Type.string )
-                             ]
-                         , Type.list (Type.namedWith [ "Elm" ] "Declaration" [])
+                         [ Type.list (Type.namedWith [ "Elm" ] "Declaration" [])
                          ]
                          (Type.namedWith [ "Elm" ] "Declaration" [])
                     )

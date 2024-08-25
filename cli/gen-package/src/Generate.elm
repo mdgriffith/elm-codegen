@@ -129,7 +129,7 @@ moduleToFile docs =
     in
     Elm.fileWith modName
         { docs =
-           "\n# Generated bindings for " ++ String.join "." sourceModName
+           "# Generated bindings for " ++ String.join "." sourceModName
         , aliases =
             [ ( [ "Elm", "Annotation" ], "Type" )
             ]
