@@ -3,8 +3,7 @@ module Elm.Expect exposing (declarationAs, equal, fileContentAs, importAs, rende
 import Elm
 import Elm.ToString
 import Expect exposing (Expectation)
-import Internal.Compiler as Compiler
-import Internal.Index as Index
+import String.Multiline
 
 
 renderedAs : Elm.Expression -> String -> Expectation
@@ -13,7 +12,7 @@ renderedAs expression str =
         |> .body
     )
         |> Expect.equal
-            (String.trim str)
+            (String.Multiline.here str)
 
 
 importAs : Elm.Expression -> String -> Expectation
@@ -22,17 +21,17 @@ importAs expression str =
         (Elm.ToString.expression expression
             |> .imports
         )
-        (String.trim str)
+        (String.Multiline.here str)
 
 
 declarationAs : Elm.Declaration -> String -> Expectation
 declarationAs decl str =
     Expect.equal
         (Elm.ToString.declaration decl
-            |> .body
-            |> String.trim
+            |> List.map (\{ body } -> String.trim body)
+            |> String.join "\n\n"
         )
-        (String.trim str)
+        (String.Multiline.here str)
 
 
 fileContentAs : Elm.File -> String -> Expectation
@@ -42,25 +41,7 @@ fileContentAs file str =
             |> .contents
             |> String.trim
         )
-        (String.trim str)
-
-
-infersType : Elm.Expression -> Expectation
-infersType expression =
-    let
-        ( _, details ) =
-            Compiler.toExpressionDetails Index.startIndex expression
-    in
-    case details.annotation of
-        Ok _ ->
-            Expect.pass
-
-        Err errs ->
-            Expect.fail
-                ("Failed to typecheck"
-                    ++ String.join "\n"
-                        (List.map Compiler.inferenceErrorToString errs)
-                )
+        (String.Multiline.here str)
 
 
 equal : Elm.Expression -> Elm.Expression -> Expectation

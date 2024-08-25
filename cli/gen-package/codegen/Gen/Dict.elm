@@ -1,6 +1,35 @@
-module Gen.Dict exposing (annotation_, call_, diff, empty, filter, foldl, foldr, fromList, get, insert, intersect, isEmpty, keys, map, member, merge, moduleName_, partition, remove, singleton, size, toList, union, update, values, values_)
+module Gen.Dict exposing
+    ( annotation_
+    , call_
+    , diff
+    , empty
+    , filter
+    , foldl
+    , foldr
+    , fromList
+    , get
+    , insert
+    , intersect
+    , isEmpty
+    , keys
+    , map
+    , member
+    , merge
+    , moduleName_
+    , partition
+    , remove
+    , singleton
+    , size
+    , toList
+    , union
+    , update
+    , values
+    , values_
+    )
 
-{-| 
+{-|
+# Generated bindings for Dict
+
 @docs moduleName_, empty, singleton, insert, update, remove, isEmpty, member, get, size, keys, values, toList, fromList, map, foldl, foldr, filter, partition, union, intersect, diff, merge, annotation_, call_, values_
 -}
 
@@ -36,24 +65,24 @@ empty =
 singleton: comparable -> v -> Dict.Dict comparable v
 -}
 singleton : Elm.Expression -> Elm.Expression -> Elm.Expression
-singleton singletonArg singletonArg0 =
+singleton singletonArg_ singletonArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "singleton"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable", Type.var "v" ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "singleton"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "comparable", Type.var "v" ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
-        [ singletonArg, singletonArg0 ]
+        [ singletonArg_, singletonArg_0 ]
 
 
 {-| Insert a key-value pair into a dictionary. Replaces value when there is
@@ -62,30 +91,30 @@ a collision.
 insert: comparable -> v -> Dict.Dict comparable v -> Dict.Dict comparable v
 -}
 insert : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-insert insertArg insertArg0 insertArg1 =
+insert insertArg_ insertArg_0 insertArg_1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "insert"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.var "v"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "insert"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "comparable"
+                          , Type.var "v"
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
-        [ insertArg, insertArg0, insertArg1 ]
+        [ insertArg_, insertArg_0, insertArg_1 ]
 
 
 {-| Update the value of a dictionary for a specific key with a given function.
@@ -101,32 +130,35 @@ update :
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-update updateArg updateArg0 updateArg1 =
+update updateArg_ updateArg_0 updateArg_1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "update"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.function
-                            [ Type.maybe (Type.var "v") ]
-                            (Type.maybe (Type.var "v"))
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "update"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "comparable"
+                          , Type.function
+                              [ Type.maybe (Type.var "v") ]
+                              (Type.maybe (Type.var "v"))
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
-        [ updateArg, Elm.functionReduced "updateUnpack" updateArg0, updateArg1 ]
+        [ updateArg_
+        , Elm.functionReduced "updateUnpack" updateArg_0
+        , updateArg_1
+        ]
 
 
 {-| Remove a key-value pair from a dictionary. If the key is not found,
@@ -135,29 +167,29 @@ no changes are made.
 remove: comparable -> Dict.Dict comparable v -> Dict.Dict comparable v
 -}
 remove : Elm.Expression -> Elm.Expression -> Elm.Expression
-remove removeArg removeArg0 =
+remove removeArg_ removeArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "remove"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "remove"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "comparable"
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
-        [ removeArg, removeArg0 ]
+        [ removeArg_, removeArg_0 ]
 
 
 {-| Determine if a dictionary is empty.
@@ -167,24 +199,24 @@ remove removeArg removeArg0 =
 isEmpty: Dict.Dict k v -> Bool
 -}
 isEmpty : Elm.Expression -> Elm.Expression
-isEmpty isEmptyArg =
+isEmpty isEmptyArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "isEmpty"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        Type.bool
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "isEmpty"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "v" ]
+                          ]
+                          Type.bool
+                     )
+             }
         )
-        [ isEmptyArg ]
+        [ isEmptyArg_ ]
 
 
 {-| Determine if a key is in a dictionary.
@@ -192,25 +224,25 @@ isEmpty isEmptyArg =
 member: comparable -> Dict.Dict comparable v -> Bool
 -}
 member : Elm.Expression -> Elm.Expression -> Elm.Expression
-member memberArg memberArg0 =
+member memberArg_ memberArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "member"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        Type.bool
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "member"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "comparable"
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          Type.bool
+                     )
+             }
         )
-        [ memberArg, memberArg0 ]
+        [ memberArg_, memberArg_0 ]
 
 
 {-| Get the value associated with a key. If the key is not found, return
@@ -226,25 +258,25 @@ dictionary.
 get: comparable -> Dict.Dict comparable v -> Maybe v
 -}
 get : Elm.Expression -> Elm.Expression -> Elm.Expression
-get getArg getArg0 =
+get getArg_ getArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "get"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.maybe (Type.var "v"))
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "get"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.var "comparable"
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.maybe (Type.var "v"))
+                     )
+             }
         )
-        [ getArg, getArg0 ]
+        [ getArg_, getArg_0 ]
 
 
 {-| Determine the number of key-value pairs in the dictionary.
@@ -252,24 +284,24 @@ get getArg getArg0 =
 size: Dict.Dict k v -> Int
 -}
 size : Elm.Expression -> Elm.Expression
-size sizeArg =
+size sizeArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "size"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        Type.int
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "size"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "v" ]
+                          ]
+                          Type.int
+                     )
+             }
         )
-        [ sizeArg ]
+        [ sizeArg_ ]
 
 
 {-| Get all of the keys in a dictionary, sorted from lowest to highest.
@@ -279,24 +311,24 @@ size sizeArg =
 keys: Dict.Dict k v -> List k
 -}
 keys : Elm.Expression -> Elm.Expression
-keys keysArg =
+keys keysArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "keys"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.list (Type.var "k"))
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "keys"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "v" ]
+                          ]
+                          (Type.list (Type.var "k"))
+                     )
+             }
         )
-        [ keysArg ]
+        [ keysArg_ ]
 
 
 {-| Get all of the values in a dictionary, in the order of their keys.
@@ -306,24 +338,24 @@ keys keysArg =
 values: Dict.Dict k v -> List v
 -}
 values : Elm.Expression -> Elm.Expression
-values valuesArg =
+values valuesArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "values"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.list (Type.var "v"))
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "values"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "v" ]
+                          ]
+                          (Type.list (Type.var "v"))
+                     )
+             }
         )
-        [ valuesArg ]
+        [ valuesArg_ ]
 
 
 {-| Convert a dictionary into an association list of key-value pairs, sorted by keys.
@@ -331,24 +363,24 @@ values valuesArg =
 toList: Dict.Dict k v -> List ( k, v )
 -}
 toList : Elm.Expression -> Elm.Expression
-toList toListArg =
+toList toListArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "toList"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.list (Type.tuple (Type.var "k") (Type.var "v")))
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "toList"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "v" ]
+                          ]
+                          (Type.list (Type.tuple (Type.var "k") (Type.var "v")))
+                     )
+             }
         )
-        [ toListArg ]
+        [ toListArg_ ]
 
 
 {-| Convert an association list into a dictionary.
@@ -356,26 +388,27 @@ toList toListArg =
 fromList: List ( comparable, v ) -> Dict.Dict comparable v
 -}
 fromList : List Elm.Expression -> Elm.Expression
-fromList fromListArg =
+fromList fromListArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "fromList"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list
-                            (Type.tuple (Type.var "comparable") (Type.var "v"))
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "fromList"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list
+                              (Type.tuple (Type.var "comparable") (Type.var "v")
+                              )
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
-        [ Elm.list fromListArg ]
+        [ Elm.list fromListArg_ ]
 
 
 {-| Apply a function to all values in a dictionary.
@@ -386,36 +419,36 @@ map :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-map mapArg mapArg0 =
+map mapArg_ mapArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "k", Type.var "a" ]
-                            (Type.var "b")
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "b" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "map"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "k", Type.var "a" ]
+                              (Type.var "b")
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "a" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "k", Type.var "b" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced
             "mapUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced "unpack" (mapArg functionReducedUnpack)
+               Elm.functionReduced "unpack" (mapArg_ functionReducedUnpack)
             )
-        , mapArg0
+        , mapArg_0
         ]
 
 
@@ -440,42 +473,42 @@ foldl :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldl foldlArg foldlArg0 foldlArg1 =
+foldl foldlArg_ foldlArg_0 foldlArg_1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "foldl"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "k", Type.var "v", Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.var "b")
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "foldl"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "k", Type.var "v", Type.var "b" ]
+                              (Type.var "b")
+                          , Type.var "b"
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "v" ]
+                          ]
+                          (Type.var "b")
+                     )
+             }
         )
         [ Elm.functionReduced
             "foldlUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (foldlArg functionReducedUnpack
-                                functionReducedUnpack0
+                            ((foldlArg_ functionReducedUnpack)
+                                 functionReducedUnpack0
                             )
-                    )
+                   )
             )
-        , foldlArg0
-        , foldlArg1
+        , foldlArg_0
+        , foldlArg_1
         ]
 
 
@@ -500,42 +533,42 @@ foldr :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldr foldrArg foldrArg0 foldrArg1 =
+foldr foldrArg_ foldrArg_0 foldrArg_1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "foldr"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "k", Type.var "v", Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.var "b")
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "foldr"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "k", Type.var "v", Type.var "b" ]
+                              (Type.var "b")
+                          , Type.var "b"
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "v" ]
+                          ]
+                          (Type.var "b")
+                     )
+             }
         )
         [ Elm.functionReduced
             "foldrUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (foldrArg functionReducedUnpack
-                                functionReducedUnpack0
+                            ((foldrArg_ functionReducedUnpack)
+                                 functionReducedUnpack0
                             )
-                    )
+                   )
             )
-        , foldrArg0
-        , foldrArg1
+        , foldrArg_0
+        , foldrArg_1
         ]
 
 
@@ -547,36 +580,36 @@ filter :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-filter filterArg filterArg0 =
+filter filterArg_ filterArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "filter"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "comparable", Type.var "v" ]
-                            Type.bool
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "filter"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "comparable", Type.var "v" ]
+                              Type.bool
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced
             "filterUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced "unpack" (filterArg functionReducedUnpack)
+               Elm.functionReduced "unpack" (filterArg_ functionReducedUnpack)
             )
-        , filterArg0
+        , filterArg_0
         ]
 
 
@@ -593,45 +626,45 @@ partition :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-partition partitionArg partitionArg0 =
+partition partitionArg_ partitionArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "partition"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "comparable", Type.var "v" ]
-                            Type.bool
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.tuple
-                            (Type.namedWith
-                                [ "Dict" ]
-                                "Dict"
-                                [ Type.var "comparable", Type.var "v" ]
-                            )
-                            (Type.namedWith
-                                [ "Dict" ]
-                                "Dict"
-                                [ Type.var "comparable", Type.var "v" ]
-                            )
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "partition"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "comparable", Type.var "v" ]
+                              Type.bool
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.tuple
+                               (Type.namedWith
+                                    [ "Dict" ]
+                                    "Dict"
+                                    [ Type.var "comparable", Type.var "v" ]
+                               )
+                               (Type.namedWith
+                                    [ "Dict" ]
+                                    "Dict"
+                                    [ Type.var "comparable", Type.var "v" ]
+                               )
+                          )
+                     )
+             }
         )
         [ Elm.functionReduced
             "partitionUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (partitionArg functionReducedUnpack)
+               Elm.functionReduced
+                   "unpack"
+                   (partitionArg_ functionReducedUnpack)
             )
-        , partitionArg0
+        , partitionArg_0
         ]
 
 
@@ -641,32 +674,32 @@ to the first dictionary.
 union: Dict.Dict comparable v -> Dict.Dict comparable v -> Dict.Dict comparable v
 -}
 union : Elm.Expression -> Elm.Expression -> Elm.Expression
-union unionArg unionArg0 =
+union unionArg_ unionArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "union"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "union"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
-        [ unionArg, unionArg0 ]
+        [ unionArg_, unionArg_0 ]
 
 
 {-| Keep a key-value pair when its key appears in the second dictionary.
@@ -675,32 +708,32 @@ Preference is given to values in the first dictionary.
 intersect: Dict.Dict comparable v -> Dict.Dict comparable v -> Dict.Dict comparable v
 -}
 intersect : Elm.Expression -> Elm.Expression -> Elm.Expression
-intersect intersectArg intersectArg0 =
+intersect intersectArg_ intersectArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "intersect"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "intersect"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "v" ]
+                          )
+                     )
+             }
         )
-        [ intersectArg, intersectArg0 ]
+        [ intersectArg_, intersectArg_0 ]
 
 
 {-| Keep a key-value pair when its key does not appear in the second dictionary.
@@ -708,32 +741,32 @@ intersect intersectArg intersectArg0 =
 diff: Dict.Dict comparable a -> Dict.Dict comparable b -> Dict.Dict comparable a
 -}
 diff : Elm.Expression -> Elm.Expression -> Elm.Expression
-diff diffArg diffArg0 =
+diff diffArg_ diffArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "diff"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "b" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "a" ]
-                        )
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "diff"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "a" ]
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "b" ]
+                          ]
+                          (Type.namedWith
+                               [ "Dict" ]
+                               "Dict"
+                               [ Type.var "comparable", Type.var "a" ]
+                          )
+                     )
+             }
         )
-        [ diffArg, diffArg0 ]
+        [ diffArg_, diffArg_0 ]
 
 
 {-| The most general way of combining two dictionaries. You provide three
@@ -767,94 +800,95 @@ merge :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-merge mergeArg mergeArg0 mergeArg1 mergeArg2 mergeArg3 mergeArg4 =
+merge mergeArg_ mergeArg_0 mergeArg_1 mergeArg_2 mergeArg_3 mergeArg_4 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Dict" ]
-            , name = "merge"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "comparable"
-                            , Type.var "a"
-                            , Type.var "result"
-                            ]
-                            (Type.var "result")
-                        , Type.function
-                            [ Type.var "comparable"
-                            , Type.var "a"
-                            , Type.var "b"
-                            , Type.var "result"
-                            ]
-                            (Type.var "result")
-                        , Type.function
-                            [ Type.var "comparable"
-                            , Type.var "b"
-                            , Type.var "result"
-                            ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "b" ]
-                        , Type.var "result"
-                        ]
-                        (Type.var "result")
-                    )
-            }
+             { importFrom = [ "Dict" ]
+             , name = "merge"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function
+                              [ Type.var "comparable"
+                              , Type.var "a"
+                              , Type.var "result"
+                              ]
+                              (Type.var "result")
+                          , Type.function
+                              [ Type.var "comparable"
+                              , Type.var "a"
+                              , Type.var "b"
+                              , Type.var "result"
+                              ]
+                              (Type.var "result")
+                          , Type.function
+                              [ Type.var "comparable"
+                              , Type.var "b"
+                              , Type.var "result"
+                              ]
+                              (Type.var "result")
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "a" ]
+                          , Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "b" ]
+                          , Type.var "result"
+                          ]
+                          (Type.var "result")
+                     )
+             }
         )
         [ Elm.functionReduced
             "mergeUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (mergeArg functionReducedUnpack
-                                functionReducedUnpack0
+                            ((mergeArg_ functionReducedUnpack)
+                                 functionReducedUnpack0
                             )
-                    )
+                   )
             )
         , Elm.functionReduced
             "mergeUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
                             (\functionReducedUnpack_2_1_2_0_2_1_2_0_0 ->
-                                Elm.functionReduced
-                                    "unpack"
-                                    (mergeArg0 functionReducedUnpack
-                                         functionReducedUnpack0
-                                        functionReducedUnpack_2_1_2_0_2_1_2_0_0
-                                    )
+                                 Elm.functionReduced
+                                     "unpack"
+                                     (((mergeArg_0 functionReducedUnpack)
+                                           functionReducedUnpack0
+                                      )
+                                          functionReducedUnpack_2_1_2_0_2_1_2_0_0
+                                     )
                             )
-                    )
+                   )
             )
         , Elm.functionReduced
             "mergeUnpack"
             (\functionReducedUnpack ->
-                Elm.functionReduced
-                    "unpack"
-                    (\functionReducedUnpack0 ->
+               Elm.functionReduced
+                   "unpack"
+                   (\functionReducedUnpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (mergeArg1 functionReducedUnpack
-                                functionReducedUnpack0
+                            ((mergeArg_1 functionReducedUnpack)
+                                 functionReducedUnpack0
                             )
-                    )
+                   )
             )
-        , mergeArg2
-        , mergeArg3
-        , mergeArg4
+        , mergeArg_2
+        , mergeArg_3
+        , mergeArg_4
         ]
 
 
@@ -902,521 +936,532 @@ call_ :
     }
 call_ =
     { singleton =
-        \singletonArg singletonArg0 ->
+        \singletonArg_ singletonArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "singleton"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "comparable", Type.var "v" ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "singleton"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "comparable", Type.var "v" ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ singletonArg, singletonArg0 ]
+                [ singletonArg_, singletonArg_0 ]
     , insert =
-        \insertArg insertArg0 insertArg1 ->
+        \insertArg_ insertArg_0 insertArg_1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "insert"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "comparable"
-                                , Type.var "v"
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "insert"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "comparable"
+                                  , Type.var "v"
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ insertArg, insertArg0, insertArg1 ]
+                [ insertArg_, insertArg_0, insertArg_1 ]
     , update =
-        \updateArg updateArg0 updateArg1 ->
+        \updateArg_ updateArg_0 updateArg_1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "update"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "comparable"
-                                , Type.function
-                                    [ Type.maybe (Type.var "v") ]
-                                    (Type.maybe (Type.var "v"))
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "update"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "comparable"
+                                  , Type.function
+                                      [ Type.maybe (Type.var "v") ]
+                                      (Type.maybe (Type.var "v"))
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ updateArg, updateArg0, updateArg1 ]
+                [ updateArg_, updateArg_0, updateArg_1 ]
     , remove =
-        \removeArg removeArg0 ->
+        \removeArg_ removeArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "remove"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "comparable"
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "remove"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "comparable"
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ removeArg, removeArg0 ]
+                [ removeArg_, removeArg_0 ]
     , isEmpty =
-        \isEmptyArg ->
+        \isEmptyArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "isEmpty"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "v" ]
-                                ]
-                                Type.bool
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "isEmpty"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "v" ]
+                                  ]
+                                  Type.bool
+                             )
+                     }
                 )
-                [ isEmptyArg ]
+                [ isEmptyArg_ ]
     , member =
-        \memberArg memberArg0 ->
+        \memberArg_ memberArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "member"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "comparable"
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                Type.bool
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "member"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "comparable"
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  Type.bool
+                             )
+                     }
                 )
-                [ memberArg, memberArg0 ]
+                [ memberArg_, memberArg_0 ]
     , get =
-        \getArg getArg0 ->
+        \getArg_ getArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "get"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.var "comparable"
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.maybe (Type.var "v"))
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "get"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.var "comparable"
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.maybe (Type.var "v"))
+                             )
+                     }
                 )
-                [ getArg, getArg0 ]
+                [ getArg_, getArg_0 ]
     , size =
-        \sizeArg ->
+        \sizeArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "size"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "v" ]
-                                ]
-                                Type.int
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "size"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "v" ]
+                                  ]
+                                  Type.int
+                             )
+                     }
                 )
-                [ sizeArg ]
+                [ sizeArg_ ]
     , keys =
-        \keysArg ->
+        \keysArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "keys"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "v" ]
-                                ]
-                                (Type.list (Type.var "k"))
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "keys"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "v" ]
+                                  ]
+                                  (Type.list (Type.var "k"))
+                             )
+                     }
                 )
-                [ keysArg ]
+                [ keysArg_ ]
     , values =
-        \valuesArg ->
+        \valuesArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "values"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "v" ]
-                                ]
-                                (Type.list (Type.var "v"))
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "values"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "v" ]
+                                  ]
+                                  (Type.list (Type.var "v"))
+                             )
+                     }
                 )
-                [ valuesArg ]
+                [ valuesArg_ ]
     , toList =
-        \toListArg ->
+        \toListArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "toList"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "v" ]
-                                ]
-                                (Type.list
-                                    (Type.tuple (Type.var "k") (Type.var "v"))
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "toList"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "v" ]
+                                  ]
+                                  (Type.list
+                                       (Type.tuple (Type.var "k") (Type.var "v")
+                                       )
+                                  )
+                             )
+                     }
                 )
-                [ toListArg ]
+                [ toListArg_ ]
     , fromList =
-        \fromListArg ->
+        \fromListArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "fromList"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list
-                                    (Type.tuple
-                                        (Type.var "comparable")
-                                        (Type.var "v")
-                                    )
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "fromList"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list
+                                      (Type.tuple
+                                         (Type.var "comparable")
+                                         (Type.var "v")
+                                      )
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ fromListArg ]
+                [ fromListArg_ ]
     , map =
-        \mapArg mapArg0 ->
+        \mapArg_ mapArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "map"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "k", Type.var "a" ]
-                                    (Type.var "b")
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "a" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "b" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "map"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "k", Type.var "a" ]
+                                      (Type.var "b")
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "a" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "k", Type.var "b" ]
+                                  )
+                             )
+                     }
                 )
-                [ mapArg, mapArg0 ]
+                [ mapArg_, mapArg_0 ]
     , foldl =
-        \foldlArg foldlArg0 foldlArg1 ->
+        \foldlArg_ foldlArg_0 foldlArg_1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "foldl"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "k", Type.var "v", Type.var "b" ]
-                                    (Type.var "b")
-                                , Type.var "b"
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "v" ]
-                                ]
-                                (Type.var "b")
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "foldl"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "k"
+                                      , Type.var "v"
+                                      , Type.var "b"
+                                      ]
+                                      (Type.var "b")
+                                  , Type.var "b"
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "v" ]
+                                  ]
+                                  (Type.var "b")
+                             )
+                     }
                 )
-                [ foldlArg, foldlArg0, foldlArg1 ]
+                [ foldlArg_, foldlArg_0, foldlArg_1 ]
     , foldr =
-        \foldrArg foldrArg0 foldrArg1 ->
+        \foldrArg_ foldrArg_0 foldrArg_1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "foldr"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "k", Type.var "v", Type.var "b" ]
-                                    (Type.var "b")
-                                , Type.var "b"
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "k", Type.var "v" ]
-                                ]
-                                (Type.var "b")
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "foldr"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "k"
+                                      , Type.var "v"
+                                      , Type.var "b"
+                                      ]
+                                      (Type.var "b")
+                                  , Type.var "b"
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "k", Type.var "v" ]
+                                  ]
+                                  (Type.var "b")
+                             )
+                     }
                 )
-                [ foldrArg, foldrArg0, foldrArg1 ]
+                [ foldrArg_, foldrArg_0, foldrArg_1 ]
     , filter =
-        \filterArg filterArg0 ->
+        \filterArg_ filterArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "filter"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "comparable", Type.var "v" ]
-                                    Type.bool
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "filter"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "comparable", Type.var "v" ]
+                                      Type.bool
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ filterArg, filterArg0 ]
+                [ filterArg_, filterArg_0 ]
     , partition =
-        \partitionArg partitionArg0 ->
+        \partitionArg_ partitionArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "partition"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "comparable", Type.var "v" ]
-                                    Type.bool
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.tuple
-                                    (Type.namedWith
-                                        [ "Dict" ]
-                                        "Dict"
-                                        [ Type.var "comparable", Type.var "v" ]
-                                    )
-                                    (Type.namedWith
-                                        [ "Dict" ]
-                                        "Dict"
-                                        [ Type.var "comparable", Type.var "v" ]
-                                    )
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "partition"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "comparable", Type.var "v" ]
+                                      Type.bool
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.tuple
+                                       (Type.namedWith
+                                            [ "Dict" ]
+                                            "Dict"
+                                            [ Type.var "comparable"
+                                            , Type.var "v"
+                                            ]
+                                       )
+                                       (Type.namedWith
+                                            [ "Dict" ]
+                                            "Dict"
+                                            [ Type.var "comparable"
+                                            , Type.var "v"
+                                            ]
+                                       )
+                                  )
+                             )
+                     }
                 )
-                [ partitionArg, partitionArg0 ]
+                [ partitionArg_, partitionArg_0 ]
     , union =
-        \unionArg unionArg0 ->
+        \unionArg_ unionArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "union"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "union"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ unionArg, unionArg0 ]
+                [ unionArg_, unionArg_0 ]
     , intersect =
-        \intersectArg intersectArg0 ->
+        \intersectArg_ intersectArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "intersect"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "v" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "intersect"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "v" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "v" ]
+                                  )
+                             )
+                     }
                 )
-                [ intersectArg, intersectArg0 ]
+                [ intersectArg_, intersectArg_0 ]
     , diff =
-        \diffArg diffArg0 ->
+        \diffArg_ diffArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "diff"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "a" ]
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "b" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "a" ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "diff"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "a" ]
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "b" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Dict" ]
+                                       "Dict"
+                                       [ Type.var "comparable", Type.var "a" ]
+                                  )
+                             )
+                     }
                 )
-                [ diffArg, diffArg0 ]
+                [ diffArg_, diffArg_0 ]
     , merge =
-        \mergeArg mergeArg0 mergeArg1 mergeArg2 mergeArg3 mergeArg4 ->
+        \mergeArg_ mergeArg_0 mergeArg_1 mergeArg_2 mergeArg_3 mergeArg_4 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Dict" ]
-                    , name = "merge"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "comparable"
-                                    , Type.var "a"
-                                    , Type.var "result"
-                                    ]
-                                    (Type.var "result")
-                                , Type.function
-                                    [ Type.var "comparable"
-                                    , Type.var "a"
-                                    , Type.var "b"
-                                    , Type.var "result"
-                                    ]
-                                    (Type.var "result")
-                                , Type.function
-                                    [ Type.var "comparable"
-                                    , Type.var "b"
-                                    , Type.var "result"
-                                    ]
-                                    (Type.var "result")
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "a" ]
-                                , Type.namedWith
-                                    [ "Dict" ]
-                                    "Dict"
-                                    [ Type.var "comparable", Type.var "b" ]
-                                , Type.var "result"
-                                ]
-                                (Type.var "result")
-                            )
-                    }
+                     { importFrom = [ "Dict" ]
+                     , name = "merge"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "comparable"
+                                      , Type.var "a"
+                                      , Type.var "result"
+                                      ]
+                                      (Type.var "result")
+                                  , Type.function
+                                      [ Type.var "comparable"
+                                      , Type.var "a"
+                                      , Type.var "b"
+                                      , Type.var "result"
+                                      ]
+                                      (Type.var "result")
+                                  , Type.function
+                                      [ Type.var "comparable"
+                                      , Type.var "b"
+                                      , Type.var "result"
+                                      ]
+                                      (Type.var "result")
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "a" ]
+                                  , Type.namedWith
+                                      [ "Dict" ]
+                                      "Dict"
+                                      [ Type.var "comparable", Type.var "b" ]
+                                  , Type.var "result"
+                                  ]
+                                  (Type.var "result")
+                             )
+                     }
                 )
-                [ mergeArg
-                , mergeArg0
-                , mergeArg1
-                , mergeArg2
-                , mergeArg3
-                , mergeArg4
+                [ mergeArg_
+                , mergeArg_0
+                , mergeArg_1
+                , mergeArg_2
+                , mergeArg_3
+                , mergeArg_4
                 ]
     }
 
@@ -1453,9 +1498,9 @@ values_ =
             , annotation =
                 Just
                     (Type.namedWith
-                        [ "Dict" ]
-                        "Dict"
-                        [ Type.var "k", Type.var "v" ]
+                         [ "Dict" ]
+                         "Dict"
+                         [ Type.var "k", Type.var "v" ]
                     )
             }
     , singleton =
@@ -1465,12 +1510,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "comparable", Type.var "v" ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.var "comparable", Type.var "v" ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , insert =
@@ -1480,18 +1525,18 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "comparable"
-                        , Type.var "v"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.var "comparable"
+                         , Type.var "v"
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , update =
@@ -1501,20 +1546,20 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "comparable"
-                        , Type.function
-                            [ Type.maybe (Type.var "v") ]
-                            (Type.maybe (Type.var "v"))
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.var "comparable"
+                         , Type.function
+                             [ Type.maybe (Type.var "v") ]
+                             (Type.maybe (Type.var "v"))
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , remove =
@@ -1524,17 +1569,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.var "comparable"
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , isEmpty =
@@ -1544,12 +1589,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        Type.bool
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "v" ]
+                         ]
+                         Type.bool
                     )
             }
     , member =
@@ -1559,13 +1604,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        Type.bool
+                         [ Type.var "comparable"
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         Type.bool
                     )
             }
     , get =
@@ -1575,13 +1620,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.maybe (Type.var "v"))
+                         [ Type.var "comparable"
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.maybe (Type.var "v"))
                     )
             }
     , size =
@@ -1591,12 +1636,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        Type.int
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "v" ]
+                         ]
+                         Type.int
                     )
             }
     , keys =
@@ -1606,12 +1651,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.list (Type.var "k"))
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "v" ]
+                         ]
+                         (Type.list (Type.var "k"))
                     )
             }
     , values =
@@ -1621,12 +1666,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.list (Type.var "v"))
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "v" ]
+                         ]
+                         (Type.list (Type.var "v"))
                     )
             }
     , toList =
@@ -1636,12 +1681,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.list (Type.tuple (Type.var "k") (Type.var "v")))
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "v" ]
+                         ]
+                         (Type.list (Type.tuple (Type.var "k") (Type.var "v")))
                     )
             }
     , fromList =
@@ -1651,14 +1696,14 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list
-                            (Type.tuple (Type.var "comparable") (Type.var "v"))
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.list
+                             (Type.tuple (Type.var "comparable") (Type.var "v"))
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , map =
@@ -1668,19 +1713,19 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "k", Type.var "a" ]
-                            (Type.var "b")
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "b" ]
-                        )
+                         [ Type.function
+                             [ Type.var "k", Type.var "a" ]
+                             (Type.var "b")
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "a" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "k", Type.var "b" ]
+                         )
                     )
             }
     , foldl =
@@ -1690,16 +1735,16 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "k", Type.var "v", Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.var "b")
+                         [ Type.function
+                             [ Type.var "k", Type.var "v", Type.var "b" ]
+                             (Type.var "b")
+                         , Type.var "b"
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "v" ]
+                         ]
+                         (Type.var "b")
                     )
             }
     , foldr =
@@ -1709,16 +1754,16 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "k", Type.var "v", Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "k", Type.var "v" ]
-                        ]
-                        (Type.var "b")
+                         [ Type.function
+                             [ Type.var "k", Type.var "v", Type.var "b" ]
+                             (Type.var "b")
+                         , Type.var "b"
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "k", Type.var "v" ]
+                         ]
+                         (Type.var "b")
                     )
             }
     , filter =
@@ -1728,19 +1773,19 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "comparable", Type.var "v" ]
-                            Type.bool
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.function
+                             [ Type.var "comparable", Type.var "v" ]
+                             Type.bool
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , partition =
@@ -1750,26 +1795,26 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "comparable", Type.var "v" ]
-                            Type.bool
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.tuple
-                            (Type.namedWith
-                                [ "Dict" ]
-                                "Dict"
-                                [ Type.var "comparable", Type.var "v" ]
-                            )
-                            (Type.namedWith
-                                [ "Dict" ]
-                                "Dict"
-                                [ Type.var "comparable", Type.var "v" ]
-                            )
-                        )
+                         [ Type.function
+                             [ Type.var "comparable", Type.var "v" ]
+                             Type.bool
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.tuple
+                              (Type.namedWith
+                                   [ "Dict" ]
+                                   "Dict"
+                                   [ Type.var "comparable", Type.var "v" ]
+                              )
+                              (Type.namedWith
+                                   [ "Dict" ]
+                                   "Dict"
+                                   [ Type.var "comparable", Type.var "v" ]
+                              )
+                         )
                     )
             }
     , union =
@@ -1779,20 +1824,20 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , intersect =
@@ -1802,20 +1847,20 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "v" ]
-                        )
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "v" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "v" ]
+                         )
                     )
             }
     , diff =
@@ -1825,20 +1870,20 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "b" ]
-                        ]
-                        (Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "a" ]
-                        )
+                         [ Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "a" ]
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "b" ]
+                         ]
+                         (Type.namedWith
+                              [ "Dict" ]
+                              "Dict"
+                              [ Type.var "comparable", Type.var "a" ]
+                         )
                     )
             }
     , merge =
@@ -1848,36 +1893,36 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function
-                            [ Type.var "comparable"
-                            , Type.var "a"
-                            , Type.var "result"
-                            ]
-                            (Type.var "result")
-                        , Type.function
-                            [ Type.var "comparable"
-                            , Type.var "a"
-                            , Type.var "b"
-                            , Type.var "result"
-                            ]
-                            (Type.var "result")
-                        , Type.function
-                            [ Type.var "comparable"
-                            , Type.var "b"
-                            , Type.var "result"
-                            ]
-                            (Type.var "result")
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Dict" ]
-                            "Dict"
-                            [ Type.var "comparable", Type.var "b" ]
-                        , Type.var "result"
-                        ]
-                        (Type.var "result")
+                         [ Type.function
+                             [ Type.var "comparable"
+                             , Type.var "a"
+                             , Type.var "result"
+                             ]
+                             (Type.var "result")
+                         , Type.function
+                             [ Type.var "comparable"
+                             , Type.var "a"
+                             , Type.var "b"
+                             , Type.var "result"
+                             ]
+                             (Type.var "result")
+                         , Type.function
+                             [ Type.var "comparable"
+                             , Type.var "b"
+                             , Type.var "result"
+                             ]
+                             (Type.var "result")
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "a" ]
+                         , Type.namedWith
+                             [ "Dict" ]
+                             "Dict"
+                             [ Type.var "comparable", Type.var "b" ]
+                         , Type.var "result"
+                         ]
+                         (Type.var "result")
                     )
             }
     }

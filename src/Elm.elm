@@ -8,11 +8,13 @@ module Elm exposing
     , record, get, updateRecord
     , ifThen
     , Declaration
-    , comment, declaration
-    , withDocumentation
-    , expose, exposeWith
-    , fileWith, docs
-    , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
+    , comment, docs, declaration
+    , withDocumentation, group
+    , expose, exposeConstructor
+    , fileWith
+    , fn, fn2, fn3
+    , fnBuilder, fnArg, Arg, fnDone, body, Fn
+    , function, functionReduced
     , customType, customTypeWith, Variant, variant, variantWith
     , alias, aliasWith
     , portIncoming, portOutgoing
@@ -57,18 +59,22 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 @docs Declaration
 
-@docs comment, declaration
+@docs comment, docs, declaration
 
-@docs withDocumentation
+@docs withDocumentation, group
 
-@docs expose, exposeWith
+@docs expose, exposeConstructor
 
-@docs fileWith, docs
+@docs fileWith
 
 
 ## Functions
 
-@docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
+@docs fn, fn2, fn3
+
+@docs fnBuilder, fnArg, Arg, fnDone, body, Fn
+
+@docs function, functionReduced
 
 
 ## Custom Types
@@ -108,6 +114,7 @@ import Elm.Syntax.Module
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
+import Internal.Arg
 import Internal.Clean as Clean
 import Internal.Compiler as Compiler
 import Internal.Dependencies
@@ -124,6 +131,170 @@ type alias Expression =
     Compiler.Expression
 
 
+{-| -}
+type Fn value
+    = Fn
+        (Index.Index
+         ->
+            { args : List Internal.Arg.ArgDetails
+            , body : value
+            , imports : List Compiler.Module
+            }
+        )
+
+
+{-| Build a function with any number of arguments.
+
+Here's how you'd implement a function which adds two numbers together:
+
+    Elm.fnBuilder
+        (\arg1 arg2 ->
+            Elm.Op.plus arg1 arg2
+        )
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.fnDone
+
+-}
+fnBuilder : value -> Fn value
+fnBuilder innerValue =
+    Fn
+        (\_ ->
+            { args = []
+            , body = innerValue
+            , imports = []
+            }
+        )
+
+
+{-| Check out the `Elm.Arg` module for more information on how to create one of these.
+-}
+type alias Arg val =
+    Internal.Arg.Arg val
+
+
+{-| -}
+fnArg : Arg arg -> Fn (arg -> value) -> Fn value
+fnArg argument (Fn toFnDetails) =
+    Fn
+        (\index ->
+            let
+                argDetails =
+                    Internal.Arg.toDetails index argument
+
+                fnDetails =
+                    toFnDetails argDetails.index
+            in
+            { args = fnDetails.args ++ [ argDetails.details ]
+            , body = fnDetails.body argDetails.value
+            , imports = fnDetails.imports ++ argDetails.details.imports
+            }
+        )
+
+
+{-| -}
+fnDone : Fn Expression -> Expression
+fnDone (Fn toFnDetails) =
+    Compiler.Expression
+        (\index ->
+            let
+                fnDetails =
+                    toFnDetails index
+
+                ( _, return ) =
+                    Compiler.toExpressionDetails (Index.next index) fnDetails.body
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        List.map
+                            .pattern
+                            fnDetails.args
+                    , expression =
+                        Compiler.nodify return.expression
+                    }
+            , annotation =
+                case return.annotation of
+                    Err _ ->
+                        return.annotation
+
+                    Ok _ ->
+                        List.foldr
+                            (\argDetails result ->
+                                case result of
+                                    Err err ->
+                                        Err err
+
+                                    Ok resultAnnotation ->
+                                        case argDetails.annotation of
+                                            Err err ->
+                                                Err err
+
+                                            Ok argAnnotation ->
+                                                Ok
+                                                    { type_ =
+                                                        Annotation.FunctionTypeAnnotation
+                                                            (Compiler.nodify argAnnotation.type_)
+                                                            (Compiler.nodify resultAnnotation.type_)
+                                                    , inferences =
+                                                        argAnnotation.inferences
+                                                            |> Compiler.mergeInferences resultAnnotation.inferences
+                                                    , aliases =
+                                                        argAnnotation.aliases
+                                                            |> Compiler.mergeAliases resultAnnotation.aliases
+                                                    }
+                            )
+                            return.annotation
+                            fnDetails.args
+            , imports =
+                fnDetails.imports ++ return.imports
+            }
+        )
+
+
+{-| `body` allows you to define the funciton body _after_ defining the args.
+
+So, normally, we'd have this.
+
+    Elm.fnBuilder
+        (\arg1 arg2 ->
+            Elm.Op.plus arg1 arg2
+        )
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.fnDone
+
+But, that's sorta weird because you're defining the body before the args.
+
+You can also do this:
+
+    Elm.fnBuilder Tuple.pair
+        |> Elm.fnArg (Elm.Arg.var "arg1")
+        |> Elm.fnArg (Elm.Arg.var "arg2")
+        |> Elm.body
+            (\( arg1, arg2 ) ->
+                Elm.Op.plus arg1 arg2
+            )
+
+Which more closely mirrors the way you'd write a function in Elm.
+
+The downside is that you need to capture the arguments in a data strucutre(in this example, we used `Tuple.pair`).
+
+-}
+body : (args -> Expression) -> Fn args -> Expression
+body toBody (Fn toFnDetails) =
+    Compiler.Expression
+        (\index ->
+            let
+                fnDetails =
+                    toFnDetails index
+            in
+            toBody fnDetails.body
+                |> Compiler.toExpressionDetails index
+                |> Tuple.second
+        )
+
+
 {-| See what code this expression would generate!
 
 **Note** - Check out the `Elm.ToString` module if this doesn't quite meet your needs!
@@ -134,7 +305,7 @@ toString (Compiler.Expression toExp) =
     let
         expresh : Compiler.ExpressionDetails
         expresh =
-            toExp Index.startIndex
+            toExp (Index.startIndex Nothing)
     in
     Internal.Write.writeExpression expresh.expression
 
@@ -149,65 +320,24 @@ toString (Compiler.Expression toExp) =
 -}
 file : List String -> List Declaration -> File
 file mod decs =
-    Render.render renderStandardComment
+    Render.render ""
         { moduleName = mod
         , declarations = decs
         , aliases = []
-        , index = Index.startIndex
+        , index = Index.startIndex (Just mod)
         }
-
-
-renderStandardComment :
-    List
-        { group : Maybe String
-        , members : List String
-        }
-    -> List String
-renderStandardComment groups =
-    if List.isEmpty groups then
-        []
-
-    else
-        List.map docs groups
-
-
-{-| Render a standard docstring.
-
-    @docs one, two, three
-
-If a `group` has been given, it will be rendered as a second level header.
-
-```markdown
-## Group name
-
-@docs one, two, three
-```
-
--}
-docs :
-    { group : Maybe String
-    , members : List String
-    }
-    -> String
-docs group =
-    case group.group of
-        Nothing ->
-            "@docs " ++ String.join ", " group.members
-
-        Just groupName ->
-            "## " ++ groupName ++ "\n\n@docs " ++ String.join ", " group.members
 
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
 
 Pass in a function that determines how to render a `@docs` comment.
 
-Each exposed item is grouped based on the string used in [exposeWith](#exposeWith).
+Each exposed item is grouped using [group](#group).
 
 **aliases** allow you to specify a module alias to be used.
 
     Elm.fileWith [ "MyModule" ]
-        { docs = List.map Elm.docs
+        { docs = "# Here's my cool module!"
         , aliases =
             [ ( [ "Json", "Encode" ], "Encode" )
             ]
@@ -225,12 +355,7 @@ All values rendered in this file that are from this module would also automatica
 fileWith :
     List String
     ->
-        { docs :
-            List
-                { group : Maybe String
-                , members : List String
-                }
-            -> List String
+        { docs : String
         , aliases : List ( List String, String )
         }
     -> List Declaration
@@ -240,7 +365,7 @@ fileWith mod options decs =
         { moduleName = mod
         , aliases = options.aliases
         , declarations = decs
-        , index = Index.startChecked True
+        , index = Index.startChecked (Just mod) True
         }
 
 
@@ -276,11 +401,15 @@ value :
 value details =
     Compiler.Expression <|
         \index ->
+            let
+                importFrom =
+                    Index.getImport index details.importFrom
+            in
             { expression =
                 -- This *must* be an un-protected name, where we only use
                 -- literally what the dev gives us, because we are trying
                 -- to refer to something that already exists.
-                Exp.FunctionOrValue details.importFrom
+                Exp.FunctionOrValue importFrom
                     (Format.sanitize details.name)
             , annotation =
                 case details.annotation of
@@ -301,20 +430,20 @@ value details =
             , imports =
                 case details.annotation of
                     Nothing ->
-                        case details.importFrom of
+                        case importFrom of
                             [] ->
                                 []
 
                             _ ->
-                                [ details.importFrom ]
+                                [ importFrom ]
 
                     Just ann ->
-                        case details.importFrom of
+                        case importFrom of
                             [] ->
                                 Compiler.getAnnotationImports ann
 
                             _ ->
-                                details.importFrom :: Compiler.getAnnotationImports ann
+                                importFrom :: Compiler.getAnnotationImports ann
             }
 
 
@@ -380,13 +509,13 @@ unwrapper modName typename =
     Compiler.Expression <|
         \index ->
             let
-                arg : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
-                arg =
+                argVal : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
+                argVal =
                     Compiler.toVar index "val"
 
                 return : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
                 return =
-                    Compiler.toVar arg.index "unwrapped"
+                    Compiler.toVar argVal.index "unwrapped"
             in
             { expression =
                 Exp.LambdaExpression
@@ -396,7 +525,7 @@ unwrapper modName typename =
                                 { moduleName = modName
                                 , name = typename
                                 }
-                                [ Pattern.VarPattern arg.name
+                                [ Pattern.VarPattern argVal.name
                                     |> Compiler.nodify
                                 ]
                             )
@@ -404,14 +533,14 @@ unwrapper modName typename =
                     , expression =
                         Compiler.nodify
                             (Exp.FunctionOrValue []
-                                arg.name
+                                argVal.name
                             )
                     }
             , annotation =
                 Ok
                     { type_ =
                         Annotation.FunctionTypeAnnotation
-                            (Compiler.nodify (Annotation.GenericType arg.typename))
+                            (Compiler.nodify (Annotation.GenericType argVal.typename))
                             (Compiler.nodify (Annotation.GenericType return.typename))
                     , inferences = Dict.empty
                     , aliases = Compiler.emptyAliases
@@ -1441,7 +1570,7 @@ Here's what's happening for the `fn*` functions —
 
 So, this
 
-    Elm.fn ( "firstInt", Nothing )
+    Elm.fn (Elm.Arg.var "firstInt")
         (\firstArgument ->
             Elm.Op.plus
                 (Elm.int 42)
@@ -1455,7 +1584,7 @@ Generates
 If you want to generate a **top level** function instead of an anonymous function, use `Elm.declaration`.
 
     Elm.declaration "add42" <|
-        Elm.fn ( "firstInt", Nothing )
+        Elm.fn (Elm.Arg.var "firstInt")
             (\firstArgument ->
                 Elm.Op.plus
                     (Elm.int 42)
@@ -1470,48 +1599,12 @@ Results in
 
 **Note** — Elm CodeGen will protect variable names if they're used in a nested `fn*` by adding a string of numbers to the end of the name. So, you may see a variable name be something like `myVariable_0_1`.
 
-If you absolutely don't want this behavior, you'll need to use [`functionAdvanced`](#functionAdvanced).
-
 -}
-fn : ( String, Maybe Elm.Annotation.Annotation ) -> (Expression -> Expression) -> Expression
-fn ( oneBaseName, maybeAnnotation ) toExpression =
-    Compiler.expression <|
-        \index ->
-            let
-                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                one =
-                    Compiler.toVarMaybeType index oneBaseName maybeAnnotation
-
-                (Compiler.Expression toExpr) =
-                    toExpression one.val
-
-                return : Compiler.ExpressionDetails
-                return =
-                    toExpr one.index
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args = [ Compiler.nodify (Pattern.VarPattern one.name) ]
-                    , expression = Compiler.nodify return.expression
-                    }
-            , annotation =
-                case return.annotation of
-                    Err _ ->
-                        return.annotation
-
-                    Ok returnAnnotation ->
-                        Ok
-                            { type_ =
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify one.type_)
-                                    (Compiler.nodify
-                                        returnAnnotation.type_
-                                    )
-                            , inferences = returnAnnotation.inferences
-                            , aliases = returnAnnotation.aliases
-                            }
-            , imports = return.imports
-            }
+fn : Arg arg -> (arg -> Expression) -> Expression
+fn arg1 toExpression =
+    fnBuilder toExpression
+        |> fnArg arg1
+        |> fnDone
 
 
 {-| This is a special case of function declaration which will _reduce_ itself if possible.
@@ -1598,8 +1691,8 @@ betaReduce : Exp.Expression -> Exp.Expression
 betaReduce e =
     let
         extractLastArg : Exp.Expression -> Maybe String
-        extractLastArg arg =
-            case arg of
+        extractLastArg argExpression =
+            case argExpression of
                 Exp.FunctionOrValue [] n ->
                     Just n
 
@@ -1614,8 +1707,8 @@ betaReduce e =
             case popLastAndDenodeLast args of
                 Just ( initLambdaArgs, Pattern.VarPattern lastLambdaArg ) ->
                     case Compiler.denode expression of
-                        Exp.RecordAccess (Node _ arg) (Node.Node _ fieldName) ->
-                            case arg of
+                        Exp.RecordAccess (Node _ argVal) (Node.Node _ fieldName) ->
+                            case argVal of
                                 Exp.FunctionOrValue [] argName ->
                                     if argName == lastLambdaArg then
                                         Exp.RecordAccessFunction <| "." ++ fieldName
@@ -1672,387 +1765,30 @@ betaReduce e =
 
 {-| -}
 fn2 :
-    ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression)
+    Arg one
+    -> Arg two
+    -> (one -> two -> Expression)
     -> Expression
-fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
-    Compiler.expression <|
-        \index ->
-            let
-                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                one =
-                    Compiler.toVarMaybeType index oneBaseName maybeOneType
-
-                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                two =
-                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
-
-                ( _, return ) =
-                    Compiler.toExpressionDetails two.index (toExpression one.val two.val)
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args =
-                        Compiler.nodifyAll
-                            [ Pattern.VarPattern one.name
-                            , Pattern.VarPattern two.name
-                            ]
-                    , expression = Compiler.nodify return.expression
-                    }
-            , annotation =
-                case return.annotation of
-                    Err _ ->
-                        return.annotation
-
-                    Ok returnAnnotation ->
-                        Ok
-                            { type_ =
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify one.type_)
-                                    (Compiler.nodify
-                                        (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify two.type_)
-                                            (Compiler.nodify
-                                                returnAnnotation.type_
-                                            )
-                                        )
-                                    )
-                            , inferences = returnAnnotation.inferences
-                            , aliases = returnAnnotation.aliases
-                            }
-            , imports = return.imports
-            }
+fn2 arg1 arg2 toExpression =
+    fnBuilder toExpression
+        |> fnArg arg1
+        |> fnArg arg2
+        |> fnDone
 
 
 {-| -}
 fn3 :
-    ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression)
+    Arg one
+    -> Arg two
+    -> Arg three
+    -> (one -> two -> three -> Expression)
     -> Expression
-fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) toExpression =
-    Compiler.expression <|
-        \index ->
-            let
-                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                one =
-                    Compiler.toVarMaybeType index oneBaseName maybeOneType
-
-                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                two =
-                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
-
-                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                three =
-                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
-
-                ( _, return ) =
-                    Compiler.toExpressionDetails three.index (toExpression one.val two.val three.val)
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args =
-                        Compiler.nodifyAll
-                            [ Pattern.VarPattern one.name
-                            , Pattern.VarPattern two.name
-                            , Pattern.VarPattern three.name
-                            ]
-                    , expression = Compiler.nodify return.expression
-                    }
-            , annotation =
-                case return.annotation of
-                    Err _ ->
-                        return.annotation
-
-                    Ok returnAnnotation ->
-                        Ok
-                            { type_ =
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify one.type_)
-                                    (Compiler.nodify
-                                        (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify two.type_)
-                                            (Compiler.nodify
-                                                (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify three.type_)
-                                                    (Compiler.nodify
-                                                        returnAnnotation.type_
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                            , inferences = returnAnnotation.inferences
-                            , aliases = returnAnnotation.aliases
-                            }
-            , imports = return.imports
-            }
-
-
-{-| -}
-fn4 :
-    ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression)
-    -> Expression
-fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) toExpression =
-    Compiler.expression <|
-        \index ->
-            let
-                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                one =
-                    Compiler.toVarMaybeType index oneBaseName maybeOneType
-
-                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                two =
-                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
-
-                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                three =
-                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
-
-                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                four =
-                    Compiler.toVarMaybeType three.index fourBaseName maybeFourType
-
-                ( _, return ) =
-                    Compiler.toExpressionDetails four.index (toExpression one.val two.val three.val four.val)
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args =
-                        Compiler.nodifyAll
-                            [ Pattern.VarPattern one.name
-                            , Pattern.VarPattern two.name
-                            , Pattern.VarPattern three.name
-                            , Pattern.VarPattern four.name
-                            ]
-                    , expression = Compiler.nodify return.expression
-                    }
-            , annotation =
-                case return.annotation of
-                    Err _ ->
-                        return.annotation
-
-                    Ok returnAnnotation ->
-                        Ok
-                            { type_ =
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify one.type_)
-                                    (Compiler.nodify
-                                        (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify two.type_)
-                                            (Compiler.nodify
-                                                (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify three.type_)
-                                                    (Compiler.nodify
-                                                        (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify four.type_)
-                                                            (Compiler.nodify
-                                                                returnAnnotation.type_
-                                                            )
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                            , inferences = returnAnnotation.inferences
-                            , aliases = returnAnnotation.aliases
-                            }
-            , imports = return.imports
-            }
-
-
-{-| -}
-fn5 :
-    ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
-    -> Expression
-fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) ( fiveBaseName, maybeFiveType ) toExpression =
-    Compiler.expression <|
-        \index ->
-            let
-                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                one =
-                    Compiler.toVarMaybeType index oneBaseName maybeOneType
-
-                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                two =
-                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
-
-                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                three =
-                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
-
-                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                four =
-                    Compiler.toVarMaybeType three.index fourBaseName maybeFourType
-
-                five : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                five =
-                    Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
-
-                ( _, return ) =
-                    Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val)
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args =
-                        Compiler.nodifyAll <|
-                            [ Pattern.VarPattern one.name
-                            , Pattern.VarPattern two.name
-                            , Pattern.VarPattern three.name
-                            , Pattern.VarPattern four.name
-                            , Pattern.VarPattern five.name
-                            ]
-                    , expression = Compiler.nodify return.expression
-                    }
-            , annotation =
-                case return.annotation of
-                    Err _ ->
-                        return.annotation
-
-                    Ok returnAnnotation ->
-                        Ok
-                            { type_ =
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify one.type_)
-                                    (Compiler.nodify
-                                        (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify two.type_)
-                                            (Compiler.nodify
-                                                (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify three.type_)
-                                                    (Compiler.nodify
-                                                        (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify four.type_)
-                                                            (Compiler.nodify
-                                                                (Annotation.FunctionTypeAnnotation
-                                                                    (Compiler.nodify five.type_)
-                                                                    (Compiler.nodify
-                                                                        returnAnnotation.type_
-                                                                    )
-                                                                )
-                                                            )
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                            , inferences = returnAnnotation.inferences
-                            , aliases = returnAnnotation.aliases
-                            }
-            , imports = return.imports
-            }
-
-
-{-| -}
-fn6 :
-    ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
-    -> Expression
-fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) ( fiveBaseName, maybeFiveType ) ( sixBaseName, maybeSixType ) toExpression =
-    Compiler.expression <|
-        \index ->
-            let
-                one : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                one =
-                    Compiler.toVarMaybeType index oneBaseName maybeOneType
-
-                two : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                two =
-                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
-
-                three : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                three =
-                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
-
-                four : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                four =
-                    Compiler.toVarMaybeType three.index fourBaseName maybeFourType
-
-                five : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                five =
-                    Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
-
-                six : { name : String, type_ : Annotation.TypeAnnotation, val : Compiler.Expression, index : Index.Index }
-                six =
-                    Compiler.toVarMaybeType five.index sixBaseName maybeSixType
-
-                ( _, return ) =
-                    Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val six.val)
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args =
-                        Compiler.nodifyAll <|
-                            [ Pattern.VarPattern one.name
-                            , Pattern.VarPattern two.name
-                            , Pattern.VarPattern three.name
-                            , Pattern.VarPattern four.name
-                            , Pattern.VarPattern five.name
-                            , Pattern.VarPattern six.name
-                            ]
-                    , expression = Compiler.nodify return.expression
-                    }
-            , annotation =
-                case return.annotation of
-                    Err _ ->
-                        return.annotation
-
-                    Ok returnAnnotation ->
-                        Ok
-                            { type_ =
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify one.type_)
-                                    (Compiler.nodify
-                                        (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify two.type_)
-                                            (Compiler.nodify
-                                                (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify three.type_)
-                                                    (Compiler.nodify
-                                                        (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify four.type_)
-                                                            (Compiler.nodify
-                                                                (Annotation.FunctionTypeAnnotation
-                                                                    (Compiler.nodify five.type_)
-                                                                    (Compiler.nodify
-                                                                        (Annotation.FunctionTypeAnnotation
-                                                                            (Compiler.nodify six.type_)
-                                                                            (Compiler.nodify
-                                                                                returnAnnotation.type_
-                                                                            )
-                                                                        )
-                                                                    )
-                                                                )
-                                                            )
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                            , inferences = returnAnnotation.inferences
-                            , aliases = returnAnnotation.aliases
-                            }
-            , imports = return.imports
-            }
+fn3 arg1 arg2 arg3 toExpression =
+    fnBuilder toExpression
+        |> fnArg arg1
+        |> fnArg arg2
+        |> fnArg arg3
+        |> fnDone
 
 
 {-| -}
@@ -2105,13 +1841,13 @@ declaration nameStr (Compiler.Expression toBody) =
         , toBody =
             \index ->
                 let
-                    body : Compiler.ExpressionDetails
-                    body =
+                    declBody : Compiler.ExpressionDetails
+                    declBody =
                         toBody index
 
                     resolvedType : Result String Annotation.TypeAnnotation
                     resolvedType =
-                        body.annotation
+                        declBody.annotation
                             |> Result.mapError renderError
                             |> Result.andThen
                                 (\sig -> Compiler.resolve index sig.inferences sig.type_)
@@ -2120,7 +1856,7 @@ declaration nameStr (Compiler.Expression toBody) =
                     maybeWarning =
                         case resolvedType of
                             Ok _ ->
-                                case body.annotation of
+                                case declBody.annotation of
                                     Ok _ ->
                                         Nothing
 
@@ -2143,13 +1879,13 @@ declaration nameStr (Compiler.Expression toBody) =
                                     }
                 in
                 { warning = maybeWarning
-                , additionalImports = body.imports
+                , additionalImports = declBody.imports
                 , declaration =
                     Declaration.FunctionDeclaration
                         { documentation =
                             Nothing
                         , signature =
-                            case ( body.annotation, resolvedType ) of
+                            case ( declBody.annotation, resolvedType ) of
                                 ( Ok _, Ok (Annotation.GenericType _) ) ->
                                     -- Top level values can't be lonely generic types.
                                     Nothing
@@ -2159,14 +1895,14 @@ declaration nameStr (Compiler.Expression toBody) =
                                         (Compiler.nodify
                                             { name = Compiler.nodify name
                                             , typeAnnotation =
-                                                Compiler.nodify (Clean.clean finalType)
+                                                Compiler.nodify (Clean.clean index finalType)
                                             }
                                         )
 
                                 _ ->
                                     Nothing
                         , declaration =
-                            case body.expression of
+                            case declBody.expression of
                                 Exp.LambdaExpression lam ->
                                     Compiler.nodify
                                         { name = Compiler.nodify name
@@ -2178,73 +1914,11 @@ declaration nameStr (Compiler.Expression toBody) =
                                     Compiler.nodify
                                         { name = Compiler.nodify name
                                         , arguments = []
-                                        , expression = Compiler.nodify body.expression
+                                        , expression = Compiler.nodify declBody.expression
                                         }
                         }
                 }
         }
-
-
-{-| For when you want the most control over a function being generated.
-
-This is for when:
-
-1.  You want your variable names to be exactly as provided
-    (i.e. you don't want the variable name collision protection)
-2.  You know exactly what type each variable should be.
-
--}
-functionAdvanced : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
-functionAdvanced args fullExpression =
-    case args of
-        [] ->
-            fullExpression
-
-        _ ->
-            Compiler.expression <|
-                \index ->
-                    let
-                        expr : Compiler.ExpressionDetails
-                        expr =
-                            case fullExpression of
-                                Compiler.Expression toExpr ->
-                                    toExpr index
-                    in
-                    { expression =
-                        Exp.LambdaExpression
-                            { args =
-                                List.map
-                                    (\( name, _ ) -> Compiler.nodify (Pattern.VarPattern name))
-                                    args
-                            , expression = Compiler.nodify expr.expression
-                            }
-                    , annotation =
-                        case expr.annotation of
-                            Err err ->
-                                Err err
-
-                            Ok return ->
-                                Ok
-                                    { type_ =
-                                        List.foldr
-                                            (\( _, Compiler.Annotation ann ) fnbody ->
-                                                Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify ann.annotation)
-                                                    (Compiler.nodify fnbody)
-                                            )
-                                            return.type_
-                                            args
-                                    , inferences = return.inferences
-                                    , aliases =
-                                        List.foldl
-                                            (\( _, ann ) gathered ->
-                                                Compiler.mergeAliases (Compiler.getAliases ann) gathered
-                                            )
-                                            return.aliases
-                                            args
-                                    }
-                    , imports = expr.imports
-                    }
 
 
 {-| You may run into situations where you don't know the number of arguments for a function at compile-time.
@@ -2291,8 +1965,8 @@ function initialArgList toFullExpression =
                                                 )
                                                 maybeType
 
-                                        arg : Expression
-                                        arg =
+                                        argExpression : Expression
+                                        argExpression =
                                             value
                                                 { importFrom = []
                                                 , name = name
@@ -2300,7 +1974,7 @@ function initialArgList toFullExpression =
                                                 }
                                     in
                                     { index = newIndex
-                                    , args = arg :: found.args
+                                    , args = argExpression :: found.args
                                     , names = name :: found.names
                                     , types = Compiler.getInnerAnnotation argType :: found.types
                                     }
@@ -2386,14 +2060,36 @@ expose =
     Compiler.expose
 
 
-{-| You can also add a group tag to an exposed value. This will automatically group the `docs` statements in the module docs.
+{-| -}
+exposeConstructor : Declaration -> Declaration
+exposeConstructor =
+    Compiler.exposeConstructor
 
-For precise control over what is rendered for the module comment, use [fileWith](#fileWith).
+
+{-| Group declarations in a module.
+
+This will add a `@docs` tag to the module doc comment for any exposed functions in the group.
+
+    Elm.group
+        [ myFunction
+        , myOtherFunction
+        ]
+
+Will create the following module doc comment:
+
+    @docs myFunction, myOtherFunction
 
 -}
-exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
-exposeWith =
-    Compiler.exposeWith
+group : List Declaration -> Declaration
+group decls =
+    Compiler.Group decls
+
+
+{-| This will include some markdown in the module doc comment.
+-}
+docs : String -> Declaration
+docs =
+    Compiler.ModuleDocs
 
 
 {-|
@@ -2493,7 +2189,7 @@ will generate
 
 -}
 portOutgoing : String -> Elm.Annotation.Annotation -> Declaration
-portOutgoing nameStr arg =
+portOutgoing nameStr ann =
     let
         name : String
         name =
@@ -2503,7 +2199,7 @@ portOutgoing nameStr arg =
         { name = name
         , exposed = Compiler.NotExposed
         , imports =
-            Compiler.getAnnotationImports arg
+            Compiler.getAnnotationImports ann
         , docs = Nothing
         , toBody =
             \_ ->
@@ -2515,7 +2211,7 @@ portOutgoing nameStr arg =
                         , typeAnnotation =
                             Compiler.nodify
                                 (Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Compiler.getInnerAnnotation arg))
+                                    (Compiler.nodify (Compiler.getInnerAnnotation ann))
                                     (Compiler.nodify cmd)
                                 )
                         }
@@ -2639,7 +2335,7 @@ determineExposure : Declaration.Declaration -> Expose.Exposing -> Compiler.Expos
 determineExposure dec exposedDec =
     case exposedDec of
         Expose.All _ ->
-            Compiler.Exposed { group = Nothing, exposeConstructor = True }
+            Compiler.Exposed { exposeConstructor = True }
 
         Expose.Explicit nodes ->
             case dec of
@@ -2654,7 +2350,7 @@ determineExposure dec exposedDec =
                             Compiler.denode implementation.name
                     in
                     if List.any (valueIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                        Compiler.Exposed { exposeConstructor = False }
 
                     else
                         Compiler.NotExposed
@@ -2666,7 +2362,7 @@ determineExposure dec exposedDec =
                             Compiler.denode typeAlias.name
                     in
                     if List.any (typeIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                        Compiler.Exposed { exposeConstructor = False }
 
                     else
                         Compiler.NotExposed
@@ -2678,10 +2374,10 @@ determineExposure dec exposedDec =
                             Compiler.denode type_.name
                     in
                     if List.any (typeIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
+                        Compiler.Exposed { exposeConstructor = False }
 
                     else if List.any (typeConstructorIsExposed name) nodes then
-                        Compiler.Exposed { group = Nothing, exposeConstructor = True }
+                        Compiler.Exposed { exposeConstructor = True }
 
                     else
                         Compiler.NotExposed

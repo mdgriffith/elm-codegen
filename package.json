@@ -8,8 +8,8 @@
     "elm-codegen": "./bin/elm-codegen"
   },
   "scripts": {
-    "test": "npm run test:install && elm make --docs=docs.json && elm-review && elm-test",
-    "test:elm": " elm-test",
+    "test": "npm run test:install && elm make --docs=docs.json && elm-test && elm-review",
+    "test:elm": "elm-test",
     "test:install": "npm run build; cd tests; node ../bin/elm-codegen install",
     "test:pkg-generation": "npm run build; cd tests/package-tests; ts-node run.ts",
     "build": "tsc && npm run pkg:build",

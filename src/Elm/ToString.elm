@@ -56,22 +56,25 @@ expressionWith :
         }
 expressionWith options (Compiler.Expression toExp) =
     let
+        index =
+            Index.startIndex Nothing
+
         expresh : Compiler.ExpressionDetails
         expresh =
-            toExp Index.startIndex
+            toExp index
     in
     { imports =
         expresh
             |> Compiler.getImports
-            |> List.filterMap (Compiler.makeImport options.aliases)
+            |> List.filterMap (Compiler.makeImport [] options.aliases)
             |> Internal.Write.writeImports
     , body = Internal.Write.writeExpressionWith options.aliases expresh.expression
     , signature =
         case expresh.annotation of
             Ok sig ->
-                case Compiler.resolve Index.startIndex sig.inferences sig.type_ of
+                case Compiler.resolve (Index.startIndex Nothing) sig.inferences sig.type_ of
                     Ok finalType ->
-                        Internal.Write.writeAnnotationWith options.aliases (Clean.clean finalType)
+                        Internal.Write.writeAnnotationWith options.aliases (Clean.clean index finalType)
 
                     Err errMsg ->
                         errMsg
@@ -88,11 +91,12 @@ expressionWith options (Compiler.Expression toExp) =
 declaration :
     Declaration
     ->
-        { imports : String
-        , docs : String
-        , signature : String
-        , body : String
-        }
+        List
+            { imports : String
+            , docs : String
+            , signature : String
+            , body : String
+            }
 declaration =
     declarationWith noAliases
 
@@ -102,67 +106,87 @@ declarationWith :
     { aliases : List ( List String, String ) }
     -> Declaration
     ->
-        { imports : String
-        , docs : String
-        , signature : String
-        , body : String
-        }
+        List
+            { imports : String
+            , docs : String
+            , signature : String
+            , body : String
+            }
 declarationWith options decl =
     case decl of
+        Compiler.Group group ->
+            List.concatMap (declarationWith options) group
+
+        Compiler.ModuleDocs docs ->
+            [ { imports =
+                    ""
+              , body = ""
+              , docs = docs
+              , signature =
+                    ""
+              }
+            ]
+
         Compiler.Declaration { imports, docs, toBody } ->
             let
+                index =
+                    Index.startIndex Nothing
+
                 rendered :
                     { declaration : Declaration.Declaration
                     , additionalImports : List Compiler.Module
                     , warning : Maybe Compiler.Warning
                     }
                 rendered =
-                    toBody Index.startIndex
+                    toBody index
             in
-            { imports =
-                imports
-                    ++ rendered.additionalImports
-                    |> List.filterMap (Compiler.makeImport options.aliases)
-                    |> Internal.Write.writeImports
-            , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedDecl rendered.declaration)
-            , docs =
-                Maybe.withDefault "" docs
-            , signature =
-                case rendered.declaration of
-                    Declaration.FunctionDeclaration func ->
-                        case func.signature of
-                            Nothing ->
-                                ""
+            [ { imports =
+                    imports
+                        ++ rendered.additionalImports
+                        |> List.filterMap (Compiler.makeImport [] options.aliases)
+                        |> Internal.Write.writeImports
+              , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedDecl rendered.declaration)
+              , docs =
+                    Maybe.withDefault "" docs
+              , signature =
+                    case rendered.declaration of
+                        Declaration.FunctionDeclaration func ->
+                            case func.signature of
+                                Nothing ->
+                                    ""
 
-                            Just (Node _ sig) ->
-                                Internal.Write.writeSignatureWith options.aliases
-                                    { name = sig.name
-                                    , typeAnnotation = Node.map Clean.clean sig.typeAnnotation
-                                    }
+                                Just (Node _ sig) ->
+                                    Internal.Write.writeSignatureWith options.aliases
+                                        { name = sig.name
+                                        , typeAnnotation = Node.map (Clean.clean index) sig.typeAnnotation
+                                        }
 
-                    _ ->
-                        ""
-            }
+                        _ ->
+                            ""
+              }
+            ]
 
         Compiler.Comment comm ->
-            { imports =
-                ""
-            , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedComment comm)
-            , docs =
-                ""
-            , signature =
-                ""
-            }
+            [ { imports =
+                    ""
+              , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedComment comm)
+              , docs =
+                    ""
+              , signature =
+                    ""
+              }
+            ]
 
         Compiler.Block block ->
-            { imports =
-                ""
-            , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedBlock block)
-            , docs =
-                ""
-            , signature =
-                ""
-            }
+            [ { imports =
+                    ""
+              , body = Internal.Write.writeDeclarationWith options.aliases (Compiler.RenderedBlock block)
+              , docs =
+                    ""
+              , signature =
+                    ""
+              }
+            ]
 
 
 {-| -}
@@ -186,7 +210,7 @@ annotationWith :
         }
 annotationWith options (Compiler.Annotation ann) =
     { imports =
-        List.filterMap (Compiler.makeImport options.aliases) ann.imports
+        List.filterMap (Compiler.makeImport [] options.aliases) ann.imports
             |> Internal.Write.writeImports
     , signature =
         Internal.Write.writeAnnotationWith options.aliases ann.annotation

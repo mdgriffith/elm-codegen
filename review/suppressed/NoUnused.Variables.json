@@ -3,15 +3,12 @@
   "automatically created by": "elm-review suppress",
   "learn more": "elm-review suppress --help",
   "suppressions": [
-    { "count": 8, "filePath": "src/Internal/Compiler.elm" },
-    { "count": 4, "filePath": "src/Internal/Debug.elm" },
     { "count": 4, "filePath": "src/Internal/Write.elm" },
-    { "count": 2, "filePath": "src/Elm/Op.elm" },
-    { "count": 2, "filePath": "tests/Pattern.elm" },
-    { "count": 1, "filePath": "src/Elm.elm" },
+    { "count": 3, "filePath": "src/Internal/Compiler.elm" },
+    { "count": 3, "filePath": "src/Internal/Debug.elm" },
+    { "count": 1, "filePath": "src/Elm/Op.elm" },
     { "count": 1, "filePath": "src/Internal/Comments.elm" },
     { "count": 1, "filePath": "src/Internal/Index.elm" },
-    { "count": 1, "filePath": "tests/Elm/Expect.elm" },
     { "count": 1, "filePath": "tests/PackageHelpers.elm" }
   ]
 }

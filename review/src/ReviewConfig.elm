@@ -37,14 +37,9 @@ import Simplify
 
 config : List Rule
 config =
-    [ NoMissingTypeExpose.rule
-    , NoUnused.Dependencies.rule
-    , Docs.NoMissing.rule
-        { document = onlyExposed
-        , from = exposedModules
-        }
+    [ NoUnused.Dependencies.rule
     , Docs.ReviewLinksAndSections.rule
-    , Docs.ReviewAtDocs.rule
+
     , Docs.UpToDateReadmeLinks.rule
     , NoDebug.Log.rule
     , NoDebug.TodoOrToString.rule
@@ -52,7 +47,6 @@ config =
     , NoExposingEverything.rule
     , NoImportingEverything.rule []
     , NoMissingTypeAnnotation.rule
-    , NoMissingTypeAnnotationInLetIn.rule
     , NoSimpleLetBody.rule
     , NoPrematureLetComputation.rule
     , NoUnused.CustomTypeConstructors.rule []

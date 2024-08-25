@@ -1,25 +1,25 @@
 module Elm.Let exposing
-    ( letIn, value, Let
-    , tuple
-    , triple
-    , record
+    ( letIn, value, unpack, Let
     , fn, fn2, fn3
-    , toExpression
+    , toExpression, withBody
     )
 
 {-| This module is for building `let` expressions.
 
-@docs letIn, value, Let
+@docs letIn, value, unpack, Let
 
 Here's a brief example to get you started
 
-    Elm.Let.letIn
+    import Elm
+    import Elm.Let as Let
+
+    Let.letIn
         (\one two ->
             Elm.Op.append one two
         )
-        |> Elm.Let.value "one" (Elm.string "Hello")
-        |> Elm.Let.value "two" (Elm.string "World!")
-        |> Elm.Let.toExpression
+        |> Let.value "one" (Elm.string "Hello")
+        |> Let.value "two" (Elm.string "World!")
+        |> Let.toExpression
 
 Will translate into
 
@@ -35,16 +35,27 @@ Will translate into
 
 # Destructing values
 
-@docs tuple
-
 Here's an example destructing a tuple. This code
 
-    Elm.Let.letIn
+    import Elm
+    import Elm.Let as Let
+    import Elm.Arg as Arg
+
+
+    Let.letIn
         (\( first, second ) ->
             Elm.Op.append first second
         )
-        |> Elm.Let.tuple "first" "second" (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
-        |> Elm.Let.toExpression
+        |> Let.unpack
+            (Arg.tuple
+                (Arg.var "first")
+                (Arg.var "second")
+            )
+            (Elm.tuple
+                (Elm.string "Hello")
+                (Elm.string "World!")
+            )
+        |> Let.toExpression
 
 Will generate
 
@@ -54,45 +65,28 @@ Will generate
     in
     first ++ second
 
-@docs triple
-
-Here's an example destructing a triple. This code
-
-    Elm.Let.letIn
-        (\( first, second, third ) ->
-            Elm.Op.append (Elm.Op.append first second) third
-        )
-        |> Elm.Let.triple "first" "second" "third" (Elm.triple (Elm.string "Hello") (Elm.string "World") (Elm.string "!"))
-        |> Elm.Let.toExpression
-
-Will generate
-
-    let
-        ( first, second, third ) =
-            ( "Hello", "World", "!" )
-    in
-    first ++ second ++ third
-
-@docs record
-
 And extracting fields from a record.
 
-    Elm.Let.letIn
-        (\fields ->
-            case fields of
-                [ first, second ] ->
-                    Elm.Op.append first second
+    import Elm
+    import Elm.Let as Let
+    import Elm.Arg as Arg
 
-                _ ->
-                    Elm.unit
+    Let.letIn
+        (\{first, second } ->
+            Elm.Op.append first second
         )
-        |> Elm.Let.record [ "first", "second" ]
+        |> Let.unpack
+            (Arg.record (\first second -> {first, second})
+            |> Arg.field "first"
+            |> Arg.field "second"
+
+            )
             (Elm.record
                 [ ( "first", Elm.string "Hello" )
                 , ( "second", Elm.string "world!" )
                 ]
             )
-        |> Elm.Let.toExpression
+        |> Let.toExpression
 
 Will generate:
 
@@ -107,18 +101,21 @@ Will generate:
 
 Here's an example of declaring functions in a let expression:
 
-    Elm.Let.letIn
+    import Elm
+    import Elm.Let as Let
+
+    Let.letIn
         (\myFn ->
             myFn (Elm.bool True)
         )
-        |> Elm.Let.fn "myFn"
-            ( "arg", Just Type.bool )
+        |> Let.fn "myFn"
+            (Arg.varWith "arg" Type.bool )
             (\arg ->
                 Elm.ifThen arg
                     (Elm.string "True")
                     (Elm.string "False")
             )
-        |> Elm.Let.toExpression
+        |> Let.toExpression
 
 will generate
 
@@ -137,19 +134,16 @@ will generate
 
 # Converting to an Expression
 
-@docs toExpression
+@docs toExpression, withBody
 
 -}
 
-import Dict
 import Elm exposing (Expression)
-import Elm.Annotation
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
-import Elm.Syntax.TypeAnnotation as Annotation
+import Internal.Arg
 import Internal.Compiler as Compiler exposing (Module)
-import Internal.Format as Format
 import Internal.Index as Index
 
 
@@ -175,6 +169,45 @@ letIn return =
             , index = index
             , return = return
             , imports = []
+            }
+        )
+
+
+{-| -}
+unpack : Elm.Arg arg -> Expression -> Let (arg -> b) -> Let b
+unpack argument bodyExpression (Let toLetScope) =
+    Let
+        (\index ->
+            let
+                argDetails =
+                    Internal.Arg.toDetails index argument
+
+                ( threeIndex, bodyDetails ) =
+                    Compiler.toExpressionDetails argDetails.index bodyExpression
+
+                previousLet :
+                    { letDecls : List (Node.Node Exp.LetDeclaration)
+                    , index : Index.Index
+                    , return : arg -> b
+                    , imports : List Module
+                    }
+                previousLet =
+                    toLetScope threeIndex
+
+                decl =
+                    Compiler.nodify <|
+                        Exp.LetDestructuring
+                            argDetails.details.pattern
+                            (Compiler.nodify bodyDetails.expression)
+            in
+            { letDecls = decl :: previousLet.letDecls
+            , index = previousLet.index
+            , return = previousLet.return argDetails.value
+            , imports =
+                bodyDetails.imports
+                    ++ previousLet.imports
+                    ++ argDetails.details.imports
+                    ++ previousLet.imports
             }
         )
 
@@ -258,81 +291,73 @@ value desiredName valueExpr sourceLet =
 {-| -}
 fn :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression)
+    -> Elm.Arg arg
+    -> (arg -> Expression)
     -> Let ((Expression -> Expression) -> a)
     -> Let a
-fn desiredName ( desiredArg, argAnnotation ) toInnerFn sourceLet =
-    with
-        (Let
-            (\index ->
-                let
-                    ( name, secondIndex ) =
-                        Index.getName desiredName index
+fn desiredName arg toInnerFn sourceLet =
+    sourceLet
+        |> with
+            (Let
+                (\index ->
+                    let
+                        ( name, secondIndex ) =
+                            Index.getName desiredName index
 
-                    ( argName, thirdIndex ) =
-                        Index.getName desiredArg secondIndex
+                        argDetails =
+                            Internal.Arg.toDetails secondIndex arg
 
-                    arg : Expression
-                    arg =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = argAnnotation
-                            , name = argName
-                            }
-
-                    ( finalIndex, innerFnDetails ) =
-                        Compiler.toExpressionDetails thirdIndex
-                            (toInnerFn arg)
-                in
-                { letDecls =
-                    [ Compiler.nodify <|
-                        Exp.LetFunction
-                            { documentation = Nothing
-                            , signature = Nothing
-                            , declaration =
-                                Compiler.nodify
-                                    { name = Compiler.nodify name
-                                    , arguments =
-                                        [ Compiler.nodify
-                                            (Pattern.VarPattern argName)
-                                        ]
-                                    , expression =
-                                        Compiler.nodify innerFnDetails.expression
-                                    }
-                            }
-                    ]
-                , index = finalIndex
-                , imports = innerFnDetails.imports
-                , return =
-                    \callerArg ->
-                        Elm.apply
-                            (Compiler.Expression
-                                (\_ ->
-                                    { innerFnDetails
-                                        | expression =
-                                            Exp.FunctionOrValue []
-                                                name
-                                    }
+                        ( finalIndex, innerFnDetails ) =
+                            Compiler.toExpressionDetails
+                                argDetails.index
+                                (toInnerFn argDetails.value)
+                    in
+                    { letDecls =
+                        [ Compiler.nodify <|
+                            Exp.LetFunction
+                                { documentation = Nothing
+                                , signature = Nothing
+                                , declaration =
+                                    Compiler.nodify
+                                        { name = Compiler.nodify name
+                                        , arguments =
+                                            [ argDetails.details.pattern
+                                            ]
+                                        , expression =
+                                            Compiler.nodify innerFnDetails.expression
+                                        }
+                                }
+                        ]
+                    , index = finalIndex
+                    , imports = innerFnDetails.imports ++ argDetails.details.imports
+                    , return =
+                        \callerArg ->
+                            Elm.apply
+                                (Compiler.Expression
+                                    (\_ ->
+                                        { innerFnDetails
+                                            | expression =
+                                                Exp.FunctionOrValue []
+                                                    name
+                                        }
+                                    )
                                 )
-                            )
-                            [ callerArg
-                            ]
-                }
+                                [ callerArg
+                                ]
+                    }
+                )
             )
-        )
-        sourceLet
 
 
 {-| -}
 fn2 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression)
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> (one -> two -> Expression)
     -> Let ((Expression -> Expression -> Expression) -> a)
     -> Let a
-fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn sourceLet =
+fn2 desiredName argOne argTwo toInnerFn sourceLet =
     with
         (Let
             (\index ->
@@ -340,31 +365,15 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                     ( name, secondIndex ) =
                         Index.getName desiredName index
 
-                    ( oneName, thirdIndex ) =
-                        Index.getName oneDesiredArg secondIndex
+                    argOneDetails =
+                        Internal.Arg.toDetails secondIndex argOne
 
-                    ( twoName, fourIndex ) =
-                        Index.getName twoDesiredArg thirdIndex
-
-                    one : Expression
-                    one =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = oneType
-                            , name = oneName
-                            }
-
-                    two : Expression
-                    two =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = twoType
-                            , name = twoName
-                            }
+                    argTwoDetails =
+                        Internal.Arg.toDetails argOneDetails.index argTwo
 
                     ( finalIndex, innerFnDetails ) =
-                        Compiler.toExpressionDetails fourIndex
-                            (toInnerFn one two)
+                        Compiler.toExpressionDetails argTwoDetails.index
+                            (toInnerFn argOneDetails.value argTwoDetails.value)
                 in
                 { letDecls =
                     [ Compiler.nodify <|
@@ -375,10 +384,8 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
                                 Compiler.nodify
                                     { name = Compiler.nodify name
                                     , arguments =
-                                        [ Compiler.nodify
-                                            (Pattern.VarPattern oneName)
-                                        , Compiler.nodify
-                                            (Pattern.VarPattern twoName)
+                                        [ argOneDetails.details.pattern
+                                        , argTwoDetails.details.pattern
                                         ]
                                     , expression =
                                         Compiler.nodify innerFnDetails.expression
@@ -411,13 +418,13 @@ fn2 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) toInnerFn 
 {-| -}
 fn3 :
     String
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> ( String, Maybe Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression)
+    -> Elm.Arg one
+    -> Elm.Arg two
+    -> Elm.Arg three
+    -> (one -> two -> three -> Expression)
     -> Let ((Expression -> Expression -> Expression -> Expression) -> a)
     -> Let a
-fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDesiredArg, threeType ) toInnerFn sourceLet =
+fn3 desiredName argOne argTwo argThree toInnerFn sourceLet =
     with
         (Let
             (\index ->
@@ -425,42 +432,21 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                     ( name, secondIndex ) =
                         Index.getName desiredName index
 
-                    ( oneName, thirdIndex ) =
-                        Index.getName oneDesiredArg secondIndex
+                    argOneDetails =
+                        Internal.Arg.toDetails secondIndex argOne
 
-                    ( twoName, fourIndex ) =
-                        Index.getName twoDesiredArg thirdIndex
+                    argTwoDetails =
+                        Internal.Arg.toDetails argOneDetails.index argTwo
 
-                    ( threeName, fifthIndex ) =
-                        Index.getName threeDesiredArg fourIndex
-
-                    one : Expression
-                    one =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = oneType
-                            , name = oneName
-                            }
-
-                    two : Expression
-                    two =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = twoType
-                            , name = twoName
-                            }
-
-                    three : Expression
-                    three =
-                        Elm.value
-                            { importFrom = []
-                            , annotation = threeType
-                            , name = threeName
-                            }
+                    argThreeDetails =
+                        Internal.Arg.toDetails argTwoDetails.index argThree
 
                     ( finalIndex, innerFnDetails ) =
-                        Compiler.toExpressionDetails fifthIndex
-                            (toInnerFn one two three)
+                        Compiler.toExpressionDetails argTwoDetails.index
+                            (toInnerFn argOneDetails.value
+                                argTwoDetails.value
+                                argThreeDetails.value
+                            )
                 in
                 { letDecls =
                     [ Compiler.nodify <|
@@ -471,12 +457,9 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
                                 Compiler.nodify
                                     { name = Compiler.nodify name
                                     , arguments =
-                                        [ Compiler.nodify
-                                            (Pattern.VarPattern oneName)
-                                        , Compiler.nodify
-                                            (Pattern.VarPattern twoName)
-                                        , Compiler.nodify
-                                            (Pattern.VarPattern threeName)
+                                        [ argOneDetails.details.pattern
+                                        , argTwoDetails.details.pattern
+                                        , argThreeDetails.details.pattern
                                         ]
                                     , expression =
                                         Compiler.nodify innerFnDetails.expression
@@ -505,257 +488,6 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
             )
         )
         sourceLet
-
-
-{-| -}
-tuple : String -> String -> Expression -> Let (( Expression, Expression ) -> a) -> Let a
-tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
-    sourceLet
-        |> with
-            (Let
-                (\index ->
-                    let
-                        ( oneName, oneIndex ) =
-                            Index.getName desiredNameOne index
-
-                        ( twoName, twoIndex ) =
-                            Index.getName desiredNameTwo oneIndex
-
-                        ( newIndex, sourceDetails ) =
-                            Compiler.toExpressionDetails twoIndex valueExpr
-
-                        annotation : Result (List Compiler.InferenceError) ( ( Annotation.TypeAnnotation, Annotation.TypeAnnotation ), Compiler.AliasCache )
-                        annotation =
-                            case sourceDetails.annotation of
-                                Err e ->
-                                    Err e
-
-                                Ok inference ->
-                                    case inference.type_ of
-                                        Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType ] ->
-                                            Ok ( ( oneType, twoType ), inference.aliases )
-
-                                        _ ->
-                                            Err []
-                    in
-                    { letDecls =
-                        [ Compiler.nodify <|
-                            Exp.LetDestructuring
-                                (Compiler.nodify
-                                    (Pattern.TuplePattern
-                                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                                        , Compiler.nodify (Pattern.VarPattern twoName)
-                                        ]
-                                    )
-                                )
-                                (Compiler.nodify sourceDetails.expression)
-                        ]
-                    , index = newIndex
-                    , imports = sourceDetails.imports
-                    , return =
-                        ( Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize oneName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( oneType, _ ), aliases ) ->
-                                                { type_ = oneType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports =
-                                    sourceDetails.imports
-                                }
-                        , Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize twoName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( _, twoType ), aliases ) ->
-                                                { type_ = twoType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports =
-                                    []
-                                }
-                        )
-                    }
-                )
-            )
-
-
-{-| -}
-triple : String -> String -> String -> Expression -> Let (( Expression, Expression, Expression ) -> a) -> Let a
-triple desiredNameOne desiredNameTwo desiredNameThree valueExpr sourceLet =
-    sourceLet
-        |> with
-            (Let
-                (\index ->
-                    let
-                        ( oneName, oneIndex ) =
-                            Index.getName desiredNameOne index
-
-                        ( twoName, twoIndex ) =
-                            Index.getName desiredNameTwo oneIndex
-
-                        ( threeName, threeIndex ) =
-                            Index.getName desiredNameThree twoIndex
-
-                        ( newIndex, sourceDetails ) =
-                            Compiler.toExpressionDetails threeIndex valueExpr
-
-                        annotation : Result (List Compiler.InferenceError) ( ( Annotation.TypeAnnotation, Annotation.TypeAnnotation, Annotation.TypeAnnotation ), Compiler.AliasCache )
-                        annotation =
-                            case sourceDetails.annotation of
-                                Err e ->
-                                    Err e
-
-                                Ok inference ->
-                                    case inference.type_ of
-                                        Annotation.Tupled [ Node.Node _ oneType, Node.Node _ twoType, Node.Node _ threeType ] ->
-                                            Ok ( ( oneType, twoType, threeType ), inference.aliases )
-
-                                        _ ->
-                                            Err []
-                    in
-                    { letDecls =
-                        [ Compiler.nodify <|
-                            Exp.LetDestructuring
-                                (Compiler.nodify
-                                    (Pattern.TuplePattern
-                                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                                        , Compiler.nodify (Pattern.VarPattern twoName)
-                                        , Compiler.nodify (Pattern.VarPattern threeName)
-                                        ]
-                                    )
-                                )
-                                (Compiler.nodify sourceDetails.expression)
-                        ]
-                    , index = newIndex
-                    , imports = sourceDetails.imports
-                    , return =
-                        ( Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize oneName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( oneType, _, _ ), aliases ) ->
-                                                { type_ = oneType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports = sourceDetails.imports
-                                }
-                        , Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize twoName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( _, twoType, _ ), aliases ) ->
-                                                { type_ = twoType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports = []
-                                }
-                        , Compiler.Expression <|
-                            \_ ->
-                                { expression =
-                                    Exp.FunctionOrValue []
-                                        (Format.sanitize threeName)
-                                , annotation =
-                                    annotation
-                                        |> Result.map
-                                            (\( ( _, _, threeType ), aliases ) ->
-                                                { type_ = threeType
-                                                , inferences = Dict.empty
-                                                , aliases = aliases
-                                                }
-                                            )
-                                , imports = []
-                                }
-                        )
-                    }
-                )
-            )
-
-
-{-| -}
-record :
-    List String
-    -> Expression
-    -> Let (List Expression -> a)
-    -> Let a
-record fields recordExp sourceLet =
-    -- Note, we can't actually guard the field names against collision here
-    -- They have to be the actual field names in the record, duh.
-    sourceLet
-        |> with
-            (Let
-                (\index ->
-                    let
-                        ( recordIndex, recordDetails ) =
-                            Compiler.toExpressionDetails index recordExp
-
-                        ( finalIndex, unpackedfields ) =
-                            List.foldl
-                                (\fieldName ( _, gathered ) ->
-                                    let
-                                        ( gotIndex, got ) =
-                                            Elm.get fieldName recordExp
-                                                |> Compiler.toExpressionDetails index
-                                    in
-                                    ( gotIndex
-                                    , Compiler.Expression
-                                        (\_ ->
-                                            { got
-                                                | expression =
-                                                    Exp.FunctionOrValue []
-                                                        fieldName
-                                            }
-                                        )
-                                        :: gathered
-                                    )
-                                )
-                                ( recordIndex, [] )
-                                fields
-                    in
-                    { letDecls =
-                        [ Compiler.nodify
-                            (Exp.LetDestructuring
-                                (Compiler.nodify
-                                    (Pattern.RecordPattern
-                                        (List.map Compiler.nodify
-                                            fields
-                                        )
-                                    )
-                                )
-                                (Compiler.nodify recordDetails.expression)
-                            )
-                        ]
-                    , index = finalIndex
-                    , return = List.reverse unpackedfields
-                    , imports = recordDetails.imports
-                    }
-                )
-            )
 
 
 {-| -}
@@ -788,6 +520,79 @@ toExpression (Let toScope) =
                             , expression = Compiler.nodify return.expression
                             }
             , imports = return.imports ++ scope.imports
+            , annotation =
+                return.annotation
+            }
+
+
+{-| Define the body of your `let` at the bottom instead of the top so it matches the generated syntax a bit closer.
+
+These two are equivalent
+import Elm
+import Elm.Let as Let
+
+      Let.letIn
+          (\one two ->
+              Elm.Op.append one two
+          )
+          |> Let.value "one" (Elm.string "Hello")
+          |> Let.value "two" (Elm.string "World!")
+          |> Let.toExpression
+
+
+      Let.letIn Tuple.pair
+          |> Let.value "one" (Elm.string "Hello")
+          |> Let.value "two" (Elm.string "World!")
+          |> Let.withBody
+              (\(one, two) ->
+                  Elm.Op.append one two
+              )
+
+And will generate
+
+      let
+          one = "Hello"
+          two = "World!"
+      in
+      one ++ two
+
+-}
+withBody : (val -> Expression) -> Let val -> Expression
+withBody toBody (Let toScope) =
+    Compiler.Expression <|
+        \index ->
+            let
+                letDetails :
+                    { letDecls : List (Node.Node Exp.LetDeclaration)
+                    , index : Index.Index
+                    , return : val
+                    , imports : List Module
+                    }
+                letDetails =
+                    toScope index
+
+                ( _, return ) =
+                    letDetails.return
+                        |> toBody
+                        |> Compiler.toExpressionDetails letDetails.index
+            in
+            { expression =
+                -- if we're leading into another let expression, just merge with it.
+                case return.expression of
+                    Exp.LetExpression innerReturn ->
+                        Exp.LetExpression
+                            { declarations =
+                                List.reverse letDetails.letDecls
+                                    ++ innerReturn.declarations
+                            , expression = innerReturn.expression
+                            }
+
+                    _ ->
+                        Exp.LetExpression
+                            { declarations = List.reverse letDetails.letDecls
+                            , expression = Compiler.nodify return.expression
+                            }
+            , imports = return.imports ++ letDetails.imports
             , annotation =
                 return.annotation
             }

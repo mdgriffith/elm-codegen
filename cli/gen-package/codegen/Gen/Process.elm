@@ -1,6 +1,16 @@
-module Gen.Process exposing (annotation_, call_, kill, moduleName_, sleep, spawn, values_)
+module Gen.Process exposing
+    ( annotation_
+    , call_
+    , kill
+    , moduleName_
+    , sleep
+    , spawn
+    , values_
+    )
 
-{-| 
+{-|
+# Generated bindings for Process
+
 @docs moduleName_, spawn, sleep, kill, annotation_, call_, values_
 -}
 
@@ -30,30 +40,30 @@ come in a later release!
 spawn: Task.Task x a -> Task.Task y Process.Id
 -}
 spawn : Elm.Expression -> Elm.Expression
-spawn spawnArg =
+spawn spawnArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Process" ]
-            , name = "spawn"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "y"
-                            , Type.namedWith [ "Process" ] "Id" []
-                            ]
-                        )
-                    )
-            }
+             { importFrom = [ "Process" ]
+             , name = "spawn"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.var "a" ]
+                          ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "y"
+                               , Type.namedWith [ "Process" ] "Id" []
+                               ]
+                          )
+                     )
+             }
         )
-        [ spawnArg ]
+        [ spawnArg_ ]
 
 
 {-| Block progress on the current process for the given number of milliseconds.
@@ -65,24 +75,24 @@ delay work until later.
 sleep: Float -> Task.Task x ()
 -}
 sleep : Float -> Elm.Expression
-sleep sleepArg =
+sleep sleepArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Process" ]
-            , name = "sleep"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.float ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
+             { importFrom = [ "Process" ]
+             , name = "sleep"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.float ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.unit ]
+                          )
+                     )
+             }
         )
-        [ Elm.float sleepArg ]
+        [ Elm.float sleepArg_ ]
 
 
 {-| Sometimes you `spawn` a process, but later decide it would be a waste to
@@ -93,24 +103,24 @@ flight, it will also abort the request.
 kill: Process.Id -> Task.Task x ()
 -}
 kill : Elm.Expression -> Elm.Expression
-kill killArg =
+kill killArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Process" ]
-            , name = "kill"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Process" ] "Id" [] ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
+             { importFrom = [ "Process" ]
+             , name = "kill"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith [ "Process" ] "Id" [] ]
+                          (Type.namedWith
+                               [ "Task" ]
+                               "Task"
+                               [ Type.var "x", Type.unit ]
+                          )
+                     )
+             }
         )
-        [ killArg ]
+        [ killArg_ ]
 
 
 annotation_ : { id : Type.Annotation }
@@ -131,68 +141,68 @@ call_ :
     }
 call_ =
     { spawn =
-        \spawnArg ->
+        \spawnArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Process" ]
-                    , name = "spawn"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.var "a" ]
-                                ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "y"
-                                    , Type.namedWith [ "Process" ] "Id" []
-                                    ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Process" ]
+                     , name = "spawn"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Task" ]
+                                      "Task"
+                                      [ Type.var "x", Type.var "a" ]
+                                  ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "y"
+                                       , Type.namedWith [ "Process" ] "Id" []
+                                       ]
+                                  )
+                             )
+                     }
                 )
-                [ spawnArg ]
+                [ spawnArg_ ]
     , sleep =
-        \sleepArg ->
+        \sleepArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Process" ]
-                    , name = "sleep"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.float ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.unit ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Process" ]
+                     , name = "sleep"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.float ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.unit ]
+                                  )
+                             )
+                     }
                 )
-                [ sleepArg ]
+                [ sleepArg_ ]
     , kill =
-        \killArg ->
+        \killArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Process" ]
-                    , name = "kill"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Process" ] "Id" [] ]
-                                (Type.namedWith
-                                    [ "Task" ]
-                                    "Task"
-                                    [ Type.var "x", Type.unit ]
-                                )
-                            )
-                    }
+                     { importFrom = [ "Process" ]
+                     , name = "kill"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith [ "Process" ] "Id" [] ]
+                                  (Type.namedWith
+                                       [ "Task" ]
+                                       "Task"
+                                       [ Type.var "x", Type.unit ]
+                                  )
+                             )
+                     }
                 )
-                [ killArg ]
+                [ killArg_ ]
     }
 
 
@@ -206,18 +216,18 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "y"
-                            , Type.namedWith [ "Process" ] "Id" []
-                            ]
-                        )
+                         [ Type.namedWith
+                             [ "Task" ]
+                             "Task"
+                             [ Type.var "x", Type.var "a" ]
+                         ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "y"
+                              , Type.namedWith [ "Process" ] "Id" []
+                              ]
+                         )
                     )
             }
     , sleep =
@@ -227,12 +237,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.float ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
+                         [ Type.float ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.unit ]
+                         )
                     )
             }
     , kill =
@@ -242,12 +252,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Process" ] "Id" [] ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
+                         [ Type.namedWith [ "Process" ] "Id" [] ]
+                         (Type.namedWith
+                              [ "Task" ]
+                              "Task"
+                              [ Type.var "x", Type.unit ]
+                         )
                     )
             }
     }

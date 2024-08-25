@@ -221,5 +221,4 @@ delimeters : Doc t -> Doc t
 delimeters doc =
     Pretty.string "{-|"
         |> Pretty.a doc
-        |> Pretty.a Pretty.line
         |> Pretty.a (Pretty.string "-}")

@@ -1,6 +1,16 @@
-module Gen.Platform.Sub exposing (annotation_, batch, call_, map, moduleName_, none, values_)
+module Gen.Platform.Sub exposing
+    ( annotation_
+    , batch
+    , call_
+    , map
+    , moduleName_
+    , none
+    , values_
+    )
 
-{-| 
+{-|
+# Generated bindings for Sub
+
 @docs moduleName_, none, batch, map, annotation_, call_, values_
 -}
 
@@ -37,21 +47,22 @@ subscriptions.
 batch: List (Platform.Sub.Sub msg) -> Platform.Sub.Sub msg
 -}
 batch : List Elm.Expression -> Elm.Expression
-batch batchArg =
+batch batchArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Sub" ]
-            , name = "batch"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                        ]
-                        (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                    )
-            }
+             { importFrom = [ "Sub" ]
+             , name = "batch"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list
+                              (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                          ]
+                          (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                     )
+             }
         )
-        [ Elm.list batchArg ]
+        [ Elm.list batchArg_ ]
 
 
 {-| Transform the messages produced by a subscription.
@@ -65,22 +76,22 @@ section on [structure][] in the guide before reaching for this!
 map: (a -> msg) -> Platform.Sub.Sub a -> Platform.Sub.Sub msg
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map mapArg mapArg0 =
+map mapArg_ mapArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Sub" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "msg")
-                        , Type.namedWith [] "Sub" [ Type.var "a" ]
-                        ]
-                        (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                    )
-            }
+             { importFrom = [ "Sub" ]
+             , name = "map"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.function [ Type.var "a" ] (Type.var "msg")
+                          , Type.namedWith [] "Sub" [ Type.var "a" ]
+                          ]
+                          (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                     )
+             }
         )
-        [ Elm.functionReduced "mapUnpack" mapArg, mapArg0 ]
+        [ Elm.functionReduced "mapUnpack" mapArg_, mapArg_0 ]
 
 
 annotation_ : { sub : Type.Annotation -> Type.Annotation }
@@ -94,41 +105,45 @@ call_ :
     }
 call_ =
     { batch =
-        \batchArg ->
+        \batchArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Sub" ]
-                    , name = "batch"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list
-                                    (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                                ]
-                                (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                            )
-                    }
+                     { importFrom = [ "Sub" ]
+                     , name = "batch"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list
+                                      (Type.namedWith
+                                         []
+                                         "Sub"
+                                         [ Type.var "msg" ]
+                                      )
+                                  ]
+                                  (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                             )
+                     }
                 )
-                [ batchArg ]
+                [ batchArg_ ]
     , map =
-        \mapArg mapArg0 ->
+        \mapArg_ mapArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Sub" ]
-                    , name = "map"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.function
-                                    [ Type.var "a" ]
-                                    (Type.var "msg")
-                                , Type.namedWith [] "Sub" [ Type.var "a" ]
-                                ]
-                                (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                            )
-                    }
+                     { importFrom = [ "Sub" ]
+                     , name = "map"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.function
+                                      [ Type.var "a" ]
+                                      (Type.var "msg")
+                                  , Type.namedWith [] "Sub" [ Type.var "a" ]
+                                  ]
+                                  (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                             )
+                     }
                 )
-                [ mapArg, mapArg0 ]
+                [ mapArg_, mapArg_0 ]
     }
 
 
@@ -148,9 +163,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list (Type.namedWith [] "Sub" [ Type.var "msg" ])
-                        ]
-                        (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                         [ Type.list
+                             (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                         ]
+                         (Type.namedWith [] "Sub" [ Type.var "msg" ])
                     )
             }
     , map =
@@ -160,10 +176,10 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "msg")
-                        , Type.namedWith [] "Sub" [ Type.var "a" ]
-                        ]
-                        (Type.namedWith [] "Sub" [ Type.var "msg" ])
+                         [ Type.function [ Type.var "a" ] (Type.var "msg")
+                         , Type.namedWith [] "Sub" [ Type.var "a" ]
+                         ]
+                         (Type.namedWith [] "Sub" [ Type.var "msg" ])
                     )
             }
     }

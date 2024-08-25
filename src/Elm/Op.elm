@@ -3,7 +3,7 @@ module Elm.Op exposing
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
     , lt, gt, lte, gte
-    , pipe
+    , pipe, pipeLeft
     , parens
     , keep, skip
     , slash, query
@@ -39,7 +39,7 @@ Would generate
 
 @docs lt, gt, lte, gte
 
-@docs pipe
+@docs pipe, pipeLeft
 
 @docs parens
 
@@ -612,78 +612,3 @@ applyNumber symbol dir l r =
                     ]
             , imports = left.imports ++ right.imports
             }
-
-
-popLast : List a -> Maybe ( List a, a )
-popLast lst =
-    case List.reverse lst of
-        [] ->
-            Nothing
-
-        last :: initReverse ->
-            Just ( List.reverse initReverse, last )
-
-
-{-|
-
-    String.append "world2" (String.append "world" "Hello")
-
-    Apply [ String.append, "world2", Apply [ String.append, "world", "hello" ] ]
-
-    Elm.string "Hello"
-        |> Elm.Gen.String.append (Elm.string "world")
-        |> Elm.Gen.String.append (Elm.string "world2")
-
-    OpApply "|>"
-        (OpApply "|>"
-            ()
-            (Apply [ String.append, "world" ])
-        )
-        String.append
-
--}
-autopipe : Bool -> Exp.Expression -> List Exp.Expression -> Exp.Expression
-autopipe committed topFn expressions =
-    if committed then
-        case popLast expressions of
-            Nothing ->
-                topFn
-
-            Just ( init, last ) ->
-                Exp.OperatorApplication "|>"
-                    Infix.Left
-                    (Compiler.nodify last)
-                    (Compiler.nodify
-                        (Exp.Application
-                            (Compiler.nodify topFn :: List.map (Compiler.nodify << Compiler.parens) init)
-                        )
-                    )
-
-    else
-        case popLast expressions of
-            Nothing ->
-                topFn
-
-            Just ( init, last ) ->
-                case last of
-                    Exp.Application lastArgs ->
-                        Exp.OperatorApplication "|>"
-                            Infix.Left
-                            (Compiler.nodify
-                                (case lastArgs of
-                                    [] ->
-                                        Exp.Application []
-
-                                    (Node _ innerFn) :: remain ->
-                                        autopipe True innerFn (Compiler.denodeAll remain)
-                                )
-                            )
-                            (Compiler.nodify
-                                (Exp.Application
-                                    (Compiler.nodify topFn :: List.map (Compiler.nodify << Compiler.parens) init)
-                                )
-                            )
-
-                    _ ->
-                        Exp.Application
-                            (List.map (Compiler.nodify << Compiler.parens) (topFn :: expressions))

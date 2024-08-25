@@ -2,6 +2,7 @@ module TypeChecking exposing (generatedCode, suite)
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg as Arg
 import Elm.Case
 import Elm.Expect
 import Elm.Op
@@ -9,6 +10,7 @@ import Elm.ToString
 import Expect
 import Internal.Compiler as Compiler
 import Internal.Index as Index
+import String.Multiline
 import Test exposing (Test, describe, test)
 
 
@@ -16,7 +18,7 @@ successfullyInferredType : Compiler.Expression -> Expect.Expectation
 successfullyInferredType expression =
     let
         ( _, details ) =
-            Compiler.toExpressionDetails Index.startIndex expression
+            Compiler.toExpressionDetails (Index.startIndex Nothing) expression
     in
     case details.annotation of
         Ok _ ->
@@ -65,13 +67,13 @@ suite =
         , test "A simple plus function" <|
             \_ ->
                 successfullyInferredType
-                    (Elm.fn ( "myInt", Nothing ) <|
+                    (Elm.fn (Arg.var "myInt") <|
                         Elm.Op.plus (Elm.int 5)
                     )
         , test "Function with list mapping" <|
             \_ ->
                 successfullyInferredType
-                    (Elm.fn ( "myArg", Nothing ) <|
+                    (Elm.fn (Arg.var "myArg") <|
                         \myArg ->
                             listMap
                                 (\i ->
@@ -83,7 +85,7 @@ suite =
         , test "Function that updates a literal elm record" <|
             \_ ->
                 successfullyInferredType
-                    (Elm.fn ( "myInt", Nothing ) <|
+                    (Elm.fn (Arg.var "myInt") <|
                         \myInt ->
                             Elm.record
                                 [ ( "first", Elm.int 5 )
@@ -176,19 +178,21 @@ generatedCode =
                 Elm.Expect.declarationAs
                     (Elm.declaration "map" myMap2)
                     """
-map : (optional -> fn) -> optional -> Optional fn
-map fn optional =
-    Present (fn optional)
-
-"""
+                    map : (optional -> fn) -> optional -> Optional fn
+                    map fn optional =
+                        Present (fn optional)
+                    """
         , test "Map function generates corrections " <|
             \_ ->
                 (Elm.ToString.expression myMap
                     |> .signature
                 )
-                    |> Expect.equal (String.trim """
-(a -> fn) -> Optional a -> Optional fn
-""")
+                    |> Expect.equal
+                        (String.Multiline.here
+                            """
+                            (a -> fn) -> Optional a -> Optional fn
+                            """
+                        )
         , test "Multiply used type variable in record only appears once in signature" <|
             \_ ->
                 Elm.Expect.declarationAs
@@ -206,8 +210,8 @@ map fn optional =
 myMap2 : Elm.Expression
 myMap2 =
     Elm.fn2
-        ( "fn", Nothing )
-        ( "optional", Nothing )
+        (Arg.var "fn")
+        (Arg.var "optional")
         (\fn a ->
             present [] (Elm.apply fn [ a ])
         )
@@ -216,20 +220,25 @@ myMap2 =
 myMap : Elm.Expression
 myMap =
     Elm.fn2
-        ( "fn", Nothing )
-        ( "optional", Nothing )
+        (Arg.var "fn")
+        (Arg.var "optional")
         (\fn optional ->
             Elm.Case.custom optional
                 (Type.namedWith [] "Optional" [ Type.var "a" ])
-                [ Elm.Case.branch1
-                    "Present"
-                    ( "present", Type.var "a" )
+                [ Elm.Case.branch
+                    (Arg.customType "Present" identity
+                        |> Arg.item (Arg.var "a")
+                    )
                     (\a ->
                         present []
                             (Elm.apply fn [ a ])
                     )
-                , Elm.Case.branch0 "Null" (null [])
-                , Elm.Case.branch0 "Absent" (absent [])
+                , Elm.Case.branch
+                    (Arg.customType "Null" [])
+                    null
+                , Elm.Case.branch
+                    (Arg.customType "Absent" [])
+                    absent
                 ]
         )
 
@@ -242,9 +251,9 @@ present optionalModuleName a =
             , name = "Present"
             , annotation =
                 Just
-                    (Type.function [ Type.var "a2" ] (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ]))
-
-            -- Nothing
+                    (Type.function [ Type.var "a2" ]
+                        (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ])
+                    )
             }
         )
         [ a ]

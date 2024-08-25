@@ -1,6 +1,36 @@
-module Gen.Elm.Annotation exposing (alias, annotation_, bool, call_, char, cmd, dict, extensible, float, function, int, list, maybe, moduleName_, named, namedWith, record, result, set, string, sub, toString, triple, tuple, unit, values_, var)
+module Gen.Elm.Annotation exposing
+    ( alias
+    , annotation_
+    , bool
+    , call_
+    , char
+    , cmd
+    , dict
+    , extensible
+    , float
+    , function
+    , int
+    , list
+    , maybe
+    , moduleName_
+    , named
+    , namedWith
+    , record
+    , result
+    , set
+    , string
+    , sub
+    , toString
+    , triple
+    , tuple
+    , unit
+    , values_
+    , var
+    )
 
-{-| 
+{-|
+# Generated bindings for Elm.Annotation
+
 @docs moduleName_, var, bool, int, float, string, char, unit, cmd, sub, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, alias, function, toString, annotation_, call_, values_
 -}
 
@@ -20,20 +50,24 @@ moduleName_ =
 var: String -> Elm.Annotation.Annotation
 -}
 var : String -> Elm.Expression
-var varArg =
+var varArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "var"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "var"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ Elm.string varArg ]
+        [ Elm.string varArg_ ]
 
 
 {-| bool: Elm.Annotation.Annotation -}
@@ -104,58 +138,76 @@ unit =
 
 {-| cmd: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 cmd : Elm.Expression -> Elm.Expression
-cmd cmdArg =
+cmd cmdArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "cmd"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "cmd"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ cmdArg ]
+        [ cmdArg_ ]
 
 
 {-| sub: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 sub : Elm.Expression -> Elm.Expression
-sub subArg =
+sub subArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "sub"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "sub"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ subArg ]
+        [ subArg_ ]
 
 
 {-| named: List String -> String -> Elm.Annotation.Annotation -}
 named : List String -> String -> Elm.Expression
-named namedArg namedArg0 =
+named namedArg_ namedArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "named"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list Type.string, Type.string ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "named"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list Type.string, Type.string ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ Elm.list (List.map Elm.string namedArg), Elm.string namedArg0 ]
+        [ Elm.list (List.map Elm.string namedArg_), Elm.string namedArg_0 ]
 
 
 {-| namedWith: 
@@ -165,69 +217,87 @@ named namedArg namedArg0 =
     -> Elm.Annotation.Annotation
 -}
 namedWith : List String -> String -> List Elm.Expression -> Elm.Expression
-namedWith namedWithArg namedWithArg0 namedWithArg1 =
+namedWith namedWithArg_ namedWithArg_0 namedWithArg_1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "namedWith"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list Type.string
-                        , Type.string
-                        , Type.list
-                            (Type.namedWith
-                                [ "Elm", "Annotation" ]
-                                "Annotation"
-                                []
-                            )
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "namedWith"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list Type.string
+                          , Type.string
+                          , Type.list
+                              (Type.namedWith
+                                 [ "Elm", "Annotation" ]
+                                 "Annotation"
+                                 []
+                              )
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ Elm.list (List.map Elm.string namedWithArg)
-        , Elm.string namedWithArg0
-        , Elm.list namedWithArg1
+        [ Elm.list (List.map Elm.string namedWithArg_)
+        , Elm.string namedWithArg_0
+        , Elm.list namedWithArg_1
         ]
 
 
 {-| maybe: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 maybe : Elm.Expression -> Elm.Expression
-maybe maybeArg =
+maybe maybeArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "maybe"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "maybe"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ maybeArg ]
+        [ maybeArg_ ]
 
 
 {-| list: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 list : Elm.Expression -> Elm.Expression
-list listArg =
+list listArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "list"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "list"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ listArg ]
+        [ listArg_ ]
 
 
 {-| tuple: 
@@ -236,22 +306,32 @@ list listArg =
     -> Elm.Annotation.Annotation
 -}
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
-tuple tupleArg tupleArg0 =
+tuple tupleArg_ tupleArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "tuple"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "tuple"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ tupleArg, tupleArg0 ]
+        [ tupleArg_, tupleArg_0 ]
 
 
 {-| triple: 
@@ -261,42 +341,62 @@ tuple tupleArg tupleArg0 =
     -> Elm.Annotation.Annotation
 -}
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-triple tripleArg tripleArg0 tripleArg1 =
+triple tripleArg_ tripleArg_0 tripleArg_1 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "triple"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "triple"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ tripleArg, tripleArg0, tripleArg1 ]
+        [ tripleArg_, tripleArg_0, tripleArg_1 ]
 
 
 {-| set: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 set : Elm.Expression -> Elm.Expression
-set setArg =
+set setArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "set"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "set"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ setArg ]
+        [ setArg_ ]
 
 
 {-| dict: 
@@ -305,22 +405,32 @@ set setArg =
     -> Elm.Annotation.Annotation
 -}
 dict : Elm.Expression -> Elm.Expression -> Elm.Expression
-dict dictArg dictArg0 =
+dict dictArg_ dictArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "dict"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "dict"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ dictArg, dictArg0 ]
+        [ dictArg_, dictArg_0 ]
 
 
 {-| result: 
@@ -329,49 +439,63 @@ dict dictArg dictArg0 =
     -> Elm.Annotation.Annotation
 -}
 result : Elm.Expression -> Elm.Expression -> Elm.Expression
-result resultArg resultArg0 =
+result resultArg_ resultArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "result"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "result"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ resultArg, resultArg0 ]
+        [ resultArg_, resultArg_0 ]
 
 
 {-| record: List ( String, Elm.Annotation.Annotation ) -> Elm.Annotation.Annotation -}
 record : List Elm.Expression -> Elm.Expression
-record recordArg =
+record recordArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "record"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list
-                            (Type.tuple
-                                Type.string
-                                (Type.namedWith
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "record"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list
+                              (Type.tuple
+                                 Type.string
+                                 (Type.namedWith
                                     [ "Elm", "Annotation" ]
                                     "Annotation"
                                     []
-                                )
-                            )
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+                                 )
+                              )
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ Elm.list recordArg ]
+        [ Elm.list recordArg_ ]
 
 
 {-| extensible: 
@@ -380,30 +504,34 @@ record recordArg =
     -> Elm.Annotation.Annotation
 -}
 extensible : String -> List Elm.Expression -> Elm.Expression
-extensible extensibleArg extensibleArg0 =
+extensible extensibleArg_ extensibleArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "extensible"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.string
-                        , Type.list
-                            (Type.tuple
-                                Type.string
-                                (Type.namedWith
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "extensible"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.string
+                          , Type.list
+                              (Type.tuple
+                                 Type.string
+                                 (Type.namedWith
                                     [ "Elm", "Annotation" ]
                                     "Annotation"
                                     []
-                                )
-                            )
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+                                 )
+                              )
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ Elm.string extensibleArg, Elm.list extensibleArg0 ]
+        [ Elm.string extensibleArg_, Elm.list extensibleArg_0 ]
 
 
 {-| The classic example of a Model
@@ -434,32 +562,39 @@ alias :
     -> List Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-alias aliasArg aliasArg0 aliasArg1 aliasArg2 =
+alias aliasArg_ aliasArg_0 aliasArg_1 aliasArg_2 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "alias"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list Type.string
-                        , Type.string
-                        , Type.list
-                            (Type.namedWith
-                                [ "Elm", "Annotation" ]
-                                "Annotation"
-                                []
-                            )
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "alias"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list Type.string
+                          , Type.string
+                          , Type.list
+                              (Type.namedWith
+                                 [ "Elm", "Annotation" ]
+                                 "Annotation"
+                                 []
+                              )
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ Elm.list (List.map Elm.string aliasArg)
-        , Elm.string aliasArg0
-        , Elm.list aliasArg1
-        , aliasArg2
+        [ Elm.list (List.map Elm.string aliasArg_)
+        , Elm.string aliasArg_0
+        , Elm.list aliasArg_1
+        , aliasArg_2
         ]
 
 
@@ -469,46 +604,56 @@ alias aliasArg aliasArg0 aliasArg1 aliasArg2 =
     -> Elm.Annotation.Annotation
 -}
 function : List Elm.Expression -> Elm.Expression -> Elm.Expression
-function functionArg functionArg0 =
+function functionArg_ functionArg_0 =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "function"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list
-                            (Type.namedWith
-                                [ "Elm", "Annotation" ]
-                                "Annotation"
-                                []
-                            )
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "function"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.list
+                              (Type.namedWith
+                                 [ "Elm", "Annotation" ]
+                                 "Annotation"
+                                 []
+                              )
+                          , Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          (Type.namedWith
+                               [ "Elm", "Annotation" ]
+                               "Annotation"
+                               []
+                          )
+                     )
+             }
         )
-        [ Elm.list functionArg, functionArg0 ]
+        [ Elm.list functionArg_, functionArg_0 ]
 
 
 {-| toString: Elm.Annotation.Annotation -> String -}
 toString : Elm.Expression -> Elm.Expression
-toString toStringArg =
+toString toStringArg_ =
     Elm.apply
         (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "toString"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        Type.string
-                    )
-            }
+             { importFrom = [ "Elm", "Annotation" ]
+             , name = "toString"
+             , annotation =
+                 Just
+                     (Type.function
+                          [ Type.namedWith
+                              [ "Elm", "Annotation" ]
+                              "Annotation"
+                              []
+                          ]
+                          Type.string
+                     )
+             }
         )
-        [ toStringArg ]
+        [ toStringArg_ ]
 
 
 annotation_ : { annotation : Type.Annotation }
@@ -550,433 +695,433 @@ call_ :
     }
 call_ =
     { var =
-        \varArg ->
+        \varArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "var"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "var"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ varArg ]
+                [ varArg_ ]
     , cmd =
-        \cmdArg ->
+        \cmdArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "cmd"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "cmd"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ cmdArg ]
+                [ cmdArg_ ]
     , sub =
-        \subArg ->
+        \subArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "sub"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "sub"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ subArg ]
+                [ subArg_ ]
     , named =
-        \namedArg namedArg0 ->
+        \namedArg_ namedArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "named"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list Type.string, Type.string ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "named"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list Type.string, Type.string ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ namedArg, namedArg0 ]
+                [ namedArg_, namedArg_0 ]
     , namedWith =
-        \namedWithArg namedWithArg0 namedWithArg1 ->
+        \namedWithArg_ namedWithArg_0 namedWithArg_1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "namedWith"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list Type.string
-                                , Type.string
-                                , Type.list
-                                    (Type.namedWith
-                                        [ "Elm", "Annotation" ]
-                                        "Annotation"
-                                        []
-                                    )
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "namedWith"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list Type.string
+                                  , Type.string
+                                  , Type.list
+                                      (Type.namedWith
+                                         [ "Elm", "Annotation" ]
+                                         "Annotation"
+                                         []
+                                      )
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ namedWithArg, namedWithArg0, namedWithArg1 ]
+                [ namedWithArg_, namedWithArg_0, namedWithArg_1 ]
     , maybe =
-        \maybeArg ->
+        \maybeArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "maybe"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "maybe"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ maybeArg ]
+                [ maybeArg_ ]
     , list =
-        \listArg ->
+        \listArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "list"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "list"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ listArg ]
+                [ listArg_ ]
     , tuple =
-        \tupleArg tupleArg0 ->
+        \tupleArg_ tupleArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "tuple"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "tuple"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ tupleArg, tupleArg0 ]
+                [ tupleArg_, tupleArg_0 ]
     , triple =
-        \tripleArg tripleArg0 tripleArg1 ->
+        \tripleArg_ tripleArg_0 tripleArg_1 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "triple"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "triple"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ tripleArg, tripleArg0, tripleArg1 ]
+                [ tripleArg_, tripleArg_0, tripleArg_1 ]
     , set =
-        \setArg ->
+        \setArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "set"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "set"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ setArg ]
+                [ setArg_ ]
     , dict =
-        \dictArg dictArg0 ->
+        \dictArg_ dictArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "dict"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "dict"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ dictArg, dictArg0 ]
+                [ dictArg_, dictArg_0 ]
     , result =
-        \resultArg resultArg0 ->
+        \resultArg_ resultArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "result"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "result"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ resultArg, resultArg0 ]
+                [ resultArg_, resultArg_0 ]
     , record =
-        \recordArg ->
+        \recordArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "record"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list
-                                    (Type.tuple
-                                        Type.string
-                                        (Type.namedWith
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "record"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list
+                                      (Type.tuple
+                                         Type.string
+                                         (Type.namedWith
                                             [ "Elm", "Annotation" ]
                                             "Annotation"
                                             []
-                                        )
-                                    )
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                                         )
+                                      )
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ recordArg ]
+                [ recordArg_ ]
     , extensible =
-        \extensibleArg extensibleArg0 ->
+        \extensibleArg_ extensibleArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "extensible"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.string
-                                , Type.list
-                                    (Type.tuple
-                                        Type.string
-                                        (Type.namedWith
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "extensible"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.string
+                                  , Type.list
+                                      (Type.tuple
+                                         Type.string
+                                         (Type.namedWith
                                             [ "Elm", "Annotation" ]
                                             "Annotation"
                                             []
-                                        )
-                                    )
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                                         )
+                                      )
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ extensibleArg, extensibleArg0 ]
+                [ extensibleArg_, extensibleArg_0 ]
     , alias =
-        \aliasArg aliasArg0 aliasArg1 aliasArg2 ->
+        \aliasArg_ aliasArg_0 aliasArg_1 aliasArg_2 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "alias"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list Type.string
-                                , Type.string
-                                , Type.list
-                                    (Type.namedWith
-                                        [ "Elm", "Annotation" ]
-                                        "Annotation"
-                                        []
-                                    )
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "alias"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list Type.string
+                                  , Type.string
+                                  , Type.list
+                                      (Type.namedWith
+                                         [ "Elm", "Annotation" ]
+                                         "Annotation"
+                                         []
+                                      )
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ aliasArg, aliasArg0, aliasArg1, aliasArg2 ]
+                [ aliasArg_, aliasArg_0, aliasArg_1, aliasArg_2 ]
     , function =
-        \functionArg functionArg0 ->
+        \functionArg_ functionArg_0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "function"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list
-                                    (Type.namedWith
-                                        [ "Elm", "Annotation" ]
-                                        "Annotation"
-                                        []
-                                    )
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "function"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.list
+                                      (Type.namedWith
+                                         [ "Elm", "Annotation" ]
+                                         "Annotation"
+                                         []
+                                      )
+                                  , Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  (Type.namedWith
+                                       [ "Elm", "Annotation" ]
+                                       "Annotation"
+                                       []
+                                  )
+                             )
+                     }
                 )
-                [ functionArg, functionArg0 ]
+                [ functionArg_, functionArg_0 ]
     , toString =
-        \toStringArg ->
+        \toStringArg_ ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Elm", "Annotation" ]
-                    , name = "toString"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                ]
-                                Type.string
-                            )
-                    }
+                     { importFrom = [ "Elm", "Annotation" ]
+                     , name = "toString"
+                     , annotation =
+                         Just
+                             (Type.function
+                                  [ Type.namedWith
+                                      [ "Elm", "Annotation" ]
+                                      "Annotation"
+                                      []
+                                  ]
+                                  Type.string
+                             )
+                     }
                 )
-                [ toStringArg ]
+                [ toStringArg_ ]
     }
 
 
@@ -1013,8 +1158,9 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.string ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , bool =
@@ -1066,9 +1212,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , sub =
@@ -1078,9 +1228,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , named =
@@ -1090,8 +1244,9 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string, Type.string ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.list Type.string, Type.string ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , namedWith =
@@ -1101,16 +1256,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
-                        , Type.list
-                            (Type.namedWith
+                         [ Type.list Type.string
+                         , Type.string
+                         , Type.list
+                             (Type.namedWith
                                 [ "Elm", "Annotation" ]
                                 "Annotation"
                                 []
-                            )
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                             )
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , maybe =
@@ -1120,9 +1276,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , list =
@@ -1132,9 +1292,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , tuple =
@@ -1144,10 +1308,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , triple =
@@ -1157,11 +1328,21 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , set =
@@ -1171,9 +1352,13 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , dict =
@@ -1183,10 +1368,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , result =
@@ -1196,10 +1388,17 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , record =
@@ -1209,17 +1408,18 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list
-                            (Type.tuple
+                         [ Type.list
+                             (Type.tuple
                                 Type.string
                                 (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
+                                   [ "Elm", "Annotation" ]
+                                   "Annotation"
+                                   []
                                 )
-                            )
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                             )
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , extensible =
@@ -1229,18 +1429,19 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.string
-                        , Type.list
-                            (Type.tuple
+                         [ Type.string
+                         , Type.list
+                             (Type.tuple
                                 Type.string
                                 (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
+                                   [ "Elm", "Annotation" ]
+                                   "Annotation"
+                                   []
                                 )
-                            )
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                             )
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , alias =
@@ -1250,17 +1451,21 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
-                        , Type.list
-                            (Type.namedWith
+                         [ Type.list Type.string
+                         , Type.string
+                         , Type.list
+                             (Type.namedWith
                                 [ "Elm", "Annotation" ]
                                 "Annotation"
                                 []
-                            )
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                             )
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , function =
@@ -1270,15 +1475,19 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list
-                            (Type.namedWith
+                         [ Type.list
+                             (Type.namedWith
                                 [ "Elm", "Annotation" ]
                                 "Annotation"
                                 []
-                            )
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                             )
+                         , Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
                     )
             }
     , toString =
@@ -1288,9 +1497,12 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                        ]
-                        Type.string
+                         [ Type.namedWith
+                             [ "Elm", "Annotation" ]
+                             "Annotation"
+                             []
+                         ]
+                         Type.string
                     )
             }
     }

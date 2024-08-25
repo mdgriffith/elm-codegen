@@ -24,7 +24,7 @@ module Internal.Compiler exposing
     , documentation
     , emptyAliases
     , expose
-    , exposeWith
+    , exposeConstructor
     , expression
     , facts
     , findAlias
@@ -52,9 +52,6 @@ module Internal.Compiler exposing
     , thread
     , toExpressionDetails
     , toVar
-    , toVarExactName
-    , toVarMaybeType
-    , toVarWithType
     , unify
     , unifyOn
     )
@@ -99,7 +96,9 @@ getTypeModule (Annotation annotation) =
 type Declaration
     = Declaration DeclarationDetails
     | Comment String
+    | ModuleDocs String
     | Block String
+    | Group (List Declaration)
 
 
 type RenderedDeclaration
@@ -291,7 +290,7 @@ facts (Expression exp) =
     let
         expresh : ExpressionDetails
         expresh =
-            exp Index.startIndex
+            exp (Index.startIndex Nothing)
     in
     case expresh.annotation of
         Ok sig ->
@@ -365,125 +364,6 @@ toVar index desiredName =
                         }
                 , imports =
                     []
-                }
-    }
-
-
-toVarExactName :
-    Index
-    -> String
-    ->
-        { name : String
-        , typename : String
-        , val : Expression
-        , index : Index
-        }
-toVarExactName index name =
-    let
-        typename : String
-        typename =
-            Index.protectTypeName name index
-    in
-    { name = name
-    , typename = typename
-    , index = Index.next index
-    , val =
-        Expression <|
-            \_ ->
-                { expression =
-                    Exp.FunctionOrValue []
-                        name
-                , annotation =
-                    Ok
-                        { type_ =
-                            Annotation.GenericType typename
-                        , inferences = Dict.empty
-                        , aliases = emptyAliases
-                        }
-                , imports =
-                    []
-                }
-    }
-
-
-toVarMaybeType :
-    Index
-    -> String
-    -> Maybe Annotation
-    ->
-        { name : String
-        , type_ : Annotation.TypeAnnotation
-        , val : Expression
-        , index : Index
-        }
-toVarMaybeType index desiredName maybeAnnotation =
-    let
-        ( name, newIndex ) =
-            Index.getName desiredName index
-
-        { imports, annotation, aliases } =
-            case maybeAnnotation of
-                Nothing ->
-                    { imports = []
-                    , annotation = Annotation.GenericType (Index.protectTypeName desiredName index)
-                    , aliases = emptyAliases
-                    }
-
-                Just (Annotation ann) ->
-                    ann
-    in
-    { name = name
-    , type_ = annotation
-    , index = newIndex
-    , val =
-        Expression <|
-            \_ ->
-                { expression =
-                    Exp.FunctionOrValue []
-                        name
-                , annotation =
-                    Ok
-                        { type_ =
-                            annotation
-                        , inferences = Dict.empty
-                        , aliases = aliases
-                        }
-                , imports =
-                    imports
-                }
-    }
-
-
-toVarWithType :
-    Index
-    -> String
-    -> Annotation
-    ->
-        { name : String
-        , exp : Expression
-        , index : Index
-        }
-toVarWithType index desiredName (Annotation ann) =
-    let
-        ( name, newIndex ) =
-            Index.getName desiredName index
-    in
-    { name = name
-    , index = newIndex
-    , exp =
-        Expression <|
-            \_ ->
-                { expression =
-                    Exp.FunctionOrValue []
-                        name
-                , annotation =
-                    Ok
-                        { inferences = Dict.empty
-                        , aliases = ann.aliases
-                        , type_ = ann.annotation
-                        }
-                , imports =
-                    ann.imports
                 }
     }
 
@@ -725,8 +605,6 @@ getInnerInference index (Annotation details) =
             -- running protectAnnotation will cause the typechecking to fail :/
             -- So, there's a bug to debug
             |> protectAnnotation index
-
-    --details.annotation
     , inferences = Dict.empty
     , aliases = details.aliases
     }
@@ -740,11 +618,6 @@ getAnnotationImports (Annotation details) =
 getImports : ExpressionDetails -> List Module
 getImports exp =
     exp.imports
-
-
-getInnerExpression : ExpressionDetails -> Exp.Expression
-getInnerExpression exp =
-    exp.expression
 
 
 getAnnotation : ExpressionDetails -> Result (List InferenceError) Inference
@@ -770,6 +643,9 @@ documentation rawDoc decl =
             Block _ ->
                 decl
 
+            ModuleDocs _ ->
+                decl
+
             Declaration details ->
                 Declaration
                     { details
@@ -782,6 +658,9 @@ documentation rawDoc decl =
                                     Just (doc ++ "\n\n" ++ existing)
                     }
 
+            Group groupDecls ->
+                Group (List.map (documentation doc) groupDecls)
+
 
 {-| -}
 expose : Declaration -> Declaration
@@ -793,13 +672,28 @@ expose decl =
         Block _ ->
             decl
 
+        ModuleDocs _ ->
+            decl
+
         Declaration details ->
-            Declaration { details | exposed = Exposed { group = Nothing, exposeConstructor = False } }
+            Declaration
+                { details
+                    | exposed =
+                        case details.exposed of
+                            Exposed _ ->
+                                details.exposed
+
+                            NotExposed ->
+                                Exposed { exposeConstructor = False }
+                }
+
+        Group group ->
+            Group (List.map expose group)
 
 
 {-| -}
-exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
-exposeWith opts decl =
+exposeConstructor : Declaration -> Declaration
+exposeConstructor decl =
     case decl of
         Comment _ ->
             decl
@@ -807,8 +701,23 @@ exposeWith opts decl =
         Block _ ->
             decl
 
+        ModuleDocs _ ->
+            decl
+
         Declaration details ->
-            Declaration { details | exposed = Exposed opts }
+            Declaration
+                { details
+                    | exposed =
+                        case details.exposed of
+                            NotExposed ->
+                                Exposed { exposeConstructor = True }
+
+                            Exposed exposed ->
+                                Exposed { exposed | exposeConstructor = True }
+                }
+
+        Group group ->
+            Group (List.map exposeConstructor group)
 
 
 type alias Module =
@@ -816,7 +725,8 @@ type alias Module =
 
 
 makeImport :
-    List ( Module, String )
+    Module
+    -> List ( Module, String )
     -> Module
     ->
         Maybe
@@ -824,21 +734,53 @@ makeImport :
             , moduleAlias : Maybe (Node (List String))
             , exposingList : Maybe (Node Expose.Exposing)
             }
-makeImport aliases name =
-    case name of
-        [] ->
-            Nothing
+makeImport thisModule aliases name =
+    if thisModule == name then
+        Nothing
 
-        _ ->
-            case findAlias name aliases of
-                Nothing ->
-                    if builtIn name then
-                        Nothing
+    else
+        case name of
+            [] ->
+                Nothing
 
-                    else
+            _ ->
+                case findAlias name aliases of
+                    Nothing ->
+                        if builtIn name then
+                            Nothing
+
+                        else
+                            Just
+                                { moduleName = nodify name
+                                , moduleAlias = Nothing
+                                , exposingList =
+                                    if isUrlParser name then
+                                        Just
+                                            (nodify <|
+                                                Expose.Explicit
+                                                    [ nodify (Expose.InfixExpose "</>")
+                                                    , nodify (Expose.InfixExpose "<?>")
+                                                    ]
+                                            )
+
+                                    else if isParser name then
+                                        Just
+                                            (nodify <|
+                                                Expose.Explicit
+                                                    [ nodify (Expose.InfixExpose "|=")
+                                                    , nodify (Expose.InfixExpose "|.")
+                                                    ]
+                                            )
+
+                                    else
+                                        Nothing
+                                }
+
+                    Just alias ->
                         Just
                             { moduleName = nodify name
-                            , moduleAlias = Nothing
+                            , moduleAlias =
+                                Just (nodify [ alias ])
                             , exposingList =
                                 if isUrlParser name then
                                     Just
@@ -861,34 +803,6 @@ makeImport aliases name =
                                 else
                                     Nothing
                             }
-
-                Just alias ->
-                    Just
-                        { moduleName = nodify name
-                        , moduleAlias =
-                            Just (nodify [ alias ])
-                        , exposingList =
-                            if isUrlParser name then
-                                Just
-                                    (nodify <|
-                                        Expose.Explicit
-                                            [ nodify (Expose.InfixExpose "</>")
-                                            , nodify (Expose.InfixExpose "<?>")
-                                            ]
-                                    )
-
-                            else if isParser name then
-                                Just
-                                    (nodify <|
-                                        Expose.Explicit
-                                            [ nodify (Expose.InfixExpose "|=")
-                                            , nodify (Expose.InfixExpose "|.")
-                                            ]
-                                    )
-
-                            else
-                                Nothing
-                        }
 
 
 findAlias : List String -> List ( Module, String ) -> Maybe String
@@ -1007,8 +921,7 @@ fullModName name =
 type Expose
     = NotExposed
     | Exposed
-        { group : Maybe String
-        , exposeConstructor : Bool
+        { exposeConstructor : Bool
         }
 
 
@@ -1040,16 +953,6 @@ nodify exp =
 nodifyAll : List a -> List (Node a)
 nodifyAll =
     List.map nodify
-
-
-nodifyMaybe : Maybe a -> Maybe (Node a)
-nodifyMaybe =
-    Maybe.map nodify
-
-
-nodifyTuple : ( a, b ) -> ( Node a, Node b )
-nodifyTuple ( a, b ) =
-    ( nodify a, nodify b )
 
 
 
@@ -2247,78 +2150,6 @@ unifiableLists aliases vars one two unified =
             ( vars, Err MismatchedTypeVariables )
 
 
-unifyNumber :
-    VariableCache
-    -> String
-    -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result String Annotation.TypeAnnotation )
-unifyNumber vars numberName two =
-    case two of
-        Annotation.Typed (Node.Node _ ( [], "Int" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.Typed (Node.Node _ ( [], "Float" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.GenericType _ ->
-            -- We don't know how this will resolve
-            -- So, for now we say this is fine
-            -- and in the resolveVariables step, we need to check that everything works
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        _ ->
-            ( Dict.insert numberName two vars
-            , Err
-                ((Elm.Writer.writeTypeAnnotation (nodify two)
-                    |> Elm.Writer.write
-                 )
-                    ++ " is not a number, but it needs to be!"
-                )
-            )
-
-
-unifyAppendable :
-    VariableCache
-    -> String
-    -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result String Annotation.TypeAnnotation )
-unifyAppendable vars numberName two =
-    case two of
-        Annotation.Typed (Node.Node _ ( [], "String" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.Typed (Node.Node _ ( [], "List" )) _ ->
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        Annotation.GenericType _ ->
-            -- We don't know how this will resolve
-            -- So, for now we say this is fine
-            -- and in the resolveVariables step, we need to check that everything works
-            ( Dict.insert numberName two vars
-            , Ok two
-            )
-
-        _ ->
-            ( Dict.insert numberName two vars
-            , Err
-                ((Elm.Writer.writeTypeAnnotation (nodify two)
-                    |> Elm.Writer.write
-                 )
-                    ++ " is not appendable.  Only Strings and Lists are appendable"
-                )
-            )
-
-
 isNumber : Annotation.TypeAnnotation -> Bool
 isNumber annotation =
     case annotation of
@@ -2627,7 +2458,8 @@ protectAnnotation index ann =
                 (str ++ Index.indexToString index)
 
         Annotation.Typed modName anns ->
-            Annotation.Typed modName
+            Annotation.Typed
+                modName
                 (List.map (mapNode (protectAnnotation index))
                     anns
                 )
