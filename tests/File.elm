@@ -116,8 +116,10 @@ grouping =
                     (Elm.file [ "Test" ]
                         [ placeholder "one"
                         , placeholder "two"
-                        , Elm.group { title = "My group", docs = "Here's how to use it" }
-                            [ placeholder "three"
+                        , Elm.group
+                            [ Elm.docs "## My group"
+                            , Elm.docs "Here's how to use it"
+                            , placeholder "three"
                             , placeholder "four"
                             ]
                         , placeholder "five"
@@ -170,9 +172,13 @@ six arg =
                         [ placeholder "one"
                             |> Elm.expose
                         , placeholder "two"
-                        , Elm.group { title = "My group", docs = "Here's how to use it" }
-                            [ placeholder "three"
+                        , Elm.group
+                            [ Elm.docs "## My group"
+                            , Elm.docs "Here's how to use it"
+                            , placeholder "three"
                             , placeholder "four"
+                                |> Elm.expose
+                            , placeholder "fourPointFive"
                                 |> Elm.expose
                             ]
                         , placeholder "five"
@@ -181,7 +187,7 @@ six arg =
                             |> Elm.expose
                         ]
                     )
-                    """module Test exposing (five, four, one, six)
+                    """module Test exposing (five, four, fourPointFive, one, six)
 
 {-|
 @docs one
@@ -190,7 +196,7 @@ six arg =
 
 Here's how to use it
 
-@docs four
+@docs four, fourPointFive
 
 @docs five, six
 -}
@@ -214,6 +220,11 @@ three arg =
 
 four : arg -> arg
 four arg =
+    arg
+
+
+fourPointFive : arg -> arg
+fourPointFive arg =
     arg
 
 

@@ -858,8 +858,4 @@ withSubmodule submod mod =
 -}
 include : Module val -> Elm.Declaration
 include mod =
-    Compiler.Group
-        { title = mod.title
-        , docs = mod.docs
-        , decls = mod.declarations
-        }
+    Compiler.Group mod.declarations

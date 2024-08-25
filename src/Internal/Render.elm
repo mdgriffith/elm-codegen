@@ -49,12 +49,11 @@ getExposedGroups decl groups =
                 Compiler.Exposed _ ->
                     Exposed decDetails.name :: groups
 
-        Compiler.Group group ->
-            ExposedGroup
-                { title = group.title
-                , docs = group.docs
-                , items = List.foldl getExposedGroups [] group.decls
-                }
+        Compiler.ModuleDocs docs ->
+            ModuleDocs docs :: groups
+
+        Compiler.Group groupDecls ->
+            ExposedGroup (List.foldl getExposedGroups [] groupDecls)
                 :: groups
 
         _ ->
@@ -85,6 +84,9 @@ renderDecls fileDetails decl gathered =
 
         Compiler.Block block ->
             { gathered | declarations = Compiler.RenderedBlock block :: gathered.declarations }
+
+        Compiler.ModuleDocs _ ->
+            gathered
 
         Compiler.Declaration decDetails ->
             let
@@ -122,19 +124,16 @@ renderDecls fileDetails decl gathered =
                         warn :: gathered.warnings
             }
 
-        Compiler.Group group ->
+        Compiler.Group groupDecls ->
             List.foldl (renderDecls fileDetails)
                 gathered
-                group.decls
+                groupDecls
 
 
 type ExposedGroup
     = Exposed String
-    | ExposedGroup
-        { title : String
-        , docs : String
-        , items : List ExposedGroup
-        }
+    | ModuleDocs String
+    | ExposedGroup (List ExposedGroup)
 
 
 {-| -}
@@ -220,7 +219,7 @@ render initialDocs fileDetails =
                             (Internal.Comments.addPart
                                 Internal.Comments.emptyComment
                                 (Internal.Comments.Markdown
-                                    (docCommentString ++ "\n")
+                                    ("\n" ++ docCommentString ++ "\n")
                                 )
                             )
                 }
@@ -253,13 +252,29 @@ exposedGroupToMarkdown docMode groups mode rendered =
                 RenderingDocsLine ->
                     rendered
 
+        (ModuleDocs docs) :: rest ->
+            case mode of
+                Normal ->
+                    let
+                        separator =
+                            if String.isEmpty rendered then
+                                ""
+
+                            else
+                                "\n\n"
+                    in
+                    exposedGroupToMarkdown docMode rest mode (rendered ++ separator ++ docs)
+
+                RenderingDocsLine ->
+                    exposedGroupToMarkdown docMode rest mode (rendered ++ "\n\n" ++ docs)
+
         (Exposed exposedName) :: rest ->
             case docMode of
                 Everything ->
                     case mode of
                         Normal ->
                             if String.isEmpty rendered then
-                                exposedGroupToMarkdown docMode rest RenderingDocsLine ("\n@docs " ++ exposedName)
+                                exposedGroupToMarkdown docMode rest RenderingDocsLine ("@docs " ++ exposedName)
 
                             else
                                 exposedGroupToMarkdown docMode rest RenderingDocsLine (rendered ++ "\n\n@docs " ++ exposedName)
@@ -270,47 +285,20 @@ exposedGroupToMarkdown docMode groups mode rendered =
                 OnlyGroups ->
                     exposedGroupToMarkdown docMode rest mode rendered
 
-        (ExposedGroup group) :: rest ->
+        (ExposedGroup groupDecls) :: rest ->
             let
                 renderedSection =
                     exposedGroupToMarkdown docMode
-                        (List.reverse group.items)
+                        (List.reverse groupDecls)
                         Normal
-                        (let
-                            hasTitle =
-                                not (String.isEmpty group.title)
-
-                            title =
-                                if hasTitle then
-                                    "## " ++ group.title
-
-                                else
-                                    ""
-
-                            docsString =
-                                if String.isEmpty group.docs then
-                                    ""
-
-                                else if hasTitle then
-                                    "\n\n" ++ group.docs
-
-                                else
-                                    group.docs
-                         in
-                         title ++ docsString
-                        )
+                        ""
 
                 separator =
                     if String.isEmpty rendered then
-                        "\n"
+                        ""
 
                     else
-                        case mode of
-                            Normal ->
-                                "\n\n"
-
-                            RenderingDocsLine ->
-                                "\n\n"
+                        "\n\n"
             in
             exposedGroupToMarkdown docMode
                 rest

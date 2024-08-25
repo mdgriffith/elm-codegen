@@ -96,12 +96,9 @@ getTypeModule (Annotation annotation) =
 type Declaration
     = Declaration DeclarationDetails
     | Comment String
+    | ModuleDocs String
     | Block String
-    | Group
-        { title : String
-        , docs : String
-        , decls : List Declaration
-        }
+    | Group (List Declaration)
 
 
 type RenderedDeclaration
@@ -646,6 +643,9 @@ documentation rawDoc decl =
             Block _ ->
                 decl
 
+            ModuleDocs _ ->
+                decl
+
             Declaration details ->
                 Declaration
                     { details
@@ -658,12 +658,8 @@ documentation rawDoc decl =
                                     Just (doc ++ "\n\n" ++ existing)
                     }
 
-            Group group ->
-                Group
-                    { group
-                        | decls =
-                            List.map (documentation doc) group.decls
-                    }
+            Group groupDecls ->
+                Group (List.map (documentation doc) groupDecls)
 
 
 {-| -}
@@ -674,6 +670,9 @@ expose decl =
             decl
 
         Block _ ->
+            decl
+
+        ModuleDocs _ ->
             decl
 
         Declaration details ->
@@ -689,7 +688,7 @@ expose decl =
                 }
 
         Group group ->
-            Group { group | decls = List.map expose group.decls }
+            Group (List.map expose group)
 
 
 {-| -}
@@ -700,6 +699,9 @@ exposeConstructor decl =
             decl
 
         Block _ ->
+            decl
+
+        ModuleDocs _ ->
             decl
 
         Declaration details ->
@@ -715,7 +717,7 @@ exposeConstructor decl =
                 }
 
         Group group ->
-            Group { group | decls = List.map exposeConstructor group.decls }
+            Group (List.map exposeConstructor group)
 
 
 type alias Module =

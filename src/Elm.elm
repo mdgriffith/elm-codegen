@@ -8,7 +8,7 @@ module Elm exposing
     , record, get, updateRecord
     , ifThen
     , Declaration
-    , comment, declaration
+    , comment, docs, declaration
     , withDocumentation, group
     , expose, exposeConstructor
     , fileWith
@@ -59,7 +59,7 @@ A `Declaration` is anything that is at the "top level" of your file, meaning all
 
 @docs Declaration
 
-@docs comment, declaration
+@docs comment, docs, declaration
 
 @docs withDocumentation, group
 
@@ -2066,32 +2066,30 @@ exposeConstructor =
     Compiler.exposeConstructor
 
 
-{-| Group declarations under a title in the doc comment at the top of the generated module.
+{-| Group declarations in a module.
 
-This will also add a `@docs` tag to the module doc comment for any exposed functions in the group.
+This will add a `@docs` tag to the module doc comment for any exposed functions in the group.
 
     Elm.group
-        { title = "MyGroup"
-        , docs = "This is a group of functions that do things"
-        }
-        [ myFunction, myOtherFunction ]
+        [ myFunction
+        , myOtherFunction
+        ]
 
 Will create the following module doc comment:
-
-    ## My Group
-
-    This is a group of functions that do things
 
     @docs myFunction, myOtherFunction
 
 -}
-group : { title : String, docs : String } -> List Declaration -> Declaration
-group options decls =
-    Compiler.Group
-        { title = options.title
-        , docs = options.docs
-        , decls = decls
-        }
+group : List Declaration -> Declaration
+group decls =
+    Compiler.Group decls
+
+
+{-| This will include some markdown in the module doc comment.
+-}
+docs : String -> Declaration
+docs =
+    Compiler.ModuleDocs
 
 
 {-|

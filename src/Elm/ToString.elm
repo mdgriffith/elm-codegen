@@ -115,7 +115,17 @@ declarationWith :
 declarationWith options decl =
     case decl of
         Compiler.Group group ->
-            List.concatMap (declarationWith options) group.decls
+            List.concatMap (declarationWith options) group
+
+        Compiler.ModuleDocs docs ->
+            [ { imports =
+                    ""
+              , body = ""
+              , docs = docs
+              , signature =
+                    ""
+              }
+            ]
 
         Compiler.Declaration { imports, docs, toBody } ->
             let
