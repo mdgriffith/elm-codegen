@@ -370,7 +370,10 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
                   exp
                     |> Elm.Op.pipe
                         (Elm.apply Gen.Elm.Arg.values_.item
-                            [ Gen.Elm.Arg.var (Format.formatValue subtypeName) ]
+                            [ Gen.Elm.Arg.varWith
+                                (Format.formatValue subtypeName)
+                                (typeToExpression thisModule subtype)
+                            ]
                         )
               in
               extractSubTypes (i + 1) remain newExp
@@ -1307,11 +1310,25 @@ typeToName elmType =
             Nothing
 
         Elm.Type.Type name types ->
-            Just (Format.formatValue name)
+            if isPrimitiveTypeName name then
+                Nothing
+
+            else
+                Just (Format.formatValue name)
 
         Elm.Type.Record fields maybeExtensible ->
             maybeExtensible
 
+isPrimitiveTypeName : String -> Bool
+isPrimitiveTypeName name =
+    case name of
+        "List.List" -> True
+        "Basics.Bool" -> True
+        "Basics.Float" -> True
+        "Basics.Int" -> True
+        "String.String" -> True
+        "Char.Char" -> True
+        _ -> False
 
 typeToExpression : List String -> Elm.Type.Type -> Elm.Expression
 typeToExpression thisModule elmType =

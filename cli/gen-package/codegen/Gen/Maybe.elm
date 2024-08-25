@@ -433,8 +433,11 @@ caseOf_ =
                 (Type.namedWith [ "Maybe" ] "Maybe" [ Type.var "a" ])
                 [ Elm.Case.branch
                     (Elm.Arg.customType "Just" maybeTags.just |> Elm.Arg.item
-                                                                       (Elm.Arg.var
+                                                                       (Elm.Arg.varWith
                                                                               "a"
+                                                                              (Type.var
+                                                                                     "a"
+                                                                              )
                                                                        )
                     )
                     Basics.identity
