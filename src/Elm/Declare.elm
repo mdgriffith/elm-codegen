@@ -813,8 +813,6 @@ This can be useful for organizing particularly complex modules.
 
 The only thing to be aware of here is that the module name for both of these modules must be the same or you're going to have a bad time.
 
-'
-
 -}
 withSubmodule : Module submod -> Module (submod -> mod) -> Module mod
 withSubmodule submod mod =
