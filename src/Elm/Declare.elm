@@ -8,7 +8,7 @@ module Elm.Declare exposing
     , Annotation, alias, customType
     , toFile, include, withSubmodule
     , customTypeAdvanced, CustomType
-    , variant0, variant1, variant2
+    , variant0, variant1, variant2, variant3, variant4
     , CustomTypeBuilder, customVariant, finishCustomType
     , Internal
     )
@@ -157,7 +157,7 @@ As an example, here's how to create a helper for the `Maybe` type.
 
 @docs customTypeAdvanced, CustomType
 
-@docs variant0, variant1, variant2
+@docs variant0, variant1, variant2, variant3, variant4
 
 @docs CustomTypeBuilder, customVariant, finishCustomType
 
@@ -356,11 +356,11 @@ variant0 name toBranch custom =
 {-| -}
 variant1 :
     String
-    -> Elm.Annotation.Annotation
     -> (case_ -> (Expression -> Expression))
+    -> Elm.Annotation.Annotation
     -> CustomTypeBuilder case_ ((Expression -> Expression) -> make_)
     -> CustomTypeBuilder case_ make_
-variant1 name type0 toBranch custom =
+variant1 name toBranch type0 custom =
     let
         args : Elm.Arg (Expression -> Expression) -> Elm.Arg Expression
         args record =
@@ -377,12 +377,12 @@ variant1 name type0 toBranch custom =
 {-| -}
 variant2 :
     String
-    -> Elm.Annotation.Annotation
-    -> Elm.Annotation.Annotation
     -> (case_ -> (Expression -> Expression -> Expression))
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
     -> CustomTypeBuilder case_ ((Expression -> Expression -> Expression) -> make_)
     -> CustomTypeBuilder case_ make_
-variant2 name type0 type1 toBranch custom =
+variant2 name toBranch type0 type1 custom =
     let
         args : Elm.Arg (Expression -> Expression -> Expression) -> Elm.Arg Expression
         args record =
@@ -395,6 +395,58 @@ variant2 name type0 type1 toBranch custom =
             makeValue [ arg0, arg1 ]
     in
     standardVariant name [ type0, type1 ] toBranch args make custom
+
+
+{-| -}
+variant3 :
+    String
+    -> (case_ -> (Expression -> Expression -> Expression -> Expression))
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> CustomTypeBuilder case_ ((Expression -> Expression -> Expression -> Expression) -> make_)
+    -> CustomTypeBuilder case_ make_
+variant3 name toBranch type0 type1 type2 custom =
+    let
+        args : Elm.Arg (Expression -> Expression -> Expression -> Expression) -> Elm.Arg Expression
+        args record =
+            record
+                |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
+                |> Elm.Arg.item (Elm.Arg.varWith "arg1" type1)
+                |> Elm.Arg.item (Elm.Arg.varWith "arg2" type2)
+
+        make : (List Expression -> Expression) -> Expression -> Expression -> Expression -> Expression
+        make makeValue arg0 arg1 arg2 =
+            makeValue [ arg0, arg1, arg2 ]
+    in
+    standardVariant name [ type0, type1, type2 ] toBranch args make custom
+
+
+{-| -}
+variant4 :
+    String
+    -> (case_ -> (Expression -> Expression -> Expression -> Expression -> Expression))
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> CustomTypeBuilder case_ ((Expression -> Expression -> Expression -> Expression -> Expression) -> make_)
+    -> CustomTypeBuilder case_ make_
+variant4 name toBranch type0 type1 type2 type3 custom =
+    let
+        args : Elm.Arg (Expression -> Expression -> Expression -> Expression -> Expression) -> Elm.Arg Expression
+        args record =
+            record
+                |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
+                |> Elm.Arg.item (Elm.Arg.varWith "arg1" type1)
+                |> Elm.Arg.item (Elm.Arg.varWith "arg2" type2)
+                |> Elm.Arg.item (Elm.Arg.varWith "arg3" type3)
+
+        make : (List Expression -> Expression) -> Expression -> Expression -> Expression -> Expression -> Expression
+        make makeValue arg0 arg1 arg2 arg3 =
+            makeValue [ arg0, arg1, arg2, arg3 ]
+    in
+    standardVariant name [ type0, type1, type2, type3 ] toBranch args make custom
 
 
 standardVariant :
