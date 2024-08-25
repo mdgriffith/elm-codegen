@@ -9,7 +9,7 @@ export default () => `
         "elm/core": "1.0.5",
         "elm/html": "1.0.0",
         "elm/json": "1.1.3",
-        "mdgriffith/elm-codegen": "4.2.1"
+        "mdgriffith/elm-codegen": "5.0.0"
       },
       "indirect": {
         "elm/parser": "1.1.0",
@@ -31,4 +31,4 @@ export default () => `
     }
   }
 
-`
+`;

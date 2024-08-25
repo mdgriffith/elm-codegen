@@ -1,6 +1,6 @@
 {
   "name": "elm-codegen",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "description": "Codegen for Elm",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -37,7 +37,10 @@
     "test:init": "(npm run build; bash scripts/test-init.sh)",
     "review": "elm-review"
   },
-  "files": ["dist", "bin"],
+  "files": [
+    "dist",
+    "bin"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mdgriffith/elm-codegen.git"
