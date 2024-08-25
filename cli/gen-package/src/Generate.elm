@@ -211,18 +211,18 @@ expressionType =
 blockToCall : List String -> Elm.Docs.Block -> Maybe Field
 blockToCall thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
-        Elm.Docs.UnionBlock union ->
+        Elm.Docs.UnionBlock _ ->
             Nothing
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             Nothing
 
         Elm.Docs.ValueBlock value ->
             case value.tipe of
-                Elm.Type.Lambda one two ->
+                Elm.Type.Lambda _ _ ->
                     let
                         captured =
                             captureFunction value.name
@@ -237,20 +237,6 @@ blockToCall thisModule block =
                                 |> List.foldl
                                     (\( name, _ ) args ->
                                         ( name, Just expressionType ) :: args
-                                    )
-                                    []
-
-                        vals =
-                            List.drop 1 captured.arguments
-                                |> List.foldl
-                                    (\( name, _ ) args ->
-                                        Elm.value
-                                            { importFrom = []
-                                            , name = name
-                                            , annotation =
-                                                Just expressionType
-                                            }
-                                            :: args
                                     )
                                     []
                     in
@@ -272,23 +258,23 @@ blockToCall thisModule block =
                 _ ->
                     Nothing
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
 blockToIdField : List String -> Elm.Docs.Block -> Maybe Field
 blockToIdField thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
-        Elm.Docs.UnionBlock union ->
+        Elm.Docs.UnionBlock _ ->
             Nothing
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             Nothing
 
         Elm.Docs.ValueBlock value ->
@@ -301,10 +287,10 @@ blockToIdField thisModule block =
                     )
                 )
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
@@ -530,7 +516,7 @@ recordWithFieldList recordName blocks makeField =
 caseOf : List String -> Elm.Docs.Block -> Maybe Field
 caseOf thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             Nothing
 
         Elm.Docs.UnionBlock union ->
@@ -538,16 +524,16 @@ caseOf thisModule block =
                 (Tuple.pair union.name)
                 (block2Case thisModule union)
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             Nothing
 
-        Elm.Docs.ValueBlock value ->
+        Elm.Docs.ValueBlock _ ->
             Nothing
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             Nothing
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             Nothing
 
 
@@ -814,31 +800,31 @@ typeCreation thisModule block =
                 _ ->
                     []
 
-        Elm.Docs.ValueBlock value ->
+        Elm.Docs.ValueBlock _ ->
             []
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             []
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             []
 
 
 generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
 generateBlocks thisModule block =
     case block of
-        Elm.Docs.MarkdownBlock str ->
+        Elm.Docs.MarkdownBlock _ ->
             []
 
-        Elm.Docs.UnionBlock union ->
+        Elm.Docs.UnionBlock _ ->
             []
 
-        Elm.Docs.AliasBlock alias ->
+        Elm.Docs.AliasBlock _ ->
             []
 
         Elm.Docs.ValueBlock value ->
             case value.tipe of
-                Elm.Type.Lambda one two ->
+                Elm.Type.Lambda _ _ ->
                     let
                         captured =
                             captureFunction value.name
@@ -890,11 +876,11 @@ generateBlocks thisModule block =
                         |> Elm.expose
                     ]
 
-        Elm.Docs.BinopBlock binop ->
+        Elm.Docs.BinopBlock _ ->
             --All binops are defined in the top level `Elm` library
             []
 
-        Elm.Docs.UnknownBlock str ->
+        Elm.Docs.UnknownBlock _ ->
             []
 
 
