@@ -202,7 +202,7 @@ makeAndCaseGeneration =
                         { exposeConstructor = True }
                         (\nothing just -> { nothing = nothing, just = just })
                         |> Elm.Declare.variant0 "Nothing" .nothing
-                        |> Elm.Declare.variant1 "Just" (Type.var "a") .just
+                        |> Elm.Declare.variant1 "Just" .just (Type.var "a")
                         |> Elm.Declare.finishCustomType
 
                 external : Elm.Declare.Module MyMaybe
