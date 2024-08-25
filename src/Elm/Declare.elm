@@ -1,10 +1,10 @@
 module Elm.Declare exposing
     ( Function, fn, fn2, fn3, fn4, fn5, fn6
+    , withDocumentation
     , fnBuilder, fnArg, fnDone, fnBody, placeholder
     , Value, value
     , function
     , Module, module_, with, withUnexposed
-    , withDocs, withTitle
     , Annotation, alias, customType
     , toFile, include, withSubmodule
     , customTypeAdvanced, CustomType
@@ -43,6 +43,8 @@ Here's an example, let's define a new function called `add42`
             ]
 
 @docs Function, fn, fn2, fn3, fn4, fn5, fn6
+
+@docs withDocumentation
 
 @docs fnBuilder, fnArg, fnDone, fnBody, placeholder
 
@@ -90,7 +92,7 @@ First, we can generate the Elm code for the module:
 Or we can include it in another module:
 
     Elm.file [ "MyInternalFile" ]
-        [ Elm.include { title = "", docs = "" } myModule
+        [ Elm.include myModule
 
         --... Whatever other declarations you want in this file.
         ]
@@ -106,8 +108,6 @@ Which will generate
 And handle the imports and everything.
 
 @docs Module, module_, with, withUnexposed
-
-@docs withDocs, withTitle
 
 @docs Annotation, alias, customType
 
@@ -181,8 +181,6 @@ import Internal.Index as Index
 {-| -}
 type alias Module val =
     { name : List String
-    , title : String
-    , docs : String
     , declarations : List Elm.Declaration
     , call : val
     }
@@ -238,8 +236,6 @@ type Internal val
 module_ : List String -> val -> Module val
 module_ name call =
     { name = name
-    , title = ""
-    , docs = ""
     , call = call
     , declarations = []
     }
@@ -510,25 +506,6 @@ customVariant name types branch arg make (CustomTypeBuilder custom) =
         }
 
 
-{-| Add a module-level title to the module.
-
-This will be rendered as a markdown header.
-
--}
-withTitle : String -> Module val -> Module val
-withTitle title mod =
-    { mod | title = title }
-
-
-{-| Add some markdown as a module-level documentation comment.
--}
-withDocs : String -> Module val -> Module val
-withDocs docs mod =
-    { mod
-        | docs = mod.docs ++ docs
-    }
-
-
 {-| -}
 with :
     { a
@@ -543,8 +520,6 @@ with decl mod =
             decl.internal
     in
     { name = mod.name
-    , title = mod.title
-    , docs = mod.docs
     , declarations = Elm.expose decl.declaration :: mod.declarations
     , call = mod.call (call mod.name)
     }
@@ -844,8 +819,6 @@ The only thing to be aware of here is that the module name for both of these mod
 withSubmodule : Module submod -> Module (submod -> mod) -> Module mod
 withSubmodule submod mod =
     { name = mod.name
-    , title = mod.title
-    , docs = mod.docs
     , declarations = mod.declarations ++ [ include submod ]
     , call = mod.call submod.call
     }
@@ -859,3 +832,15 @@ withSubmodule submod mod =
 include : Module val -> Elm.Declaration
 include mod =
     Compiler.Group mod.declarations
+
+
+{-| Add documentation to a function or value declared using this module.
+-}
+withDocumentation :
+    String
+    -> { a | declaration : Elm.Declaration }
+    -> { a | declaration : Elm.Declaration }
+withDocumentation doc val =
+    { val
+        | declaration = val.declaration |> Elm.withDocumentation doc
+    }
