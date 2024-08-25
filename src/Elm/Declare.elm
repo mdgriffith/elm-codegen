@@ -11,6 +11,7 @@ module Elm.Declare exposing
     , variant0, variant1, variant2, variant3, variant4
     , CustomTypeBuilder, customVariant, finishCustomType
     , Internal
+    , withDocumentation
     )
 
 {-| You may run into situations where you want to generate a function, and then call that generated function somewhere else.
@@ -863,3 +864,15 @@ include mod =
         , docs = mod.docs
         , decls = mod.declarations
         }
+
+
+{-| Add documentation to a function or value declared using this module.
+-}
+withDocumentation :
+    String
+    -> { a | declaration : Elm.Declaration }
+    -> { a | declaration : Elm.Declaration }
+withDocumentation doc val =
+    { val
+        | declaration = val.declaration |> Elm.withDocumentation doc
+    }
