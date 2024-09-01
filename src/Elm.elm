@@ -288,10 +288,56 @@ body toBody (Fn toFnDetails) =
             let
                 fnDetails =
                     toFnDetails index
+
+                ( _, return ) =
+                    toBody fnDetails.body
+                        |> Compiler.toExpressionDetails (Index.next index)
             in
-            toBody fnDetails.body
-                |> Compiler.toExpressionDetails index
-                |> Tuple.second
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        List.map
+                            .pattern
+                            fnDetails.args
+                    , expression =
+                        Compiler.nodify return.expression
+                    }
+            , annotation =
+                case return.annotation of
+                    Err _ ->
+                        return.annotation
+
+                    Ok _ ->
+                        List.foldr
+                            (\argDetails result ->
+                                case result of
+                                    Err err ->
+                                        Err err
+
+                                    Ok resultAnnotation ->
+                                        case argDetails.annotation of
+                                            Err err ->
+                                                Err err
+
+                                            Ok argAnnotation ->
+                                                Ok
+                                                    { type_ =
+                                                        Annotation.FunctionTypeAnnotation
+                                                            (Compiler.nodify argAnnotation.type_)
+                                                            (Compiler.nodify resultAnnotation.type_)
+                                                    , inferences =
+                                                        argAnnotation.inferences
+                                                            |> Compiler.mergeInferences resultAnnotation.inferences
+                                                    , aliases =
+                                                        argAnnotation.aliases
+                                                            |> Compiler.mergeAliases resultAnnotation.aliases
+                                                    }
+                            )
+                            return.annotation
+                            fnDetails.args
+            , imports =
+                fnDetails.imports ++ return.imports
+            }
         )
 
 
