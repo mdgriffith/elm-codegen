@@ -3,7 +3,7 @@ module Internal.Arg exposing
     , aliasAs
     , var, varWith
     , triple, tuple
-    , char, string
+    , char, string, int
     , customType
     , item, items, list, listRemaining, record, field
     , ignore, unit
@@ -19,7 +19,7 @@ module Internal.Arg exposing
 
 @docs triple, tuple
 
-@docs char, string
+@docs char, string, int
 
 @docs customType
 
@@ -133,6 +133,39 @@ string str =
                 Compiler.Expression <|
                     \_ ->
                         { expression = Exp.Literal str
+                        , annotation = annotation
+                        , imports = imports
+                        }
+            }
+        )
+
+
+{-| -}
+int : Int -> Arg Expression
+int intVal =
+    Arg
+        (\index ->
+            let
+                annotation =
+                    Ok
+                        { inferences = Dict.empty
+                        , type_ = Internal.Types.int
+                        , aliases = Compiler.emptyAliases
+                        }
+
+                imports =
+                    []
+            in
+            { details =
+                { imports = imports
+                , pattern = Compiler.nodify (Pattern.IntPattern intVal)
+                , annotation = annotation
+                }
+            , index = Index.next index
+            , value =
+                Compiler.Expression <|
+                    \_ ->
+                        { expression = Exp.Integer intVal
                         , annotation = annotation
                         , imports = imports
                         }

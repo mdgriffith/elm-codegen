@@ -3,7 +3,7 @@ module Elm.Arg exposing
     , tuple, triple
     , record, field
     , aliasAs
-    , ignore, string, char
+    , ignore, string, char, int
     , list, item, items, listRemaining
     , customType
     )
@@ -60,7 +60,7 @@ Will generate
 
 ## Useful for case expressions
 
-@docs ignore, string, char
+@docs ignore, string, char, int
 
 @docs list, item, items, listRemaining
 
@@ -181,6 +181,12 @@ string =
 char : Char -> Arg Expression
 char =
     Internal.Arg.char
+
+
+{-| -}
+int : Int -> Arg Expression
+int =
+    Internal.Arg.int
 
 
 {-| Will generate `_` to ignore an argument or pattern.
