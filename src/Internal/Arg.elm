@@ -503,7 +503,7 @@ customType name toType =
             let
                 annotation =
                     Ok
-                        { type_ = Internal.Types.custom [] name []
+                        { type_ = Internal.Types.custom [] (Format.formatValue name) []
                         , inferences = Dict.empty
                         , aliases = Compiler.emptyAliases
                         }
@@ -517,7 +517,7 @@ customType name toType =
                     Compiler.nodify
                         (Pattern.NamedPattern
                             { moduleName = []
-                            , name = name
+                            , name = Format.formatType name
                             }
                             []
                         )
