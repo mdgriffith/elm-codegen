@@ -32,6 +32,8 @@ newStyleTest =
             \_ ->
                 Elm.Expect.renderedAs inner
                     """\\( a, b ) c -> ( a, b, c )"""
+        , test "fnDone == body" <|
+            \_ -> Elm.Expect.equal inner innerViaBody
         , test "declaration" <|
             \_ ->
                 Elm.Expect.declarationAs newStyle.declaration
@@ -49,6 +51,17 @@ inner =
         |> Elm.fnArg (Elm.Arg.tuple (Elm.Arg.var "a") (Elm.Arg.var "b"))
         |> Elm.fnArg (Elm.Arg.var "c")
         |> Elm.fnDone
+
+
+innerViaBody : Elm.Expression
+innerViaBody =
+    Elm.fnBuilder Tuple.pair
+        |> Elm.fnArg (Elm.Arg.tuple (Elm.Arg.var "a") (Elm.Arg.var "b"))
+        |> Elm.fnArg (Elm.Arg.var "c")
+        |> Elm.body
+            (\( ( a, b ), c ) ->
+                Elm.triple a b c
+            )
 
 
 newStyle : Elm.Declare.Function (Elm.Expression -> Elm.Expression -> Elm.Expression)
