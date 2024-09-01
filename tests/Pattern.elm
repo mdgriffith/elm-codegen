@@ -52,7 +52,7 @@ suite =
                                 )
                             , Elm.Case.branch
                                 (Arg.tuple
-                                    (Arg.customType "Just" identity
+                                    (Arg.customType "just" identity
                                         |> Arg.item (Arg.var "left")
                                     )
                                     (Arg.customType "Just" identity
