@@ -44,6 +44,7 @@ module Internal.Compiler exposing
     , mergeAliases
     , mergeInferences
     , noImports
+    , nodeAtLine
     , nodify
     , nodifyAll
     , parens
@@ -948,6 +949,15 @@ denodeMaybe =
 nodify : a -> Node a
 nodify exp =
     Node Range.emptyRange exp
+
+
+nodeAtLine : Int -> a -> Node a
+nodeAtLine line exp =
+    Node
+        { start = { column = 0, row = line }
+        , end = { column = 0, row = line }
+        }
+        exp
 
 
 nodifyAll : List a -> List (Node a)

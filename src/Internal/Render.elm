@@ -6,6 +6,7 @@ import Elm.Syntax.Declaration
 import Elm.Syntax.Documentation
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Module
+import Elm.Syntax.Node as Node
 import Elm.Syntax.Range as Range
 import Internal.Comments
 import Internal.Compiler as Compiler
@@ -66,14 +67,16 @@ renderDecls :
     ->
         { declarations : List Compiler.RenderedDeclaration
         , imports : List Compiler.Module
-        , exposed : List Expose.TopLevelExpose
+        , exposed : List ExposeGroup
+        , exposePath : List Int
         , hasPorts : Bool
         , warnings : List Compiler.Warning
         }
     ->
         { declarations : List Compiler.RenderedDeclaration
         , imports : List Compiler.Module
-        , exposed : List Expose.TopLevelExpose
+        , exposed : List ExposeGroup
+        , exposePath : List Int
         , hasPorts : Bool
         , warnings : List Compiler.Warning
         }
@@ -102,8 +105,9 @@ renderDecls fileDetails decl gathered =
                 Compiler.RenderedDecl (addDocs decDetails.docs result.declaration) :: gathered.declarations
             , imports =
                 result.additionalImports ++ decDetails.imports ++ gathered.imports
+            , exposePath = gathered.exposePath
             , exposed =
-                addExposed decDetails.exposed result.declaration gathered.exposed
+                addExposed gathered.exposePath decDetails.exposed result.declaration gathered.exposed
             , hasPorts =
                 if gathered.hasPorts then
                     gathered.hasPorts
@@ -125,9 +129,22 @@ renderDecls fileDetails decl gathered =
             }
 
         Compiler.Group groupDecls ->
+            let
+                incrementExposePath g =
+                    { g
+                        | exposePath =
+                            case g.exposePath of
+                                [] ->
+                                    []
+
+                                top :: remain ->
+                                    top + 1 :: remain
+                    }
+            in
             List.foldl (renderDecls fileDetails)
-                gathered
+                { gathered | exposePath = 0 :: gathered.exposePath }
                 groupDecls
+                |> incrementExposePath
 
 
 type ExposedGroup
@@ -146,7 +163,8 @@ render initialDocs fileDetails =
         rendered :
             { declarations : List Compiler.RenderedDeclaration
             , imports : List Compiler.Module
-            , exposed : List Expose.TopLevelExpose
+            , exposePath : List Int
+            , exposed : List ExposeGroup
             , hasPorts : Bool
             , warnings : List Compiler.Warning
             }
@@ -155,6 +173,7 @@ render initialDocs fileDetails =
                 (renderDecls fileDetails)
                 { imports = []
                 , hasPorts = False
+                , exposePath = [ 0 ]
                 , exposed = []
                 , declarations = []
                 , warnings = []
@@ -181,7 +200,9 @@ render initialDocs fileDetails =
                                 _ ->
                                     Compiler.nodify
                                         (Expose.Explicit
-                                            (Compiler.nodifyAll rendered.exposed)
+                                            (List.indexedMap groupExposedItems rendered.exposed
+                                                |> List.concat
+                                            )
                                         )
                         }
                 , aliases = fileDetails.aliases
@@ -233,7 +254,8 @@ render initialDocs fileDetails =
 
 type RenderingMode
     = Normal
-    | RenderingDocsLine
+      -- Rendering Docs line and the count of how many elements have been rendered
+    | RenderingDocsLine Int
 
 
 type DocMode
@@ -249,7 +271,7 @@ exposedGroupToMarkdown docMode groups mode rendered =
                 Normal ->
                     rendered
 
-                RenderingDocsLine ->
+                RenderingDocsLine _ ->
                     rendered
 
         (ModuleDocs docs) :: rest ->
@@ -265,7 +287,7 @@ exposedGroupToMarkdown docMode groups mode rendered =
                     in
                     exposedGroupToMarkdown docMode rest mode (rendered ++ separator ++ docs)
 
-                RenderingDocsLine ->
+                RenderingDocsLine _ ->
                     exposedGroupToMarkdown docMode rest mode (rendered ++ "\n\n" ++ docs)
 
         (Exposed exposedName) :: rest ->
@@ -274,13 +296,17 @@ exposedGroupToMarkdown docMode groups mode rendered =
                     case mode of
                         Normal ->
                             if String.isEmpty rendered then
-                                exposedGroupToMarkdown docMode rest RenderingDocsLine ("@docs " ++ exposedName)
+                                exposedGroupToMarkdown docMode rest (RenderingDocsLine 1) ("@docs " ++ exposedName)
 
                             else
-                                exposedGroupToMarkdown docMode rest RenderingDocsLine (rendered ++ "\n\n@docs " ++ exposedName)
+                                exposedGroupToMarkdown docMode rest (RenderingDocsLine 1) (rendered ++ "\n\n@docs " ++ exposedName)
 
-                        RenderingDocsLine ->
-                            exposedGroupToMarkdown docMode rest mode (rendered ++ ", " ++ exposedName)
+                        RenderingDocsLine docsItemCount ->
+                            if docsItemCount > 5 then
+                                exposedGroupToMarkdown docMode rest (RenderingDocsLine 1) (rendered ++ "\n@docs " ++ exposedName)
+
+                            else
+                                exposedGroupToMarkdown docMode rest (RenderingDocsLine (docsItemCount + 1)) (rendered ++ ", " ++ exposedName)
 
                 OnlyGroups ->
                     exposedGroupToMarkdown docMode rest mode rendered
@@ -372,13 +398,53 @@ addDocs maybeDoc decl =
                     decl
 
 
-addExposed : Compiler.Expose -> Elm.Syntax.Declaration.Declaration -> List Expose.TopLevelExpose -> List Expose.TopLevelExpose
-addExposed exposed declaration otherExposes =
+groupExposedItems : Int -> ExposeGroup -> List (Node.Node Expose.TopLevelExpose)
+groupExposedItems line group =
+    List.map
+        (Compiler.nodeAtLine line)
+        group.exposed
+
+
+type alias ExposeGroup =
+    { id : List Int
+    , exposed : List Expose.TopLevelExpose
+    }
+
+
+addExposed :
+    List Int
+    -> Compiler.Expose
+    -> Elm.Syntax.Declaration.Declaration
+    -> List ExposeGroup
+    -> List ExposeGroup
+addExposed exposePath exposed declaration otherExposes =
     case exposed of
         Compiler.NotExposed ->
             otherExposes
 
         Compiler.Exposed details ->
+            let
+                addToExposedCollection new =
+                    case otherExposes of
+                        [] ->
+                            [ { id = exposePath
+                              , exposed = [ new ]
+                              }
+                            ]
+
+                        top :: rest ->
+                            if top.id == exposePath then
+                                { id = top.id
+                                , exposed = new :: top.exposed
+                                }
+                                    :: rest
+
+                            else
+                                { id = exposePath
+                                , exposed = [ new ]
+                                }
+                                    :: otherExposes
+            in
             case declaration of
                 Elm.Syntax.Declaration.FunctionDeclaration fn ->
                     let
@@ -387,7 +453,7 @@ addExposed exposed declaration otherExposes =
                             Compiler.denode (.name (Compiler.denode fn.declaration))
                     in
                     Expose.FunctionExpose fnName
-                        :: otherExposes
+                        |> addToExposedCollection
 
                 Elm.Syntax.Declaration.AliasDeclaration synonym ->
                     let
@@ -396,7 +462,7 @@ addExposed exposed declaration otherExposes =
                             Compiler.denode synonym.name
                     in
                     Expose.TypeOrAliasExpose aliasName
-                        :: otherExposes
+                        |> addToExposedCollection
 
                 Elm.Syntax.Declaration.CustomTypeDeclaration myType ->
                     let
@@ -409,11 +475,11 @@ addExposed exposed declaration otherExposes =
                             { name = typeName
                             , open = Just Range.emptyRange
                             }
-                            :: otherExposes
+                            |> addToExposedCollection
 
                     else
                         Expose.TypeOrAliasExpose typeName
-                            :: otherExposes
+                            |> addToExposedCollection
 
                 Elm.Syntax.Declaration.PortDeclaration myPort ->
                     let
@@ -422,7 +488,7 @@ addExposed exposed declaration otherExposes =
                             Compiler.denode myPort.name
                     in
                     Expose.FunctionExpose typeName
-                        :: otherExposes
+                        |> addToExposedCollection
 
                 Elm.Syntax.Declaration.InfixDeclaration _ ->
                     otherExposes

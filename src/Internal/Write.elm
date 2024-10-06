@@ -238,7 +238,7 @@ prettyDefaultModuleData moduleData =
     Pretty.words
         [ Pretty.string "module"
         , prettyModuleName (denode moduleData.moduleName)
-        , prettyExposing (denode moduleData.exposingList)
+        , prettyModuleExposing (denode moduleData.exposingList)
         ]
 
 
@@ -247,7 +247,7 @@ prettyPortModuleData moduleData =
     Pretty.words
         [ Pretty.string "port module"
         , prettyModuleName (denode moduleData.moduleName)
-        , prettyExposing (denode moduleData.exposingList)
+        , prettyModuleExposing (denode moduleData.exposingList)
         ]
 
 
@@ -292,7 +292,7 @@ prettyEffectModuleData moduleData =
         , prettyModuleName (denode moduleData.moduleName)
         , prettyCmdAndSub (denodeMaybe moduleData.command) (denodeMaybe moduleData.subscription)
             |> prettyMaybe identity
-        , prettyExposing (denode moduleData.exposingList)
+        , prettyModuleExposing (denode moduleData.exposingList)
         ]
 
 
@@ -364,6 +364,118 @@ prettyExposing exposing_ =
     in
     Pretty.string "exposing"
         |> Pretty.a exposings
+
+
+prettyModuleExposing : Exposing -> Doc t
+prettyModuleExposing exposing_ =
+    let
+        exposings : Doc t
+        exposings =
+            case exposing_ of
+                All _ ->
+                    Pretty.string ".."
+                        |> Pretty.surround
+                            (Pretty.string " (")
+                            (Pretty.string ")")
+
+                Explicit tll ->
+                    let
+                        isIndented =
+                            checkIfIsIndented tll 0
+
+                        start =
+                            if isIndented then
+                                Pretty.string "\n    ( "
+
+                            else
+                                Pretty.string " ( "
+
+                        end =
+                            if isIndented then
+                                Pretty.string "\n    )"
+
+                            else
+                                Pretty.string " )"
+                    in
+                    Pretty.append
+                        (List.foldr prettyGroupedExposing
+                            { firstIteration = True
+                            , previousRow = 0
+                            , rowCount = 0
+                            , rendered = start
+                            }
+                            tll
+                            |> .rendered
+                        )
+                        end
+    in
+    Pretty.string "exposing"
+        |> Pretty.a exposings
+
+
+checkIfIsIndented : List (Node TopLevelExpose) -> Int -> Bool
+checkIfIsIndented tll count =
+    if count >= 5 then
+        True
+
+    else
+        case tll of
+            [] ->
+                False
+
+            (Node range _) :: xs ->
+                if range.start.row > 0 then
+                    True
+
+                else
+                    checkIfIsIndented xs (count + 1)
+
+
+prettyGroupedExposing :
+    Node TopLevelExpose
+    ->
+        { previousRow : Int
+        , rowCount : Int
+        , rendered : Doc t
+        , firstIteration : Bool
+        }
+    ->
+        { previousRow : Int
+        , rowCount : Int
+        , rendered : Doc t
+        , firstIteration : Bool
+        }
+prettyGroupedExposing (Node range exposedElement) rendered =
+    let
+        currentRow =
+            range.start.row
+
+        renderedTopElement =
+            prettyTopLevelExpose exposedElement
+
+        newRow =
+            currentRow /= rendered.previousRow || rendered.rowCount > 5
+
+        newRendered =
+            if rendered.firstIteration then
+                renderedTopElement
+
+            else if newRow then
+                Pretty.append (Pretty.string "\n    , ") renderedTopElement
+
+            else
+                Pretty.append (Pretty.string ", ") renderedTopElement
+    in
+    { rendered = Pretty.append rendered.rendered newRendered
+    , previousRow = currentRow
+    , firstIteration = False
+    , rowCount =
+        if newRow then
+            0
+
+        else
+            rendered.rowCount + 1
+    }
 
 
 prettyTopLevelExpose : TopLevelExpose -> Doc t
