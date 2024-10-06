@@ -187,7 +187,11 @@ six arg =
                             |> Elm.expose
                         ]
                     )
-                    """module Test exposing (five, four, fourPointFive, one, six)
+                    """module Test exposing
+    ( one
+    , four, fourPointFive
+    , five, six
+    )
 
 {-|
 @docs one

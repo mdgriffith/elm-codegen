@@ -158,7 +158,7 @@ fileGeneration =
     test "File Generation" <|
         \_ ->
             Expect.equal (Declare.toFile mod |> .contents)
-                (String.trim """module Virtual.Module exposing (MyInt, MyType, myFn)
+                (String.trim """module Virtual.Module exposing ( MyInt, MyType, myFn )
 
 {-|
 @docs MyInt, MyType, myFn
