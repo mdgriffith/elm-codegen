@@ -41,7 +41,7 @@ suite =
                 \_ ->
                     Elm.Expect.fileContentAs (Elm.file [ "Test" ] [ Elm.expose testFn1 ])
                         """
-module Test exposing (testFn1)
+module Test exposing ( testFn1 )
 
 {-|
 @docs testFn1
@@ -68,7 +68,7 @@ testFn1 arg =
                 \_ ->
                     Elm.Expect.fileContentAs (Elm.file [ "Test" ] [ Elm.expose testFn1, Elm.expose testFn2 ])
                         """
-module Test exposing (testFn1, testFn2)
+module Test exposing ( testFn1, testFn2 )
 
 {-|
 @docs testFn1, testFn2
