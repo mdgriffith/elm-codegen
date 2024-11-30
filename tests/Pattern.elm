@@ -191,6 +191,21 @@ suite =
                     """
                     \\(From.Here.Variant 'c') -> "There is 1 item"
                     """
+        , test "custom type helpers - type qualification" <|
+            \() ->
+                Elm.Expect.declarationAs
+                    (Elm.declaration "fn" <|
+                        Elm.fn
+                            (Arg.customTypeWith { importFrom = [ "From", "Here" ], variantName = "Variant", typeName = "SomeType" } identity
+                                |> Arg.item (Arg.char 'c')
+                            )
+                            (\_ -> Elm.string "There is 1 item")
+                    )
+                    """
+                    fn : From.Here.SomeType -> String
+                    fn (From.Here.Variant 'c') =
+                        "There is 1 item"
+                    """
         , describe "literal patterns"
             [ test "unit" <|
                 \() ->
