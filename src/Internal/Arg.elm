@@ -546,10 +546,14 @@ customTypeWith :
     }
     -> a
     -> Arg a
-customTypeWith { typeName, variantName, importFrom } toType =
+customTypeWith ({ typeName, variantName } as details) toType =
     Arg
         (\index ->
             let
+                importFrom : List String
+                importFrom =
+                    Index.getImport index details.importFrom
+
                 annotation =
                     Ok
                         { type_ = Internal.Types.custom importFrom (Format.formatType typeName) []
