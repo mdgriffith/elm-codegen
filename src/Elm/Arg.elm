@@ -5,7 +5,7 @@ module Elm.Arg exposing
     , aliasAs
     , ignore, string, char, int
     , list, item, items, listRemaining
-    , customType
+    , customType, customTypeWith
     )
 
 {-| An `Arg` can be used to pattern match on the arguments of a function.
@@ -64,7 +64,7 @@ Will generate
 
 @docs list, item, items, listRemaining
 
-@docs customType
+@docs customType, customTypeWith
 
 -}
 
@@ -283,3 +283,16 @@ Which will generate
 customType : String -> a -> Arg a
 customType =
     Internal.Arg.customType
+
+
+{-| Same as `customType`, but allows to specify the module name and type name.
+-}
+customTypeWith :
+    { importFrom : List String
+    , typeName : String
+    , variantName : String
+    }
+    -> a
+    -> Arg a
+customTypeWith =
+    Internal.Arg.customTypeWith

@@ -7,6 +7,7 @@ module Internal.Arg exposing
     , customType
     , item, items, list, listRemaining, record, field
     , ignore, unit
+    , customTypeWith
     )
 
 {-|
@@ -531,34 +532,54 @@ list toList =
 
 customType : String -> a -> Arg a
 customType name toType =
+    customTypeWith
+        { typeName = Format.formatValue name
+        , variantName = name
+        , importFrom = []
+        }
+        toType
+
+
+customTypeWith :
+    { importFrom : List String
+    , typeName : String
+    , variantName : String
+    }
+    -> a
+    -> Arg a
+customTypeWith { typeName, variantName, importFrom } toType =
     Arg
         (\index ->
             let
                 annotation =
                     Ok
-                        { type_ = Internal.Types.custom [] (Format.formatValue name) []
+                        { type_ = Internal.Types.custom importFrom (Format.formatType typeName) []
                         , inferences = Dict.empty
                         , aliases = Compiler.emptyAliases
                         }
 
+                imports : List (List String)
                 imports =
-                    []
+                    if List.isEmpty importFrom then
+                        []
+
+                    else
+                        [ importFrom ]
             in
             { details =
                 { imports = imports
                 , pattern =
                     Compiler.nodify
                         (Pattern.NamedPattern
-                            { moduleName = []
-                            , name = Format.formatType name
+                            { moduleName = importFrom
+                            , name = Format.formatType variantName
                             }
                             []
                         )
                 , annotation = annotation
                 }
             , index = Index.dive index
-            , value =
-                toType
+            , value = toType
             }
         )
 
