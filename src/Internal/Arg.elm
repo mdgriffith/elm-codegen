@@ -4,10 +4,9 @@ module Internal.Arg exposing
     , var, varWith
     , triple, tuple
     , char, string, int
-    , customType
+    , customType, customTypeWith
     , item, items, list, listRemaining, record, field
     , ignore, unit
-    , customTypeWith
     )
 
 {-|
@@ -22,7 +21,7 @@ module Internal.Arg exposing
 
 @docs char, string, int
 
-@docs customType
+@docs customType, customTypeWith
 
 @docs item, items, list, listRemaining, record, field
 
@@ -547,10 +546,14 @@ customTypeWith :
     }
     -> a
     -> Arg a
-customTypeWith { typeName, variantName, importFrom } toType =
+customTypeWith ({ typeName, variantName } as details) toType =
     Arg
         (\index ->
             let
+                importFrom : List String
+                importFrom =
+                    Index.getImport index details.importFrom
+
                 annotation =
                     Ok
                         { type_ = Internal.Types.custom importFrom (Format.formatType typeName) []
