@@ -10,17 +10,16 @@ elmCaseString : Test
 elmCaseString =
     test "Elm.Case.string" <|
         \_ ->
-            Elm.Expect.renderedAs
-                (Elm.Case.string (Elm.string "Hello")
-                    { cases = [ ( "World", Elm.int 1 ) ]
-                    , otherwise = Elm.int 0
-                    }
-                )
-                """
-                case "Hello" of
-                    "World" ->
-                        1
+            Elm.Case.string (Elm.string "Hello")
+                { cases = [ ( "World", Elm.int 1 ) ]
+                , otherwise = Elm.int 0
+                }
+                |> Elm.Expect.renderedAs
+                    """
+                    case "Hello" of
+                        "World" ->
+                            1
 
-                    _ ->
-                        0
-                """
+                        _ ->
+                            0
+                    """

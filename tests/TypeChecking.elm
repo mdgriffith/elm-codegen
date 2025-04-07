@@ -10,7 +10,6 @@ import Elm.ToString
 import Expect
 import Internal.Compiler as Compiler
 import Internal.Index as Index
-import String.Multiline
 import Test exposing (Test, describe, test)
 
 
@@ -148,9 +147,9 @@ generatedCode =
     describe "Exact Output"
         [ test "Strings" <|
             \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.string "Hello!")
-                    "\"Hello!\""
+                Elm.string "Hello!"
+                    |> Elm.Expect.renderedAs
+                        "\"Hello!\""
         , test "Function, arg order isn't reversed" <|
             \_ ->
                 let
@@ -170,40 +169,41 @@ generatedCode =
                                         Elm.unit
                             )
                 in
-                Elm.Expect.declarationAs
-                    (Elm.declaration "myFunc" exp)
-                    "myFunc : String -> Int -> Bool -> ( String, Int, Bool )\nmyFunc str int bool =\n    ( str, int, bool )"
+                Elm.declaration "myFunc" exp
+                    |> Elm.Expect.declarationAs
+                        """
+                        myFunc : String -> Int -> Bool -> ( String, Int, Bool )
+                        myFunc str int bool =
+                            ( str, int, bool )
+                        """
         , test "Simplified version of map generates the correct signature" <|
             \_ ->
-                Elm.Expect.declarationAs
-                    (Elm.declaration "map" myMap2)
-                    """
-                    map : (optional -> fn) -> optional -> Optional fn
-                    map fn optional =
-                        Present (fn optional)
-                    """
+                Elm.declaration "map" myMap2
+                    |> Elm.Expect.declarationAs
+                        """
+                        map : (optional -> fn) -> optional -> Optional fn
+                        map fn optional =
+                            Present (fn optional)
+                        """
         , test "Map function generates corrections " <|
             \_ ->
-                (Elm.ToString.expression myMap
+                Elm.ToString.expression myMap
                     |> .signature
-                )
-                    |> Expect.equal
-                        (String.Multiline.here
-                            """
-                            (a -> fn) -> Optional a -> Optional fn
-                            """
-                        )
+                    |> Elm.Expect.expectEqualMultiline
+                        "(a -> fn) -> Optional a -> Optional fn"
         , test "Multiply used type variable in record only appears once in signature" <|
             \_ ->
-                Elm.Expect.declarationAs
-                    (Elm.alias "Record"
-                        (Type.record
-                            [ ( "a", Type.var "var" )
-                            , ( "b", Type.var "var" )
-                            ]
-                        )
+                Elm.alias "Record"
+                    (Type.record
+                        [ ( "a", Type.var "var" )
+                        , ( "b", Type.var "var" )
+                        ]
                     )
-                    "type alias Record var =\n    { a : var, b : var }"
+                    |> Elm.Expect.declarationAs
+                        """
+                        type alias Record var =
+                            { a : var, b : var }
+                        """
         ]
 
 

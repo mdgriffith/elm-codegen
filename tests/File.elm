@@ -39,70 +39,74 @@ suite =
         , describe "module doc"
             [ test "present when has content" <|
                 \_ ->
-                    Elm.Expect.fileContentAs (Elm.file [ "Test" ] [ Elm.expose testFn1 ])
-                        """
-module Test exposing ( testFn1 )
+                    Elm.file [ "Test" ] [ Elm.expose testFn1 ]
+                        |> Elm.Expect.fileContentAs
+                            """
+                            module Test exposing ( testFn1 )
 
-{-|
-@docs testFn1
--}
+                            {-|
+                            @docs testFn1
+                            -}
 
 
 
-testFn1 : arg -> arg
-testFn1 arg =
-    arg
-"""
+                            testFn1 : arg -> arg
+                            testFn1 arg =
+                                arg
+                            """
             , test "absent when has no content" <|
                 \_ ->
-                    Elm.Expect.fileContentAs (Elm.file [ "Test" ] [ testFn1 ])
-                        """
-module Test exposing (..)
+                    Elm.file [ "Test" ] [ testFn1 ]
+                        |> Elm.Expect.fileContentAs
+                            """
+                            module Test exposing (..)
 
 
-testFn1 : arg -> arg
-testFn1 arg =
-    arg
-"""
+                            testFn1 : arg -> arg
+                            testFn1 arg =
+                                arg
+                            """
             , test "declaration are in the correct order" <|
                 \_ ->
-                    Elm.Expect.fileContentAs (Elm.file [ "Test" ] [ Elm.expose testFn1, Elm.expose testFn2 ])
-                        """
-module Test exposing ( testFn1, testFn2 )
+                    Elm.file [ "Test" ] [ Elm.expose testFn1, Elm.expose testFn2 ]
+                        |> Elm.Expect.fileContentAs
+                            """
+                            module Test exposing ( testFn1, testFn2 )
 
-{-|
-@docs testFn1, testFn2
--}
-
-
-
-testFn1 : arg -> arg
-testFn1 arg =
-    arg
+                            {-|
+                            @docs testFn1, testFn2
+                            -}
 
 
-testFn2 : arg -> arg
-testFn2 arg =
-    arg
-"""
+
+                            testFn1 : arg -> arg
+                            testFn1 arg =
+                                arg
+
+
+                            testFn2 : arg -> arg
+                            testFn2 arg =
+                                arg
+                            """
             ]
         , describe "trailing lines"
             [ test "no extra lines at the end of the file" <|
                 \_ ->
-                    Elm.Expect.fileContentAs (Elm.file [ "Test" ] [ testFn1, testFn2 ])
-                        """
-module Test exposing (..)
+                    Elm.file [ "Test" ] [ testFn1, testFn2 ]
+                        |> Elm.Expect.fileContentAs
+                            """
+                            module Test exposing (..)
 
 
-testFn1 : arg -> arg
-testFn1 arg =
-    arg
+                            testFn1 : arg -> arg
+                            testFn1 arg =
+                                arg
 
 
-testFn2 : arg -> arg
-testFn2 arg =
-    arg
-"""
+                            testFn2 : arg -> arg
+                            testFn2 arg =
+                                arg
+                            """
             ]
         ]
 
@@ -112,133 +116,133 @@ grouping =
     describe "Grouping exposed"
         [ test "Group items into sections" <|
             \_ ->
-                Elm.Expect.fileContentAs
-                    (Elm.file [ "Test" ]
-                        [ placeholder "one"
-                        , placeholder "two"
-                        , Elm.group
-                            [ Elm.docs "## My group"
-                            , Elm.docs "Here's how to use it"
-                            , placeholder "three"
-                            , placeholder "four"
-                            ]
-                        , placeholder "five"
-                        , placeholder "six"
+                Elm.file [ "Test" ]
+                    [ placeholder "one"
+                    , placeholder "two"
+                    , Elm.group
+                        [ Elm.docs "## My group"
+                        , Elm.docs "Here's how to use it"
+                        , placeholder "three"
+                        , placeholder "four"
                         ]
-                    )
-                    """module Test exposing (..)
+                    , placeholder "five"
+                    , placeholder "six"
+                    ]
+                    |> Elm.Expect.fileContentAs
+                        """
+                        module Test exposing (..)
 
-{-|
-## My group
+                        {-|
+                        ## My group
 
-Here's how to use it
--}
-
-
-
-one : arg -> arg
-one arg =
-    arg
+                        Here's how to use it
+                        -}
 
 
-two : arg -> arg
-two arg =
-    arg
+
+                        one : arg -> arg
+                        one arg =
+                            arg
 
 
-three : arg -> arg
-three arg =
-    arg
+                        two : arg -> arg
+                        two arg =
+                            arg
 
 
-four : arg -> arg
-four arg =
-    arg
+                        three : arg -> arg
+                        three arg =
+                            arg
 
 
-five : arg -> arg
-five arg =
-    arg
+                        four : arg -> arg
+                        four arg =
+                            arg
 
 
-six : arg -> arg
-six arg =
-    arg
-"""
+                        five : arg -> arg
+                        five arg =
+                            arg
+
+
+                        six : arg -> arg
+                        six arg =
+                            arg
+                        """
         , test "only include @docs if something is specifically exposed" <|
             \_ ->
-                Elm.Expect.fileContentAs
-                    (Elm.file [ "Test" ]
-                        [ placeholder "one"
+                Elm.file [ "Test" ]
+                    [ placeholder "one"
+                        |> Elm.expose
+                    , placeholder "two"
+                    , Elm.group
+                        [ Elm.docs "## My group"
+                        , Elm.docs "Here's how to use it"
+                        , placeholder "three"
+                        , placeholder "four"
                             |> Elm.expose
-                        , placeholder "two"
-                        , Elm.group
-                            [ Elm.docs "## My group"
-                            , Elm.docs "Here's how to use it"
-                            , placeholder "three"
-                            , placeholder "four"
-                                |> Elm.expose
-                            , placeholder "fourPointFive"
-                                |> Elm.expose
-                            ]
-                        , placeholder "five"
-                            |> Elm.expose
-                        , placeholder "six"
+                        , placeholder "fourPointFive"
                             |> Elm.expose
                         ]
-                    )
-                    """module Test exposing
-    ( one
-    , four, fourPointFive
-    , five, six
-    )
+                    , placeholder "five"
+                        |> Elm.expose
+                    , placeholder "six"
+                        |> Elm.expose
+                    ]
+                    |> Elm.Expect.fileContentAs
+                        """
+                        module Test exposing
+                            ( one
+                            , four, fourPointFive
+                            , five, six
+                            )
 
-{-|
-@docs one
+                        {-|
+                        @docs one
 
-## My group
+                        ## My group
 
-Here's how to use it
+                        Here's how to use it
 
-@docs four, fourPointFive
+                        @docs four, fourPointFive
 
-@docs five, six
--}
-
-
-
-one : arg -> arg
-one arg =
-    arg
-
-
-two : arg -> arg
-two arg =
-    arg
+                        @docs five, six
+                        -}
 
 
-three : arg -> arg
-three arg =
-    arg
+
+                        one : arg -> arg
+                        one arg =
+                            arg
 
 
-four : arg -> arg
-four arg =
-    arg
+                        two : arg -> arg
+                        two arg =
+                            arg
 
 
-fourPointFive : arg -> arg
-fourPointFive arg =
-    arg
+                        three : arg -> arg
+                        three arg =
+                            arg
 
 
-five : arg -> arg
-five arg =
-    arg
+                        four : arg -> arg
+                        four arg =
+                            arg
 
 
-six : arg -> arg
-six arg =
-    arg
-"""
+                        fourPointFive : arg -> arg
+                        fourPointFive arg =
+                            arg
+
+
+                        five : arg -> arg
+                        five arg =
+                            arg
+
+
+                        six : arg -> arg
+                        six arg =
+                            arg
+                        """
         ]

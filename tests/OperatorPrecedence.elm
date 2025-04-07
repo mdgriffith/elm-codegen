@@ -33,24 +33,24 @@ get =
     describe "Elm.get"
         [ test "Works correctly if the argument is a function call" <|
             \_ ->
-                Elm.Expect.renderedAs (Elm.get "field" (todo "todo"))
-                    """(Debug.todo "todo").field"""
+                Elm.get "field" (todo "todo")
+                    |> Elm.Expect.renderedAs """(Debug.todo "todo").field"""
         , test "Works correctly if the argument is a value" <|
             \_ ->
-                Elm.Expect.renderedAs (Elm.get "field" valueTodo)
-                    """Debug.todo.field"""
+                Elm.get "field" valueTodo
+                    |> Elm.Expect.renderedAs """Debug.todo.field"""
         , test "Works correctly if the argument is a record" <|
             \_ ->
-                Elm.Expect.renderedAs (Elm.get "field" (Elm.record []))
-                    """{}.field"""
+                Elm.get "field" (Elm.record [])
+                    |> Elm.Expect.renderedAs """{}.field"""
         , test "Works correctly if the argument is a record update" <|
             \_ ->
-                Elm.Expect.renderedAs (Elm.get "field" (Elm.updateRecord [ ( "bar", Elm.int 3 ) ] (Elm.val "foo")))
-                    """{ foo | bar = 3 }.field"""
+                Elm.get "field" (Elm.updateRecord [ ( "bar", Elm.int 3 ) ] (Elm.val "foo"))
+                    |> Elm.Expect.renderedAs """{ foo | bar = 3 }.field"""
         , test "Works correctly if the argument is a field" <|
             \_ ->
-                Elm.Expect.renderedAs (Elm.get "field2" (Elm.get "field1" (Elm.record [])))
-                    """{}.field1.field2"""
+                Elm.get "field2" (Elm.get "field1" (Elm.record []))
+                    |> Elm.Expect.renderedAs """{}.field1.field2"""
         ]
 
 
@@ -72,42 +72,42 @@ operators =
     describe "+ and *"
         [ test "(2 + 3) + 5" <|
             \_ ->
-                Elm.Expect.renderedAs (plus (plus two three) five)
-                    """2 + 3 + 5"""
+                plus (plus two three) five
+                    |> Elm.Expect.renderedAs """2 + 3 + 5"""
         , test "(2 * 3) * 5" <|
             \_ ->
-                Elm.Expect.renderedAs (multiply (multiply two three) five)
-                    """2 * 3 * 5"""
+                multiply (multiply two three) five
+                    |> Elm.Expect.renderedAs """2 * 3 * 5"""
         , test "(2 + 3) * 5" <|
             \_ ->
-                Elm.Expect.renderedAs (multiply (plus two three) five)
-                    """(2 + 3) * 5"""
+                multiply (plus two three) five
+                    |> Elm.Expect.renderedAs """(2 + 3) * 5"""
         , test "(2 * 3) + 5" <|
             \_ ->
-                Elm.Expect.renderedAs (plus (multiply two three) five)
-                    """2 * 3 + 5"""
+                plus (multiply two three) five
+                    |> Elm.Expect.renderedAs """2 * 3 + 5"""
         , test "2 + (3 * 5)" <|
             \_ ->
-                Elm.Expect.renderedAs (plus two (multiply three five))
-                    """2 + 3 * 5"""
+                plus two (multiply three five)
+                    |> Elm.Expect.renderedAs """2 + 3 * 5"""
         , test "2 * (3 + 5)" <|
             \_ ->
-                Elm.Expect.renderedAs (multiply two (plus three five))
-                    """2 * (3 + 5)"""
+                multiply two (plus three five)
+                    |> Elm.Expect.renderedAs """2 * (3 + 5)"""
         , test "(2 + 3) + (3 + 5)" <|
             \_ ->
-                Elm.Expect.renderedAs (plus (plus two three) (plus three five))
-                    "2 + 3 + (3 + 5)"
+                plus (plus two three) (plus three five)
+                    |> Elm.Expect.renderedAs "2 + 3 + (3 + 5)"
         , test "(2 == 3) == (3 == 5)" <|
             \_ ->
-                Elm.Expect.renderedAs (equal (equal two three) (equal three five))
-                    "(2 == 3) == (3 == 5)"
+                equal (equal two three) (equal three five)
+                    |> Elm.Expect.renderedAs "(2 == 3) == (3 == 5)"
         , test "2 || (3 || 5)" <|
             \_ ->
-                Elm.Expect.renderedAs (or two (or three five))
-                    "2 || 3 || 5"
+                or two (or three five)
+                    |> Elm.Expect.renderedAs "2 || 3 || 5"
         , test "(2 || 3) || 5" <|
             \_ ->
-                Elm.Expect.renderedAs (or (or two three) five)
-                    "(2 || 3) || 5"
+                or (or two three) five
+                    |> Elm.Expect.renderedAs "(2 || 3) || 5"
         ]
