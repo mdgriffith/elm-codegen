@@ -12,13 +12,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
 
       # Re-use node_modules between runs until package-lock.json changes.
       - name: Cache node_modules
-        id: internal-cache-node_modules
-        uses: actions/cache@v2
+        id: cache-node_modules
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: internal-node_modules-ubuntu-latest.x-${{ hashFiles('package-lock.json') }}
@@ -26,7 +27,7 @@ jobs:
       # Re-use ~/.elm between runs until elm.json or review/elm.json changes.
       # The Elm compiler saves downloaded Elm packages to ~/.elm.
       - name: Cache ~/.elm
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.elm
           key: elm-${{ hashFiles('elm.json', 'review/elm.json') }}
@@ -34,4 +35,5 @@ jobs:
       - name: Install npm dependencies
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
         run: npm ci
+
       - run: npm test
