@@ -1,4 +1,4 @@
-module Generate exposing (main)
+module Generate exposing (main, moduleToFile)
 
 {-| -}
 
@@ -338,9 +338,6 @@ block2Case thisModule union =
 toBranch : List String -> Elm.Expression -> ( String, List Elm.Type.Type ) -> Maybe Elm.Expression
 toBranch thisModule tagRecord ( tagname, subtypes ) =
     let
-        moduleName =
-            Elm.list (List.map Elm.string thisModule)
-
         extractSubTypes i subs exp =
             case subs of
                 [] ->
@@ -1445,6 +1442,13 @@ namedWithType thisModule name types =
         [ "Platform", "Sub", "Sub" ] ->
             GenType.namedWith []
                 "Sub"
+                (List.map (typeToExpression thisModule) types)
+
+        [ typeName ] ->
+            -- This is a type from the current module
+            GenType.namedWith
+                thisModule
+                typeName
                 (List.map (typeToExpression thisModule) types)
 
         _ ->
