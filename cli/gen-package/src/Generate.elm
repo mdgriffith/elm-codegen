@@ -335,6 +335,7 @@ block2Case thisModule union =
                 )
 
 
+toBranch : List String -> Elm.Expression -> ( String, List Elm.Type.Type ) -> Maybe Elm.Expression
 toBranch thisModule tagRecord ( tagname, subtypes ) =
     let
         moduleName =
