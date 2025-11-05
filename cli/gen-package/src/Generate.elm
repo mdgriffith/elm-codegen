@@ -24,6 +24,7 @@ import Internal.Format as Format
 import Internal.Write as Write
 import Json.Decode as Json
 import List.Extra
+import Result.Extra
 
 
 main : Program Json.Value () ()
@@ -48,7 +49,7 @@ main =
                         )
 
                     Ok (ElmSource srcs) ->
-                        case parseSources srcs [] of
+                        case Result.Extra.combineMap DocsFromSource.fromSource srcs of
                             Ok docs ->
                                 ( ()
                                 , Elm.Gen.files
@@ -68,21 +69,6 @@ main =
                 ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
-
-
-parseSources : List String -> List Elm.Docs.Module -> Result String (List Elm.Docs.Module)
-parseSources srcs parsed =
-    case srcs of
-        [] ->
-            Ok parsed
-
-        top :: remain ->
-            case DocsFromSource.fromSource top of
-                Err err ->
-                    Err err
-
-                Ok topParsed ->
-                    parseSources remain (topParsed :: parsed)
 
 
 type Flags
