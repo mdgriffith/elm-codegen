@@ -52,9 +52,10 @@ toModuleNameAndExposed { moduleName, exposingList } =
             ( Node.value moduleName, All )
 
         Node _ (Elm.Syntax.Exposing.Explicit exposedVals) ->
-            ( Node.value moduleName, Explicit (List.map (exposeValue << Node.value) exposedVals) )
+            ( Node.value moduleName, Explicit (List.map (\(Node _ exposedVal) -> exposeValue exposedVal) exposedVals) )
 
 
+exposeValue : Elm.Syntax.Exposing.TopLevelExpose -> ExposedValue
 exposeValue val =
     case val of
         Elm.Syntax.Exposing.InfixExpose str ->
@@ -75,6 +76,7 @@ exposeValue val =
                     ExposedConstructors name
 
 
+isExposed : String -> Exposed -> Bool
 isExposed name exposed =
     case exposed of
         All ->
@@ -146,6 +148,7 @@ toDocs file =
             , aliases = imports.aliases
             }
 
+        gathered : { values : List Elm.Docs.Value, aliases : List Elm.Docs.Alias, unions : List Elm.Docs.Union }
         gathered =
             List.foldl (gather context exposingSet)
                 { values = []
@@ -255,8 +258,8 @@ gather :
         , aliases : List Elm.Docs.Alias
         , unions : List Elm.Docs.Union
         }
-gather context exposed node found =
-    case Node.value node of
+gather context exposed (Node _ node) found =
+    case node of
         Elm.Syntax.Declaration.FunctionDeclaration fn ->
             let
                 (Node _ fnName) =
@@ -278,6 +281,7 @@ gather context exposed node found =
 
         Elm.Syntax.Declaration.AliasDeclaration alias ->
             let
+                aliasName : String
                 aliasName =
                     Node.value alias.name
             in
@@ -291,6 +295,7 @@ gather context exposed node found =
 
         Elm.Syntax.Declaration.CustomTypeDeclaration type_ ->
             let
+                typeName : String
                 typeName =
                     Node.value type_.name
             in
@@ -309,6 +314,7 @@ gather context exposed node found =
 
         Elm.Syntax.Declaration.PortDeclaration portSignature ->
             let
+                portName : String
                 portName =
                     Node.value portSignature.name
             in
@@ -341,21 +347,23 @@ portToValue context signature =
 toDocValue : Context -> Elm.Syntax.Expression.Function -> Maybe Elm.Docs.Value
 toDocValue context fn =
     Maybe.map
-        (\signature ->
+        (\(Node _ signature) ->
             { name =
-                case Node.value fn.declaration of
-                    implementation ->
-                        Node.value implementation.name
+                let
+                    implementation : Elm.Syntax.Expression.FunctionImplementation
+                    implementation =
+                        Node.value fn.declaration
+                in
+                Node.value implementation.name
             , comment =
                 case fn.documentation of
                     Nothing ->
                         ""
 
-                    Just doc ->
-                        Node.value doc
+                    Just (Node _ doc) ->
+                        doc
             , tipe =
-                Node.value signature
-                    |> .typeAnnotation
+                signature.typeAnnotation
                     |> toDocType context
             }
         )
@@ -370,17 +378,15 @@ toDocUnion context type_ =
             Nothing ->
                 ""
 
-            Just doc ->
-                Node.value doc
+            Just (Node _ doc) ->
+                doc
     , args = List.map Node.value type_.generics
     , tags =
         List.map
-            (\const ->
-                case Node.value const of
-                    node ->
-                        ( Node.value node.name
-                        , List.map (toDocType context) node.arguments
-                        )
+            (\(Node _ const) ->
+                ( Node.value const.name
+                , List.map (toDocType context) const.arguments
+                )
             )
             type_.constructors
     }
@@ -394,8 +400,8 @@ toDocUnionOpaque type_ =
             Nothing ->
                 ""
 
-            Just doc ->
-                Node.value doc
+            Just (Node _ doc) ->
+                doc
     , args = List.map Node.value type_.generics
     , tags =
         []
@@ -410,8 +416,8 @@ toDocAlias context typeAlias =
             Nothing ->
                 ""
 
-            Just str ->
-                Node.value str
+            Just (Node _ doc) ->
+                doc
     , args = List.map Node.value typeAlias.generics
     , tipe =
         typeAlias.typeAnnotation
@@ -425,11 +431,11 @@ toDocType context (Node _ annotation) =
         Elm.Syntax.TypeAnnotation.GenericType var ->
             Elm.Type.Var var
 
-        Elm.Syntax.TypeAnnotation.Typed modName inner ->
+        Elm.Syntax.TypeAnnotation.Typed (Node _ modName) inner ->
             let
                 typeName : String
                 typeName =
-                    case Node.value modName of
+                    case modName of
                         -- This is the list found at https://package.elm-lang.org/packages/elm/core/latest/
                         ( [], "List" ) ->
                             "List.List"
@@ -490,30 +496,26 @@ toDocType context (Node _ annotation) =
         Elm.Syntax.TypeAnnotation.Record fields ->
             Elm.Type.Record
                 (List.map
-                    (\f ->
-                        case Node.value f of
-                            ( name, fieldAnnotation ) ->
-                                ( Node.value name
-                                , toDocType context fieldAnnotation
-                                )
+                    (\(Node _ ( Node _ name, fieldAnnotation )) ->
+                        ( name
+                        , toDocType context fieldAnnotation
+                        )
                     )
                     fields
                 )
                 Nothing
 
-        Elm.Syntax.TypeAnnotation.GenericRecord recordName fields ->
+        Elm.Syntax.TypeAnnotation.GenericRecord (Node _ recordName) (Node _ fields) ->
             Elm.Type.Record
                 (List.map
-                    (\f ->
-                        case Node.value f of
-                            ( name, fieldAnnotation ) ->
-                                ( Node.value name
-                                , toDocType context fieldAnnotation
-                                )
+                    (\(Node _ ( Node _ name, fieldAnnotation )) ->
+                        ( name
+                        , toDocType context fieldAnnotation
+                        )
                     )
-                    (Node.value fields)
+                    fields
                 )
-                (Just (Node.value recordName))
+                (Just recordName)
 
         Elm.Syntax.TypeAnnotation.FunctionTypeAnnotation one two ->
             Elm.Type.Lambda
