@@ -1,4 +1,4 @@
-module Generate exposing (main)
+module Generate exposing (main, moduleToFile)
 
 {-| -}
 
@@ -6,13 +6,14 @@ import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
 import Elm.Arg
-import Elm.Op
 import Elm.Docs
 import Elm.Gen
+import Elm.Op
 import Elm.Syntax.TypeAnnotation
 import Elm.Type
 import Gen.Elm
 import Gen.Elm.Annotation as GenType
+import Gen.Elm.Arg
 import Gen.Elm.Case
 import Gen.List
 import Gen.Tuple
@@ -20,7 +21,7 @@ import Internal.Compiler as Compiler
 import Internal.Format as Format
 import Internal.Write as Write
 import Json.Decode as Json
-import Gen.Elm.Arg
+
 
 main : Program Json.Value () ()
 main =
@@ -129,7 +130,7 @@ moduleToFile docs =
     in
     Elm.fileWith modName
         { docs =
-           "# Generated bindings for " ++ String.join "." sourceModName
+            "# Generated bindings for " ++ String.join "." sourceModName
         , aliases =
             [ ( [ "Elm", "Annotation" ], "Type" )
             ]
@@ -307,21 +308,21 @@ block2Case thisModule union =
                 (Elm.fn2
                     (Elm.Arg.var (union.name ++ "Expression"))
                     (Elm.Arg.varWith (union.name ++ "Tags")
-                      (Annotation.record
-                        (List.map
-                          (\(tagname, subtypes) ->
-                            ( tagname
-                            , Annotation.function
-                                (List.map
-                                  (\_ ->  Gen.Elm.annotation_.expression)
-                                  subtypes
+                        (Annotation.record
+                            (List.map
+                                (\( tagname, subtypes ) ->
+                                    ( tagname
+                                    , Annotation.function
+                                        (List.map
+                                            (\_ -> Gen.Elm.annotation_.expression)
+                                            subtypes
+                                        )
+                                        Gen.Elm.annotation_.expression
+                                    )
                                 )
-                                Gen.Elm.annotation_.expression
+                                union.tags
                             )
-                          )
-                          union.tags
                         )
-                      )
                     )
                     (\express tagRecord ->
                         Gen.Elm.Case.custom express
@@ -333,41 +334,40 @@ block2Case thisModule union =
                     )
                 )
 
+
+toBranch : List String -> Elm.Expression -> ( String, List Elm.Type.Type ) -> Maybe Elm.Expression
 toBranch thisModule tagRecord ( tagname, subtypes ) =
     let
-        moduleName =
-            Elm.list (List.map Elm.string thisModule)
-
         extractSubTypes i subs exp =
-          case subs of
-            [] ->
-              exp
+            case subs of
+                [] ->
+                    exp
 
-            (subtype :: remain) ->
-              let
+                subtype :: remain ->
+                    let
+                        subtypeName =
+                            case typeToName subtype of
+                                Nothing ->
+                                    "arg_" ++ String.fromInt i
 
-                subtypeName =
-                  case typeToName subtype of
-                    Nothing -> "arg_" ++ (String.fromInt i)
+                                Just name ->
+                                    name
 
-                    Just name -> name
-
-                newExp =
-                  exp
-                    |> Elm.Op.pipe
-                        (Elm.apply Gen.Elm.Arg.values_.item
-                            [ Gen.Elm.Arg.varWith
-                                (Format.formatValue subtypeName)
-                                (typeToExpression thisModule subtype)
-                            ]
-                        )
-              in
-              extractSubTypes (i + 1) remain newExp
-
+                        newExp =
+                            exp
+                                |> Elm.Op.pipe
+                                    (Elm.apply Gen.Elm.Arg.values_.item
+                                        [ Gen.Elm.Arg.varWith
+                                            (Format.formatValue subtypeName)
+                                            (typeToExpression thisModule subtype)
+                                        ]
+                                    )
+                    in
+                    extractSubTypes (i + 1) remain newExp
     in
     Gen.Elm.Case.call_.branch
         (Gen.Elm.Arg.customType tagname (Elm.get tagname tagRecord)
-          |> extractSubTypes 0 subtypes
+            |> extractSubTypes 0 subtypes
         )
         basicsIdentity
         |> Just
@@ -376,10 +376,10 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
 basicsIdentity : Elm.Expression
 basicsIdentity =
     Elm.value
-      { importFrom = [ "Basics" ]
-      , name = "identity"
-      , annotation = Just (Annotation.function [ Annotation.var "a" ] (Annotation.var "a"))
-      }
+        { importFrom = [ "Basics" ]
+        , name = "identity"
+        , annotation = Just (Annotation.function [ Annotation.var "a" ] (Annotation.var "a"))
+        }
 
 
 block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
@@ -861,10 +861,10 @@ generateBlocks thisModule block =
                     ]
 
                 _ ->
-                  let
-                    name =
-                      Format.formatValue value.name
-                  in
+                    let
+                        name =
+                            Format.formatValue value.name
+                    in
                     [ Elm.declaration name
                         (valueWith thisModule
                             value.name
@@ -1305,16 +1305,31 @@ typeToName elmType =
         Elm.Type.Record fields maybeExtensible ->
             maybeExtensible
 
+
 isPrimitiveTypeName : String -> Bool
 isPrimitiveTypeName name =
     case name of
-        "List.List" -> True
-        "Basics.Bool" -> True
-        "Basics.Float" -> True
-        "Basics.Int" -> True
-        "String.String" -> True
-        "Char.Char" -> True
-        _ -> False
+        "List.List" ->
+            True
+
+        "Basics.Bool" ->
+            True
+
+        "Basics.Float" ->
+            True
+
+        "Basics.Int" ->
+            True
+
+        "String.String" ->
+            True
+
+        "Char.Char" ->
+            True
+
+        _ ->
+            False
+
 
 typeToExpression : List String -> Elm.Type.Type -> Elm.Expression
 typeToExpression thisModule elmType =
@@ -1427,6 +1442,13 @@ namedWithType thisModule name types =
         [ "Platform", "Sub", "Sub" ] ->
             GenType.namedWith []
                 "Sub"
+                (List.map (typeToExpression thisModule) types)
+
+        [ typeName ] ->
+            -- This is a type from the current module
+            GenType.namedWith
+                thisModule
+                typeName
                 (List.map (typeToExpression thisModule) types)
 
         _ ->
