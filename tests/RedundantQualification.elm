@@ -19,36 +19,34 @@ inTypeAliases : Test
 inTypeAliases =
     test "In type aliases" <|
         \_ ->
-            Elm.Expect.fileContentAs
-                (Elm.file [ "Foo" ]
-                    [ Elm.alias "Bar" (Elm.Annotation.named [ "Foo" ] "Baz") ]
-                )
-                """
-module Foo exposing (..)
+            Elm.file [ "Foo" ]
+                [ Elm.alias "Bar" (Elm.Annotation.named [ "Foo" ] "Baz") ]
+                |> Elm.Expect.fileContentAs
+                    """
+                    module Foo exposing (..)
 
 
-type alias Bar =
-    Baz
-"""
+                    type alias Bar =
+                        Baz
+                    """
 
 
 inAnnotation : Test
 inAnnotation =
     test "In annotation" <|
         \_ ->
-            Elm.Expect.fileContentAs
-                (Elm.file [ "Foo" ]
-                    [ Elm.fn
-                        (Elm.Arg.varWith "v" (Elm.Annotation.named [ "Foo" ] "Baz"))
-                        identity
-                        |> Elm.declaration "id"
-                    ]
-                )
-                """
-module Foo exposing (..)
+            Elm.file [ "Foo" ]
+                [ Elm.fn
+                    (Elm.Arg.varWith "v" (Elm.Annotation.named [ "Foo" ] "Baz"))
+                    identity
+                    |> Elm.declaration "id"
+                ]
+                |> Elm.Expect.fileContentAs
+                    """
+                    module Foo exposing (..)
 
 
-id : Baz -> Baz
-id v =
-    v
-"""
+                    id : Baz -> Baz
+                    id v =
+                        v
+                    """
