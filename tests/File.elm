@@ -3,6 +3,7 @@ module File exposing (suite)
 {-| -}
 
 import Elm
+import Elm.Annotation
 import Elm.Arg as Arg
 import Elm.Expect
 import Test exposing (Test, describe, test)
@@ -108,7 +109,30 @@ suite =
                                 arg
                             """
             ]
+        , describe "local types" [ localTypesTest ]
         ]
+
+
+localTypesTest : Test
+localTypesTest =
+    test "Local types are not qualified" <|
+        \_ ->
+            Elm.file [ "Foo" ]
+                [ Elm.alias "Bar" (Elm.Annotation.named [ "Foo" ] "Qux")
+                , Elm.alias "Qux" Elm.Annotation.unit
+                ]
+                |> Elm.Expect.fileContentAs
+                    """
+                module Foo exposing (..)
+
+
+                type alias Bar =
+                    Qux
+
+
+                type alias Qux =
+                    ()
+                """
 
 
 grouping : Test

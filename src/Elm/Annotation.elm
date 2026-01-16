@@ -30,6 +30,7 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
 import Internal.Compiler as Compiler
 import Internal.Format as Format
+import Internal.Index as Index exposing (Index)
 
 
 {-| -}
@@ -40,7 +41,7 @@ type alias Annotation =
 {-| -}
 toString : Annotation -> String
 toString (Compiler.Annotation ann) =
-    Elm.Writer.writeTypeAnnotation (Compiler.nodify ann.annotation)
+    Elm.Writer.writeTypeAnnotation (Compiler.nodify (ann.annotation (Index.startIndex Nothing)))
         |> Elm.Writer.write
 
 
@@ -49,9 +50,9 @@ toString (Compiler.Annotation ann) =
 var : String -> Annotation
 var a =
     Compiler.Annotation
-        { annotation = Annotation.GenericType (Format.formatValue a)
+        { annotation = \_ -> Annotation.GenericType (Format.formatValue a)
         , imports = []
-        , aliases = Compiler.emptyAliases
+        , aliases = \_ -> Compiler.emptyAliases
         }
 
 
@@ -89,9 +90,9 @@ char =
 unit : Annotation
 unit =
     Compiler.Annotation
-        { annotation = Annotation.Unit
+        { annotation = \_ -> Annotation.Unit
         , imports = []
-        , aliases = Compiler.emptyAliases
+        , aliases = \_ -> Compiler.emptyAliases
         }
 
 
@@ -124,23 +125,25 @@ tuple : Annotation -> Annotation -> Annotation
 tuple one two =
     Compiler.Annotation
         { annotation =
-            Annotation.Tupled
-                (Compiler.nodifyAll
-                    [ Compiler.getInnerAnnotation one
-                    , Compiler.getInnerAnnotation two
-                    ]
-                )
+            \index ->
+                Annotation.Tupled
+                    (Compiler.nodifyAll
+                        [ Compiler.getInnerAnnotation index one
+                        , Compiler.getInnerAnnotation index two
+                        ]
+                    )
         , imports =
             Compiler.getAnnotationImports one
                 ++ Compiler.getAnnotationImports two
         , aliases =
-            Compiler.mergeAliases (getAliases one) (getAliases two)
+            \index ->
+                Compiler.mergeAliases (getAliases index one) (getAliases index two)
         }
 
 
-getAliases : Annotation -> Compiler.AliasCache
-getAliases (Compiler.Annotation ann) =
-    ann.aliases
+getAliases : Index -> Annotation -> Compiler.AliasCache
+getAliases index (Compiler.Annotation ann) =
+    ann.aliases index
 
 
 {-| -}
@@ -148,24 +151,26 @@ triple : Annotation -> Annotation -> Annotation -> Annotation
 triple one two three =
     Compiler.Annotation
         { annotation =
-            Annotation.Tupled
-                (Compiler.nodifyAll
-                    [ Compiler.getInnerAnnotation one
-                    , Compiler.getInnerAnnotation two
-                    , Compiler.getInnerAnnotation three
-                    ]
-                )
+            \index ->
+                Annotation.Tupled
+                    (Compiler.nodifyAll
+                        [ Compiler.getInnerAnnotation index one
+                        , Compiler.getInnerAnnotation index two
+                        , Compiler.getInnerAnnotation index three
+                        ]
+                    )
         , imports =
             Compiler.getAnnotationImports one
                 ++ Compiler.getAnnotationImports two
                 ++ Compiler.getAnnotationImports three
         , aliases =
-            Compiler.mergeAliases
-                (Compiler.mergeAliases
-                    (getAliases one)
-                    (getAliases two)
-                )
-                (getAliases three)
+            \index ->
+                Compiler.mergeAliases
+                    (Compiler.mergeAliases
+                        (getAliases index one)
+                        (getAliases index two)
+                    )
+                    (getAliases index three)
         }
 
 
@@ -212,11 +217,12 @@ alias :
 alias mod name vars target =
     Compiler.Annotation
         { annotation =
-            Annotation.Typed
-                (Compiler.nodify
-                    ( mod, Format.formatType name )
-                )
-                (List.map (Compiler.nodify << Compiler.getInnerAnnotation) vars)
+            \index ->
+                Annotation.Typed
+                    (Compiler.nodify
+                        ( mod, Format.formatType name )
+                    )
+                    (List.map (Compiler.nodify << Compiler.getInnerAnnotation index) vars)
         , imports =
             case mod of
                 [] ->
@@ -225,13 +231,14 @@ alias mod name vars target =
                 _ ->
                     mod :: List.concatMap Compiler.getAnnotationImports vars
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (Compiler.getAliases ann) aliases
-                )
-                (Compiler.getAliases target)
-                vars
-                |> Compiler.addAlias mod name target
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (Compiler.getAliases index ann) aliases
+                    )
+                    (Compiler.getAliases index target)
+                    vars
+                    |> Compiler.addAlias mod name index target
         }
 
 
@@ -240,25 +247,27 @@ record : List ( String, Annotation ) -> Annotation
 record fields =
     Compiler.Annotation
         { annotation =
-            fields
-                |> List.map
-                    (\( name, ann ) ->
-                        ( Compiler.nodify (Format.formatValue name)
-                        , Compiler.nodify (Compiler.getInnerAnnotation ann)
+            \index ->
+                fields
+                    |> List.map
+                        (\( name, ann ) ->
+                            ( Compiler.nodify (Format.formatValue name)
+                            , Compiler.nodify (Compiler.getInnerAnnotation index ann)
+                            )
                         )
-                    )
-                |> Compiler.nodifyAll
-                |> Annotation.Record
+                    |> Compiler.nodifyAll
+                    |> Annotation.Record
         , imports =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
         , aliases =
-            List.foldl
-                (\( _, ann ) aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                fields
+            \index ->
+                List.foldl
+                    (\( _, ann ) aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    fields
         }
 
 
@@ -267,26 +276,28 @@ extensible : String -> List ( String, Annotation ) -> Annotation
 extensible base fields =
     Compiler.Annotation
         { annotation =
-            fields
-                |> List.map
-                    (\( name, ann ) ->
-                        ( Compiler.nodify (Format.formatValue name)
-                        , Compiler.nodify (Compiler.getInnerAnnotation ann)
+            \index ->
+                fields
+                    |> List.map
+                        (\( name, ann ) ->
+                            ( Compiler.nodify (Format.formatValue name)
+                            , Compiler.nodify (Compiler.getInnerAnnotation index ann)
+                            )
                         )
-                    )
-                |> Compiler.nodifyAll
-                |> Compiler.nodify
-                |> Annotation.GenericRecord (Compiler.nodify (Format.formatValue base))
+                    |> Compiler.nodifyAll
+                    |> Compiler.nodify
+                    |> Annotation.GenericRecord (Compiler.nodify (Format.formatValue base))
         , imports =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
         , aliases =
-            List.foldl
-                (\( _, ann ) aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                fields
+            \index ->
+                List.foldl
+                    (\( _, ann ) aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    fields
         }
 
 
@@ -295,11 +306,17 @@ named : List String -> String -> Annotation
 named mod name =
     Compiler.Annotation
         { annotation =
-            Annotation.Typed
-                (Compiler.nodify
-                    ( mod, Format.formatType name )
-                )
-                []
+            \index ->
+                let
+                    importFrom : List String
+                    importFrom =
+                        Index.getImport index mod
+                in
+                Annotation.Typed
+                    (Compiler.nodify
+                        ( importFrom, Format.formatType name )
+                    )
+                    []
         , imports =
             case mod of
                 [] ->
@@ -307,7 +324,7 @@ named mod name =
 
                 _ ->
                     [ mod ]
-        , aliases = Compiler.emptyAliases
+        , aliases = \_ -> Compiler.emptyAliases
         }
 
 
@@ -316,28 +333,37 @@ namedWith : List String -> String -> List Annotation -> Annotation
 namedWith mod name args =
     Compiler.Annotation
         { annotation =
-            Annotation.Typed
-                (Compiler.nodify
-                    ( mod
-                    , Format.formatType name
+            \index ->
+                let
+                    importFrom : List String
+                    importFrom =
+                        Index.getImport index mod
+                in
+                Annotation.Typed
+                    (Compiler.nodify
+                        ( importFrom
+                        , Format.formatType name
+                        )
                     )
-                )
-                (Compiler.nodifyAll
-                    (List.map Compiler.getInnerAnnotation
-                        args
+                    (Compiler.nodifyAll
+                        (List.map (Compiler.getInnerAnnotation index)
+                            args
+                        )
                     )
-                )
         , imports =
-            mod
-                :: List.concatMap Compiler.getAnnotationImports
-                    args
+            if List.isEmpty mod then
+                List.concatMap Compiler.getAnnotationImports args
+
+            else
+                mod :: List.concatMap Compiler.getAnnotationImports args
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                args
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    args
         }
 
 
@@ -346,19 +372,21 @@ typed : List String -> String -> List Annotation -> Annotation
 typed mod name args =
     Compiler.Annotation
         { annotation =
-            Annotation.Typed
-                (Compiler.nodify ( mod, name ))
-                (Compiler.nodifyAll
-                    (List.map Compiler.getInnerAnnotation args)
-                )
+            \index ->
+                Annotation.Typed
+                    (Compiler.nodify ( mod, name ))
+                    (Compiler.nodifyAll
+                        (List.map (Compiler.getInnerAnnotation index) args)
+                    )
         , imports = List.concatMap Compiler.getAnnotationImports args
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                args
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    args
         }
 
 
@@ -367,22 +395,24 @@ function : List Annotation -> Annotation -> Annotation
 function anns return =
     Compiler.Annotation
         { annotation =
-            List.foldr
-                (\ann fn ->
-                    Annotation.FunctionTypeAnnotation
-                        (Compiler.nodify ann)
-                        (Compiler.nodify fn)
-                )
-                (Compiler.getInnerAnnotation return)
-                (List.map Compiler.getInnerAnnotation anns)
+            \index ->
+                List.foldr
+                    (\ann fn ->
+                        Annotation.FunctionTypeAnnotation
+                            (Compiler.nodify ann)
+                            (Compiler.nodify fn)
+                    )
+                    (Compiler.getInnerAnnotation index return)
+                    (List.map (Compiler.getInnerAnnotation index) anns)
         , imports =
             Compiler.getAnnotationImports return
                 ++ List.concatMap Compiler.getAnnotationImports anns
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                (return :: anns)
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    (return :: anns)
         }

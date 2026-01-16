@@ -78,15 +78,14 @@ type Annotation
 
 type alias AnnotationDetails =
     { imports : List Module
-    , annotation : Annotation.TypeAnnotation
-    , aliases :
-        AliasCache
+    , annotation : Index -> Annotation.TypeAnnotation
+    , aliases : Index -> AliasCache
     }
 
 
-getTypeModule : Annotation -> List String
-getTypeModule (Annotation annotation) =
-    case annotation.annotation of
+getTypeModule : Index -> Annotation -> List String
+getTypeModule index (Annotation annotation) =
+    case annotation.annotation index of
         Annotation.Typed (Node _ ( mod, _ )) _ ->
             mod
 
@@ -216,9 +215,9 @@ getAlias (Node.Node _ ( modName, name )) cache =
     Dict.get (formatAliasKey modName name) cache
 
 
-getAliases : Annotation -> AliasCache
-getAliases (Annotation ann) =
-    ann.aliases
+getAliases : Index -> Annotation -> AliasCache
+getAliases index (Annotation ann) =
+    ann.aliases index
 
 
 formatAliasKey : List String -> String -> String
@@ -226,11 +225,11 @@ formatAliasKey mod name =
     String.join "." mod ++ "." ++ name
 
 
-addAlias : List String -> String -> Annotation -> AliasCache -> AliasCache
-addAlias mod name ((Annotation annDetails) as ann) aliasCache =
+addAlias : List String -> String -> Index -> Annotation -> AliasCache -> AliasCache
+addAlias mod name index ((Annotation annDetails) as ann) aliasCache =
     Dict.insert (formatAliasKey mod name)
-        { variables = getGenerics ann
-        , target = annDetails.annotation
+        { variables = getGenerics index ann
+        , target = annDetails.annotation index
         }
         aliasCache
 
@@ -542,9 +541,10 @@ inferenceErrorToString inf =
             "Different lists of type variables"
 
 
-getGenerics : Annotation -> List String
-getGenerics (Annotation details) =
-    getGenericsHelper details.annotation
+getGenerics : Index -> Annotation -> List String
+getGenerics index (Annotation details) =
+    details.annotation index
+        |> getGenericsHelper
         |> unique
 
 
@@ -588,26 +588,26 @@ getGenericsHelper ann =
 noImports : Annotation.TypeAnnotation -> Annotation
 noImports tipe =
     Annotation
-        { annotation = tipe
+        { annotation = \_ -> tipe
         , imports = []
-        , aliases = emptyAliases
+        , aliases = \_ -> emptyAliases
         }
 
 
-getInnerAnnotation : Annotation -> Annotation.TypeAnnotation
-getInnerAnnotation (Annotation details) =
-    details.annotation
+getInnerAnnotation : Index -> Annotation -> Annotation.TypeAnnotation
+getInnerAnnotation index (Annotation details) =
+    details.annotation index
 
 
 getInnerInference : Index -> Annotation -> Inference
 getInnerInference index (Annotation details) =
     { type_ =
-        details.annotation
+        details.annotation index
             -- running protectAnnotation will cause the typechecking to fail :/
             -- So, there's a bug to debug
             |> protectAnnotation index
     , inferences = Dict.empty
-    , aliases = details.aliases
+    , aliases = details.aliases index
     }
 
 
@@ -1692,7 +1692,8 @@ unifyHelper exps existing =
 
 
 unifyOn :
-    Annotation
+    Index
+    -> Annotation
     ->
         Result
             (List InferenceError)
@@ -1701,7 +1702,7 @@ unifyOn :
         Result
             (List InferenceError)
             Inference
-unifyOn (Annotation annDetails) res =
+unifyOn index (Annotation annDetails) res =
     case res of
         Err _ ->
             res
@@ -1709,14 +1710,14 @@ unifyOn (Annotation annDetails) res =
         Ok inf ->
             let
                 ( newInferences, finalResult ) =
-                    unifiable inf.aliases inf.inferences annDetails.annotation inf.type_
+                    unifiable inf.aliases inf.inferences (annDetails.annotation index) inf.type_
             in
             case finalResult of
                 Ok finalType ->
                     Ok
                         { type_ = finalType
                         , inferences = newInferences
-                        , aliases = mergeAliases annDetails.aliases inf.aliases
+                        , aliases = mergeAliases (annDetails.aliases index) inf.aliases
                         }
 
                 Err err ->
