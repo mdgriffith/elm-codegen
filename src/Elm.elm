@@ -1318,13 +1318,13 @@ verifyFieldsHelper existingFields updatedFields =
         [] ->
             True
 
-        ( fieldName, fieldInference ) :: remain ->
-            presentAndMatching fieldName fieldInference existingFields
+        ( fieldName, _ ) :: remain ->
+            presentAndMatching fieldName existingFields
                 && verifyFieldsHelper existingFields remain
 
 
-presentAndMatching : String -> Compiler.Inference -> List (Node Annotation.RecordField) -> Bool
-presentAndMatching fieldName _ existingFields =
+presentAndMatching : String -> List (Node Annotation.RecordField) -> Bool
+presentAndMatching fieldName existingFields =
     List.any
         (\(Node.Node _ ( Node.Node _ existingFieldName, _ )) ->
             fieldName == existingFieldName

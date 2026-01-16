@@ -11,7 +11,7 @@ module Internal.Compiler exposing
     , InferenceError(..)
     , Module
     , RenderedDeclaration(..)
-    , Restrictions(..)
+    , Restrictions
     , VariableCache
     , Visited
     , Warning

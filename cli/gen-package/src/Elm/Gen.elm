@@ -1,4 +1,4 @@
-port module Elm.Gen exposing (error, files, info)
+port module Elm.Gen exposing (error, files)
 
 import Json.Encode as Json
 
@@ -41,13 +41,6 @@ files list =
 error : { title : String, description : String } -> Cmd msg
 error err =
     onFailureSend err
-
-
-{-| Report some info. The script will continue to run.
--}
-info : String -> Cmd msg
-info err =
-    onInfoSend err
 
 
 port onSuccessSend : List Json.Value -> Cmd msg
