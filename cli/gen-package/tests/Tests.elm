@@ -1,4 +1,4 @@
-module Tests exposing (suite)
+module Tests exposing (parserBinding, testAliases)
 
 import Ansi.Color
 import Diff
@@ -9,8 +9,8 @@ import Generate
 import Test exposing (Test, test)
 
 
-suite : Test
-suite =
+parserBinding : Test
+parserBinding =
     testBinding "Parser" parserModule parserBindings
 
 
@@ -127,3 +127,75 @@ caseOf_ =
                     Basics.identity
                 ]
     }"""
+
+
+aliasSource : String
+aliasSource =
+    """module Foo exposing (a)
+
+import Imported exposing (Foo(..))
+
+
+type alias Foo a =
+    Imported.Foo a
+
+
+a : Foo Int
+a =
+    Debug.todo ""
+"""
+
+
+aliasExpected : String
+aliasExpected =
+    """module Gen.Foo exposing ( moduleName_, a, values_ )
+
+{-|
+# Generated bindings for Foo
+
+@docs moduleName_, a, values_
+-}
+
+
+import Elm
+import Elm.Annotation as Type
+
+
+{-| The name of this module. -}
+moduleName_ : List String
+moduleName_ =
+    [ "Foo" ]
+
+
+{-| a: Foo.Foo Int -}
+a : Elm.Expression
+a =
+    Elm.value
+        { importFrom = [ "Foo" ]
+        , name = "a"
+        , annotation = Just (Type.namedWith [ "Foo" ] "Foo" [ Type.int ])
+        }
+
+
+values_ : { a : Elm.Expression }
+values_ =
+    { a =
+        Elm.value
+            { importFrom = [ "Foo" ]
+            , name = "a"
+            , annotation = Just (Type.namedWith [ "Foo" ] "Foo" [ Type.int ])
+            }
+    }"""
+
+
+testAliases : Test
+testAliases =
+    test "Aliases are codegenned properly" <|
+        \_ ->
+            case DocsFromSource.fromSource aliasSource of
+                Err _ ->
+                    Expect.fail "Could not parse source"
+
+                Ok file ->
+                    (Generate.moduleToFile file).contents
+                        |> expectEqualMultiline aliasExpected
