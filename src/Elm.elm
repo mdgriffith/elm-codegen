@@ -518,7 +518,7 @@ withType ((Compiler.Annotation annDetails) as ann) (Compiler.Expression toExp) =
             in
             { exp
                 | annotation =
-                    case Compiler.unifyOn ann exp.annotation of
+                    case Compiler.unifyOn index ann exp.annotation of
                         Ok unified ->
                             Ok unified
 
@@ -526,14 +526,14 @@ withType ((Compiler.Annotation annDetails) as ann) (Compiler.Expression toExp) =
                             case exp.annotation of
                                 Ok expressionAnnotation ->
                                     Ok
-                                        { type_ = annDetails.annotation
+                                        { type_ = annDetails.annotation index
                                         , inferences = expressionAnnotation.inferences
                                         , aliases = expressionAnnotation.aliases
                                         }
 
                                 Err _ ->
                                     Ok
-                                        { type_ = annDetails.annotation
+                                        { type_ = annDetails.annotation index
                                         , inferences = Dict.empty
                                         , aliases = Compiler.emptyAliases
                                         }
@@ -809,7 +809,7 @@ triple oneExp twoExp threeExp =
                                 (Compiler.noImports oneA.type_)
                                 (Compiler.noImports twoA.type_)
                                 (Compiler.noImports threeA.type_)
-                                |> Compiler.getInnerAnnotation
+                                |> Compiler.getInnerAnnotation index
                         , inferences =
                             oneA.inferences
                                 |> Compiler.mergeInferences twoA.inferences
@@ -1384,7 +1384,7 @@ customTypeWith name generics variants =
                 variants
         , docs = Nothing
         , toBody =
-            \_ ->
+            \index ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -1400,7 +1400,7 @@ customTypeWith name generics variants =
                                         (\(Variant _ listAnn) ->
                                             listAnn
                                                 |> List.concatMap
-                                                    Compiler.getGenerics
+                                                    (Compiler.getGenerics index)
                                         )
                                         variants
                                 }
@@ -1411,7 +1411,7 @@ customTypeWith name generics variants =
                                         { name = Compiler.nodify (Format.formatType varName)
                                         , arguments =
                                             List.map
-                                                (Compiler.getInnerAnnotation
+                                                (Compiler.getInnerAnnotation index
                                                     >> Compiler.nodify
                                                 )
                                                 vars
@@ -1518,7 +1518,7 @@ aliasWith name generics innerAnnotation =
             Compiler.getAnnotationImports innerAnnotation
         , docs = Nothing
         , toBody =
-            \_ ->
+            \index ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -1529,9 +1529,9 @@ aliasWith name generics innerAnnotation =
                             getGenerics
                                 { keepExtra = False
                                 , requested = generics
-                                , needed = Compiler.getGenerics innerAnnotation
+                                , needed = Compiler.getGenerics index innerAnnotation
                                 }
-                        , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
+                        , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation index innerAnnotation)
                         }
                 }
         }
@@ -2002,11 +2002,12 @@ function initialArgList toFullExpression =
                                                     { imports = []
                                                     , aliases = Compiler.emptyAliases
                                                     , annotation =
-                                                        Annotation.GenericType
-                                                            (Index.protectTypeName
-                                                                nameBase
-                                                                found.index
-                                                            )
+                                                        \_ ->
+                                                            Annotation.GenericType
+                                                                (Index.protectTypeName
+                                                                    nameBase
+                                                                    found.index
+                                                                )
                                                     }
                                                 )
                                                 maybeType
@@ -2022,7 +2023,7 @@ function initialArgList toFullExpression =
                                     { index = newIndex
                                     , args = argExpression :: found.args
                                     , names = name :: found.names
-                                    , types = Compiler.getInnerAnnotation argType :: found.types
+                                    , types = Compiler.getInnerAnnotation newIndex argType :: found.types
                                     }
                                 )
                                 { args = []
@@ -2176,7 +2177,7 @@ portIncoming nameStr args =
             List.concatMap Compiler.getAnnotationImports args
         , docs = Nothing
         , toBody =
-            \_ ->
+            \index ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -2194,7 +2195,7 @@ portIncoming nameStr args =
                                         Annotation.FunctionTypeAnnotation
                                             (groupAnn
                                                 (Compiler.nodify
-                                                    (Compiler.getInnerAnnotation
+                                                    (Compiler.getInnerAnnotation index
                                                         (Elm.Annotation.function
                                                             args
                                                             (Elm.Annotation.var "msg")
@@ -2248,7 +2249,7 @@ portOutgoing nameStr ann =
             Compiler.getAnnotationImports ann
         , docs = Nothing
         , toBody =
-            \_ ->
+            \index ->
                 { warning = Nothing
                 , additionalImports = []
                 , declaration =
@@ -2257,7 +2258,7 @@ portOutgoing nameStr ann =
                         , typeAnnotation =
                             Compiler.nodify
                                 (Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Compiler.getInnerAnnotation ann))
+                                    (Compiler.nodify (Compiler.getInnerAnnotation index ann))
                                     (Compiler.nodify cmd)
                                 )
                         }

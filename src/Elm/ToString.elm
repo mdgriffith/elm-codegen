@@ -213,5 +213,5 @@ annotationWith options (Compiler.Annotation ann) =
         List.filterMap (Compiler.makeImport [] options.aliases) ann.imports
             |> Internal.Write.writeImports
     , signature =
-        Internal.Write.writeAnnotationWith options.aliases ann.annotation
+        Internal.Write.writeAnnotationWith options.aliases (ann.annotation (Index.startIndex Nothing))
     }

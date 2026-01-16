@@ -169,8 +169,12 @@ captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
 
         ( _, exp ) =
             Compiler.toExpressionDetails branchIndex caseExpression
+
+        newIndex : Index.Index
+        newIndex =
+            Index.next accum.index
     in
-    { index = Index.next accum.index
+    { index = newIndex
     , cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
     , imports = accum.imports ++ exp.imports
     , annotation =
@@ -179,9 +183,9 @@ captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
                 Just exp.annotation
 
             Just (Ok gatheredAnnotation) ->
-                Compiler.unifyOn
+                Compiler.unifyOn newIndex
                     (Compiler.Annotation
-                        { annotation = gatheredAnnotation.type_
+                        { annotation = \_ -> gatheredAnnotation.type_
                         , aliases = gatheredAnnotation.aliases
                         , imports = []
                         }
@@ -300,7 +304,7 @@ custom mainExpression annotation branches =
 
                 ( expr, gathered ) =
                     captureCase myMain
-                        (Compiler.getTypeModule annotation)
+                        (Compiler.getTypeModule index annotation)
                         (Index.dive index)
                         branches
             in
