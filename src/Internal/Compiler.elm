@@ -79,8 +79,7 @@ type Annotation
 type alias AnnotationDetails =
     { imports : List Module
     , annotation : Index -> Annotation.TypeAnnotation
-    , aliases :
-        AliasCache
+    , aliases : Index -> AliasCache
     }
 
 
@@ -216,9 +215,9 @@ getAlias (Node.Node _ ( modName, name )) cache =
     Dict.get (formatAliasKey modName name) cache
 
 
-getAliases : Annotation -> AliasCache
-getAliases (Annotation ann) =
-    ann.aliases
+getAliases : Index -> Annotation -> AliasCache
+getAliases index (Annotation ann) =
+    ann.aliases index
 
 
 formatAliasKey : List String -> String -> String
@@ -591,7 +590,7 @@ noImports tipe =
     Annotation
         { annotation = \_ -> tipe
         , imports = []
-        , aliases = emptyAliases
+        , aliases = \_ -> emptyAliases
         }
 
 
@@ -608,7 +607,7 @@ getInnerInference index (Annotation details) =
             -- So, there's a bug to debug
             |> protectAnnotation index
     , inferences = Dict.empty
-    , aliases = details.aliases
+    , aliases = details.aliases index
     }
 
 
@@ -1718,7 +1717,7 @@ unifyOn index (Annotation annDetails) res =
                     Ok
                         { type_ = finalType
                         , inferences = newInferences
-                        , aliases = mergeAliases annDetails.aliases inf.aliases
+                        , aliases = mergeAliases (annDetails.aliases index) inf.aliases
                         }
 
                 Err err ->

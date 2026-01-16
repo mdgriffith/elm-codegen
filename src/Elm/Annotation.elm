@@ -30,7 +30,7 @@ import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
 import Internal.Compiler as Compiler
 import Internal.Format as Format
-import Internal.Index as Index
+import Internal.Index as Index exposing (Index)
 
 
 {-| -}
@@ -52,7 +52,7 @@ var a =
     Compiler.Annotation
         { annotation = \_ -> Annotation.GenericType (Format.formatValue a)
         , imports = []
-        , aliases = Compiler.emptyAliases
+        , aliases = \_ -> Compiler.emptyAliases
         }
 
 
@@ -92,7 +92,7 @@ unit =
     Compiler.Annotation
         { annotation = \_ -> Annotation.Unit
         , imports = []
-        , aliases = Compiler.emptyAliases
+        , aliases = \_ -> Compiler.emptyAliases
         }
 
 
@@ -136,13 +136,14 @@ tuple one two =
             Compiler.getAnnotationImports one
                 ++ Compiler.getAnnotationImports two
         , aliases =
-            Compiler.mergeAliases (getAliases one) (getAliases two)
+            \index ->
+                Compiler.mergeAliases (getAliases index one) (getAliases index two)
         }
 
 
-getAliases : Annotation -> Compiler.AliasCache
-getAliases (Compiler.Annotation ann) =
-    ann.aliases
+getAliases : Index -> Annotation -> Compiler.AliasCache
+getAliases index (Compiler.Annotation ann) =
+    ann.aliases index
 
 
 {-| -}
@@ -163,12 +164,13 @@ triple one two three =
                 ++ Compiler.getAnnotationImports two
                 ++ Compiler.getAnnotationImports three
         , aliases =
-            Compiler.mergeAliases
-                (Compiler.mergeAliases
-                    (getAliases one)
-                    (getAliases two)
-                )
-                (getAliases three)
+            \index ->
+                Compiler.mergeAliases
+                    (Compiler.mergeAliases
+                        (getAliases index one)
+                        (getAliases index two)
+                    )
+                    (getAliases index three)
         }
 
 
@@ -229,13 +231,14 @@ alias mod name vars target =
                 _ ->
                     mod :: List.concatMap Compiler.getAnnotationImports vars
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (Compiler.getAliases ann) aliases
-                )
-                (Compiler.getAliases target)
-                vars
-                |> Compiler.addAlias mod name (Index.startIndex Nothing) target
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (Compiler.getAliases index ann) aliases
+                    )
+                    (Compiler.getAliases index target)
+                    vars
+                    |> Compiler.addAlias mod name index target
         }
 
 
@@ -258,12 +261,13 @@ record fields =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
         , aliases =
-            List.foldl
-                (\( _, ann ) aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                fields
+            \index ->
+                List.foldl
+                    (\( _, ann ) aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    fields
         }
 
 
@@ -287,12 +291,13 @@ extensible base fields =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
         , aliases =
-            List.foldl
-                (\( _, ann ) aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                fields
+            \index ->
+                List.foldl
+                    (\( _, ann ) aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    fields
         }
 
 
@@ -319,7 +324,7 @@ named mod name =
 
                 _ ->
                     [ mod ]
-        , aliases = Compiler.emptyAliases
+        , aliases = \_ -> Compiler.emptyAliases
         }
 
 
@@ -352,12 +357,13 @@ namedWith mod name args =
             else
                 mod :: List.concatMap Compiler.getAnnotationImports args
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                args
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    args
         }
 
 
@@ -374,12 +380,13 @@ typed mod name args =
                     )
         , imports = List.concatMap Compiler.getAnnotationImports args
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                args
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    args
         }
 
 
@@ -401,10 +408,11 @@ function anns return =
             Compiler.getAnnotationImports return
                 ++ List.concatMap Compiler.getAnnotationImports anns
         , aliases =
-            List.foldl
-                (\ann aliases ->
-                    Compiler.mergeAliases (getAliases ann) aliases
-                )
-                Compiler.emptyAliases
-                (return :: anns)
+            \index ->
+                List.foldl
+                    (\ann aliases ->
+                        Compiler.mergeAliases (getAliases index ann) aliases
+                    )
+                    Compiler.emptyAliases
+                    (return :: anns)
         }

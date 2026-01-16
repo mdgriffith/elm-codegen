@@ -186,7 +186,7 @@ captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
                 Compiler.unifyOn newIndex
                     (Compiler.Annotation
                         { annotation = \_ -> gatheredAnnotation.type_
-                        , aliases = gatheredAnnotation.aliases
+                        , aliases = \_ -> gatheredAnnotation.aliases
                         , imports = []
                         }
                     )

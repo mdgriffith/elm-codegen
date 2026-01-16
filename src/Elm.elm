@@ -2000,7 +2000,7 @@ function initialArgList toFullExpression =
                                             Maybe.withDefault
                                                 (Compiler.Annotation
                                                     { imports = []
-                                                    , aliases = Compiler.emptyAliases
+                                                    , aliases = \_ -> Compiler.emptyAliases
                                                     , annotation =
                                                         \_ ->
                                                             Annotation.GenericType
@@ -2080,7 +2080,7 @@ function initialArgList toFullExpression =
                                                 Just ann ->
                                                     aliases
                                                         |> Compiler.mergeAliases
-                                                            (Compiler.getAliases ann)
+                                                            (Compiler.getAliases index ann)
                                         )
                                         return.aliases
                                         initialArgList
