@@ -6,9 +6,9 @@
     { "count": 4, "filePath": "src/Internal/Write.elm" },
     { "count": 3, "filePath": "src/Internal/Compiler.elm" },
     { "count": 3, "filePath": "src/Internal/Debug.elm" },
+    { "count": 2, "filePath": "tests/PackageHelpers.elm" },
     { "count": 1, "filePath": "src/Elm/Op.elm" },
     { "count": 1, "filePath": "src/Internal/Comments.elm" },
-    { "count": 1, "filePath": "src/Internal/Index.elm" },
-    { "count": 1, "filePath": "tests/PackageHelpers.elm" }
+    { "count": 1, "filePath": "src/Internal/Index.elm" }
   ]
 }

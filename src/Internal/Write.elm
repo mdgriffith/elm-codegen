@@ -166,7 +166,7 @@ writeImports imports =
 
 writeDeclaration : Util.RenderedDeclaration -> String
 writeDeclaration exp =
-    prettyDeclaration 80 exp
+    prettyDeclaration exp
         |> Pretty.pretty 80
 
 
@@ -503,8 +503,8 @@ prettyTopLevelExpose tlExpose =
 
 {-| Pretty prints a single top-level declaration.
 -}
-prettyDeclaration : Int -> Util.RenderedDeclaration -> Doc t
-prettyDeclaration _ decl =
+prettyDeclaration : Util.RenderedDeclaration -> Doc t
+prettyDeclaration decl =
     case decl of
         Util.RenderedDecl innerDecl ->
             prettyElmSyntaxDeclaration noAliases innerDecl
@@ -568,8 +568,7 @@ prettyDeclarations aliases decls =
             )
         |> List.reverse
         |> List.drop 1
-        |> List.reverse
-        |> List.foldl (<|) Pretty.empty
+        |> List.foldr (<|) Pretty.empty
 
 
 {-| Pretty prints an Elm function, which may include documentation and a signature too.

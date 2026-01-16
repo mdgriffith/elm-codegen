@@ -204,8 +204,8 @@ prettyTags tags =
         |> Pretty.words
 
 
-partToStringAndTags : Int -> CommentPart -> ( String, List String )
-partToStringAndTags _ part =
+partToStringAndTags : CommentPart -> ( String, List String )
+partToStringAndTags part =
     case part of
         Markdown val ->
             ( val, [] )
