@@ -824,7 +824,7 @@ withSubmodule submod mod =
 
 {-| Include a module as a declaration in another module.
 
-**Note** - Be aware that the modulename of the included module must match the module name of the module you're including it in!
+**Note** - Be aware that the module name of the included module must match the module name of the module you're including it in!
 
 -}
 include : Module val -> Elm.Declaration
