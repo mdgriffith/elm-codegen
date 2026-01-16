@@ -6,7 +6,6 @@ import Elm.Arg
 import Elm.Expect
 import Elm.Op
 import Elm.Syntax.TypeAnnotation exposing (TypeAnnotation)
-import Elm.ToString
 import Expect
 import Gen.Element
 import Gen.Maybe
