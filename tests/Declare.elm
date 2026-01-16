@@ -30,18 +30,22 @@ newStyleTest =
     describe "New style"
         [ test "usage" <|
             \_ ->
-                Elm.Expect.renderedAs inner
-                    """\\( a, b ) c -> ( a, b, c )"""
+                inner
+                    |> Elm.Expect.renderedAs
+                        """\\( a, b ) c -> ( a, b, c )"""
         , test "fnDone == body" <|
-            \_ -> Elm.Expect.equal inner innerViaBody
+            \_ ->
+                innerViaBody
+                    |> Elm.Expect.equal inner
         , test "declaration" <|
             \_ ->
-                Elm.Expect.declarationAs newStyle.declaration
-                    (String.trim """
-
-name : ( a, b ) -> c -> ( a, b, c )
-name ( a, b ) c =
-    ( a, b, c )""")
+                newStyle.declaration
+                    |> Elm.Expect.declarationAs
+                        """
+                        name : ( a, b ) -> c -> ( a, b, c )
+                        name ( a, b ) c =
+                            ( a, b, c )
+                        """
         ]
 
 
@@ -84,23 +88,23 @@ declarations =
     describe "declarations"
         [ test "Basic function dec" <|
             \_ ->
-                Elm.Expect.declarationAs myFn.declaration
-                    """
-                    myFn : Int -> Int
-                    myFn myInt =
-                        5 + myInt
-                    """
+                myFn.declaration
+                    |> Elm.Expect.declarationAs
+                        """
+                        myFn : Int -> Int
+                        myFn myInt =
+                            5 + myInt
+                        """
         , test "Call correctly" <|
             \_ ->
-                Elm.Expect.declarationAs
-                    (Elm.declaration "mySweetNumber"
-                        (myFn.call (Elm.int 82))
-                    )
-                    """
-                    mySweetNumber : Int
-                    mySweetNumber =
-                        myFn 82
-                    """
+                Elm.declaration "mySweetNumber"
+                    (myFn.call (Elm.int 82))
+                    |> Elm.Expect.declarationAs
+                        """
+                        mySweetNumber : Int
+                        mySweetNumber =
+                            myFn 82
+                        """
         ]
 
 
@@ -108,78 +112,74 @@ aliasTest : Test
 aliasTest =
     test "Elm.alias" <|
         \_ ->
-            Elm.Expect.declarationAs
-                (Elm.alias "MyAlias"
-                    (Type.record
-                        [ ( "one", Type.var "oneVar" )
-                        , ( "two", Type.var "twoVar" )
-                        , ( "three", Type.var "threeVar" )
-                        ]
-                    )
+            Elm.alias "MyAlias"
+                (Type.record
+                    [ ( "one", Type.var "oneVar" )
+                    , ( "two", Type.var "twoVar" )
+                    , ( "three", Type.var "threeVar" )
+                    ]
                 )
-                """
-                type alias MyAlias oneVar twoVar threeVar =
-                    { one : oneVar, two : twoVar, three : threeVar }
-                """
+                |> Elm.Expect.declarationAs
+                    """
+                    type alias MyAlias oneVar twoVar threeVar =
+                        { one : oneVar, two : twoVar, three : threeVar }
+                    """
 
 
 aliasWithTest : Test
 aliasWithTest =
     test "Elm.aliasWith" <|
         \_ ->
-            Elm.Expect.declarationAs
-                (Elm.aliasWith "MyAlias"
-                    [ "twoVar", "nonexistingVar", "oneVar" ]
-                    (Type.record
-                        [ ( "one", Type.var "oneVar" )
-                        , ( "two", Type.var "twoVar" )
-                        , ( "three", Type.var "threeVar" )
-                        ]
-                    )
+            Elm.aliasWith "MyAlias"
+                [ "twoVar", "nonexistingVar", "oneVar" ]
+                (Type.record
+                    [ ( "one", Type.var "oneVar" )
+                    , ( "two", Type.var "twoVar" )
+                    , ( "three", Type.var "threeVar" )
+                    ]
                 )
-                """
-                type alias MyAlias twoVar oneVar threeVar =
-                    { one : oneVar, two : twoVar, three : threeVar }
-                """
+                |> Elm.Expect.declarationAs
+                    """
+                    type alias MyAlias twoVar oneVar threeVar =
+                        { one : oneVar, two : twoVar, three : threeVar }
+                    """
 
 
 customTypeTest : Test
 customTypeTest =
     test "Elm.customType" <|
         \_ ->
-            Elm.Expect.declarationAs
-                (Elm.customType "MyType"
-                    [ Elm.variantWith "One"
-                        [ Type.var "oneVar" ]
-                    , Elm.variantWith "Two"
-                        [ Type.var "twoVar" ]
-                    ]
-                )
-                """
-                type MyType oneVar twoVar
-                    = One oneVar
-                    | Two twoVar
-                """
+            Elm.customType "MyType"
+                [ Elm.variantWith "One"
+                    [ Type.var "oneVar" ]
+                , Elm.variantWith "Two"
+                    [ Type.var "twoVar" ]
+                ]
+                |> Elm.Expect.declarationAs
+                    """
+                    type MyType oneVar twoVar
+                        = One oneVar
+                        | Two twoVar
+                    """
 
 
 customTypeWithTest : Test
 customTypeWithTest =
     test "Elm.customTypeWith" <|
         \_ ->
-            Elm.Expect.declarationAs
-                (Elm.customTypeWith "MyType"
-                    [ "addVar", "twoVar" ]
-                    [ Elm.variantWith "One"
-                        [ Type.var "oneVar" ]
-                    , Elm.variantWith "Two"
-                        [ Type.var "twoVar" ]
-                    ]
-                )
-                """
-                type MyType addVar twoVar oneVar
-                    = One oneVar
-                    | Two twoVar
-                """
+            Elm.customTypeWith "MyType"
+                [ "addVar", "twoVar" ]
+                [ Elm.variantWith "One"
+                    [ Type.var "oneVar" ]
+                , Elm.variantWith "Two"
+                    [ Type.var "twoVar" ]
+                ]
+                |> Elm.Expect.declarationAs
+                    """
+                    type MyType addVar twoVar oneVar
+                        = One oneVar
+                        | Two twoVar
+                    """
 
 
 type alias MyMaybe =
@@ -225,58 +225,55 @@ makeAndCaseGeneration =
             in
             Expect.all
                 [ \_ ->
-                    Elm.Expect.declarationAs maybe.declaration
-                        """
-                        type Maybe a
-                            = Nothing
-                            | Just a
-                        """
+                    maybe.declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            type Maybe a
+                                = Nothing
+                                | Just a
+                            """
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        maybe.make_.nothing
-                        "Nothing"
+                    maybe.make_.nothing
+                        |> Elm.Expect.renderedAs "Nothing"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (maybe.make_.just Elm.unit)
-                        "Just ()"
+                    maybe.make_.just Elm.unit
+                        |> Elm.Expect.renderedAs "Just ()"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (maybe.case_ (Elm.val "a")
-                            { just = \a -> a
-                            , nothing = Elm.string ""
-                            }
-                        )
-                        """
-                        case a of
-                            Nothing ->
-                                ""
+                    maybe.case_ (Elm.val "a")
+                        { just = \a -> a
+                        , nothing = Elm.string ""
+                        }
+                        |> Elm.Expect.renderedAs
+                            """
+                            case a of
+                                Nothing ->
+                                    ""
 
-                            Just arg0 ->
-                                arg0
-                        """
+                                Just arg0 ->
+                                    arg0
+                            """
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        external.call.maybe.make_.nothing
-                        "MyMaybe.Nothing"
+                    external.call.maybe.make_.nothing
+                        |> Elm.Expect.renderedAs
+                            "MyMaybe.Nothing"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (external.call.maybe.make_.just Elm.unit)
-                        "MyMaybe.Just ()"
+                    external.call.maybe.make_.just Elm.unit
+                        |> Elm.Expect.renderedAs
+                            "MyMaybe.Just ()"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (external.call.maybe.case_ (Elm.val "a")
-                            { just = \a -> a
-                            , nothing = Elm.string ""
-                            }
-                        )
-                        """
-                        case a of
-                            MyMaybe.Nothing ->
-                                ""
+                    external.call.maybe.case_ (Elm.val "a")
+                        { just = \a -> a
+                        , nothing = Elm.string ""
+                        }
+                        |> Elm.Expect.renderedAs
+                            """
+                            case a of
+                                MyMaybe.Nothing ->
+                                    ""
 
-                            MyMaybe.Just arg0 ->
-                                arg0
-                        """
+                                MyMaybe.Just arg0 ->
+                                    arg0
+                            """
                 ]
                 ()
 
@@ -315,94 +312,87 @@ makeAndCaseGenerationFullyDynamic =
             in
             Expect.all
                 [ \_ ->
-                    Elm.Expect.declarationAs semaphore.declaration
-                        """
-                        type Semaphore
-                            = Red
-                            | Yellow
-                            | Green
-                        """
+                    semaphore.declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            type Semaphore
+                                = Red
+                                | Yellow
+                                | Green
+                            """
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (semaphore.make_ "Red")
-                        "Red"
+                    semaphore.make_ "Red"
+                        |> Elm.Expect.renderedAs "Red"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (semaphore.make_ "Yellow")
-                        "Yellow"
+                    semaphore.make_ "Yellow"
+                        |> Elm.Expect.renderedAs "Yellow"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (semaphore.make_ "Green")
-                        "Green"
+                    semaphore.make_ "Green"
+                        |> Elm.Expect.renderedAs "Green"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (semaphore.case_ (Elm.val "a")
-                            (\color ->
-                                case color of
-                                    "Red" ->
-                                        Elm.string "Red"
+                    semaphore.case_ (Elm.val "a")
+                        (\color ->
+                            case color of
+                                "Red" ->
+                                    Elm.string "Red"
 
-                                    "Green" ->
-                                        Elm.string "Green"
+                                "Green" ->
+                                    Elm.string "Green"
 
-                                    "Yellow" ->
-                                        Elm.string "Yellow"
+                                "Yellow" ->
+                                    Elm.string "Yellow"
 
-                                    _ ->
-                                        Gen.Debug.todo "This doesn't happen"
-                            )
+                                _ ->
+                                    Gen.Debug.todo "This doesn't happen"
                         )
-                        """
-                        case a of
-                            Red ->
-                                "Red"
+                        |> Elm.Expect.renderedAs
+                            """
+                            case a of
+                                Red ->
+                                    "Red"
 
-                            Yellow ->
-                                "Yellow"
+                                Yellow ->
+                                    "Yellow"
 
-                            Green ->
-                                "Green"
-                        """
+                                Green ->
+                                    "Green"
+                            """
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (external.call.make_ "Red")
-                        "Semaphore.Red"
+                    external.call.make_ "Red"
+                        |> Elm.Expect.renderedAs "Semaphore.Red"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (external.call.make_ "Yellow")
-                        "Semaphore.Yellow"
+                    external.call.make_ "Yellow"
+                        |> Elm.Expect.renderedAs "Semaphore.Yellow"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (external.call.make_ "Green")
-                        "Semaphore.Green"
+                    external.call.make_ "Green"
+                        |> Elm.Expect.renderedAs "Semaphore.Green"
                 , \_ ->
-                    Elm.Expect.renderedAs
-                        (external.call.case_ (Elm.val "a")
-                            (\color ->
-                                case color of
-                                    "Red" ->
-                                        Elm.string "Red"
+                    external.call.case_ (Elm.val "a")
+                        (\color ->
+                            case color of
+                                "Red" ->
+                                    Elm.string "Red"
 
-                                    "Green" ->
-                                        Elm.string "Green"
+                                "Green" ->
+                                    Elm.string "Green"
 
-                                    "Yellow" ->
-                                        Elm.string "Yellow"
+                                "Yellow" ->
+                                    Elm.string "Yellow"
 
-                                    _ ->
-                                        Gen.Debug.todo "This doesn't happen"
-                            )
+                                _ ->
+                                    Gen.Debug.todo "This doesn't happen"
                         )
-                        """
-                        case a of
-                            Semaphore.Red ->
-                                "Red"
+                        |> Elm.Expect.renderedAs
+                            """
+                            case a of
+                                Semaphore.Red ->
+                                    "Red"
 
-                            Semaphore.Yellow ->
-                                "Yellow"
+                                Semaphore.Yellow ->
+                                    "Yellow"
 
-                            Semaphore.Green ->
-                                "Green"
-                        """
+                                Semaphore.Green ->
+                                    "Green"
+                            """
                 ]
                 ()

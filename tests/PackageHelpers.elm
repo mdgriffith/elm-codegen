@@ -122,30 +122,27 @@ packageHelpers =
                             |> Result.withDefault True
                 in
                 Expect.equal False cycles
-        , test "typevariables in functions within a record dont pollute each other" <|
+        , test "typevariables in functions within a record don't pollute each other" <|
             \_ ->
-                Expect.equal
-                    (Elm.record
-                        [ Elm.fn (Elm.Arg.var "arg")
-                            (\arg ->
-                                Elm.Op.plus arg (Elm.int 5)
-                            )
-                            |> Tuple.pair "one"
-                        , Elm.fn (Elm.Arg.var "arg")
-                            (\arg ->
-                                Elm.Op.append arg (Elm.string "World")
-                            )
-                            |> Tuple.pair "two"
-                        ]
-                        |> Elm.declaration "test"
-                        |> Elm.ToString.declaration
-                        |> List.map .body
-                        |> String.join "\n"
-                        |> String.trim
-                    )
-                    """test : { one : Int -> Int, two : String -> String }
-test =
-    { one = \\arg -> arg + 5, two = \\arg -> arg ++ "World" }"""
+                Elm.record
+                    [ Elm.fn (Elm.Arg.var "arg")
+                        (\arg ->
+                            Elm.Op.plus arg (Elm.int 5)
+                        )
+                        |> Tuple.pair "one"
+                    , Elm.fn (Elm.Arg.var "arg")
+                        (\arg ->
+                            Elm.Op.append arg (Elm.string "World")
+                        )
+                        |> Tuple.pair "two"
+                    ]
+                    |> Elm.declaration "test"
+                    |> Elm.Expect.declarationAs
+                        """
+                        test : { one : Int -> Int, two : String -> String }
+                        test =
+                            { one = \\arg -> arg + 5, two = \\arg -> arg ++ "World" }
+                        """
         ]
 
 
@@ -169,13 +166,12 @@ stringifying =
                         )
                         |> Tuple.pair "one"
                     ]
-                    |> Elm.ToString.expressionWith
+                    |> Elm.Expect.renderedAsWith
                         { aliases =
                             [ ( [ "Longer", "Module" ], "Ui" )
                             ]
                         }
-                    |> .body
-                    |> Expect.equal "{ one = \\arg -> Ui.gorthalax arg }"
+                        "{ one = \\arg -> Ui.gorthalax arg }"
         , test "expressionWith generates aliases as expected" <|
             \_ ->
                 Elm.record
@@ -193,43 +189,40 @@ stringifying =
                         )
                         |> Tuple.pair "one"
                     ]
-                    |> Elm.ToString.expressionWith
+                    |> Elm.Expect.importAsWith
                         { aliases =
                             [ ( [ "Longer", "Module" ], "Ui" )
                             ]
                         }
-                    |> .imports
-                    |> Expect.equal "import Longer.Module as Ui"
+                        "import Longer.Module as Ui"
         , test "declarations named `main` do not get sanitized" <|
             \_ ->
-                Elm.Expect.declarationAs
-                    (Elm.declaration "main"
-                        (Elm.int 5)
-                    )
-                    "main : Int\nmain =\n    5"
+                Elm.declaration "main"
+                    (Elm.int 5)
+                    |> Elm.Expect.declarationAs
+                        "main : Int\nmain =\n    5"
         , test "Pipelines are paren-ed correctly" <|
             \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.string "Hello"
-                        |> Elm.Op.pipe
+                Elm.string "Hello"
+                    |> Elm.Op.pipe
+                        (Elm.value
+                            { importFrom = []
+                            , name = "one"
+                            , annotation = Nothing
+                            }
+                        )
+                    |> Elm.Op.pipe
+                        (Elm.apply
                             (Elm.value
                                 { importFrom = []
-                                , name = "one"
+                                , name = "two"
                                 , annotation = Nothing
                                 }
                             )
-                        |> Elm.Op.pipe
-                            (Elm.apply
-                                (Elm.value
-                                    { importFrom = []
-                                    , name = "two"
-                                    , annotation = Nothing
-                                    }
-                                )
-                                [ Elm.int 5
-                                , Elm.string "HELLOOOOOOOOOOOOOO"
-                                ]
-                            )
-                    )
-                    """"Hello" |> one |> two 5 "HELLOOOOOOOOOOOOOO\""""
+                            [ Elm.int 5
+                            , Elm.string "HELLOOOOOOOOOOOOOO"
+                            ]
+                        )
+                    |> Elm.Expect.renderedAs
+                        """"Hello" |> one |> two 5 "HELLOOOOOOOOOOOOOO\""""
         ]

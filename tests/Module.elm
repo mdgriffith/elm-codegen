@@ -6,7 +6,7 @@ import Elm
 import Elm.Annotation as Type
 import Elm.Arg as Arg
 import Elm.Declare as Declare
-import Expect
+import Elm.Expect
 import Test exposing (Test, describe, test)
 
 
@@ -66,42 +66,42 @@ usageInsideModule =
     describe "Usage inside module is unqualified"
         [ test "Type reference" <|
             \_ ->
-                let
-                    file =
-                        Elm.file [ "Virtual", "Module" ]
-                            [ Elm.declaration "test"
-                                (Elm.fn
-                                    (Arg.varWith "a" mod.call.myType)
-                                    (\a ->
-                                        a
-                                    )
-                                )
-                            ]
-                in
-                Expect.equal file.contents """module Virtual.Module exposing (..)
+                Elm.file [ "Virtual", "Module" ]
+                    [ Elm.declaration "test"
+                        (Elm.fn
+                            (Arg.varWith "a" mod.call.myType)
+                            (\a ->
+                                a
+                            )
+                        )
+                    ]
+                    |> Elm.Expect.fileContentAs
+                        """
+                        module Virtual.Module exposing (..)
 
 
-test : MyType -> MyType
-test a =
-    a"""
+                        test : MyType -> MyType
+                        test a =
+                            a
+                        """
         , test "Function" <|
             \_ ->
-                let
-                    file =
-                        Elm.file [ "Virtual", "Module" ]
-                            [ Elm.declaration "test"
-                                (Elm.fn
-                                    (Arg.var "a")
-                                    (\a -> mod.call.myFn a a)
-                                )
-                            ]
-                in
-                Expect.equal file.contents """module Virtual.Module exposing (..)
+                Elm.file [ "Virtual", "Module" ]
+                    [ Elm.declaration "test"
+                        (Elm.fn
+                            (Arg.var "a")
+                            (\a -> mod.call.myFn a a)
+                        )
+                    ]
+                    |> Elm.Expect.fileContentAs
+                        """
+                        module Virtual.Module exposing (..)
 
 
-test : Int -> Test
-test a =
-    myFn a a"""
+                        test : Int -> Test
+                        test a =
+                            myFn a a
+                        """
         ]
 
 
@@ -110,46 +110,45 @@ usageOutsideModule =
     describe "Usage outside module is qualified"
         [ test "Type reference" <|
             \_ ->
-                let
-                    file =
-                        Elm.file [ "My", "Module" ]
-                            [ Elm.declaration "test"
-                                (Elm.fn
-                                    (Arg.varWith "a" mod.call.myType)
-                                    (\a ->
-                                        a
-                                    )
-                                )
-                            ]
-                in
-                Expect.equal file.contents """module My.Module exposing (..)
+                Elm.file [ "My", "Module" ]
+                    [ Elm.declaration "test"
+                        (Elm.fn
+                            (Arg.varWith "a" mod.call.myType)
+                            (\a ->
+                                a
+                            )
+                        )
+                    ]
+                    |> Elm.Expect.fileContentAs
+                        """
+                        module My.Module exposing (..)
 
-import Virtual.Module
+                        import Virtual.Module
 
 
-test : Virtual.Module.MyType -> Virtual.Module.MyType
-test a =
-    a"""
+                        test : Virtual.Module.MyType -> Virtual.Module.MyType
+                        test a =
+                            a"""
         , test "Function" <|
             \_ ->
-                let
-                    file =
-                        Elm.file [ "My", "Module" ]
-                            [ Elm.declaration "test"
-                                (Elm.fn
-                                    (Arg.var "a")
-                                    (\a -> mod.call.myFn a a)
-                                )
-                            ]
-                in
-                Expect.equal file.contents """module My.Module exposing (..)
+                Elm.file [ "My", "Module" ]
+                    [ Elm.declaration "test"
+                        (Elm.fn
+                            (Arg.var "a")
+                            (\a -> mod.call.myFn a a)
+                        )
+                    ]
+                    |> Elm.Expect.fileContentAs
+                        """
+                        module My.Module exposing (..)
 
-import Virtual.Module
+                        import Virtual.Module
 
 
-test : Int -> Test
-test a =
-    Virtual.Module.myFn a a"""
+                        test : Int -> Test
+                        test a =
+                            Virtual.Module.myFn a a
+                        """
         ]
 
 
@@ -157,32 +156,35 @@ fileGeneration : Test
 fileGeneration =
     test "File Generation" <|
         \_ ->
-            Expect.equal (Declare.toFile mod |> .contents)
-                (String.trim """module Virtual.Module exposing ( MyInt, MyType, myFn )
+            Declare.toFile mod
+                |> Elm.Expect.fileContentAs
+                    """
+                    module Virtual.Module exposing ( MyInt, MyType, myFn )
 
-{-|
-@docs MyInt, MyType, myFn
--}
-
-
-
-type alias MyInt =
-    Int
+                    {-|
+                    @docs MyInt, MyType, myFn
+                    -}
 
 
-type MyType
-    = MyType
+
+                    type alias MyInt =
+                        Int
 
 
-myFn : Int -> Int -> Test
-myFn firstArg secondArg =
-    testFn
-        (Test
-             { one = firstArg
-             , two = firstArg
-             , three = firstArg
-             , four = firstArg
-             , five = firstArg
-             , six = firstArg
-             }
-        )""")
+                    type MyType
+                        = MyType
+
+
+                    myFn : Int -> Int -> Test
+                    myFn firstArg secondArg =
+                        testFn
+                            (Test
+                                 { one = firstArg
+                                 , two = firstArg
+                                 , three = firstArg
+                                 , four = firstArg
+                                 , five = firstArg
+                                 , six = firstArg
+                                 }
+                            )
+                    """

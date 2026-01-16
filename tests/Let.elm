@@ -22,113 +22,108 @@ imports =
     describe "Import propagation"
         [ test "Simple" <|
             \_ ->
-                Elm.Expect.importAs
-                    (Elm.Let.letIn
-                        (\one two ->
-                            Elm.Op.append one two
-                        )
-                        |> Elm.Let.value "one"
-                            (Elm.value
-                                { importFrom = [ "Module" ]
-                                , name = "constant"
-                                , annotation = Nothing
-                                }
-                            )
-                        |> Elm.Let.value "two" (Elm.string "World!")
-                        |> Elm.Let.toExpression
+                Elm.Let.letIn
+                    (\one two ->
+                        Elm.Op.append one two
                     )
-                    "import Module"
+                    |> Elm.Let.value "one"
+                        (Elm.value
+                            { importFrom = [ "Module" ]
+                            , name = "constant"
+                            , annotation = Nothing
+                            }
+                        )
+                    |> Elm.Let.value "two" (Elm.string "World!")
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.importAs
+                        "import Module"
         , test "Second" <|
             \_ ->
-                Elm.Expect.importAs
-                    (Elm.Let.letIn
-                        (\one two ->
-                            Elm.Op.append one two
+                Elm.Let.letIn
+                    (\one two ->
+                        Elm.Op.append one two
+                    )
+                    |> Elm.Let.value "two" (Elm.string "World!")
+                    |> Elm.Let.value "one"
+                        (Elm.value
+                            { importFrom = [ "Module" ]
+                            , name = "constant"
+                            , annotation = Nothing
+                            }
                         )
-                        |> Elm.Let.value "two" (Elm.string "World!")
-                        |> Elm.Let.value "one"
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.importAs
+                        "import Module"
+        , test "Tuple" <|
+            \_ ->
+                Elm.Let.letIn
+                    (\( one, two ) ->
+                        Elm.Op.append one two
+                    )
+                    |> Elm.Let.unpack
+                        (Arg.tuple (Arg.var "one") (Arg.var "two"))
+                        (Elm.tuple
                             (Elm.value
                                 { importFrom = [ "Module" ]
                                 , name = "constant"
                                 , annotation = Nothing
                                 }
                             )
-                        |> Elm.Let.toExpression
-                    )
-                    "import Module"
-        , test "Tuple" <|
-            \_ ->
-                Elm.Expect.importAs
-                    (Elm.Let.letIn
-                        (\( one, two ) ->
-                            Elm.Op.append one two
+                            (Elm.string "World!")
                         )
-                        |> Elm.Let.unpack
-                            (Arg.tuple (Arg.var "one") (Arg.var "two"))
-                            (Elm.tuple
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.importAs
+                        "import Module"
+        , test "Record" <|
+            \_ ->
+                Elm.Let.letIn
+                    (\( one, two ) ->
+                        Elm.Op.append one two
+                    )
+                    |> Elm.Let.unpack
+                        (Arg.record Tuple.pair
+                            |> Arg.field "one"
+                            |> Arg.field "two"
+                        )
+                        (Elm.record
+                            [ ( "one"
+                              , Elm.value
+                                    { importFrom = [ "Module" ]
+                                    , name = "constant"
+                                    , annotation = Nothing
+                                    }
+                              )
+                            , ( "two", Elm.string "World!" )
+                            ]
+                        )
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.importAs
+                        "import Module"
+        , test "Nested" <|
+            \_ ->
+                Elm.Let.letIn
+                    (\one two ->
+                        Elm.Let.letIn
+                            (\three four ->
+                                Elm.tuple
+                                    (Elm.Op.append one two)
+                                    (Elm.Op.append three four)
+                            )
+                            |> Elm.Let.value "three" (Elm.string "and")
+                            |> Elm.Let.value "four"
                                 (Elm.value
                                     { importFrom = [ "Module" ]
                                     , name = "constant"
                                     , annotation = Nothing
                                     }
                                 )
-                                (Elm.string "World!")
-                            )
-                        |> Elm.Let.toExpression
+                            |> Elm.Let.toExpression
                     )
-                    "import Module"
-        , test "Record" <|
-            \_ ->
-                Elm.Expect.importAs
-                    (Elm.Let.letIn
-                        (\( one, two ) ->
-                            Elm.Op.append one two
-                        )
-                        |> Elm.Let.unpack
-                            (Arg.record Tuple.pair
-                                |> Arg.field "one"
-                                |> Arg.field "two"
-                            )
-                            (Elm.record
-                                [ ( "one"
-                                  , Elm.value
-                                        { importFrom = [ "Module" ]
-                                        , name = "constant"
-                                        , annotation = Nothing
-                                        }
-                                  )
-                                , ( "two", Elm.string "World!" )
-                                ]
-                            )
-                        |> Elm.Let.toExpression
-                    )
-                    "import Module"
-        , test "Nested" <|
-            \_ ->
-                Elm.Expect.importAs
-                    (Elm.Let.letIn
-                        (\one two ->
-                            Elm.Let.letIn
-                                (\three four ->
-                                    Elm.tuple
-                                        (Elm.Op.append one two)
-                                        (Elm.Op.append three four)
-                                )
-                                |> Elm.Let.value "three" (Elm.string "and")
-                                |> Elm.Let.value "four"
-                                    (Elm.value
-                                        { importFrom = [ "Module" ]
-                                        , name = "constant"
-                                        , annotation = Nothing
-                                        }
-                                    )
-                                |> Elm.Let.toExpression
-                        )
-                        |> Elm.Let.value "one" (Elm.string "Hello")
-                        |> Elm.Let.value "two" (Elm.string "World!")
-                        |> Elm.Let.toExpression
-                    )
-                    "import Module"
+                    |> Elm.Let.value "one" (Elm.string "Hello")
+                    |> Elm.Let.value "two" (Elm.string "World!")
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.importAs
+                        "import Module"
         ]
 
 
@@ -137,162 +132,156 @@ generation =
     describe "Generation"
         [ test "Simple" <|
             \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.Let.letIn
-                        (\one two ->
-                            Elm.Op.append one two
-                        )
-                        |> Elm.Let.value "one" (Elm.string "Hello")
-                        |> Elm.Let.value "two" (Elm.string "World!")
-                        |> Elm.Let.toExpression
+                Elm.Let.letIn
+                    (\one two ->
+                        Elm.Op.append one two
                     )
-                    """
-let
-    one =
-        "Hello"
+                    |> Elm.Let.value "one" (Elm.string "Hello")
+                    |> Elm.Let.value "two" (Elm.string "World!")
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.renderedAs
+                        """
+                        let
+                            one =
+                                "Hello"
 
-    two =
-        "World!"
-in
-one ++ two
-                    """
+                            two =
+                                "World!"
+                        in
+                        one ++ two
+                        """
         , test "Nested lets will merge in to one" <|
             \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.Let.letIn
-                        (\one two ->
-                            Elm.Let.letIn
-                                (\three four ->
-                                    Elm.tuple
-                                        (Elm.Op.append one two)
-                                        (Elm.Op.append three four)
-                                )
-                                |> Elm.Let.value "three" (Elm.string "and")
-                                |> Elm.Let.value "four" (Elm.string "the moon")
-                                |> Elm.Let.toExpression
-                        )
-                        |> Elm.Let.value "one" (Elm.string "Hello")
-                        |> Elm.Let.value "two" (Elm.string "World!")
-                        |> Elm.Let.toExpression
+                Elm.Let.letIn
+                    (\one two ->
+                        Elm.Let.letIn
+                            (\three four ->
+                                Elm.tuple
+                                    (Elm.Op.append one two)
+                                    (Elm.Op.append three four)
+                            )
+                            |> Elm.Let.value "three" (Elm.string "and")
+                            |> Elm.Let.value "four" (Elm.string "the moon")
+                            |> Elm.Let.toExpression
                     )
-                    """
-let
-    one =
-        "Hello"
+                    |> Elm.Let.value "one" (Elm.string "Hello")
+                    |> Elm.Let.value "two" (Elm.string "World!")
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.renderedAs
+                        """
+                        let
+                            one =
+                                "Hello"
 
-    two =
-        "World!"
+                            two =
+                                "World!"
 
-    three =
-        "and"
+                            three =
+                                "and"
 
-    four =
-        "the moon"
-in
-( one ++ two, three ++ four )
-                    """
+                            four =
+                                "the moon"
+                        in
+                        ( one ++ two, three ++ four )
+                        """
         , test "Tuples" <|
             \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.Let.letIn
-                        (\( first, second ) ->
-                            Elm.Op.append first second
-                        )
-                        |> Elm.Let.unpack
-                            (Arg.tuple
-                                (Arg.var "first")
-                                (Arg.var "second")
-                            )
-                            (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
-                        |> Elm.Let.toExpression
+                Elm.Let.letIn
+                    (\( first, second ) ->
+                        Elm.Op.append first second
                     )
-                    """
-let
-    ( first, second ) =
-        ( "Hello", "World!" )
-in
-first ++ second
-                    """
+                    |> Elm.Let.unpack
+                        (Arg.tuple
+                            (Arg.var "first")
+                            (Arg.var "second")
+                        )
+                        (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.renderedAs
+                        """
+                        let
+                            ( first, second ) =
+                                ( "Hello", "World!" )
+                        in
+                        first ++ second
+                        """
         , test "Records" <|
             \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.Let.letIn
-                        (\( first, second ) ->
-                            Elm.Op.append first second
-                        )
-                        |> Elm.Let.unpack
-                            (Arg.record Tuple.pair
-                                |> Arg.field "first"
-                                |> Arg.field "second"
-                            )
-                            (Elm.record
-                                [ ( "first", Elm.string "Hello" )
-                                , ( "second", Elm.string "world!" )
-                                ]
-                            )
-                        |> Elm.Let.toExpression
+                Elm.Let.letIn
+                    (\( first, second ) ->
+                        Elm.Op.append first second
                     )
-                    """
-let
-    { first, second } =
-        { first = "Hello", second = "world!" }
-in
-first ++ second
-                    """
+                    |> Elm.Let.unpack
+                        (Arg.record Tuple.pair
+                            |> Arg.field "first"
+                            |> Arg.field "second"
+                        )
+                        (Elm.record
+                            [ ( "first", Elm.string "Hello" )
+                            , ( "second", Elm.string "world!" )
+                            ]
+                        )
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.renderedAs
+                        """
+                        let
+                            { first, second } =
+                                { first = "Hello", second = "world!" }
+                        in
+                        first ++ second
+                        """
         , test "Elm.fn" <|
             \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.Let.letIn
-                        (\myFn ->
-                            Elm.apply myFn [ Elm.bool True ]
-                        )
-                        |> Elm.Let.value "myFn"
-                            (Elm.fn
-                                (Arg.varWith "arg" Type.bool)
-                                (\arg ->
-                                    Elm.ifThen arg
-                                        (Elm.string "True")
-                                        (Elm.string "False")
-                                )
-                            )
-                        |> Elm.Let.toExpression
+                Elm.Let.letIn
+                    (\myFn ->
+                        Elm.apply myFn [ Elm.bool True ]
                     )
-                    """
-let
-    myFn arg =
-        if arg then
-            "True"
-
-        else
-            "False"
-in
-myFn True
-                    """
-        , test "Function" <|
-            \_ ->
-                Elm.Expect.renderedAs
-                    (Elm.Let.letIn
-                        (\myFn ->
-                            myFn (Elm.bool True)
-                        )
-                        |> Elm.Let.fn "myFn"
+                    |> Elm.Let.value "myFn"
+                        (Elm.fn
                             (Arg.varWith "arg" Type.bool)
                             (\arg ->
                                 Elm.ifThen arg
                                     (Elm.string "True")
                                     (Elm.string "False")
                             )
-                        |> Elm.Let.toExpression
-                    )
-                    """
-let
-    myFn arg =
-        if arg then
-            "True"
+                        )
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.renderedAs
+                        """
+                        let
+                            myFn arg =
+                                if arg then
+                                    "True"
 
-        else
-            "False"
-in
-myFn True
-                    """
+                                else
+                                    "False"
+                        in
+                        myFn True
+                        """
+        , test "Function" <|
+            \_ ->
+                Elm.Let.letIn
+                    (\myFn ->
+                        myFn (Elm.bool True)
+                    )
+                    |> Elm.Let.fn "myFn"
+                        (Arg.varWith "arg" Type.bool)
+                        (\arg ->
+                            Elm.ifThen arg
+                                (Elm.string "True")
+                                (Elm.string "False")
+                        )
+                    |> Elm.Let.toExpression
+                    |> Elm.Expect.renderedAs
+                        """
+                        let
+                            myFn arg =
+                                if arg then
+                                    "True"
+
+                                else
+                                    "False"
+                        in
+                        myFn True
+                        """
         ]
