@@ -2143,15 +2143,12 @@ docs =
 
     import Elm.Annotation as Type
 
-    Elm.portIncoming "receiveMessageFromTheWorld"
-        [ Type.string
-        , Type.int
-        ]
+    Elm.portIncoming "receiveMessageFromTheWorld" Type.int
 
 Results in
 
     port receiveMessageFromTheWorld :
-        (String -> Int -> msg)
+        (Int -> msg)
         -> Sub msg
 
 **Note** You generally only need one incoming and one outgoing port!
@@ -2163,8 +2160,8 @@ This will give you more flexibility in the future and save you having to wire up
 **Another note** - You may need to expose your port explicitly using [`Elm.expose`](#expose).
 
 -}
-portIncoming : String -> List Elm.Annotation.Annotation -> Declaration
-portIncoming nameStr args =
+portIncoming : String -> Elm.Annotation.Annotation -> Declaration
+portIncoming nameStr arg =
     let
         name : String
         name =
@@ -2174,7 +2171,7 @@ portIncoming nameStr args =
         { name = name
         , exposed = Compiler.NotExposed
         , imports =
-            List.concatMap Compiler.getAnnotationImports args
+            Compiler.getAnnotationImports arg
         , docs = Nothing
         , toBody =
             \index ->
@@ -2185,36 +2182,13 @@ portIncoming nameStr args =
                         { name = Compiler.nodify name
                         , typeAnnotation =
                             Compiler.nodify
-                                (case args of
-                                    [] ->
-                                        Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType "msg"))
-                                            (Compiler.nodify sub)
-
-                                    _ :: _ ->
-                                        Annotation.FunctionTypeAnnotation
-                                            (groupAnn
-                                                (Compiler.nodify
-                                                    (Compiler.getInnerAnnotation index
-                                                        (Elm.Annotation.function
-                                                            args
-                                                            (Elm.Annotation.var "msg")
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                            (Compiler.nodify sub)
+                                (Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Compiler.getInnerAnnotation index arg))
+                                    (Compiler.nodify sub)
                                 )
                         }
                 }
         }
-
-
-groupAnn : Node Annotation.TypeAnnotation -> Node Annotation.TypeAnnotation
-groupAnn ann =
-    Annotation.Tupled
-        [ ann ]
-        |> Compiler.nodify
 
 
 sub : Annotation.TypeAnnotation
@@ -2485,3 +2459,4 @@ typeConstructorIsExposed name (Node _ node) =
 
         Expose.TypeExpose myType ->
             name == myType.name
+
