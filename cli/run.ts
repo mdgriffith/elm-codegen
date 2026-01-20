@@ -66,7 +66,7 @@ type Warning = {
   warning: string
 }
 
-async function run_generator(output_dir: string, moduleName: string, elm_source: string, flags: any) {
+async function run_generator(output_dir: string, moduleName: string, elm_source: string, flags: any) : Promise<void> {
   eval(elm_source)
 
   const promise = new Promise<{ path: string; contents: string; warnings: Warning[] }[]>((resolve, reject) => {
@@ -78,7 +78,7 @@ async function run_generator(output_dir: string, moduleName: string, elm_source:
           `Module ${moduleName} not found in compile Elm code. Available modules are: ${JSON.stringify(this.Elm)}`
         )
       )
-      return 1
+      process.exit(1)
     }
 
     // @ts-ignore
@@ -158,11 +158,11 @@ async function run_generator(output_dir: string, moduleName: string, elm_source:
       }
     }
     console.error(formatted)
-    return 1
+    process.exit(1)
   }
 }
 
-function generate(debug: boolean, elm_file: string, moduleName: string, output_dir: string, cwd: string, flags: any) {
+async function generate(debug: boolean, elm_file: string, moduleName: string, output_dir: string, cwd: string, flags: any) : Promise<void> {
   try {
     const data = elm_compiler.compileToStringSync([elm_file], {
       cwd: cwd,
@@ -171,7 +171,7 @@ function generate(debug: boolean, elm_file: string, moduleName: string, output_d
     })
 
     // @ts-ignore
-    return new run_generator(output_dir, moduleName, data.toString(), flags)
+    await new run_generator(output_dir, moduleName, data.toString(), flags)
   } catch (error: unknown) {
     // This is generally an elm make error from the elm_compiler
     console.log(error)
@@ -560,7 +560,7 @@ export type Options = {
 
 export async function run(elmFile: string, options: Options) {
   const moduleName = path.parse(elmFile).name
-  generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags)
+  await generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags)
 }
 
 export type CliOptions = {
@@ -615,7 +615,7 @@ function fileToFlags(filename: string) {
   return parsed
 }
 
-export async function run_generation_from_cli(desiredElmFile: string | null, options: CliOptions) {
+export async function run_generation_from_cli(desiredElmFile: string | null, options: CliOptions) : Promise<void> {
   let elmFile = "Generate.elm"
   let cwd = "./codegen"
 
@@ -690,16 +690,16 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
   if (options.watch) {
     //         clear(output)
 
-    generate(options.debug, elmFile, moduleName, output, cwd, flags)
-    Chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
+    await generate(options.debug, elmFile, moduleName, output, cwd, flags)
+    Chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", async (event, path) => {
       if (event === "change") {
         console.log(`\n${path} changed, regenerating`)
-        generate(options.debug, elmFile, moduleName, output, cwd, flags)
+        await generate(options.debug, elmFile, moduleName, output, cwd, flags)
       }
     })
   } else {
     //         skipping clearing files because in my test case it was failing with permission denied all the time.
     //         clear(output)
-    generate(options.debug, elmFile, moduleName, output, cwd, flags)
+    await generate(options.debug, elmFile, moduleName, output, cwd, flags)
   }
 }
