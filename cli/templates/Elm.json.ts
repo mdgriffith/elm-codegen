@@ -9,7 +9,7 @@ export default () => `
         "direct": {
             "elm/core": "1.0.3",
             "elm/json": "1.1.3",
-            "mdgriffith/elm-codegen": "6.0.0"
+            "mdgriffith/elm-codegen": "6.0.1"
         },
         "indirect": {
             "elm/parser": "1.1.0",
