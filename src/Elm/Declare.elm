@@ -5,7 +5,7 @@ module Elm.Declare exposing
     , Value, value
     , function
     , Module, module_, with, withUnexposed
-    , Annotation, alias, customType
+    , Annotation, alias, customType, exposeConstructor
     , toFile, include, withSubmodule
     , customTypeAdvanced, CustomType
     , variant0, variant1, variant2, variant3, variant4
@@ -110,7 +110,7 @@ And handle the imports and everything.
 
 @docs Module, module_, with, withUnexposed
 
-@docs Annotation, alias, customType
+@docs Annotation, alias, customType, exposeConstructor
 
 @docs toFile, include, withSubmodule
 
@@ -281,6 +281,13 @@ customType name variants =
     }
 
 
+{-| Expose the constructors of a custom type.
+-}
+exposeConstructor : Annotation -> Annotation
+exposeConstructor unexposed =
+    { unexposed | declaration = Elm.exposeConstructor unexposed.declaration }
+
+
 {-| -}
 type CustomTypeBuilder case_ make_
     = CustomTypeBuilder
@@ -295,9 +302,9 @@ type CustomTypeBuilder case_ make_
 
 {-| -}
 customTypeAdvanced : String -> { exposeConstructor : Bool } -> make_ -> CustomTypeBuilder case_ make_
-customTypeAdvanced name { exposeConstructor } make_ =
+customTypeAdvanced name options make_ =
     CustomTypeBuilder
-        { exposeConstructor = exposeConstructor
+        { exposeConstructor = options.exposeConstructor
         , name = name
         , variants = []
         , make_ = make_
