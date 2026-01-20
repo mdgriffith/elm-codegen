@@ -4,7 +4,7 @@ module Elm.Declare exposing
     , fnBuilder, fnArg, fnDone, fnBody, placeholder
     , Value, value
     , function
-    , Module, module_, with, withUnexposed
+    , Module, module_, with, withUnexposed, withDeclarations
     , Annotation, alias, customType, exposeConstructor
     , toFile, include, withSubmodule
     , customTypeAdvanced, CustomType
@@ -108,7 +108,7 @@ Which will generate
 
 And handle the imports and everything.
 
-@docs Module, module_, with, withUnexposed
+@docs Module, module_, with, withUnexposed, withDeclarations
 
 @docs Annotation, alias, customType, exposeConstructor
 
@@ -931,3 +931,10 @@ buildRecord (Record r) =
     , internal = inner.internal
     , make = \v -> Elm.record (List.reverse (r.make v)) |> Elm.withType annotation
     }
+
+
+{-| Add multiple declarations to the module.
+-}
+withDeclarations : List Elm.Declaration -> Module val -> Module val
+withDeclarations declarations mod =
+    { mod | declarations = List.reverse declarations ++ mod.declarations }
