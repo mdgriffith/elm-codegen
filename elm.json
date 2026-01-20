@@ -3,7 +3,7 @@
     "name": "mdgriffith/elm-codegen",
     "summary": "A code generation library for Elm",
     "license": "BSD-3-Clause",
-    "version": "6.0.0",
+    "version": "6.0.1",
     "exposed-modules": [
         "Elm",
         "Elm.Op",
