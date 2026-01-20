@@ -10,6 +10,7 @@ module Elm.Declare exposing
     , customTypeAdvanced, CustomType
     , variant0, variant1, variant2, variant3, variant4
     , CustomTypeBuilder, customVariant, finishCustomType
+    , record, withField, buildRecord, Record
     , Internal
     )
 
@@ -160,6 +161,27 @@ As an example, here's how to create a helper for the `Maybe` type.
 @docs variant0, variant1, variant2, variant3, variant4
 
 @docs CustomTypeBuilder, customVariant, finishCustomType
+
+
+## Advanced records
+
+You can use these functions to declare a record type alias and to also get a constructor for it.
+
+    point =
+        Elm.Declare.record "Point"
+            |> Elm.Declare.withField "x" .x Elm.Annotation.float
+            |> Elm.Declare.withField "y" .y Elm.Annotation.float
+            |> Elm.Declare.buildRecord
+
+    p =
+        point.make
+            { x = Elm.float 0
+            , y = Elm.float y
+            }
+
+This gives you compile time guarantees for the field names being correct.
+
+@docs record, withField, buildRecord, Record
 
 
 ## Internal things
@@ -359,8 +381,8 @@ variant1 :
 variant1 name toBranch type0 custom =
     let
         args : Elm.Arg (Expression -> Expression) -> Elm.Arg Expression
-        args record =
-            record
+        args r =
+            r
                 |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
 
         make : (List Expression -> Expression) -> Expression -> Expression
@@ -381,8 +403,8 @@ variant2 :
 variant2 name toBranch type0 type1 custom =
     let
         args : Elm.Arg (Expression -> Expression -> Expression) -> Elm.Arg Expression
-        args record =
-            record
+        args r =
+            r
                 |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
                 |> Elm.Arg.item (Elm.Arg.varWith "arg1" type1)
 
@@ -405,8 +427,8 @@ variant3 :
 variant3 name toBranch type0 type1 type2 custom =
     let
         args : Elm.Arg (Expression -> Expression -> Expression -> Expression) -> Elm.Arg Expression
-        args record =
-            record
+        args r =
+            r
                 |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
                 |> Elm.Arg.item (Elm.Arg.varWith "arg1" type1)
                 |> Elm.Arg.item (Elm.Arg.varWith "arg2" type2)
@@ -431,8 +453,8 @@ variant4 :
 variant4 name toBranch type0 type1 type2 type3 custom =
     let
         args : Elm.Arg (Expression -> Expression -> Expression -> Expression -> Expression) -> Elm.Arg Expression
-        args record =
-            record
+        args r =
+            r
                 |> Elm.Arg.item (Elm.Arg.varWith "arg0" type0)
                 |> Elm.Arg.item (Elm.Arg.varWith "arg1" type1)
                 |> Elm.Arg.item (Elm.Arg.varWith "arg2" type2)
@@ -486,14 +508,14 @@ customVariant name types branch arg make (CustomTypeBuilder custom) =
         , variants = Elm.variantWith name types :: custom.variants
         , make_ = make (makeValue []) custom.make_
         , case_ =
-            \record ->
+            \r ->
                 Elm.Case.branch
-                    (branch record
+                    (branch r
                         |> Elm.Arg.customType name
                         |> arg
                     )
                     identity
-                    :: custom.case_ record
+                    :: custom.case_ r
         , internal =
             Internal
                 (\mod ->
@@ -841,4 +863,64 @@ withDocumentation :
 withDocumentation doc val =
     { val
         | declaration = val.declaration |> Elm.withDocumentation doc
+    }
+
+
+{-| -}
+type Record type_
+    = Record
+        { name : String
+        , fields : List ( String, Elm.Annotation.Annotation )
+        , make : type_ -> List ( String, Elm.Expression )
+        }
+
+
+{-| -}
+record : String -> Record type_
+record name =
+    Record
+        { name = name
+        , fields = []
+        , make = \_ -> []
+        }
+
+
+{-| -}
+withField :
+    String
+    -> (type_ -> Elm.Expression)
+    -> Elm.Annotation.Annotation
+    -> Record type_
+    -> Record type_
+withField fieldName getter annotation (Record r) =
+    Record
+        { name = r.name
+        , fields = ( fieldName, annotation ) :: r.fields
+        , make = \v -> ( fieldName, getter v ) :: r.make v
+        }
+
+
+{-| -}
+buildRecord :
+    Record type_
+    ->
+        { annotation : Elm.Annotation.Annotation
+        , declaration : Elm.Declaration
+        , internal : Internal Elm.Annotation.Annotation
+        , make : type_ -> Elm.Expression
+        }
+buildRecord (Record r) =
+    let
+        annotation : Elm.Annotation.Annotation
+        annotation =
+            Elm.Annotation.record r.fields
+
+        inner : Annotation
+        inner =
+            alias r.name annotation
+    in
+    { annotation = inner.annotation
+    , declaration = inner.declaration
+    , internal = inner.internal
+    , make = \v -> Elm.record (List.reverse (r.make v)) |> Elm.withType annotation
     }
