@@ -7,6 +7,7 @@ module Internal.Arg exposing
     , customType, customTypeWith
     , item, items, list, listRemaining, record, field
     , ignore, unit
+    , map
     )
 
 {-|
@@ -827,4 +828,16 @@ field name (Arg arg) =
             , value =
                 toRecord.value fieldExpression
             }
+        )
+
+
+map : (a -> b) -> Arg a -> Arg b
+map f (Arg toValue) =
+    Arg
+        (\index ->
+            let
+                value =
+                    toValue index
+            in
+            { details = value.details, value = f value.value, index = value.index }
         )
