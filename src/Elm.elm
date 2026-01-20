@@ -2183,7 +2183,12 @@ portIncoming nameStr arg =
                         , typeAnnotation =
                             Compiler.nodify
                                 (Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Compiler.getInnerAnnotation index arg))
+                                    (Compiler.nodify
+                                        (Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify (Compiler.getInnerAnnotation index arg))
+                                            (Compiler.nodify (Annotation.GenericType "msg"))
+                                        )
+                                    )
                                     (Compiler.nodify sub)
                                 )
                         }
@@ -2459,4 +2464,3 @@ typeConstructorIsExposed name (Node _ node) =
 
         Expose.TypeExpose myType ->
             name == myType.name
-
