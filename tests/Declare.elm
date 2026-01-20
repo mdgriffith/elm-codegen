@@ -22,6 +22,7 @@ suite =
         , customTypeTest
         , customTypeWithTest
         , newStyleTest
+        , ports
         ]
 
 
@@ -396,3 +397,19 @@ makeAndCaseGenerationFullyDynamic =
                             """
                 ]
                 ()
+
+
+ports : Test
+ports =
+    describe "ports"
+        [ test "incoming" <|
+            \_ ->
+                Elm.portIncoming "receive" Type.int
+                    |> Elm.Expect.declarationAs
+                        "port receive : (Int -> msg) -> Sub msg"
+        , test "outgoing" <|
+            \_ ->
+                Elm.portOutgoing "send" Type.int
+                    |> Elm.Expect.declarationAs
+                        "port send : Int -> Cmd msg"
+        ]
