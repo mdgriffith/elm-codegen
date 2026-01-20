@@ -3,7 +3,7 @@ module Elm.Op exposing
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
     , lt, gt, lte, gte
-    , pipe, pipeLeft
+    , pipe, pipeLeft, pipeTo
     , parens
     , keep, skip
     , slash, query
@@ -39,7 +39,7 @@ Would generate
 
 @docs lt, gt, lte, gte
 
-@docs pipe, pipeLeft
+@docs pipe, pipeLeft, pipeTo
 
 @docs parens
 
@@ -472,6 +472,13 @@ pipeLeft =
             ]
             (Internal.Types.var "b")
         )
+
+
+{-| Like `pipe`, but accepts a function as argument.
+-}
+pipeTo : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
+pipeTo f x =
+    pipe (Elm.functionReduced "pipeArg" f) x
 
 
 {-| Like applyInfix, but without parens
