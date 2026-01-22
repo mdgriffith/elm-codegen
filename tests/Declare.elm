@@ -1,4 +1,4 @@
-module Declare exposing (makeAndCaseGeneration, makeAndCaseGenerationFullyDynamic, suite)
+module Declare exposing (argMap, makeAndCaseGeneration, makeAndCaseGenerationFullyDynamic, suite)
 
 {-| -}
 
@@ -9,7 +9,9 @@ import Elm.Declare
 import Elm.Expect
 import Elm.Op
 import Expect
+import Gen.Basics
 import Gen.Debug
+import Gen.Maybe
 import Test exposing (Test, describe, test)
 
 
@@ -275,6 +277,39 @@ makeAndCaseGeneration =
                                 MyMaybe.Just arg0 ->
                                     arg0
                             """
+                ]
+                ()
+
+
+argMap : Test
+argMap =
+    test "Elm.Arg.map" <|
+        \_ ->
+            let
+                -- myMap : Elm.Declare.Function ((Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression)
+                call_myMap =
+                    Elm.Declare.fnBuilder "myMap" (\fn maybe -> Gen.Maybe.call_.map fn maybe)
+                        |> Elm.Declare.fnArg (Elm.Arg.var "fn")
+                        |> Elm.Declare.fnArg (Elm.Arg.var "maybe")
+                        |> Elm.Declare.fnDone
+            in
+            Expect.all
+                [ \_ ->
+                    Elm.Expect.declarationAs
+                        """
+                        myMap : (a -> b) -> Maybe a -> Maybe b
+                        myMap fn maybe =
+                            Maybe.map fn maybe
+                        """
+                        call_myMap.declaration
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        "myMap Basics.identity Nothing"
+                        (call_myMap.call Gen.Basics.values_.identity Gen.Maybe.make_.nothing)
+                , \_ ->
+                    Elm.Expect.renderedAs
+                        "myMap (\\i -> i * i) Nothing"
+                        (call_myMap.call (Elm.functionReduced "i" <| \i -> Elm.Op.multiply i i) Gen.Maybe.make_.nothing)
                 ]
                 ()
 
