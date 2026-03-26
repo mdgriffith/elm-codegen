@@ -1064,19 +1064,30 @@ prettyOperatorApplication aliases indent symbol dir (Node _ exprl) (Node _ exprr
             prettyExpressionInner aliases { precedence = lprec } indent exprl
 
         ( right, breakRight ) =
-            prettyExpressionInner aliases { precedence = rprec } (indent + 4) exprr
+            prettyExpressionInner aliases { precedence = rprec } indent exprr
 
         alwaysBreak : Bool
         alwaysBreak =
             breakLeft || breakRight
     in
-    ( left
-        |> Pretty.a Pretty.space
-        |> Pretty.a (Pretty.string symbol)
-        |> Pretty.a Pretty.space
-        |> Pretty.a right
-        |> Pretty.align
-        |> optionalGroup alwaysBreak
+    ( case dir of
+        Left ->
+            left
+                |> Pretty.a (Pretty.nest indent Pretty.line)
+                |> Pretty.a (Pretty.string symbol)
+                |> Pretty.a Pretty.space
+                |> Pretty.a right
+                |> Pretty.align
+                |> optionalGroup alwaysBreak
+
+        _ ->
+            left
+                |> Pretty.a Pretty.space
+                |> Pretty.a (Pretty.string symbol)
+                |> Pretty.a (Pretty.nest indent Pretty.line)
+                |> Pretty.a right
+                |> Pretty.align
+                |> optionalGroup alwaysBreak
     , alwaysBreak
     )
 

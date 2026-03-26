@@ -9,6 +9,7 @@ import Elm.Syntax.TypeAnnotation exposing (TypeAnnotation)
 import Expect
 import Gen.Element
 import Gen.Maybe
+import Gen.String
 import Internal.Compiler as Compiler
 import Internal.Write
 import Test exposing (Test, describe, test)
@@ -224,4 +225,56 @@ stringifying =
                         )
                     |> Elm.Expect.renderedAs
                         """"Hello" |> one |> two 5 "HELLOOOOOOOOOOOOOO\""""
+        , test "pipeline chains get line breaks before symbol" <|
+            \_ ->
+                (Elm.string "123456"
+                    |> Elm.Op.pipeTo (Gen.String.call_.replace (Elm.string "1") (Elm.string "H"))
+                    |> Elm.Op.pipeTo (Gen.String.call_.replace (Elm.string "2") (Elm.string "e"))
+                    |> Elm.Op.pipeTo (Gen.String.call_.replace (Elm.string "3") (Elm.string "l"))
+                    |> Elm.Op.pipeTo (Gen.String.call_.replace (Elm.string "4") (Elm.string "l"))
+                    |> Elm.Op.pipeTo (Gen.String.call_.replace (Elm.string "5") (Elm.string "o"))
+                    |> Elm.Op.pipeTo (Gen.String.call_.replace (Elm.string "6") (Elm.string "!"))
+                )
+                    |> Elm.Expect.renderedAs
+                        """"123456" |> String.replace "1" "H" |> String.replace "2" "e"
+    |> String.replace "3" "l"
+    |> String.replace "4" "l"
+    |> String.replace "5" "o"
+    |> String.replace "6" "!"
+"""
+        , test "pipe left gets line breaks after symbol" <|
+            \_ ->
+                (Elm.string "123456"
+                    |> Elm.Op.pipeLeft
+                        (Elm.functionReduced "a"
+                            (Gen.String.call_.replace (Elm.string "1") (Elm.string "W"))
+                        )
+                    |> Elm.Op.pipeLeft
+                        (Elm.functionReduced "a"
+                            (Gen.String.call_.replace (Elm.string "2") (Elm.string "o"))
+                        )
+                    |> Elm.Op.pipeLeft
+                        (Elm.functionReduced "a"
+                            (Gen.String.call_.replace (Elm.string "3") (Elm.string "r"))
+                        )
+                    |> Elm.Op.pipeLeft
+                        (Elm.functionReduced "a"
+                            (Gen.String.call_.replace (Elm.string "4") (Elm.string "l"))
+                        )
+                    |> Elm.Op.pipeLeft
+                        (Elm.functionReduced "a"
+                            (Gen.String.call_.replace (Elm.string "5") (Elm.string "d"))
+                        )
+                    |> Elm.Op.pipeLeft
+                        (Elm.functionReduced "a"
+                            (Gen.String.call_.replace (Elm.string "6") (Elm.string "!"))
+                        )
+                )
+                    |> Elm.Expect.renderedAs
+                        """String.replace "6" "!" <|
+    String.replace "5" "d" <|
+        String.replace "4" "l" <|
+            String.replace "3" "r" <|
+                String.replace "2" "o" <| String.replace "1" "W" <| "123456"
+"""
         ]
