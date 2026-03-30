@@ -4,6 +4,7 @@ import Elm
 import Elm.Annotation as Type
 import Elm.Arg as Arg
 import Elm.Case
+import Elm.Declare
 import Elm.Expect
 import Elm.Op
 import Elm.ToString
@@ -203,6 +204,86 @@ generatedCode =
                         """
                         type alias Record var =
                             { a : var, b : var }
+                        """
+        , test "Record with mixed Float and Int fields infers correct types" <|
+            \_ ->
+                Elm.declaration "myRecord"
+                    (Elm.record
+                        [ ( "alpha", Elm.Op.plus (Elm.int 1) (Elm.int 2) )
+                        , ( "beta", Elm.unit )
+                        , ( "gamma", Elm.Op.gt (Elm.int 3) (Elm.int 4) )
+                        , ( "delta", Elm.Op.minus (Elm.float 10.5) (Elm.float 3.2) )
+                        , ( "epsilon", Elm.Op.multiply (Elm.int 5) (Elm.int 6) )
+                        ]
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        myRecord :
+                            { alpha : Int, beta : (), gamma : Bool, delta : Float, epsilon : Int }
+                        myRecord =
+                            { alpha = 1 + 2
+                            , beta = ()
+                            , gamma = 3 > 4
+                            , delta = 10.5 - 3.2
+                            , epsilon = 5 * 6
+                            }
+                        """
+        , test "Tuple with Float and Int arithmetic infers correct types" <|
+            \_ ->
+                Elm.declaration "myTuple"
+                    (Elm.tuple
+                        (Elm.Op.plus (Elm.float 1.5) (Elm.float 2.5))
+                        (Elm.Op.plus (Elm.int 1) (Elm.int 2))
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        myTuple : ( Float, Int )
+                        myTuple =
+                            ( 1.5 + 2.5, 1 + 2 )
+                        """
+        , describe "Number type resolution doesn't disturb polymorphic variables"
+            [ test "Arithmetic on polymorphic arg resolves to concrete type" <|
+                \_ ->
+                    Elm.Declare.fn "addOne"
+                        (Arg.var "x")
+                        (\x -> Elm.Op.plus x (Elm.int 1))
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            addOne : Int -> Int
+                            addOne x =
+                                x + 1
+                            """
+            , test "Float arithmetic next to polymorphic value in tuple" <|
+                \_ ->
+                    Elm.Declare.fn "mixedTuple"
+                        (Arg.var "x")
+                        (\x ->
+                            Elm.tuple
+                                (Elm.Op.plus (Elm.float 1.0) (Elm.float 2.0))
+                                x
+                        )
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            mixedTuple : x -> ( Float, x )
+                            mixedTuple x =
+                                ( 1 + 2, x )
+                            """
+            ]
+        , test "Triple with mixed Float and Int infers correct types" <|
+            \_ ->
+                Elm.declaration "myTriple"
+                    (Elm.triple
+                        (Elm.Op.minus (Elm.float 10.5) (Elm.float 3.2))
+                        Elm.unit
+                        (Elm.Op.plus (Elm.int 1) (Elm.int 2))
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        myTriple : ( Float, (), Int )
+                        myTriple =
+                            ( 10.5 - 3.2, (), 1 + 2 )
                         """
         ]
 

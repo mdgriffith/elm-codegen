@@ -589,37 +589,40 @@ applyNumber symbol dir l r =
                     Index.protectTypeName
                         "number"
                         annotationIndex
+
+                annotation : Result (List Compiler.InferenceError) Compiler.Inference
+                annotation =
+                    Compiler.applyType index
+                        (Ok
+                            { inferences = Dict.empty
+                            , aliases = Compiler.emptyAliases
+                            , type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify
+                                        (Annotation.GenericType numberTypeName)
+                                    )
+                                    (Compiler.nodify
+                                        (Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify
+                                                (Annotation.GenericType numberTypeName)
+                                            )
+                                            (Compiler.nodify
+                                                (Annotation.GenericType numberTypeName)
+                                            )
+                                        )
+                                    )
+                            }
+                        )
+                        [ left
+                        , right
+                        ]
             in
             { expression =
                 Exp.OperatorApplication symbol
                     dir
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
-            , annotation =
-                Compiler.applyType index
-                    (Ok
-                        { inferences = Dict.empty
-                        , aliases = Compiler.emptyAliases
-                        , type_ =
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify
-                                    (Annotation.GenericType numberTypeName)
-                                )
-                                (Compiler.nodify
-                                    (Annotation.FunctionTypeAnnotation
-                                        (Compiler.nodify
-                                            (Annotation.GenericType numberTypeName)
-                                        )
-                                        (Compiler.nodify
-                                            (Annotation.GenericType numberTypeName)
-                                        )
-                                    )
-                                )
-                        }
-                    )
-                    [ left
-                    , right
-                    ]
+            , annotation = annotation
             , imports = left.imports ++ right.imports
             }
 
