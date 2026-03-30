@@ -1,0 +1,8 @@
+node_modules/
+generated/
+.elm-pages/
+elm-stuff/
+script/elm-stuff/
+review/elm-stuff/
+codegen/Gen/
+package-lock.json

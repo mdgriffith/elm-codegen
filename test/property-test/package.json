@@ -1,0 +1,15 @@
+{
+  "name": "elm-codegen-property-tests",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "generate": "node generate.mjs",
+    "test": "node harness.mjs",
+    "property-test": "sh run.sh"
+  },
+  "devDependencies": {
+    "elm": "^0.19.1-6",
+    "elm-codegen": "^0.6.3",
+    "elm-review": "^2.12.0"
+  }
+}
