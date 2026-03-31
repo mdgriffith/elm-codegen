@@ -1528,16 +1528,23 @@ coverageBoostGenerator baseIndex =
         (\letUnpackDecls exprLambdaDecls exposedDecls docDecls commentDecls ->
             letUnpackDecls ++ exprLambdaDecls ++ exposedDecls ++ docDecls ++ commentDecls
         )
-        -- Let.unpack with tuple destructuring
         (letUnpackGenerator baseIndex)
-        -- Expression-level fn2/fn3 (not Declare.fn2)
         (exprLambdaGenerator baseIndex)
-        -- Expose + exposeConstructor
         (exposedDeclGenerator baseIndex)
-        -- withDocumentation
         (documentedDeclGenerator baseIndex)
-        -- Comment declarations
         (Random.constant [ Elm.comment "Generated comment" ])
+        |> Random.andThen
+            (\batch1 ->
+                Random.map5
+                    (\letFnDecls groupDecls triplePatternDecls applyDecls annotationDecls ->
+                        batch1 ++ letFnDecls ++ groupDecls ++ triplePatternDecls ++ applyDecls ++ annotationDecls
+                    )
+                    (letFnGenerator baseIndex)
+                    (groupGenerator baseIndex)
+                    (triplePatternFnGenerator baseIndex)
+                    (applyWithAnnotationGenerator baseIndex)
+                    (annotationExerciseGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -1640,6 +1647,137 @@ documentedDeclGenerator index =
                                 |> Elm.expose
                             ]
                         )
+            )
+
+
+{-| Let-bound functions — exercises Elm.Let.fn which is 0% covered. -}
+letFnGenerator : Int -> Random.Generator (List Elm.Declaration)
+letFnGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\returnType ->
+                expressionGenerator 0 returnType
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("letFn" ++ String.fromInt index)
+                                (Elm.Let.letIn
+                                    (\myFn ->
+                                        myFn (Elm.int 1)
+                                    )
+                                    |> Elm.Let.fn "myFn"
+                                        (Elm.Arg.var "arg")
+                                        (\_ -> body.expr)
+                                    |> Elm.Let.toExpression
+                                )
+                            ]
+                        )
+            )
+
+
+{-| Elm.group + Elm.docs — exercises grouping and doc generation. -}
+groupGenerator : Int -> Random.Generator (List Elm.Declaration)
+groupGenerator index =
+    Random.map2
+        (\type1 type2 ->
+            Random.map2
+                (\val1 val2 ->
+                    [ Elm.group
+                        [ Elm.docs ("## Section " ++ String.fromInt index)
+                        , Elm.declaration ("grouped1_" ++ String.fromInt index) val1.expr
+                            |> Elm.expose
+                        , Elm.declaration ("grouped2_" ++ String.fromInt index) val2.expr
+                            |> Elm.expose
+                        ]
+                    ]
+                )
+                (expressionGenerator 0 type1)
+                (expressionGenerator 0 type2)
+        )
+        simpleTypeGenerator
+        simpleTypeGenerator
+        |> Random.andThen identity
+
+
+{-| Function with triple destructuring pattern — exercises Elm.Arg.triple. -}
+triplePatternFnGenerator : Int -> Random.Generator (List Elm.Declaration)
+triplePatternFnGenerator index =
+    bodyStrategyGenerator 0 TUnit
+        |> Random.map
+            (\_ ->
+                [ Elm.Declare.fn ("fnTriple" ++ String.fromInt index)
+                    (Elm.Arg.triple
+                        (Elm.Arg.var "a")
+                        (Elm.Arg.var "b")
+                        (Elm.Arg.var "c")
+                    )
+                    (\( a, _, _ ) -> a)
+                    |> .declaration
+                ]
+            )
+
+
+{-| Elm.apply with a typed value reference — exercises the apply +
+type inference path more deeply.
+-}
+applyWithAnnotationGenerator : Int -> Random.Generator (List Elm.Declaration)
+applyWithAnnotationGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\argType ->
+                simpleTypeGenerator
+                    |> Random.andThen
+                        (\returnType ->
+                            expressionGenerator 0 argType
+                                |> Random.map
+                                    (\argVal ->
+                                        let
+                                            fnRef =
+                                                Elm.value
+                                                    { importFrom = []
+                                                    , name = "identity"
+                                                    , annotation =
+                                                        Just
+                                                            (Type.function
+                                                                [ typeAnnotation argType ]
+                                                                (typeAnnotation argType)
+                                                            )
+                                                    }
+                                        in
+                                        [ Elm.declaration ("applied" ++ String.fromInt index)
+                                            (Elm.apply fnRef [ argVal.expr ])
+                                        ]
+                                    )
+                        )
+            )
+
+
+{-| Exercise annotation APIs — Type.list, Type.maybe, Type.result,
+Type.tuple, Type.namedWith, Type.function, Type.dict, Type.set.
+These generate type aliases that exercise the annotation builders.
+-}
+annotationExerciseGenerator : Int -> Random.Generator (List Elm.Declaration)
+annotationExerciseGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\innerType ->
+                let
+                    inner =
+                        typeAnnotation innerType
+                in
+                Random.constant
+                    [ Elm.alias ("AnnList" ++ String.fromInt index)
+                        (Type.list inner)
+                    , Elm.alias ("AnnMaybe" ++ String.fromInt index)
+                        (Type.maybe inner)
+                    , Elm.alias ("AnnResult" ++ String.fromInt index)
+                        (Type.result Type.string inner)
+                    , Elm.alias ("AnnTuple" ++ String.fromInt index)
+                        (Type.tuple inner Type.int)
+                    , Elm.alias ("AnnFn" ++ String.fromInt index)
+                        (Type.function [ inner, Type.string ] Type.bool)
+                    , Elm.alias ("AnnNamed" ++ String.fromInt index)
+                        (Type.namedWith [ "Dict" ] "Dict" [ Type.string, inner ])
+                    ]
             )
 
 
