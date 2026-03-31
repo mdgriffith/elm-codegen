@@ -51,14 +51,21 @@ singleFileGenerator index =
     in
     Random.map5
         (\literals records functions customTypes advanced ->
-            Elm.file [ moduleName ]
-                (literals ++ records ++ functions ++ customTypes ++ advanced)
+            literals ++ records ++ functions ++ customTypes ++ advanced
         )
         (literalDeclarationsGenerator index)
         (recordDeclarationsGenerator index)
         (functionDeclarationsGenerator index)
         (customTypeDeclarationsGenerator index)
         (advancedDeclarationsGenerator index)
+        |> Random.andThen
+            (\baseDecls ->
+                coverageBoostGenerator index
+                    |> Random.map
+                        (\extraDecls ->
+                            Elm.file [ moduleName ] (baseDecls ++ extraDecls)
+                        )
+            )
 
 
 
@@ -1502,6 +1509,136 @@ multiFileGenerator index =
                                         in
                                         [ libFile, consumerFile ]
                                     )
+                        )
+            )
+
+
+
+-- ============================================================
+-- COVERAGE BOOST: exercise uncovered elm-codegen APIs
+-- ============================================================
+
+
+{-| Additional declarations that exercise elm-codegen APIs not
+covered by the main generators. Guided by coverage analysis.
+-}
+coverageBoostGenerator : Int -> Random.Generator (List Elm.Declaration)
+coverageBoostGenerator baseIndex =
+    Random.map5
+        (\letUnpackDecls exprLambdaDecls exposedDecls docDecls commentDecls ->
+            letUnpackDecls ++ exprLambdaDecls ++ exposedDecls ++ docDecls ++ commentDecls
+        )
+        -- Let.unpack with tuple destructuring
+        (letUnpackGenerator baseIndex)
+        -- Expression-level fn2/fn3 (not Declare.fn2)
+        (exprLambdaGenerator baseIndex)
+        -- Expose + exposeConstructor
+        (exposedDeclGenerator baseIndex)
+        -- withDocumentation
+        (documentedDeclGenerator baseIndex)
+        -- Comment declarations
+        (Random.constant [ Elm.comment "Generated comment" ])
+
+
+{-| Let.unpack with tuple destructuring — exercises Internal.Arg
+and Let.unpack code paths that are otherwise 0% covered.
+-}
+letUnpackGenerator : Int -> Random.Generator (List Elm.Declaration)
+letUnpackGenerator index =
+    Random.map2
+        (\type1 type2 ->
+            Random.map2
+                (\val1 val2 ->
+                    [ Elm.declaration ("letUnpack" ++ String.fromInt index)
+                        (Elm.Let.letIn
+                            (\( first, second ) ->
+                                first
+                            )
+                            |> Elm.Let.unpack
+                                (Elm.Arg.tuple
+                                    (Elm.Arg.var "first")
+                                    (Elm.Arg.var "second")
+                                )
+                                (Elm.tuple val1.expr val2.expr)
+                            |> Elm.Let.toExpression
+                        )
+                    ]
+                )
+                (expressionGenerator 0 type1)
+                (expressionGenerator 0 type2)
+        )
+        simpleTypeGenerator
+        simpleTypeGenerator
+        |> Random.andThen identity
+
+
+{-| Expression-level Elm.fn2 and Elm.fn3 (as opposed to Declare.fn2).
+These are lambda expressions with multiple arguments.
+-}
+exprLambdaGenerator : Int -> Random.Generator (List Elm.Declaration)
+exprLambdaGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\returnType ->
+                expressionGenerator 0 returnType
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("exprFn2_" ++ String.fromInt index)
+                                (Elm.fn2
+                                    (Elm.Arg.var "a")
+                                    (Elm.Arg.var "b")
+                                    (\_ _ -> body.expr)
+                                )
+                            , Elm.declaration ("exprFn3_" ++ String.fromInt index)
+                                (Elm.fn3
+                                    (Elm.Arg.var "x")
+                                    (Elm.Arg.var "y")
+                                    (Elm.Arg.var "z")
+                                    (\_ _ _ -> body.expr)
+                                )
+                            ]
+                        )
+            )
+
+
+{-| Exposed declarations and exposeConstructor — exercises the
+expose/exposeConstructor code paths in Elm.elm.
+-}
+exposedDeclGenerator : Int -> Random.Generator (List Elm.Declaration)
+exposedDeclGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("exposed" ++ String.fromInt index) body.expr
+                                |> Elm.expose
+                            , Elm.customType ("ExposedType" ++ String.fromInt index)
+                                [ Elm.variant ("ExVariantA" ++ String.fromInt index)
+                                , Elm.variantWith ("ExVariantB" ++ String.fromInt index)
+                                    [ typeAnnotation t ]
+                                ]
+                                |> Elm.exposeConstructor
+                            ]
+                        )
+            )
+
+
+{-| Declarations with documentation — exercises withDocumentation.
+-}
+documentedDeclGenerator : Int -> Random.Generator (List Elm.Declaration)
+documentedDeclGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("documented" ++ String.fromInt index) body.expr
+                                |> Elm.withDocumentation "This is a generated declaration."
+                                |> Elm.expose
+                            ]
                         )
             )
 
