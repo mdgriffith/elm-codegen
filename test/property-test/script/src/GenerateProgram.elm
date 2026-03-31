@@ -1,71 +1,116 @@
-port module GenerateProgram exposing (main)
+module GenerateProgram exposing (run)
 
-{-| A simple Platform.worker that generates random Elm programs
-using elm-codegen and sends them through a port to be written by Node.js.
+{-| elm-pages script that generates random Elm programs using elm-codegen
+and writes them to disk for property testing.
 -}
 
+import BackendTask
+import Cli.Option as Option
+import Cli.OptionsParser as OptionsParser
+import Cli.Program as Program
 import Elm
+import FatalError exposing (FatalError)
 import Generate.Program
 import Json.Encode
+import Pages.Script as Script exposing (Script)
 import Random
 
 
-port output : Json.Encode.Value -> Cmd msg
-
-
-type alias Flags =
+type alias CliOptions =
     { seed : Int
     , count : Int
     }
 
 
-main : Program Flags () Never
-main =
-    Platform.worker
-        { init =
-            \flags ->
-                let
-                    initialSeed =
-                        Random.initialSeed flags.seed
+run : Script
+run =
+    Script.withCliOptions program
+        (\{ seed, count } ->
+            let
+                initialSeed =
+                    Random.initialSeed seed
 
-                    allFiles =
-                        generatePrograms initialSeed flags.count []
+                allFiles =
+                    generatePrograms initialSeed count []
+            in
+            allFiles
+                |> List.map writeFile
+                |> BackendTask.combine
+                |> BackendTask.andThen
+                    (\_ ->
+                        writeManifest
+                            (allFiles
+                                |> List.map
+                                    (\file ->
+                                        file.path
+                                            |> String.replace ".elm" ""
+                                            |> String.replace "/" "."
+                                    )
+                            )
+                    )
+                |> BackendTask.andThen
+                    (\_ ->
+                        Script.log
+                            ("Generated "
+                                ++ String.fromInt (List.length allFiles)
+                                ++ " files with seed "
+                                ++ String.fromInt seed
+                            )
+                    )
+        )
 
-                    encodedFiles =
-                        allFiles
-                            |> List.map
-                                (\file ->
-                                    Json.Encode.object
-                                        [ ( "path", Json.Encode.string file.path )
-                                        , ( "contents", Json.Encode.string file.contents )
-                                        ]
-                                )
 
-                    moduleNames =
-                        allFiles
-                            |> List.map
-                                (\file ->
-                                    -- Extract module name from path: "Test0.elm" -> "Test0"
-                                    file.path
-                                        |> String.replace ".elm" ""
-                                        |> String.replace "/" "."
-                                )
+program : Program.Config CliOptions
+program =
+    Program.config
+        |> Program.add
+            (OptionsParser.build CliOptions
+                |> OptionsParser.with
+                    (Option.requiredKeywordArg "seed"
+                        |> Option.validateMap
+                            (\s ->
+                                case String.toInt s of
+                                    Just i ->
+                                        Ok i
 
-                    payload =
-                        Json.Encode.object
-                            [ ( "files", Json.Encode.list identity encodedFiles )
-                            , ( "moduleNames", Json.Encode.list Json.Encode.string moduleNames )
-                            ]
-                in
-                ( (), output payload )
-        , update = \_ model -> ( model, Cmd.none )
-        , subscriptions = \_ -> Sub.none
+                                    Nothing ->
+                                        Err "seed must be an integer"
+                            )
+                    )
+                |> OptionsParser.with
+                    (Option.optionalKeywordArg "count"
+                        |> Option.withDefault "10"
+                        |> Option.validateMap
+                            (\s ->
+                                case String.toInt s of
+                                    Just i ->
+                                        Ok i
+
+                                    Nothing ->
+                                        Err "count must be an integer"
+                            )
+                    )
+            )
+
+
+writeFile : Elm.File -> BackendTask.BackendTask FatalError ()
+writeFile file =
+    Script.writeFile
+        { path = "../generated/src/" ++ file.path
+        , body = file.contents
         }
+        |> BackendTask.allowFatal
 
 
-{-| Generate all files across all test programs. Each program can produce
-1 or 2 files (single module or library+consumer pair).
--}
+writeManifest : List String -> BackendTask.BackendTask FatalError ()
+writeManifest moduleNames =
+    Script.writeFile
+        { path = "../generated/manifest.json"
+        , body = Json.Encode.encode 2 (Json.Encode.list Json.Encode.string moduleNames)
+        }
+        |> BackendTask.allowFatal
+
+
 generatePrograms : Random.Seed -> Int -> List Elm.File -> List Elm.File
 generatePrograms seed remaining acc =
     if remaining <= 0 then
