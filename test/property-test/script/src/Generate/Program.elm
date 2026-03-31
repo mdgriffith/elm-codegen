@@ -1604,6 +1604,16 @@ coverageBoostGenerator baseIndex =
                     (declareRecordBuilderGenerator baseIndex)
                     (fnBodyGenerator baseIndex)
             )
+        |> Random.andThen
+            (\batch7 ->
+                Random.map3
+                    (\variant2Decls namedTypeAliasDecls recordUnifyDecls ->
+                        batch7 ++ variant2Decls ++ namedTypeAliasDecls ++ recordUnifyDecls
+                    )
+                    (customTypeVariant2Generator baseIndex)
+                    (namedTypeAliasGenerator baseIndex)
+                    (recordFieldUnifyGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -2526,6 +2536,125 @@ fnBodyGenerator index =
                     )
             )
         ]
+
+
+
+{-| Declare.customTypeAdvanced with variant2 — multi-payload variants
+are 0% covered. Exercises variant2, standardVariant, customVariant,
+and the make_/case_ generation for multi-arg constructors.
+-}
+customTypeVariant2Generator : Int -> Random.Generator (List Elm.Declaration)
+customTypeVariant2Generator index =
+    let
+        typeName =
+            "Pair" ++ String.fromInt index
+
+        pairType =
+            Elm.Declare.customTypeAdvanced typeName
+                { exposeConstructor = True }
+                (\empty pair -> { empty = empty, pair = pair })
+                |> Elm.Declare.variant0 ("Empty" ++ String.fromInt index) .empty
+                |> Elm.Declare.variant2 ("MkPair" ++ String.fromInt index)
+                    .pair
+                    Type.int
+                    Type.string
+                |> Elm.Declare.finishCustomType
+
+        -- Exercise make_ with 2 args
+        makePairDecl =
+            Elm.declaration ("mkPair" ++ String.fromInt index)
+                (pairType.make_.pair (Elm.int 1) (Elm.string "hello"))
+
+        -- Exercise case_ with 2-arg pattern
+        casePairDecl =
+            Elm.declaration ("matchPair" ++ String.fromInt index)
+                (pairType.case_
+                    (pairType.make_.pair (Elm.int 1) (Elm.string "hello"))
+                    { empty = Elm.string "empty"
+                    , pair = \n s -> s
+                    }
+                )
+    in
+    Random.constant
+        [ pairType.declaration
+        , makePairDecl
+        , casePairDecl
+        ]
+
+
+{-| Use Elm.withType with a namedWith alias to trigger unifyWithAlias.
+This exercises the alias type parameter substitution path.
+-}
+namedTypeAliasGenerator : Int -> Random.Generator (List Elm.Declaration)
+namedTypeAliasGenerator index =
+    let
+        aliasName =
+            "Container" ++ String.fromInt index
+
+        -- Define a type alias: type alias Container a = { value : a }
+        aliasDef =
+            Elm.alias aliasName
+                (Type.record
+                    [ ( "value", Type.var "a" ) ]
+                )
+
+        -- Create a record and annotate it with the parameterized alias
+        -- This triggers unifyWithAlias when the annotation is resolved
+        valueDecl =
+            Elm.declaration ("container" ++ String.fromInt index)
+                (Elm.record [ ( "value", Elm.int 42 ) ]
+                    |> Elm.withType
+                        (Type.namedWith [] aliasName [ Type.int ])
+                )
+
+        -- Access a field through the alias — triggers resolveField Typed branch
+        fieldDecl =
+            Elm.declaration ("containerVal" ++ String.fromInt index)
+                (Elm.get "value"
+                    (Elm.record [ ( "value", Elm.string "test" ) ]
+                        |> Elm.withType
+                            (Type.namedWith [] aliasName [ Type.string ])
+                    )
+                )
+    in
+    Random.constant [ aliasDef, valueDecl, fieldDecl ]
+
+
+{-| Force record field unification by passing a record to a function
+that expects a record with the same fields in different order.
+This triggers unifiableFields in Internal.Compiler.
+-}
+recordFieldUnifyGenerator : Int -> Random.Generator (List Elm.Declaration)
+recordFieldUnifyGenerator index =
+    let
+        -- Function expects { b : String, a : Int } (b first)
+        fnDecl =
+            Elm.Declare.fn ("recUnify" ++ String.fromInt index)
+                (Elm.Arg.var "rec")
+                (\rec ->
+                    Elm.get "a"
+                        (Elm.withType
+                            (Type.record
+                                [ ( "b", Type.string )
+                                , ( "a", Type.int )
+                                ]
+                            )
+                            rec
+                        )
+                )
+
+        -- Call it with { a : Int, b : String } (a first)
+        callDecl =
+            Elm.declaration ("callRecUnify" ++ String.fromInt index)
+                (fnDecl.call
+                    (Elm.record
+                        [ ( "a", Elm.int 1 )
+                        , ( "b", Elm.string "hi" )
+                        ]
+                    )
+                )
+    in
+    Random.constant [ fnDecl.declaration, callDecl ]
 
 
 
