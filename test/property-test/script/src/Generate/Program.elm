@@ -1545,6 +1545,18 @@ coverageBoostGenerator baseIndex =
                     (applyWithAnnotationGenerator baseIndex)
                     (annotationExerciseGenerator baseIndex)
             )
+        |> Random.andThen
+            (\batch2 ->
+                Random.map5
+                    (\declareValueDecls declareFn4Decls declareAliasDecls declareCustomTypeDecls declareModuleDecls ->
+                        batch2 ++ declareValueDecls ++ declareFn4Decls ++ declareAliasDecls ++ declareCustomTypeDecls ++ declareModuleDecls
+                    )
+                    (declareValueGenerator baseIndex)
+                    (declareFn4Generator baseIndex)
+                    (declareAliasGenerator baseIndex)
+                    (declareCustomTypeGenerator baseIndex)
+                    (declareModuleGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -1778,6 +1790,153 @@ annotationExerciseGenerator index =
                     , Elm.alias ("AnnNamed" ++ String.fromInt index)
                         (Type.namedWith [ "Dict" ] "Dict" [ Type.string, inner ])
                     ]
+            )
+
+
+
+{-| Elm.Declare.value — a declared value with a .value reference. -}
+declareValueGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareValueGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            let
+                                declaredVal =
+                                    Elm.Declare.value
+                                        ("declVal" ++ String.fromInt index)
+                                        body.expr
+
+                                -- Use the declared value's .value reference
+                                useDecl =
+                                    Elm.declaration
+                                        ("useDeclVal" ++ String.fromInt index)
+                                        declaredVal.value
+                            in
+                            [ declaredVal.declaration, useDecl ]
+                        )
+            )
+
+
+{-| Elm.Declare.fn4 — higher arity function. -}
+declareFn4Generator : Int -> Random.Generator (List Elm.Declaration)
+declareFn4Generator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\returnType ->
+                expressionGenerator 0 returnType
+                    |> Random.map
+                        (\body ->
+                            let
+                                declared =
+                                    Elm.Declare.fn4
+                                        ("fn4_" ++ String.fromInt index)
+                                        (Elm.Arg.var "a")
+                                        (Elm.Arg.var "b")
+                                        (Elm.Arg.var "c")
+                                        (Elm.Arg.var "d")
+                                        (\_ _ _ _ -> body.expr)
+
+                                callDecl =
+                                    Elm.declaration
+                                        ("callFn4_" ++ String.fromInt index)
+                                        (declared.call Elm.unit Elm.unit Elm.unit Elm.unit)
+                            in
+                            [ declared.declaration, callDecl ]
+                        )
+            )
+
+
+{-| Elm.Declare.alias — a typed alias declaration with .annotation. -}
+declareAliasGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareAliasGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                let
+                    declaredAlias =
+                        Elm.Declare.alias
+                            ("DeclAlias" ++ String.fromInt index)
+                            (Type.record
+                                [ ( "field1", typeAnnotation t )
+                                , ( "field2", Type.string )
+                                ]
+                            )
+
+                    -- Use the alias's annotation in a function signature
+                    useAlias =
+                        Elm.Declare.fn
+                            ("useDeclAlias" ++ String.fromInt index)
+                            (Elm.Arg.var "input")
+                            (\input ->
+                                Elm.withType declaredAlias.annotation input
+                            )
+                in
+                Random.constant
+                    [ declaredAlias.declaration
+                    , useAlias.declaration
+                    ]
+            )
+
+
+{-| Elm.Declare.customType + exposeConstructor — typed custom type with
+constructor exposure.
+-}
+declareCustomTypeGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareCustomTypeGenerator index =
+    let
+        declaredType =
+            Elm.Declare.customType
+                ("DeclCustom" ++ String.fromInt index)
+                [ Elm.variant ("DeclVariantA" ++ String.fromInt index)
+                , Elm.variantWith ("DeclVariantB" ++ String.fromInt index)
+                    [ Type.int ]
+                ]
+                |> Elm.Declare.exposeConstructor
+    in
+    Random.constant
+        [ declaredType.declaration
+        ]
+
+
+{-| Elm.Declare.module_ + with + toFile pattern — virtual module builder.
+We use include instead of toFile to embed it in the current file.
+-}
+declareModuleGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareModuleGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            let
+                                helperFn =
+                                    Elm.Declare.fn
+                                        ("modHelper" ++ String.fromInt index)
+                                        (Elm.Arg.var "x")
+                                        (\_ -> body.expr)
+
+                                helperVal =
+                                    Elm.Declare.value
+                                        ("modVal" ++ String.fromInt index)
+                                        body.expr
+
+                                mod =
+                                    Elm.Declare.module_ [] identity
+                                        |> Elm.Declare.with helperFn
+                                        |> Elm.Declare.with helperVal
+                                        |> Elm.Declare.withDeclarations
+                                            [ Elm.declaration ("modExtra" ++ String.fromInt index) (Elm.int 42) ]
+
+                                -- Use include to embed the module's declarations
+                                includeDecl =
+                                    Elm.Declare.include mod
+                            in
+                            [ includeDecl ]
+                        )
             )
 
 
