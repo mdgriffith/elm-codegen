@@ -1485,12 +1485,94 @@ applyType index annotation args =
                             mergedArgs.inferences
                             fnAnnotation.type_
                             mergedArgs.types
+                            |> Result.map resolveInferenceType
 
                     Err err ->
                         Err err
 
             else
                 Err []
+
+
+{-| After type application, eagerly substitute any type variables in
+the result type that are already resolved in the inference cache.
+
+This prevents internal type variables (like "number" in arithmetic
+operators) from leaking into the cache where they could collide
+with identically-named variables from sibling expressions.
+-}
+resolveInferenceType : Inference -> Inference
+resolveInferenceType inf =
+    { inf
+        | type_ = substituteType inf.inferences inf.type_
+    }
+
+
+substituteType : VariableCache -> Annotation.TypeAnnotation -> Annotation.TypeAnnotation
+substituteType cache type_ =
+    case type_ of
+        Annotation.GenericType varName ->
+            case Dict.get varName cache of
+                Just resolved ->
+                    -- Only substitute if the resolved type is concrete
+                    -- (not another GenericType that could chain further)
+                    case resolved of
+                        Annotation.GenericType _ ->
+                            type_
+
+                        _ ->
+                            resolved
+
+                Nothing ->
+                    type_
+
+        Annotation.Typed name vars ->
+            Annotation.Typed name
+                (List.map
+                    (\(Node.Node range inner) ->
+                        Node.Node range (substituteType cache inner)
+                    )
+                    vars
+                )
+
+        Annotation.FunctionTypeAnnotation (Node.Node rangeOne one) (Node.Node rangeTwo two) ->
+            Annotation.FunctionTypeAnnotation
+                (Node.Node rangeOne (substituteType cache one))
+                (Node.Node rangeTwo (substituteType cache two))
+
+        Annotation.Tupled nodes ->
+            Annotation.Tupled
+                (List.map
+                    (\(Node.Node range inner) ->
+                        Node.Node range (substituteType cache inner)
+                    )
+                    nodes
+                )
+
+        Annotation.Record fields ->
+            Annotation.Record
+                (List.map
+                    (\(Node.Node fieldRange ( name, Node.Node typeRange fieldType )) ->
+                        Node.Node fieldRange
+                            ( name, Node.Node typeRange (substituteType cache fieldType) )
+                    )
+                    fields
+                )
+
+        Annotation.GenericRecord baseName (Node.Node recordRange fields) ->
+            Annotation.GenericRecord baseName
+                (Node.Node recordRange
+                    (List.map
+                        (\(Node.Node fieldRange ( name, Node.Node typeRange fieldType )) ->
+                            Node.Node fieldRange
+                                ( name, Node.Node typeRange (substituteType cache fieldType) )
+                        )
+                        fields
+                    )
+                )
+
+        Annotation.Unit ->
+            type_
 
 
 mergeArgInferences :
