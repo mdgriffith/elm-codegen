@@ -59,11 +59,32 @@ The type `x -> Int` uses the lambda variable name `x` as a type variable, but `x
 
 In `functionReduced` (line 1679), the argument type is set to `var arg1Name` where `arg1Name` is the user-provided name ("r", "x"). This becomes the type variable in the annotation. But after beta reduction, the actual type constraints (extensible record, number) from the body are lost because `betaReduce` doesn't propagate them back to the annotation.
 
+## Also affects: Elm.unwrapper
+
+```elm
+Elm.unwrapper [] "Wrapper"
+```
+
+### Generated code
+```elm
+extract : val -> unwrapped
+extract (Wrapper val) = val
+```
+
+### Expected
+```elm
+extract : Wrapper -> Int
+extract (Wrapper val) = val
+```
+
+Same root cause — the lambda parameter names (`val`, `unwrapped`) become type variables instead of the actual types (`Wrapper`, `Int`).
+
 ## Affected patterns
 
 - `Elm.functionReduced "r" (\r -> Elm.get "field" r)` — record accessor
 - `Elm.functionReduced "x" (\x -> Elm.Op.plus x (Elm.int N))` — arithmetic
-- Any `functionReduced` where the body constrains the argument type
+- `Elm.unwrapper` — single-variant type extraction
+- Any lambda-producing function where the body constrains the argument type
 
 ## Note
 

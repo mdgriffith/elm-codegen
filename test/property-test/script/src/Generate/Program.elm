@@ -1592,6 +1592,18 @@ coverageBoostGenerator baseIndex =
                     (customTypeAdvancedGenerator baseIndex)
                     (aliasPatternGenerator baseIndex)
             )
+        |> Random.andThen
+            (\batch6 ->
+                Random.map5
+                    (\unwrapDecls divideDecls pipeLeftDecls declareRecordDecls bodyDecls ->
+                        batch6 ++ unwrapDecls ++ divideDecls ++ pipeLeftDecls ++ declareRecordDecls ++ bodyDecls
+                    )
+                    (unwrapGenerator baseIndex)
+                    (divideGenerator baseIndex)
+                    (pipeLeftGenerator baseIndex)
+                    (declareRecordBuilderGenerator baseIndex)
+                    (fnBodyGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -2401,6 +2413,118 @@ aliasPatternGenerator index =
                 Elm.tuple name person
             )
             |> .declaration
+        ]
+
+
+
+{-| Elm.unwrap / Elm.unwrapper — exercises single-variant type
+pattern matching and lambda generation. Uses a custom type we
+define in the same module.
+-}
+unwrapGenerator : Int -> Random.Generator (List Elm.Declaration)
+unwrapGenerator index =
+    let
+        wrapperName =
+            "Wrapper" ++ String.fromInt index
+
+        typeDef =
+            Elm.customType wrapperName
+                [ Elm.variantWith wrapperName [ Type.int ] ]
+                |> Elm.exposeConstructor
+
+        -- Use unwrapper to create the extraction function
+        extractDecl =
+            Elm.declaration ("extract" ++ String.fromInt index)
+                (Elm.unwrapper [] wrapperName)
+
+        -- Use unwrap to apply it
+        unwrapDecl =
+            Elm.declaration ("unwrapped" ++ String.fromInt index)
+                (Elm.unwrap [] wrapperName
+                    (Elm.apply
+                        (Elm.value
+                            { importFrom = []
+                            , name = wrapperName
+                            , annotation = Just (Type.function [ Type.int ] (Type.named [] wrapperName))
+                            }
+                        )
+                        [ Elm.int 42 ]
+                    )
+                )
+    in
+    Random.constant [ typeDef, extractDecl, unwrapDecl ]
+
+
+{-| Elm.Op.divide — float division, 0% covered. -}
+divideGenerator : Int -> Random.Generator (List Elm.Declaration)
+divideGenerator index =
+    Random.constant
+        [ Elm.declaration ("divided" ++ String.fromInt index)
+            (Elm.Op.divide (Elm.float 10.0) (Elm.float 3.0))
+        ]
+
+
+{-| Elm.Op.pipeLeft — left pipe operator, 0% covered.
+Has the same rendering concerns as pipe (right operand parens).
+-}
+pipeLeftGenerator : Int -> Random.Generator (List Elm.Declaration)
+pipeLeftGenerator index =
+    Random.constant
+        [ Elm.declaration ("pipeLeft" ++ String.fromInt index)
+            (Elm.Op.pipeLeft
+                (Elm.fn (Elm.Arg.var "x") (\x -> x))
+                (Elm.string "hello")
+            )
+        ]
+
+
+{-| Declare.record + withField + buildRecord — the record builder
+pattern. Exercises field ordering and record constructor generation.
+-}
+declareRecordBuilderGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareRecordBuilderGenerator index =
+    let
+        recName =
+            "BuiltRecord" ++ String.fromInt index
+
+        builtRecord =
+            Elm.Declare.record recName
+                |> Elm.Declare.withField "name" .name Type.string
+                |> Elm.Declare.withField "age" .age Type.int
+                |> Elm.Declare.buildRecord
+
+        -- Use the record maker
+        makeDecl =
+            Elm.declaration ("makeBuiltRec" ++ String.fromInt index)
+                (builtRecord.make
+                    { name = Elm.string "Alice"
+                    , age = Elm.int 30
+                    }
+                )
+    in
+    Random.constant
+        [ builtRecord.declaration
+        , makeDecl
+        ]
+
+
+{-| Elm.body / Declare.fnBody — the custom body renderer for
+function builders. Exercises a different code path than fnDone.
+-}
+fnBodyGenerator : Int -> Random.Generator (List Elm.Declaration)
+fnBodyGenerator index =
+    Random.constant
+        [ -- Elm.body on a fnBuilder — body receives the accumulated
+          -- result of applying args through the builder function
+          Elm.declaration ("bodyFn" ++ String.fromInt index)
+            (Elm.fnBuilder (\a b -> ( a, b ))
+                |> Elm.fnArg (Elm.Arg.var "x")
+                |> Elm.fnArg (Elm.Arg.var "y")
+                |> Elm.body
+                    (\( x, y ) ->
+                        Elm.tuple x y
+                    )
+            )
         ]
 
 
