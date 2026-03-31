@@ -1568,6 +1568,18 @@ coverageBoostGenerator baseIndex =
                     (appendableOperatorGenerator baseIndex)
                     (fnWithTypedArgsGenerator baseIndex)
             )
+        |> Random.andThen
+            (\batch4 ->
+                Random.map5
+                    (\betaReduceDecls dynamicFnDecls complexUpdateDecls genericFieldDecls listAppendDecls ->
+                        batch4 ++ betaReduceDecls ++ dynamicFnDecls ++ complexUpdateDecls ++ genericFieldDecls ++ listAppendDecls
+                    )
+                    (betaReduceGenerator baseIndex)
+                    (dynamicFunctionGenerator baseIndex)
+                    (complexRecordUpdateGenerator baseIndex)
+                    (genericRecordFieldAccessGenerator baseIndex)
+                    (listAppendGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -2072,6 +2084,185 @@ fnWithTypedArgsGenerator index =
                                         ]
                                     )
                         )
+            )
+
+
+
+{-| Elm.functionReduced — triggers betaReduce.
+Several patterns to exercise different reduction paths:
+1. Record accessor: \r -> r.field  →  .field
+2. Identity: \x -> x  →  identity-like
+3. Partial application: \x -> f x  →  f
+-}
+betaReduceGenerator : Int -> Random.Generator (List Elm.Declaration)
+betaReduceGenerator index =
+    Random.constant
+        [ -- Record accessor reduction: \r -> r.field → .field
+          Elm.declaration ("betaAccessor" ++ String.fromInt index)
+            (Elm.functionReduced "r"
+                (\r -> Elm.get "name" r)
+            )
+        , -- Identity-like reduction: \x -> x
+          Elm.declaration ("betaIdentity" ++ String.fromInt index)
+            (Elm.functionReduced "x" (\x -> x))
+        , -- Partial application: \x -> Elm.Op.plus x (Elm.int 1)
+          Elm.declaration ("betaPartial" ++ String.fromInt index)
+            (Elm.functionReduced "x"
+                (\x -> Elm.Op.plus x (Elm.int 1))
+            )
+        ]
+
+
+{-| Elm.function (dynamic arg list) — 0% covered.
+Exercises function with explicit type annotations and variable arity.
+-}
+dynamicFunctionGenerator : Int -> Random.Generator (List Elm.Declaration)
+dynamicFunctionGenerator index =
+    Random.constant
+        [ -- 1-arg function with type annotation
+          Elm.declaration ("dynFn1_" ++ String.fromInt index)
+            (Elm.function
+                [ ( "x", Just Type.int ) ]
+                (\args ->
+                    case args of
+                        [ x ] ->
+                            x
+
+                        _ ->
+                            Elm.unit
+                )
+            )
+        , -- 2-arg function with mixed annotations
+          Elm.declaration ("dynFn2_" ++ String.fromInt index)
+            (Elm.function
+                [ ( "name", Just Type.string )
+                , ( "age", Just Type.int )
+                ]
+                (\args ->
+                    case args of
+                        [ name, _ ] ->
+                            name
+
+                        _ ->
+                            Elm.unit
+                )
+            )
+        , -- 0-arg function (edge case)
+          Elm.declaration ("dynFn0_" ++ String.fromInt index)
+            (Elm.function []
+                (\_ -> Elm.string "no args")
+            )
+        , -- Function with no type annotation (inferred)
+          Elm.declaration ("dynFnInferred_" ++ String.fromInt index)
+            (Elm.function
+                [ ( "a", Nothing )
+                , ( "b", Nothing )
+                ]
+                (\args ->
+                    case args of
+                        [ a, _ ] ->
+                            a
+
+                        _ ->
+                            Elm.unit
+                )
+            )
+        ]
+
+
+{-| updateRecord slow path — when the record expression is complex
+(not a simple variable), updateRecord creates a let binding.
+-}
+complexRecordUpdateGenerator : Int -> Random.Generator (List Elm.Declaration)
+complexRecordUpdateGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                Random.map2
+                    (\val1 val2 ->
+                        [ Elm.declaration ("complexUpdate" ++ String.fromInt index)
+                            (Elm.updateRecord
+                                [ ( "alpha", val2.expr ) ]
+                                -- Complex expression (not a simple var) triggers
+                                -- the let-binding slow path in updateRecord
+                                (Elm.ifThen (Elm.bool True)
+                                    (Elm.record
+                                        [ ( "alpha", val1.expr )
+                                        , ( "beta", Elm.int 0 )
+                                        ]
+                                    )
+                                    (Elm.record
+                                        [ ( "alpha", val1.expr )
+                                        , ( "beta", Elm.int 1 )
+                                        ]
+                                    )
+                                )
+                            )
+                        ]
+                    )
+                    (expressionGenerator 0 t)
+                    (expressionGenerator 0 t)
+            )
+
+
+{-| Field access on a record with a type annotation.
+Exercises resolveField on typed records.
+Also exercises Elm.fn with record arg + field access (triggers
+inferRecordField when the function arg is generic).
+-}
+genericRecordFieldAccessGenerator : Int -> Random.Generator (List Elm.Declaration)
+genericRecordFieldAccessGenerator index =
+    Random.constant
+        [ -- Access field on an inline record with type annotation
+          Elm.declaration ("genFieldAccess" ++ String.fromInt index)
+            (Elm.get "name"
+                (Elm.record
+                    [ ( "name", Elm.string "test" )
+                    , ( "age", Elm.int 25 )
+                    ]
+                    |> Elm.withType
+                        (Type.record
+                            [ ( "name", Type.string )
+                            , ( "age", Type.int )
+                            ]
+                        )
+                )
+            )
+        , -- Function that accesses a field on its argument
+          -- This exercises inferRecordField when arg type is generic
+          Elm.Declare.fn ("fieldAccessFn" ++ String.fromInt index)
+            (Elm.Arg.var "rec")
+            (\rec -> Elm.get "name" rec)
+            |> .declaration
+        ]
+
+
+{-| List append to exercise isAppendable path.
+Also exercises list type annotations.
+-}
+listAppendGenerator : Int -> Random.Generator (List Elm.Declaration)
+listAppendGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\elemType ->
+                Random.map2
+                    (\item1 item2 ->
+                        [ -- List ++ List
+                          Elm.declaration ("listAppend" ++ String.fromInt index)
+                            (Elm.Op.append
+                                (Elm.list [ item1.expr ])
+                                (Elm.list [ item2.expr ])
+                            )
+                        , -- String ++ String (appendable)
+                          Elm.declaration ("strAppend" ++ String.fromInt index)
+                            (Elm.Op.append
+                                (Elm.string "hello")
+                                (Elm.string "world")
+                            )
+                        ]
+                    )
+                    (expressionGenerator 0 elemType)
+                    (expressionGenerator 0 elemType)
             )
 
 
