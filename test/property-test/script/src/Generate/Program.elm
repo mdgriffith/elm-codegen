@@ -1580,6 +1580,18 @@ coverageBoostGenerator baseIndex =
                     (genericRecordFieldAccessGenerator baseIndex)
                     (listAppendGenerator baseIndex)
             )
+        |> Random.andThen
+            (\batch5 ->
+                Random.map5
+                    (\hexDecls literalPatternDecls portDecls customTypeAdvDecls aliasPatternDecls ->
+                        batch5 ++ hexDecls ++ literalPatternDecls ++ portDecls ++ customTypeAdvDecls ++ aliasPatternDecls
+                    )
+                    (hexLiteralGenerator baseIndex)
+                    (literalPatternCaseGenerator baseIndex)
+                    (portGenerator baseIndex)
+                    (customTypeAdvancedGenerator baseIndex)
+                    (aliasPatternGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -2264,6 +2276,132 @@ listAppendGenerator index =
                     (expressionGenerator 0 elemType)
                     (expressionGenerator 0 elemType)
             )
+
+
+
+{-| Elm.hex — exercises hex literal rendering (toHexString in Write.elm). -}
+hexLiteralGenerator : Int -> Random.Generator (List Elm.Declaration)
+hexLiteralGenerator index =
+    Random.int 0 65535
+        |> Random.map
+            (\n ->
+                [ Elm.declaration ("hexVal" ++ String.fromInt index) (Elm.hex n)
+                ]
+            )
+
+
+{-| Case expressions with literal patterns — exercises Elm.Arg.unit,
+Elm.Arg.int, Elm.Arg.char which are all 0% covered.
+-}
+literalPatternCaseGenerator : Int -> Random.Generator (List Elm.Declaration)
+literalPatternCaseGenerator index =
+    Random.constant
+        [ -- Unit pattern
+          Elm.declaration ("unitCase" ++ String.fromInt index)
+            (Elm.Case.custom Elm.unit
+                Type.unit
+                [ Elm.Case.branch Elm.Arg.unit
+                    (\_ -> Elm.string "unit matched")
+                ]
+            )
+        , -- Int literal pattern
+          Elm.declaration ("intCase" ++ String.fromInt index)
+            (Elm.Case.custom (Elm.int 42)
+                Type.int
+                [ Elm.Case.branch (Elm.Arg.int 42)
+                    (\_ -> Elm.string "forty-two")
+                , Elm.Case.branch (Elm.Arg.var "other")
+                    (\_ -> Elm.string "something else")
+                ]
+            )
+        , -- Char literal pattern
+          Elm.declaration ("charCase" ++ String.fromInt index)
+            (Elm.Case.custom (Elm.char 'a')
+                Type.char
+                [ Elm.Case.branch (Elm.Arg.char 'a')
+                    (\_ -> Elm.bool True)
+                , Elm.Case.branch (Elm.Arg.var "other")
+                    (\_ -> Elm.bool False)
+                ]
+            )
+        ]
+
+
+{-| Port declarations — exercises portIncoming, portOutgoing,
+and prettyPortDeclaration in Write.elm. Note: ports make the
+module a port module which changes the module declaration.
+-}
+portGenerator : Int -> Random.Generator (List Elm.Declaration)
+portGenerator index =
+    Random.constant
+        [ Elm.portIncoming ("receive" ++ String.fromInt index)
+            Type.string
+        , Elm.portOutgoing ("send" ++ String.fromInt index)
+            Type.string
+        ]
+
+
+{-| Declare.customTypeAdvanced with variant0/variant1 + make_ + case_.
+Exercises the entire custom type builder pipeline which is 0% covered.
+-}
+customTypeAdvancedGenerator : Int -> Random.Generator (List Elm.Declaration)
+customTypeAdvancedGenerator index =
+    let
+        typeName =
+            "AdvType" ++ String.fromInt index
+
+        advType =
+            Elm.Declare.customTypeAdvanced typeName
+                { exposeConstructor = True }
+                (\none some -> { none = none, some = some })
+                |> Elm.Declare.variant0 ("None" ++ String.fromInt index) .none
+                |> Elm.Declare.variant1 ("Some" ++ String.fromInt index) .some Type.int
+                |> Elm.Declare.finishCustomType
+
+        -- Use make_ to construct values
+        makeNone =
+            Elm.declaration ("makeNone" ++ String.fromInt index)
+                advType.make_.none
+
+        makeSome =
+            Elm.declaration ("makeSome" ++ String.fromInt index)
+                (advType.make_.some (Elm.int 42))
+
+        -- Use case_ to pattern match
+        caseExpr =
+            Elm.declaration ("matchAdv" ++ String.fromInt index)
+                (advType.case_ (advType.make_.some (Elm.int 1))
+                    { none = Elm.int 0
+                    , some = \val -> val
+                    }
+                )
+    in
+    Random.constant
+        [ advType.declaration
+        , makeNone
+        , makeSome
+        , caseExpr
+        ]
+
+
+{-| Elm.Arg.aliasAs — pattern alias like `pattern as name`.
+Exercises the aliasAs path in Internal.Arg.
+-}
+aliasPatternGenerator : Int -> Random.Generator (List Elm.Declaration)
+aliasPatternGenerator index =
+    Random.constant
+        [ Elm.Declare.fn ("aliasPattern" ++ String.fromInt index)
+            (Elm.Arg.record (\a b -> ( a, b ))
+                |> Elm.Arg.field "name"
+                |> Elm.Arg.field "age"
+                |> Elm.Arg.aliasAs "person"
+            )
+            (\( ( name, _ ), person ) ->
+                -- Use both the destructured field and the alias
+                Elm.tuple name person
+            )
+            |> .declaration
+        ]
 
 
 
