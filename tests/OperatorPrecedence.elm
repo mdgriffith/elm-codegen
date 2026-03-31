@@ -1,7 +1,8 @@
-module OperatorPrecedence exposing (get, operators)
+module OperatorPrecedence exposing (get, operators, pipes)
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Arg
 import Elm.Expect
 import Elm.Op exposing (equal, multiply, or, plus)
 import Test exposing (Test, describe, test)
@@ -110,4 +111,26 @@ operators =
             \_ ->
                 or (or two three) five
                     |> Elm.Expect.renderedAs "(2 || 3) || 5"
+        ]
+
+
+pipes : Test
+pipes =
+    describe "|> with lambdas"
+        [ test "Pipe into lambda is parenthesized" <|
+            \_ ->
+                Elm.string "hello"
+                    |> Elm.Op.pipe
+                        (Elm.fn (Elm.Arg.var "x") (\x -> x))
+                    |> Elm.Expect.renderedAs
+                        """"hello" |> (\\x -> x)"""
+        , test "Chained pipes into lambdas are each parenthesized" <|
+            \_ ->
+                Elm.string "hello"
+                    |> Elm.Op.pipe
+                        (Elm.fn (Elm.Arg.var "x") (\x -> x))
+                    |> Elm.Op.pipe
+                        (Elm.fn (Elm.Arg.var "y") (\y -> y))
+                    |> Elm.Expect.renderedAs
+                        """"hello" |> (\\x -> x) |> (\\y -> y)"""
         ]

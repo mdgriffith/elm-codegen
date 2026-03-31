@@ -1063,8 +1063,17 @@ prettyOperatorApplication aliases indent symbol dir (Node _ exprl) (Node _ exprr
         ( left, breakLeft ) =
             prettyExpressionInner aliases { precedence = lprec } indent exprl
 
+        -- Lambda expressions on the right side of operators like |>
+        -- need explicit parentheses because `a |> \x -> b |> \y -> c`
+        -- is ambiguous — the second |> could be inside the lambda body.
         ( right, breakRight ) =
-            prettyExpressionInner aliases { precedence = rprec } indent exprr
+            case exprr of
+                LambdaExpression _ ->
+                    prettyExpressionInner aliases { precedence = rprec } indent exprr
+                        |> Tuple.mapFirst Pretty.parens
+
+                _ ->
+                    prettyExpressionInner aliases { precedence = rprec } indent exprr
 
         alwaysBreak : Bool
         alwaysBreak =
