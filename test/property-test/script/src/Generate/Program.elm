@@ -1557,6 +1557,17 @@ coverageBoostGenerator baseIndex =
                     (declareCustomTypeGenerator baseIndex)
                     (declareModuleGenerator baseIndex)
             )
+        |> Random.andThen
+            (\batch3 ->
+                Random.map4
+                    (\recordAliasFieldAccess recordUpdateOnAlias appendableOps fnWithTypedArgs ->
+                        batch3 ++ recordAliasFieldAccess ++ recordUpdateOnAlias ++ appendableOps ++ fnWithTypedArgs
+                    )
+                    (recordAliasFieldAccessGenerator baseIndex)
+                    (recordUpdateOnAliasGenerator baseIndex)
+                    (appendableOperatorGenerator baseIndex)
+                    (fnWithTypedArgsGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -1936,6 +1947,130 @@ declareModuleGenerator index =
                                     Elm.Declare.include mod
                             in
                             [ includeDecl ]
+                        )
+            )
+
+
+
+{-| Record field access on a record with a type alias annotation.
+Exercises inferRecordField, getField, unifiableFields, and the
+alias resolution paths in Internal.Compiler.
+-}
+recordAliasFieldAccessGenerator : Int -> Random.Generator (List Elm.Declaration)
+recordAliasFieldAccessGenerator index =
+    Random.map2
+        (\type1 type2 ->
+            Random.map2
+                (\val1 val2 ->
+                    let
+                        aliasName =
+                            "FieldAlias" ++ String.fromInt index
+
+                        aliasDef =
+                            Elm.alias aliasName
+                                (Type.record
+                                    [ ( "name", typeAnnotation type1 )
+                                    , ( "value", typeAnnotation type2 )
+                                    ]
+                                )
+
+                        recordVal =
+                            Elm.record
+                                [ ( "name", val1.expr )
+                                , ( "value", val2.expr )
+                                ]
+                                |> Elm.withType (Type.named [] aliasName)
+
+                        -- Access a field through the alias
+                        fieldAccess =
+                            Elm.declaration ("aliasField" ++ String.fromInt index)
+                                (Elm.get "name" recordVal)
+                    in
+                    [ aliasDef, fieldAccess ]
+                )
+                (expressionGenerator 0 type1)
+                (expressionGenerator 0 type2)
+        )
+        simpleTypeGenerator
+        simpleTypeGenerator
+        |> Random.andThen identity
+
+
+{-| Record update on an aliased record.
+Exercises updateRecord + alias resolution paths.
+-}
+recordUpdateOnAliasGenerator : Int -> Random.Generator (List Elm.Declaration)
+recordUpdateOnAliasGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                Random.map2
+                    (\origVal newVal ->
+                        let
+                            aliasName =
+                                "UpdAlias" ++ String.fromInt index
+
+                            aliasDef =
+                                Elm.alias aliasName
+                                    (Type.record
+                                        [ ( "alpha", typeAnnotation t )
+                                        , ( "beta", Type.int )
+                                        ]
+                                    )
+
+                            updated =
+                                Elm.updateRecord
+                                    [ ( "alpha", newVal.expr ) ]
+                                    (Elm.record
+                                        [ ( "alpha", origVal.expr )
+                                        , ( "beta", Elm.int 0 )
+                                        ]
+                                    )
+                        in
+                        [ aliasDef
+                        , Elm.declaration ("updAlias" ++ String.fromInt index) updated
+                        ]
+                    )
+                    (expressionGenerator 0 t)
+                    (expressionGenerator 0 t)
+            )
+
+
+{-| Appendable operators — exercises Elm.Op.append with list operands
+which hits the isAppendable path in Internal.Compiler.
+-}
+appendableOperatorGenerator : Int -> Random.Generator (List Elm.Declaration)
+appendableOperatorGenerator index =
+    Random.constant
+        [ Elm.declaration ("appendList" ++ String.fromInt index)
+            (Elm.Op.append
+                (Elm.list [ Elm.int 1, Elm.int 2 ])
+                (Elm.list [ Elm.int 3 ])
+            )
+        ]
+
+
+{-| Functions with explicit type annotations on arguments.
+Exercises Elm.Arg.varWith and typed function signatures.
+-}
+fnWithTypedArgsGenerator : Int -> Random.Generator (List Elm.Declaration)
+fnWithTypedArgsGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\argType ->
+                simpleTypeGenerator
+                    |> Random.andThen
+                        (\returnType ->
+                            expressionGenerator 0 returnType
+                                |> Random.map
+                                    (\body ->
+                                        [ Elm.Declare.fn
+                                            ("typedArgFn" ++ String.fromInt index)
+                                            (Elm.Arg.varWith "input" (typeAnnotation argType))
+                                            (\_ -> body.expr)
+                                            |> .declaration
+                                        ]
+                                    )
                         )
             )
 
