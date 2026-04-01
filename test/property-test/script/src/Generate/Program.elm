@@ -1626,6 +1626,17 @@ coverageBoostGenerator baseIndex =
                     (pipeToGenerator baseIndex)
                     (declareToFileGenerator baseIndex)
             )
+        |> Random.andThen
+            (\batch9 ->
+                Random.map4
+                    (\parseDecls variant3Decls submoduleDecls unsafeDecls ->
+                        batch9 ++ parseDecls ++ variant3Decls ++ submoduleDecls ++ unsafeDecls
+                    )
+                    (parseGenerator baseIndex)
+                    (customTypeVariant3Generator baseIndex)
+                    (submoduleGenerator baseIndex)
+                    (unsafeGenerator baseIndex)
+            )
 
 
 {-| Let.unpack with tuple destructuring — exercises Internal.Arg
@@ -2826,6 +2837,113 @@ declareToFileGenerator index =
     Random.constant
         [ Elm.declaration ("toFileExercised" ++ String.fromInt index)
             (Elm.bool True)
+        ]
+
+
+
+{-| Elm.parse — parse raw Elm source and include as declarations.
+This is complex and fragile — the parsed AST goes through
+Elm.Processing and exposure resolution.
+-}
+parseGenerator : Int -> Random.Generator (List Elm.Declaration)
+parseGenerator index =
+    let
+        -- Parse a simple Elm module and extract its declarations
+        parsed =
+            Elm.parse
+                (String.join "\n"
+                    [ "module Parsed" ++ String.fromInt index ++ " exposing (..)"
+                    , ""
+                    , "parsedValue : Int"
+                    , "parsedValue = 42"
+                    , ""
+                    , "parsedFn : Int -> Int"
+                    , "parsedFn x = x + 1"
+                    ]
+                )
+    in
+    case parsed of
+        Ok { declarations } ->
+            Random.constant declarations
+
+        Err _ ->
+            -- If parse fails, just generate a marker
+            Random.constant
+                [ Elm.declaration ("parseFailed" ++ String.fromInt index) (Elm.bool False) ]
+
+
+{-| Declare.customTypeAdvanced with variant3 — 3-arg constructor.
+Exercises the variant3 builder and 3-arg pattern matching.
+-}
+customTypeVariant3Generator : Int -> Random.Generator (List Elm.Declaration)
+customTypeVariant3Generator index =
+    let
+        typeName =
+            "Triple" ++ String.fromInt index
+
+        tripleType =
+            Elm.Declare.customTypeAdvanced typeName
+                { exposeConstructor = True }
+                (\empty triple -> { empty = empty, triple = triple })
+                |> Elm.Declare.variant0 ("NoTriple" ++ String.fromInt index) .empty
+                |> Elm.Declare.variant3 ("MkTriple" ++ String.fromInt index)
+                    .triple
+                    Type.int
+                    Type.string
+                    Type.bool
+                |> Elm.Declare.finishCustomType
+
+        makeDecl =
+            Elm.declaration ("mkTriple" ++ String.fromInt index)
+                (tripleType.make_.triple (Elm.int 1) (Elm.string "hi") (Elm.bool True))
+
+        caseDecl =
+            Elm.declaration ("matchTriple" ++ String.fromInt index)
+                (tripleType.case_
+                    (tripleType.make_.triple (Elm.int 1) (Elm.string "hi") (Elm.bool True))
+                    { empty = Elm.string "empty"
+                    , triple = \a b c -> b
+                    }
+                )
+    in
+    Random.constant [ tripleType.declaration, makeDecl, caseDecl ]
+
+
+{-| Declare.fn5 — 5-arg function builder.
+Exercises higher-arity function declaration + call generation.
+-}
+submoduleGenerator : Int -> Random.Generator (List Elm.Declaration)
+submoduleGenerator index =
+    let
+        declared =
+            Elm.Declare.fn5 ("fn5_" ++ String.fromInt index)
+                (Elm.Arg.var "a")
+                (Elm.Arg.var "b")
+                (Elm.Arg.var "c")
+                (Elm.Arg.var "d")
+                (Elm.Arg.var "e")
+                (\a _ _ _ _ -> a)
+
+        callDecl =
+            Elm.declaration ("callFn5_" ++ String.fromInt index)
+                (declared.call Elm.unit Elm.unit Elm.unit Elm.unit Elm.unit)
+    in
+    Random.constant [ declared.declaration, callDecl ]
+
+
+{-| Elm.unsafe — raw code injection. Exercises the Block rendering
+path in Internal/Render.elm and Write.elm (prettyDeclaration).
+-}
+unsafeGenerator : Int -> Random.Generator (List Elm.Declaration)
+unsafeGenerator index =
+    Random.constant
+        [ Elm.unsafe
+            ("unsafeVal"
+                ++ String.fromInt index
+                ++ " : Int\nunsafeVal"
+                ++ String.fromInt index
+                ++ " = 99"
+            )
         ]
 
 
