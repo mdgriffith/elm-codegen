@@ -6,6 +6,7 @@ Random program generator for elm-codegen. Generates random Elm files using elm-c
 
 ```sh
 cd test/property-test
+npm install
 SEED=42 COUNT=10 bash run.sh
 ```
 
@@ -13,7 +14,7 @@ SEED=42 COUNT=10 bash run.sh
 
 ```sh
 cd test/property-test/script
-elm-pages run src/GenerateProgram.elm -- --seed 42 --count 20
+npx elm-pages run src/GenerateProgram.elm -- --seed 42 --count 20
 ```
 
 ## Code coverage
@@ -22,7 +23,7 @@ The `--coverage-include ../../../src` flag limits instrumentation to elm-codegen
 
 ```sh
 cd test/property-test/script
-elm-pages run --coverage --coverage-include ../../../src src/GenerateProgram.elm -- --seed 42 --count 10
+npx elm-pages run --coverage --coverage-include ../../../src src/GenerateProgram.elm -- --seed 42 --count 10
 ```
 
 Coverage output is written to `script/coverage/lcov.info`.

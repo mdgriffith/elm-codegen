@@ -3,13 +3,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "generate": "node generate.mjs",
+    "generate": "cd script && npx elm-pages run src/GenerateProgram.elm",
     "test": "node harness.mjs",
     "property-test": "sh run.sh"
   },
   "devDependencies": {
     "elm": "^0.19.1-6",
     "elm-codegen": "^0.6.3",
+    "elm-pages": "^3.3.4",
     "elm-review": "^2.12.0"
   }
 }

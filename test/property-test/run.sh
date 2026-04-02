@@ -41,7 +41,7 @@ fi
 # Generate programs using elm-pages script
 echo "Generating $COUNT test programs with seed $SEED..."
 cd script
-elm-pages run src/GenerateProgram.elm -- --seed "$SEED" --count "$COUNT"
+npx elm-pages run src/GenerateProgram.elm -- --seed "$SEED" --count "$COUNT"
 cd ..
 echo ""
 
