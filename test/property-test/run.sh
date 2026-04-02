@@ -10,18 +10,6 @@ echo "=== elm-codegen Property Tests ==="
 echo "Seed: $SEED  Count: $COUNT"
 echo ""
 
-# Install npm deps if needed
-if [ ! -d "node_modules" ]; then
-    echo "Installing dependencies..."
-    npm install
-fi
-
-# Generate codegen helpers if needed
-if [ ! -d "codegen/Gen" ]; then
-    echo "Generating codegen helpers..."
-    npx elm-codegen install
-fi
-
 # Clean previous generated files, preserve elm.json
 rm -rf generated/src generated/manifest.json generated/elm-stuff
 mkdir -p generated/src
@@ -50,9 +38,11 @@ if [ ! -f "generated/elm.json" ]; then
 ELMJSON
 fi
 
-# Generate programs
+# Generate programs using elm-pages script
 echo "Generating $COUNT test programs with seed $SEED..."
-node generate.mjs --seed "$SEED" --count "$COUNT"
+cd script
+elm-pages run src/GenerateProgram.elm -- --seed "$SEED" --count "$COUNT"
+cd ..
 echo ""
 
 # Run the harness (compile + elm-review)
