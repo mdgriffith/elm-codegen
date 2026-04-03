@@ -51,14 +51,21 @@ singleFileGenerator index =
     in
     Random.map5
         (\literals records functions customTypes advanced ->
-            Elm.file [ moduleName ]
-                (literals ++ records ++ functions ++ customTypes ++ advanced)
+            literals ++ records ++ functions ++ customTypes ++ advanced
         )
         (literalDeclarationsGenerator index)
         (recordDeclarationsGenerator index)
         (functionDeclarationsGenerator index)
         (customTypeDeclarationsGenerator index)
         (advancedDeclarationsGenerator index)
+        |> Random.andThen
+            (\baseDecls ->
+                coverageBoostGenerator index
+                    |> Random.map
+                        (\extraDecls ->
+                            Elm.file [ moduleName ] (baseDecls ++ extraDecls)
+                        )
+            )
 
 
 
@@ -1504,6 +1511,1440 @@ multiFileGenerator index =
                                     )
                         )
             )
+
+
+
+-- ============================================================
+-- COVERAGE BOOST: exercise uncovered elm-codegen APIs
+-- ============================================================
+
+
+{-| Additional declarations that exercise elm-codegen APIs not
+covered by the main generators. Guided by coverage analysis.
+-}
+coverageBoostGenerator : Int -> Random.Generator (List Elm.Declaration)
+coverageBoostGenerator baseIndex =
+    Random.map5
+        (\letUnpackDecls exprLambdaDecls exposedDecls docDecls commentDecls ->
+            letUnpackDecls ++ exprLambdaDecls ++ exposedDecls ++ docDecls ++ commentDecls
+        )
+        (letUnpackGenerator baseIndex)
+        (exprLambdaGenerator baseIndex)
+        (exposedDeclGenerator baseIndex)
+        (documentedDeclGenerator baseIndex)
+        (Random.constant [ Elm.comment "Generated comment" ])
+        |> Random.andThen
+            (\batch1 ->
+                Random.map5
+                    (\letFnDecls groupDecls triplePatternDecls applyDecls annotationDecls ->
+                        batch1 ++ letFnDecls ++ groupDecls ++ triplePatternDecls ++ applyDecls ++ annotationDecls
+                    )
+                    (letFnGenerator baseIndex)
+                    (groupGenerator baseIndex)
+                    (triplePatternFnGenerator baseIndex)
+                    (applyWithAnnotationGenerator baseIndex)
+                    (annotationExerciseGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch2 ->
+                Random.map5
+                    (\declareValueDecls declareFn4Decls declareAliasDecls declareCustomTypeDecls declareModuleDecls ->
+                        batch2 ++ declareValueDecls ++ declareFn4Decls ++ declareAliasDecls ++ declareCustomTypeDecls ++ declareModuleDecls
+                    )
+                    (declareValueGenerator baseIndex)
+                    (declareFn4Generator baseIndex)
+                    (declareAliasGenerator baseIndex)
+                    (declareCustomTypeGenerator baseIndex)
+                    (declareModuleGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch3 ->
+                Random.map4
+                    (\recordAliasFieldAccess recordUpdateOnAlias appendableOps fnWithTypedArgs ->
+                        batch3 ++ recordAliasFieldAccess ++ recordUpdateOnAlias ++ appendableOps ++ fnWithTypedArgs
+                    )
+                    (recordAliasFieldAccessGenerator baseIndex)
+                    (recordUpdateOnAliasGenerator baseIndex)
+                    (appendableOperatorGenerator baseIndex)
+                    (fnWithTypedArgsGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch4 ->
+                Random.map5
+                    (\betaReduceDecls dynamicFnDecls complexUpdateDecls genericFieldDecls listAppendDecls ->
+                        batch4 ++ betaReduceDecls ++ dynamicFnDecls ++ complexUpdateDecls ++ genericFieldDecls ++ listAppendDecls
+                    )
+                    (betaReduceGenerator baseIndex)
+                    (dynamicFunctionGenerator baseIndex)
+                    (complexRecordUpdateGenerator baseIndex)
+                    (genericRecordFieldAccessGenerator baseIndex)
+                    (listAppendGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch5 ->
+                Random.map5
+                    (\hexDecls literalPatternDecls portDecls customTypeAdvDecls aliasPatternDecls ->
+                        batch5 ++ hexDecls ++ literalPatternDecls ++ portDecls ++ customTypeAdvDecls ++ aliasPatternDecls
+                    )
+                    (hexLiteralGenerator baseIndex)
+                    (literalPatternCaseGenerator baseIndex)
+                    (portGenerator baseIndex)
+                    (customTypeAdvancedGenerator baseIndex)
+                    (aliasPatternGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch6 ->
+                Random.map5
+                    (\unwrapDecls divideDecls pipeLeftDecls declareRecordDecls bodyDecls ->
+                        batch6 ++ unwrapDecls ++ divideDecls ++ pipeLeftDecls ++ declareRecordDecls ++ bodyDecls
+                    )
+                    (unwrapGenerator baseIndex)
+                    (divideGenerator baseIndex)
+                    (pipeLeftGenerator baseIndex)
+                    (declareRecordBuilderGenerator baseIndex)
+                    (fnBodyGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch7 ->
+                Random.map3
+                    (\variant2Decls namedTypeAliasDecls recordUnifyDecls ->
+                        batch7 ++ variant2Decls ++ namedTypeAliasDecls ++ recordUnifyDecls
+                    )
+                    (customTypeVariant2Generator baseIndex)
+                    (namedTypeAliasGenerator baseIndex)
+                    (recordFieldUnifyGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch8 ->
+                Random.map5
+                    (\extensibleDecls fileWithDecls listPatternDecls pipeToDecls toFileDecls ->
+                        batch8 ++ extensibleDecls ++ fileWithDecls ++ listPatternDecls ++ pipeToDecls ++ toFileDecls
+                    )
+                    (extensibleRecordGenerator baseIndex)
+                    (fileWithGenerator baseIndex)
+                    (listPatternGenerator baseIndex)
+                    (pipeToGenerator baseIndex)
+                    (declareToFileGenerator baseIndex)
+            )
+        |> Random.andThen
+            (\batch9 ->
+                Random.map4
+                    (\parseDecls variant3Decls submoduleDecls unsafeDecls ->
+                        batch9 ++ parseDecls ++ variant3Decls ++ submoduleDecls ++ unsafeDecls
+                    )
+                    (parseGenerator baseIndex)
+                    (customTypeVariant3Generator baseIndex)
+                    (submoduleGenerator baseIndex)
+                    (unsafeGenerator baseIndex)
+            )
+
+
+{-| Let.unpack with tuple destructuring — exercises Internal.Arg
+and Let.unpack code paths that are otherwise 0% covered.
+-}
+letUnpackGenerator : Int -> Random.Generator (List Elm.Declaration)
+letUnpackGenerator index =
+    Random.map2
+        (\type1 type2 ->
+            Random.map2
+                (\val1 val2 ->
+                    [ Elm.declaration ("letUnpack" ++ String.fromInt index)
+                        (Elm.Let.letIn
+                            (\( first, second ) ->
+                                first
+                            )
+                            |> Elm.Let.unpack
+                                (Elm.Arg.tuple
+                                    (Elm.Arg.var "first")
+                                    (Elm.Arg.var "second")
+                                )
+                                (Elm.tuple val1.expr val2.expr)
+                            |> Elm.Let.toExpression
+                        )
+                    ]
+                )
+                (expressionGenerator 0 type1)
+                (expressionGenerator 0 type2)
+        )
+        simpleTypeGenerator
+        simpleTypeGenerator
+        |> Random.andThen identity
+
+
+{-| Expression-level Elm.fn2 and Elm.fn3 (as opposed to Declare.fn2).
+These are lambda expressions with multiple arguments.
+-}
+exprLambdaGenerator : Int -> Random.Generator (List Elm.Declaration)
+exprLambdaGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\returnType ->
+                expressionGenerator 0 returnType
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("exprFn2_" ++ String.fromInt index)
+                                (Elm.fn2
+                                    (Elm.Arg.var "a")
+                                    (Elm.Arg.var "b")
+                                    (\_ _ -> body.expr)
+                                )
+                            , Elm.declaration ("exprFn3_" ++ String.fromInt index)
+                                (Elm.fn3
+                                    (Elm.Arg.var "x")
+                                    (Elm.Arg.var "y")
+                                    (Elm.Arg.var "z")
+                                    (\_ _ _ -> body.expr)
+                                )
+                            ]
+                        )
+            )
+
+
+{-| Exposed declarations and exposeConstructor — exercises the
+expose/exposeConstructor code paths in Elm.elm.
+-}
+exposedDeclGenerator : Int -> Random.Generator (List Elm.Declaration)
+exposedDeclGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("exposed" ++ String.fromInt index) body.expr
+                                |> Elm.expose
+                            , Elm.customType ("ExposedType" ++ String.fromInt index)
+                                [ Elm.variant ("ExVariantA" ++ String.fromInt index)
+                                , Elm.variantWith ("ExVariantB" ++ String.fromInt index)
+                                    [ typeAnnotation t ]
+                                ]
+                                |> Elm.exposeConstructor
+                            ]
+                        )
+            )
+
+
+{-| Declarations with documentation — exercises withDocumentation.
+-}
+documentedDeclGenerator : Int -> Random.Generator (List Elm.Declaration)
+documentedDeclGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("documented" ++ String.fromInt index) body.expr
+                                |> Elm.withDocumentation "This is a generated declaration."
+                                |> Elm.expose
+                            ]
+                        )
+            )
+
+
+{-| Let-bound functions — exercises Elm.Let.fn which is 0% covered. -}
+letFnGenerator : Int -> Random.Generator (List Elm.Declaration)
+letFnGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\returnType ->
+                expressionGenerator 0 returnType
+                    |> Random.map
+                        (\body ->
+                            [ Elm.declaration ("letFn" ++ String.fromInt index)
+                                (Elm.Let.letIn
+                                    (\myFn ->
+                                        myFn (Elm.int 1)
+                                    )
+                                    |> Elm.Let.fn "myFn"
+                                        (Elm.Arg.var "arg")
+                                        (\_ -> body.expr)
+                                    |> Elm.Let.toExpression
+                                )
+                            ]
+                        )
+            )
+
+
+{-| Elm.group + Elm.docs — exercises grouping and doc generation. -}
+groupGenerator : Int -> Random.Generator (List Elm.Declaration)
+groupGenerator index =
+    Random.map2
+        (\type1 type2 ->
+            Random.map2
+                (\val1 val2 ->
+                    [ Elm.group
+                        [ Elm.docs ("## Section " ++ String.fromInt index)
+                        , Elm.declaration ("grouped1_" ++ String.fromInt index) val1.expr
+                            |> Elm.expose
+                        , Elm.declaration ("grouped2_" ++ String.fromInt index) val2.expr
+                            |> Elm.expose
+                        ]
+                    ]
+                )
+                (expressionGenerator 0 type1)
+                (expressionGenerator 0 type2)
+        )
+        simpleTypeGenerator
+        simpleTypeGenerator
+        |> Random.andThen identity
+
+
+{-| Function with triple destructuring pattern — exercises Elm.Arg.triple. -}
+triplePatternFnGenerator : Int -> Random.Generator (List Elm.Declaration)
+triplePatternFnGenerator index =
+    bodyStrategyGenerator 0 TUnit
+        |> Random.map
+            (\_ ->
+                [ Elm.Declare.fn ("fnTriple" ++ String.fromInt index)
+                    (Elm.Arg.triple
+                        (Elm.Arg.var "a")
+                        (Elm.Arg.var "b")
+                        (Elm.Arg.var "c")
+                    )
+                    (\( a, _, _ ) -> a)
+                    |> .declaration
+                ]
+            )
+
+
+{-| Elm.apply with a typed value reference — exercises the apply +
+type inference path more deeply.
+-}
+applyWithAnnotationGenerator : Int -> Random.Generator (List Elm.Declaration)
+applyWithAnnotationGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\argType ->
+                simpleTypeGenerator
+                    |> Random.andThen
+                        (\returnType ->
+                            expressionGenerator 0 argType
+                                |> Random.map
+                                    (\argVal ->
+                                        let
+                                            fnRef =
+                                                Elm.value
+                                                    { importFrom = []
+                                                    , name = "identity"
+                                                    , annotation =
+                                                        Just
+                                                            (Type.function
+                                                                [ typeAnnotation argType ]
+                                                                (typeAnnotation argType)
+                                                            )
+                                                    }
+                                        in
+                                        [ Elm.declaration ("applied" ++ String.fromInt index)
+                                            (Elm.apply fnRef [ argVal.expr ])
+                                        ]
+                                    )
+                        )
+            )
+
+
+{-| Exercise annotation APIs — Type.list, Type.maybe, Type.result,
+Type.tuple, Type.namedWith, Type.function, Type.dict, Type.set.
+These generate type aliases that exercise the annotation builders.
+-}
+annotationExerciseGenerator : Int -> Random.Generator (List Elm.Declaration)
+annotationExerciseGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\innerType ->
+                let
+                    inner =
+                        typeAnnotation innerType
+                in
+                Random.constant
+                    [ Elm.alias ("AnnList" ++ String.fromInt index)
+                        (Type.list inner)
+                    , Elm.alias ("AnnMaybe" ++ String.fromInt index)
+                        (Type.maybe inner)
+                    , Elm.alias ("AnnResult" ++ String.fromInt index)
+                        (Type.result Type.string inner)
+                    , Elm.alias ("AnnTuple" ++ String.fromInt index)
+                        (Type.tuple inner Type.int)
+                    , Elm.alias ("AnnFn" ++ String.fromInt index)
+                        (Type.function [ inner, Type.string ] Type.bool)
+                    , Elm.alias ("AnnNamed" ++ String.fromInt index)
+                        (Type.namedWith [ "Dict" ] "Dict" [ Type.string, inner ])
+                    ]
+            )
+
+
+
+{-| Elm.Declare.value — a declared value with a .value reference. -}
+declareValueGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareValueGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            let
+                                declaredVal =
+                                    Elm.Declare.value
+                                        ("declVal" ++ String.fromInt index)
+                                        body.expr
+
+                                -- Use the declared value's .value reference
+                                useDecl =
+                                    Elm.declaration
+                                        ("useDeclVal" ++ String.fromInt index)
+                                        declaredVal.value
+                            in
+                            [ declaredVal.declaration, useDecl ]
+                        )
+            )
+
+
+{-| Elm.Declare.fn4 — higher arity function. -}
+declareFn4Generator : Int -> Random.Generator (List Elm.Declaration)
+declareFn4Generator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\returnType ->
+                expressionGenerator 0 returnType
+                    |> Random.map
+                        (\body ->
+                            let
+                                declared =
+                                    Elm.Declare.fn4
+                                        ("fn4_" ++ String.fromInt index)
+                                        (Elm.Arg.var "a")
+                                        (Elm.Arg.var "b")
+                                        (Elm.Arg.var "c")
+                                        (Elm.Arg.var "d")
+                                        (\_ _ _ _ -> body.expr)
+
+                                callDecl =
+                                    Elm.declaration
+                                        ("callFn4_" ++ String.fromInt index)
+                                        (declared.call Elm.unit Elm.unit Elm.unit Elm.unit)
+                            in
+                            [ declared.declaration, callDecl ]
+                        )
+            )
+
+
+{-| Elm.Declare.alias — a typed alias declaration with .annotation. -}
+declareAliasGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareAliasGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                let
+                    declaredAlias =
+                        Elm.Declare.alias
+                            ("DeclAlias" ++ String.fromInt index)
+                            (Type.record
+                                [ ( "field1", typeAnnotation t )
+                                , ( "field2", Type.string )
+                                ]
+                            )
+
+                    -- Use the alias's annotation in a function signature
+                    useAlias =
+                        Elm.Declare.fn
+                            ("useDeclAlias" ++ String.fromInt index)
+                            (Elm.Arg.var "input")
+                            (\input ->
+                                Elm.withType declaredAlias.annotation input
+                            )
+                in
+                Random.constant
+                    [ declaredAlias.declaration
+                    , useAlias.declaration
+                    ]
+            )
+
+
+{-| Elm.Declare.customType + exposeConstructor — typed custom type with
+constructor exposure.
+-}
+declareCustomTypeGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareCustomTypeGenerator index =
+    let
+        declaredType =
+            Elm.Declare.customType
+                ("DeclCustom" ++ String.fromInt index)
+                [ Elm.variant ("DeclVariantA" ++ String.fromInt index)
+                , Elm.variantWith ("DeclVariantB" ++ String.fromInt index)
+                    [ Type.int ]
+                ]
+                |> Elm.Declare.exposeConstructor
+    in
+    Random.constant
+        [ declaredType.declaration
+        ]
+
+
+{-| Elm.Declare.module_ + with + toFile pattern — virtual module builder.
+We use include instead of toFile to embed it in the current file.
+-}
+declareModuleGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareModuleGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                expressionGenerator 0 t
+                    |> Random.map
+                        (\body ->
+                            let
+                                helperFn =
+                                    Elm.Declare.fn
+                                        ("modHelper" ++ String.fromInt index)
+                                        (Elm.Arg.var "x")
+                                        (\_ -> body.expr)
+
+                                helperVal =
+                                    Elm.Declare.value
+                                        ("modVal" ++ String.fromInt index)
+                                        body.expr
+
+                                mod =
+                                    Elm.Declare.module_ [] identity
+                                        |> Elm.Declare.with helperFn
+                                        |> Elm.Declare.with helperVal
+                                        |> Elm.Declare.withDeclarations
+                                            [ Elm.declaration ("modExtra" ++ String.fromInt index) (Elm.int 42) ]
+
+                                -- Use include to embed the module's declarations
+                                includeDecl =
+                                    Elm.Declare.include mod
+                            in
+                            [ includeDecl ]
+                        )
+            )
+
+
+
+{-| Record field access on a record with a type alias annotation.
+Exercises inferRecordField, getField, unifiableFields, and the
+alias resolution paths in Internal.Compiler.
+-}
+recordAliasFieldAccessGenerator : Int -> Random.Generator (List Elm.Declaration)
+recordAliasFieldAccessGenerator index =
+    Random.map2
+        (\type1 type2 ->
+            Random.map2
+                (\val1 val2 ->
+                    let
+                        aliasName =
+                            "FieldAlias" ++ String.fromInt index
+
+                        aliasDef =
+                            Elm.alias aliasName
+                                (Type.record
+                                    [ ( "name", typeAnnotation type1 )
+                                    , ( "value", typeAnnotation type2 )
+                                    ]
+                                )
+
+                        recordVal =
+                            Elm.record
+                                [ ( "name", val1.expr )
+                                , ( "value", val2.expr )
+                                ]
+                                |> Elm.withType (Type.named [] aliasName)
+
+                        -- Access a field through the alias
+                        fieldAccess =
+                            Elm.declaration ("aliasField" ++ String.fromInt index)
+                                (Elm.get "name" recordVal)
+                    in
+                    [ aliasDef, fieldAccess ]
+                )
+                (expressionGenerator 0 type1)
+                (expressionGenerator 0 type2)
+        )
+        simpleTypeGenerator
+        simpleTypeGenerator
+        |> Random.andThen identity
+
+
+{-| Record update on an aliased record.
+Exercises updateRecord + alias resolution paths.
+-}
+recordUpdateOnAliasGenerator : Int -> Random.Generator (List Elm.Declaration)
+recordUpdateOnAliasGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                Random.map2
+                    (\origVal newVal ->
+                        let
+                            aliasName =
+                                "UpdAlias" ++ String.fromInt index
+
+                            aliasDef =
+                                Elm.alias aliasName
+                                    (Type.record
+                                        [ ( "alpha", typeAnnotation t )
+                                        , ( "beta", Type.int )
+                                        ]
+                                    )
+
+                            updated =
+                                Elm.updateRecord
+                                    [ ( "alpha", newVal.expr ) ]
+                                    (Elm.record
+                                        [ ( "alpha", origVal.expr )
+                                        , ( "beta", Elm.int 0 )
+                                        ]
+                                    )
+                        in
+                        [ aliasDef
+                        , Elm.declaration ("updAlias" ++ String.fromInt index) updated
+                        ]
+                    )
+                    (expressionGenerator 0 t)
+                    (expressionGenerator 0 t)
+            )
+
+
+{-| Appendable operators — exercises Elm.Op.append with list operands
+which hits the isAppendable path in Internal.Compiler.
+-}
+appendableOperatorGenerator : Int -> Random.Generator (List Elm.Declaration)
+appendableOperatorGenerator index =
+    Random.constant
+        [ Elm.declaration ("appendList" ++ String.fromInt index)
+            (Elm.Op.append
+                (Elm.list [ Elm.int 1, Elm.int 2 ])
+                (Elm.list [ Elm.int 3 ])
+            )
+        ]
+
+
+{-| Functions with explicit type annotations on arguments.
+Exercises Elm.Arg.varWith and typed function signatures.
+-}
+fnWithTypedArgsGenerator : Int -> Random.Generator (List Elm.Declaration)
+fnWithTypedArgsGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\argType ->
+                simpleTypeGenerator
+                    |> Random.andThen
+                        (\returnType ->
+                            expressionGenerator 0 returnType
+                                |> Random.map
+                                    (\body ->
+                                        [ Elm.Declare.fn
+                                            ("typedArgFn" ++ String.fromInt index)
+                                            (Elm.Arg.varWith "input" (typeAnnotation argType))
+                                            (\_ -> body.expr)
+                                            |> .declaration
+                                        ]
+                                    )
+                        )
+            )
+
+
+
+{-| Elm.functionReduced — triggers betaReduce.
+Several patterns to exercise different reduction paths:
+1. Record accessor: \r -> r.field  →  .field
+2. Identity: \x -> x  →  identity-like
+3. Partial application: \x -> f x  →  f
+-}
+betaReduceGenerator : Int -> Random.Generator (List Elm.Declaration)
+betaReduceGenerator index =
+    Random.constant
+        [ -- Record accessor reduction: \r -> r.field → .field
+          Elm.declaration ("betaAccessor" ++ String.fromInt index)
+            (Elm.functionReduced "r"
+                (\r -> Elm.get "name" r)
+            )
+        , -- Identity-like reduction: \x -> x
+          Elm.declaration ("betaIdentity" ++ String.fromInt index)
+            (Elm.functionReduced "x" (\x -> x))
+        , -- Partial application: \x -> Elm.Op.plus x (Elm.int 1)
+          Elm.declaration ("betaPartial" ++ String.fromInt index)
+            (Elm.functionReduced "x"
+                (\x -> Elm.Op.plus x (Elm.int 1))
+            )
+        ]
+
+
+{-| Elm.function (dynamic arg list) — 0% covered.
+Exercises function with explicit type annotations and variable arity.
+-}
+dynamicFunctionGenerator : Int -> Random.Generator (List Elm.Declaration)
+dynamicFunctionGenerator index =
+    Random.constant
+        [ -- 1-arg function with type annotation
+          Elm.declaration ("dynFn1_" ++ String.fromInt index)
+            (Elm.function
+                [ ( "x", Just Type.int ) ]
+                (\args ->
+                    case args of
+                        [ x ] ->
+                            x
+
+                        _ ->
+                            Elm.unit
+                )
+            )
+        , -- 2-arg function with mixed annotations
+          Elm.declaration ("dynFn2_" ++ String.fromInt index)
+            (Elm.function
+                [ ( "name", Just Type.string )
+                , ( "age", Just Type.int )
+                ]
+                (\args ->
+                    case args of
+                        [ name, _ ] ->
+                            name
+
+                        _ ->
+                            Elm.unit
+                )
+            )
+        , -- 0-arg function (edge case)
+          Elm.declaration ("dynFn0_" ++ String.fromInt index)
+            (Elm.function []
+                (\_ -> Elm.string "no args")
+            )
+        , -- Function with no type annotation (inferred)
+          Elm.declaration ("dynFnInferred_" ++ String.fromInt index)
+            (Elm.function
+                [ ( "a", Nothing )
+                , ( "b", Nothing )
+                ]
+                (\args ->
+                    case args of
+                        [ a, _ ] ->
+                            a
+
+                        _ ->
+                            Elm.unit
+                )
+            )
+        ]
+
+
+{-| updateRecord slow path — when the record expression is complex
+(not a simple variable), updateRecord creates a let binding.
+-}
+complexRecordUpdateGenerator : Int -> Random.Generator (List Elm.Declaration)
+complexRecordUpdateGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\t ->
+                Random.map2
+                    (\val1 val2 ->
+                        [ Elm.declaration ("complexUpdate" ++ String.fromInt index)
+                            (Elm.updateRecord
+                                [ ( "alpha", val2.expr ) ]
+                                -- Complex expression (not a simple var) triggers
+                                -- the let-binding slow path in updateRecord
+                                (Elm.ifThen (Elm.bool True)
+                                    (Elm.record
+                                        [ ( "alpha", val1.expr )
+                                        , ( "beta", Elm.int 0 )
+                                        ]
+                                    )
+                                    (Elm.record
+                                        [ ( "alpha", val1.expr )
+                                        , ( "beta", Elm.int 1 )
+                                        ]
+                                    )
+                                )
+                            )
+                        ]
+                    )
+                    (expressionGenerator 0 t)
+                    (expressionGenerator 0 t)
+            )
+
+
+{-| Field access on a record with a type annotation.
+Exercises resolveField on typed records.
+Also exercises Elm.fn with record arg + field access (triggers
+inferRecordField when the function arg is generic).
+-}
+genericRecordFieldAccessGenerator : Int -> Random.Generator (List Elm.Declaration)
+genericRecordFieldAccessGenerator index =
+    Random.constant
+        [ -- Access field on an inline record with type annotation
+          Elm.declaration ("genFieldAccess" ++ String.fromInt index)
+            (Elm.get "name"
+                (Elm.record
+                    [ ( "name", Elm.string "test" )
+                    , ( "age", Elm.int 25 )
+                    ]
+                    |> Elm.withType
+                        (Type.record
+                            [ ( "name", Type.string )
+                            , ( "age", Type.int )
+                            ]
+                        )
+                )
+            )
+        , -- Function that accesses a field on its argument
+          -- This exercises inferRecordField when arg type is generic
+          Elm.Declare.fn ("fieldAccessFn" ++ String.fromInt index)
+            (Elm.Arg.var "rec")
+            (\rec -> Elm.get "name" rec)
+            |> .declaration
+        ]
+
+
+{-| List append to exercise isAppendable path.
+Also exercises list type annotations.
+-}
+listAppendGenerator : Int -> Random.Generator (List Elm.Declaration)
+listAppendGenerator index =
+    simpleTypeGenerator
+        |> Random.andThen
+            (\elemType ->
+                Random.map2
+                    (\item1 item2 ->
+                        [ -- List ++ List
+                          Elm.declaration ("listAppend" ++ String.fromInt index)
+                            (Elm.Op.append
+                                (Elm.list [ item1.expr ])
+                                (Elm.list [ item2.expr ])
+                            )
+                        , -- String ++ String (appendable)
+                          Elm.declaration ("strAppend" ++ String.fromInt index)
+                            (Elm.Op.append
+                                (Elm.string "hello")
+                                (Elm.string "world")
+                            )
+                        ]
+                    )
+                    (expressionGenerator 0 elemType)
+                    (expressionGenerator 0 elemType)
+            )
+
+
+
+{-| Elm.hex — exercises hex literal rendering (toHexString in Write.elm). -}
+hexLiteralGenerator : Int -> Random.Generator (List Elm.Declaration)
+hexLiteralGenerator index =
+    Random.int 0 65535
+        |> Random.map
+            (\n ->
+                [ Elm.declaration ("hexVal" ++ String.fromInt index) (Elm.hex n)
+                ]
+            )
+
+
+{-| Case expressions with literal patterns — exercises Elm.Arg.unit,
+Elm.Arg.int, Elm.Arg.char which are all 0% covered.
+-}
+literalPatternCaseGenerator : Int -> Random.Generator (List Elm.Declaration)
+literalPatternCaseGenerator index =
+    Random.constant
+        [ -- Unit pattern
+          Elm.declaration ("unitCase" ++ String.fromInt index)
+            (Elm.Case.custom Elm.unit
+                Type.unit
+                [ Elm.Case.branch Elm.Arg.unit
+                    (\_ -> Elm.string "unit matched")
+                ]
+            )
+        , -- Int literal pattern
+          Elm.declaration ("intCase" ++ String.fromInt index)
+            (Elm.Case.custom (Elm.int 42)
+                Type.int
+                [ Elm.Case.branch (Elm.Arg.int 42)
+                    (\_ -> Elm.string "forty-two")
+                , Elm.Case.branch (Elm.Arg.var "other")
+                    (\_ -> Elm.string "something else")
+                ]
+            )
+        , -- Char literal pattern
+          Elm.declaration ("charCase" ++ String.fromInt index)
+            (Elm.Case.custom (Elm.char 'a')
+                Type.char
+                [ Elm.Case.branch (Elm.Arg.char 'a')
+                    (\_ -> Elm.bool True)
+                , Elm.Case.branch (Elm.Arg.var "other")
+                    (\_ -> Elm.bool False)
+                ]
+            )
+        ]
+
+
+{-| Port declarations — exercises portIncoming, portOutgoing,
+and prettyPortDeclaration in Write.elm. Note: ports make the
+module a port module which changes the module declaration.
+-}
+portGenerator : Int -> Random.Generator (List Elm.Declaration)
+portGenerator index =
+    Random.constant
+        [ Elm.portIncoming ("receive" ++ String.fromInt index)
+            Type.string
+        , Elm.portOutgoing ("send" ++ String.fromInt index)
+            Type.string
+        ]
+
+
+{-| Declare.customTypeAdvanced with variant0/variant1 + make_ + case_.
+Exercises the entire custom type builder pipeline which is 0% covered.
+-}
+customTypeAdvancedGenerator : Int -> Random.Generator (List Elm.Declaration)
+customTypeAdvancedGenerator index =
+    let
+        typeName =
+            "AdvType" ++ String.fromInt index
+
+        advType =
+            Elm.Declare.customTypeAdvanced typeName
+                { exposeConstructor = True }
+                (\none some -> { none = none, some = some })
+                |> Elm.Declare.variant0 ("None" ++ String.fromInt index) .none
+                |> Elm.Declare.variant1 ("Some" ++ String.fromInt index) .some Type.int
+                |> Elm.Declare.finishCustomType
+
+        -- Use make_ to construct values
+        makeNone =
+            Elm.declaration ("makeNone" ++ String.fromInt index)
+                advType.make_.none
+
+        makeSome =
+            Elm.declaration ("makeSome" ++ String.fromInt index)
+                (advType.make_.some (Elm.int 42))
+
+        -- Use case_ to pattern match
+        caseExpr =
+            Elm.declaration ("matchAdv" ++ String.fromInt index)
+                (advType.case_ (advType.make_.some (Elm.int 1))
+                    { none = Elm.int 0
+                    , some = \val -> val
+                    }
+                )
+    in
+    Random.constant
+        [ advType.declaration
+        , makeNone
+        , makeSome
+        , caseExpr
+        ]
+
+
+{-| Elm.Arg.aliasAs — pattern alias like `pattern as name`.
+Exercises the aliasAs path in Internal.Arg.
+-}
+aliasPatternGenerator : Int -> Random.Generator (List Elm.Declaration)
+aliasPatternGenerator index =
+    Random.constant
+        [ Elm.Declare.fn ("aliasPattern" ++ String.fromInt index)
+            (Elm.Arg.record (\a b -> ( a, b ))
+                |> Elm.Arg.field "name"
+                |> Elm.Arg.field "age"
+                |> Elm.Arg.aliasAs "person"
+            )
+            (\( ( name, _ ), person ) ->
+                -- Use both the destructured field and the alias
+                Elm.tuple name person
+            )
+            |> .declaration
+        ]
+
+
+
+{-| Elm.unwrap / Elm.unwrapper — exercises single-variant type
+pattern matching and lambda generation. Uses a custom type we
+define in the same module.
+-}
+unwrapGenerator : Int -> Random.Generator (List Elm.Declaration)
+unwrapGenerator index =
+    let
+        wrapperName =
+            "Wrapper" ++ String.fromInt index
+
+        typeDef =
+            Elm.customType wrapperName
+                [ Elm.variantWith wrapperName [ Type.int ] ]
+                |> Elm.exposeConstructor
+
+        -- Use unwrapper to create the extraction function
+        extractDecl =
+            Elm.declaration ("extract" ++ String.fromInt index)
+                (Elm.unwrapper [] wrapperName)
+
+        -- Use unwrap to apply it
+        unwrapDecl =
+            Elm.declaration ("unwrapped" ++ String.fromInt index)
+                (Elm.unwrap [] wrapperName
+                    (Elm.apply
+                        (Elm.value
+                            { importFrom = []
+                            , name = wrapperName
+                            , annotation = Just (Type.function [ Type.int ] (Type.named [] wrapperName))
+                            }
+                        )
+                        [ Elm.int 42 ]
+                    )
+                )
+    in
+    Random.constant [ typeDef, extractDecl, unwrapDecl ]
+
+
+{-| Elm.Op.divide — float division, 0% covered. -}
+divideGenerator : Int -> Random.Generator (List Elm.Declaration)
+divideGenerator index =
+    Random.constant
+        [ Elm.declaration ("divided" ++ String.fromInt index)
+            (Elm.Op.divide (Elm.float 10.0) (Elm.float 3.0))
+        ]
+
+
+{-| Elm.Op.pipeLeft — left pipe operator, 0% covered.
+Has the same rendering concerns as pipe (right operand parens).
+-}
+pipeLeftGenerator : Int -> Random.Generator (List Elm.Declaration)
+pipeLeftGenerator index =
+    Random.constant
+        [ Elm.declaration ("pipeLeft" ++ String.fromInt index)
+            (Elm.Op.pipeLeft
+                (Elm.fn (Elm.Arg.var "x") (\x -> x))
+                (Elm.string "hello")
+            )
+        ]
+
+
+{-| Declare.record + withField + buildRecord — the record builder
+pattern. Exercises field ordering and record constructor generation.
+-}
+declareRecordBuilderGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareRecordBuilderGenerator index =
+    let
+        recName =
+            "BuiltRecord" ++ String.fromInt index
+
+        builtRecord =
+            Elm.Declare.record recName
+                |> Elm.Declare.withField "name" .name Type.string
+                |> Elm.Declare.withField "age" .age Type.int
+                |> Elm.Declare.buildRecord
+
+        -- Use the record maker
+        makeDecl =
+            Elm.declaration ("makeBuiltRec" ++ String.fromInt index)
+                (builtRecord.make
+                    { name = Elm.string "Alice"
+                    , age = Elm.int 30
+                    }
+                )
+    in
+    Random.constant
+        [ builtRecord.declaration
+        , makeDecl
+        ]
+
+
+{-| Elm.body / Declare.fnBody — the custom body renderer for
+function builders. Exercises a different code path than fnDone.
+-}
+fnBodyGenerator : Int -> Random.Generator (List Elm.Declaration)
+fnBodyGenerator index =
+    Random.constant
+        [ -- Elm.body on a fnBuilder — body receives the accumulated
+          -- result of applying args through the builder function
+          Elm.declaration ("bodyFn" ++ String.fromInt index)
+            (Elm.fnBuilder (\a b -> ( a, b ))
+                |> Elm.fnArg (Elm.Arg.var "x")
+                |> Elm.fnArg (Elm.Arg.var "y")
+                |> Elm.body
+                    (\( x, y ) ->
+                        Elm.tuple x y
+                    )
+            )
+        ]
+
+
+
+{-| Declare.customTypeAdvanced with variant2 — multi-payload variants
+are 0% covered. Exercises variant2, standardVariant, customVariant,
+and the make_/case_ generation for multi-arg constructors.
+-}
+customTypeVariant2Generator : Int -> Random.Generator (List Elm.Declaration)
+customTypeVariant2Generator index =
+    let
+        typeName =
+            "Pair" ++ String.fromInt index
+
+        pairType =
+            Elm.Declare.customTypeAdvanced typeName
+                { exposeConstructor = True }
+                (\empty pair -> { empty = empty, pair = pair })
+                |> Elm.Declare.variant0 ("Empty" ++ String.fromInt index) .empty
+                |> Elm.Declare.variant2 ("MkPair" ++ String.fromInt index)
+                    .pair
+                    Type.int
+                    Type.string
+                |> Elm.Declare.finishCustomType
+
+        -- Exercise make_ with 2 args
+        makePairDecl =
+            Elm.declaration ("mkPair" ++ String.fromInt index)
+                (pairType.make_.pair (Elm.int 1) (Elm.string "hello"))
+
+        -- Exercise case_ with 2-arg pattern
+        casePairDecl =
+            Elm.declaration ("matchPair" ++ String.fromInt index)
+                (pairType.case_
+                    (pairType.make_.pair (Elm.int 1) (Elm.string "hello"))
+                    { empty = Elm.string "empty"
+                    , pair = \n s -> s
+                    }
+                )
+    in
+    Random.constant
+        [ pairType.declaration
+        , makePairDecl
+        , casePairDecl
+        ]
+
+
+{-| Use Elm.withType with a namedWith alias to trigger unifyWithAlias.
+This exercises the alias type parameter substitution path.
+-}
+namedTypeAliasGenerator : Int -> Random.Generator (List Elm.Declaration)
+namedTypeAliasGenerator index =
+    let
+        aliasName =
+            "Container" ++ String.fromInt index
+
+        -- Define a type alias: type alias Container a = { value : a }
+        aliasDef =
+            Elm.alias aliasName
+                (Type.record
+                    [ ( "value", Type.var "a" ) ]
+                )
+
+        -- Create a record and annotate it with the parameterized alias
+        -- This triggers unifyWithAlias when the annotation is resolved
+        valueDecl =
+            Elm.declaration ("container" ++ String.fromInt index)
+                (Elm.record [ ( "value", Elm.int 42 ) ]
+                    |> Elm.withType
+                        (Type.namedWith [] aliasName [ Type.int ])
+                )
+
+        -- Access a field through the alias — triggers resolveField Typed branch
+        fieldDecl =
+            Elm.declaration ("containerVal" ++ String.fromInt index)
+                (Elm.get "value"
+                    (Elm.record [ ( "value", Elm.string "test" ) ]
+                        |> Elm.withType
+                            (Type.namedWith [] aliasName [ Type.string ])
+                    )
+                )
+    in
+    Random.constant [ aliasDef, valueDecl, fieldDecl ]
+
+
+{-| Force record field unification by passing a record to a function
+that expects a record with the same fields in different order.
+This triggers unifiableFields in Internal.Compiler.
+-}
+recordFieldUnifyGenerator : Int -> Random.Generator (List Elm.Declaration)
+recordFieldUnifyGenerator index =
+    let
+        -- Function expects { b : String, a : Int } (b first)
+        fnDecl =
+            Elm.Declare.fn ("recUnify" ++ String.fromInt index)
+                (Elm.Arg.var "rec")
+                (\rec ->
+                    Elm.get "a"
+                        (Elm.withType
+                            (Type.record
+                                [ ( "b", Type.string )
+                                , ( "a", Type.int )
+                                ]
+                            )
+                            rec
+                        )
+                )
+
+        -- Call it with { a : Int, b : String } (a first)
+        callDecl =
+            Elm.declaration ("callRecUnify" ++ String.fromInt index)
+                (fnDecl.call
+                    (Elm.record
+                        [ ( "a", Elm.int 1 )
+                        , ( "b", Elm.string "hi" )
+                        ]
+                    )
+                )
+    in
+    Random.constant [ fnDecl.declaration, callDecl ]
+
+
+
+{-| Elm.Annotation.extensible — extensible record types.
+Exercises the GenericRecord annotation path which is 0% covered.
+This is one of the trickiest type features in Elm.
+-}
+extensibleRecordGenerator : Int -> Random.Generator (List Elm.Declaration)
+extensibleRecordGenerator index =
+    Random.constant
+        [ -- Type alias with extensible record
+          Elm.alias ("Named" ++ String.fromInt index)
+            (Type.extensible "a"
+                [ ( "name", Type.string )
+                ]
+            )
+        , -- Function taking extensible record
+          Elm.Declare.fn ("getName" ++ String.fromInt index)
+            (Elm.Arg.var "rec")
+            (\rec ->
+                Elm.get "name"
+                    (Elm.withType
+                        (Type.extensible "a" [ ( "name", Type.string ) ])
+                        rec
+                    )
+            )
+            |> .declaration
+        , -- Call it with a concrete record that satisfies the constraint
+          Elm.declaration ("gotName" ++ String.fromInt index)
+            (Elm.apply
+                (Elm.val ("getName" ++ String.fromInt index))
+                [ Elm.record
+                    [ ( "name", Elm.string "Alice" )
+                    , ( "age", Elm.int 30 )
+                    ]
+                ]
+            )
+        ]
+
+
+{-| Elm.fileWith — exercises the alias rendering path and module docs.
+We generate a separate file using fileWith with import aliases.
+Note: returns as declarations in the main file since we can't nest
+files, but the fileWith call itself exercises the code path.
+-}
+fileWithGenerator : Int -> Random.Generator (List Elm.Declaration)
+fileWithGenerator index =
+    let
+        -- Generate a file using fileWith just to exercise the code path.
+        -- We don't use the file itself, just exercise the function.
+        _ =
+            Elm.fileWith [ "FileWith" ++ String.fromInt index ]
+                { docs = "Module generated with fileWith"
+                , aliases = [ ( [ "Dict" ], "D" ) ]
+                }
+                [ Elm.declaration "val" (Elm.int 42)
+                    |> Elm.expose
+                ]
+    in
+    -- Return a marker declaration so we know this ran
+    Random.constant
+        [ Elm.declaration ("fileWithExercised" ++ String.fromInt index) (Elm.bool True) ]
+
+
+{-| Elm.Arg.list + Elm.Arg.items + Elm.Arg.listRemaining —
+list pattern matching in case expressions.
+Exercises Internal.Arg.list, items, listRemaining, toUncons.
+-}
+listPatternGenerator : Int -> Random.Generator (List Elm.Declaration)
+listPatternGenerator index =
+    Random.constant
+        [ -- Match specific list items
+          Elm.declaration ("listItems" ++ String.fromInt index)
+            (Elm.Case.custom
+                (Elm.list [ Elm.int 1, Elm.int 2, Elm.int 3 ])
+                (Type.list Type.int)
+                [ Elm.Case.branch
+                    (Elm.Arg.list identity
+                        |> Elm.Arg.items
+                            [ Elm.Arg.var "first"
+                            , Elm.Arg.var "second"
+                            ]
+                    )
+                    (\items ->
+                        case items of
+                            [ first, _ ] ->
+                                first
+
+                            _ ->
+                                Elm.int 0
+                    )
+                , Elm.Case.branch Elm.Arg.ignore
+                    (\_ -> Elm.int 0)
+                ]
+            )
+        , -- Match head :: tail pattern
+          Elm.declaration ("listUncons" ++ String.fromInt index)
+            (Elm.Case.custom
+                (Elm.list [ Elm.string "a", Elm.string "b" ])
+                (Type.list Type.string)
+                [ Elm.Case.branch
+                    (Elm.Arg.list Tuple.pair
+                        |> Elm.Arg.items [ Elm.Arg.var "head" ]
+                        |> Elm.Arg.listRemaining "tail"
+                    )
+                    (\( items, tail ) ->
+                        case items of
+                            [ head ] ->
+                                head
+
+                            _ ->
+                                Elm.string ""
+                    )
+                , Elm.Case.branch Elm.Arg.ignore
+                    (\_ -> Elm.string "empty")
+                ]
+            )
+        ]
+
+
+{-| Elm.Op.pipeTo — the advanced pipe that accepts a function builder.
+Internally calls functionReduced, so may hit finding #5 annotation bugs.
+-}
+pipeToGenerator : Int -> Random.Generator (List Elm.Declaration)
+pipeToGenerator index =
+    Random.constant
+        [ Elm.declaration ("pipedTo" ++ String.fromInt index)
+            (Elm.string "hello"
+                |> Elm.Op.pipeTo
+                    (\x ->
+                        Elm.Op.append x (Elm.string " world")
+                    )
+            )
+        ]
+
+
+{-| Elm.Declare.toFile — convert a virtual module to a file.
+Exercises the toFile path and virtual module rendering.
+We generate the file just to exercise the code but don't use the output.
+-}
+declareToFileGenerator : Int -> Random.Generator (List Elm.Declaration)
+declareToFileGenerator index =
+    let
+        helperFn =
+            Elm.Declare.fn ("toFileHelper" ++ String.fromInt index)
+                (Elm.Arg.var "x")
+                (\x -> x)
+
+        mod =
+            Elm.Declare.module_ [ "Virtual" ++ String.fromInt index ] identity
+                |> Elm.Declare.with helperFn
+
+        -- Exercise toFile
+        _ =
+            Elm.Declare.toFile mod
+    in
+    Random.constant
+        [ Elm.declaration ("toFileExercised" ++ String.fromInt index)
+            (Elm.bool True)
+        ]
+
+
+
+{-| Elm.parse — parse raw Elm source and include as declarations.
+This is complex and fragile — the parsed AST goes through
+Elm.Processing and exposure resolution.
+-}
+parseGenerator : Int -> Random.Generator (List Elm.Declaration)
+parseGenerator index =
+    let
+        -- Parse a simple Elm module and extract its declarations
+        parsed =
+            Elm.parse
+                (String.join "\n"
+                    [ "module Parsed" ++ String.fromInt index ++ " exposing (..)"
+                    , ""
+                    , "parsedValue : Int"
+                    , "parsedValue = 42"
+                    , ""
+                    , "parsedFn : Int -> Int"
+                    , "parsedFn x = x + 1"
+                    ]
+                )
+    in
+    case parsed of
+        Ok { declarations } ->
+            Random.constant declarations
+
+        Err _ ->
+            -- If parse fails, just generate a marker
+            Random.constant
+                [ Elm.declaration ("parseFailed" ++ String.fromInt index) (Elm.bool False) ]
+
+
+{-| Declare.customTypeAdvanced with variant3 — 3-arg constructor.
+Exercises the variant3 builder and 3-arg pattern matching.
+-}
+customTypeVariant3Generator : Int -> Random.Generator (List Elm.Declaration)
+customTypeVariant3Generator index =
+    let
+        typeName =
+            "Triple" ++ String.fromInt index
+
+        tripleType =
+            Elm.Declare.customTypeAdvanced typeName
+                { exposeConstructor = True }
+                (\empty triple -> { empty = empty, triple = triple })
+                |> Elm.Declare.variant0 ("NoTriple" ++ String.fromInt index) .empty
+                |> Elm.Declare.variant3 ("MkTriple" ++ String.fromInt index)
+                    .triple
+                    Type.int
+                    Type.string
+                    Type.bool
+                |> Elm.Declare.finishCustomType
+
+        makeDecl =
+            Elm.declaration ("mkTriple" ++ String.fromInt index)
+                (tripleType.make_.triple (Elm.int 1) (Elm.string "hi") (Elm.bool True))
+
+        caseDecl =
+            Elm.declaration ("matchTriple" ++ String.fromInt index)
+                (tripleType.case_
+                    (tripleType.make_.triple (Elm.int 1) (Elm.string "hi") (Elm.bool True))
+                    { empty = Elm.string "empty"
+                    , triple = \a b c -> b
+                    }
+                )
+    in
+    Random.constant [ tripleType.declaration, makeDecl, caseDecl ]
+
+
+{-| Declare.fn5 — 5-arg function builder.
+Exercises higher-arity function declaration + call generation.
+-}
+submoduleGenerator : Int -> Random.Generator (List Elm.Declaration)
+submoduleGenerator index =
+    let
+        declared =
+            Elm.Declare.fn5 ("fn5_" ++ String.fromInt index)
+                (Elm.Arg.var "a")
+                (Elm.Arg.var "b")
+                (Elm.Arg.var "c")
+                (Elm.Arg.var "d")
+                (Elm.Arg.var "e")
+                (\a _ _ _ _ -> a)
+
+        callDecl =
+            Elm.declaration ("callFn5_" ++ String.fromInt index)
+                (declared.call Elm.unit Elm.unit Elm.unit Elm.unit Elm.unit)
+    in
+    Random.constant [ declared.declaration, callDecl ]
+
+
+{-| Elm.unsafe — raw code injection. Exercises the Block rendering
+path in Internal/Render.elm and Write.elm (prettyDeclaration).
+-}
+unsafeGenerator : Int -> Random.Generator (List Elm.Declaration)
+unsafeGenerator index =
+    Random.constant
+        [ Elm.unsafe
+            ("unsafeVal"
+                ++ String.fromInt index
+                ++ " : Int\nunsafeVal"
+                ++ String.fromInt index
+                ++ " = 99"
+            )
+        ]
 
 
 

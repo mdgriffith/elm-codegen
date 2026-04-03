@@ -3,6 +3,9 @@ generated/
 .elm-pages/
 elm-stuff/
 script/elm-stuff/
+script/.elm-pages/
+script/.coverage/
+script/coverage/
 review/elm-stuff/
 codegen/Gen/
 package-lock.json
