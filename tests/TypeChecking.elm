@@ -271,6 +271,26 @@ generatedCode =
                                 ( 1 + 2, x )
                             """
             ]
+        , describe "aliasAs pattern type"
+            [ test "aliasAs on record pattern uses the underlying record type" <|
+                \_ ->
+                    Elm.Declare.fn "describe"
+                        (Arg.record (\a b -> ( a, b ))
+                            |> Arg.field "name"
+                            |> Arg.field "age"
+                            |> Arg.aliasAs "person"
+                        )
+                        (\( ( name, _ ), person ) ->
+                            Elm.tuple name person
+                        )
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            describe : { name : name, age : age } -> ( name, { name : name, age : age } )
+                            describe ({ name, age } as person) =
+                                ( name, person )
+                            """
+            ]
         , test "Triple with mixed Float and Int infers correct types" <|
             \_ ->
                 Elm.declaration "myTriple"
