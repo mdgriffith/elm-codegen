@@ -6,6 +6,7 @@ import Elm.Arg as Arg
 import Elm.Case
 import Elm.Declare
 import Elm.Expect
+import Elm.Let
 import Elm.Op
 import Elm.ToString
 import Expect
@@ -271,6 +272,71 @@ generatedCode =
                                 ( 1 + 2, x )
                             """
             ]
+        , test "Elm.Let.fn declaration has a type annotation" <|
+            \_ ->
+                Elm.declaration "useLetFn"
+                    (Elm.Let.letIn
+                        (\myFn -> myFn (Elm.int 5))
+                        |> Elm.Let.fn "myFn"
+                            (Arg.var "x")
+                            (\x -> Elm.Op.plus x (Elm.int 1))
+                        |> Elm.Let.toExpression
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        useLetFn : Int
+                        useLetFn =
+                            let
+                                myFn x =
+                                    x + 1
+                            in
+                            myFn 5
+                        """
+        , test "Elm.Let.fn2 declaration has a type annotation" <|
+            \_ ->
+                Elm.declaration "useLetFn2"
+                    (Elm.Let.letIn
+                        (\myFn -> myFn (Elm.int 1) (Elm.int 2))
+                        |> Elm.Let.fn2 "myFn"
+                            (Arg.var "x")
+                            (Arg.var "y")
+                            (\x y -> Elm.Op.plus x y)
+                        |> Elm.Let.toExpression
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        useLetFn2 : Int
+                        useLetFn2 =
+                            let
+                                myFn x y =
+                                    x + y
+                            in
+                            myFn 1 2
+                        """
+        , test "Elm.Let.fn3 declaration has a type annotation" <|
+            \_ ->
+                Elm.declaration "useLetFn3"
+                    (Elm.Let.letIn
+                        (\myFn -> myFn (Elm.int 1) (Elm.int 2) (Elm.int 3))
+                        |> Elm.Let.fn3 "myFn"
+                            (Arg.var "x")
+                            (Arg.var "y")
+                            (Arg.var "z")
+                            (\x y z ->
+                                Elm.Op.plus x (Elm.Op.plus y z)
+                            )
+                        |> Elm.Let.toExpression
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        useLetFn3 : Int
+                        useLetFn3 =
+                            let
+                                myFn x y z =
+                                    x + (y + z)
+                            in
+                            myFn 1 2 3
+                        """
         , test "Triple with mixed Float and Int infers correct types" <|
             \_ ->
                 Elm.declaration "myTriple"
