@@ -583,14 +583,18 @@ unwrapper modName typename =
                             )
                     }
             , annotation =
-                Ok
-                    { type_ =
-                        Annotation.FunctionTypeAnnotation
-                            (Compiler.nodify (Annotation.GenericType argVal.typename))
-                            (Compiler.nodify (Annotation.GenericType return.typename))
-                    , inferences = Dict.empty
-                    , aliases = Compiler.emptyAliases
-                    }
+                -- We can't generate a valid type annotation for an
+                -- unwrapper lambda: the arg type is the named custom
+                -- type (e.g. Wrapper), but the return type is its
+                -- unknown inner type. Generating `Wrapper -> a` would
+                -- be wrong because the body extracts a concrete value,
+                -- not a polymorphic one, so Elm would reject it with
+                -- a TYPE MISMATCH.
+                --
+                -- Returning `Err []` causes the declaration to be
+                -- generated without a type annotation, letting Elm
+                -- infer it from the custom type definition.
+                Err []
             , imports =
                 case modName of
                     [] ->

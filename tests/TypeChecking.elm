@@ -271,6 +271,22 @@ generatedCode =
                                 ( 1 + 2, x )
                             """
             ]
+        , test "Elm.unwrapper omits annotation to let Elm infer it" <|
+            -- unwrapper creates `\(Wrapper val) -> val` but can't
+            -- derive a valid type annotation because it doesn't know
+            -- the inner type of Wrapper. Any annotation we could
+            -- generate (like `Wrapper -> a`) would be rejected by Elm
+            -- because the extracted value has a concrete type, not a
+            -- polymorphic one. So we omit the annotation and let Elm
+            -- infer it from the custom type definition.
+            \_ ->
+                Elm.declaration "extract"
+                    (Elm.unwrapper [] "Wrapper")
+                    |> Elm.Expect.declarationAs
+                        """
+                        extract (Wrapper val) =
+                            val
+                        """
         , test "Triple with mixed Float and Int infers correct types" <|
             \_ ->
                 Elm.declaration "myTriple"
