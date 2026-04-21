@@ -1020,7 +1020,7 @@ resolve index cache annotation =
                         getRestrictions annotation cache
                 in
                 newAnnotation
-                    |> rewriteTypeVariables
+                    |> rewriteTypeVariables cache
                     |> checkRestrictions restrictions
 
             Err err ->
@@ -1286,19 +1286,115 @@ getRestrictionsHelper existingRestrictions notation cache =
             existingRestrictions
 
 
-rewriteTypeVariables : Annotation.TypeAnnotation -> Annotation.TypeAnnotation
-rewriteTypeVariables type_ =
+{-| Rewrite type variable names to clean forms, preserving typeclass
+constraint names.
+
+When a constrained type variable (like `number_0`) gets resolved to
+another generic variable (like `arg_0`), the constraint name is lost.
+This function builds a mapping from resolved variable names back to
+their constraint names, so `arg_0` gets renamed to `number` instead
+of `a`.
+-}
+rewriteTypeVariables :
+    VariableCache
+    -> Annotation.TypeAnnotation
+    -> Annotation.TypeAnnotation
+rewriteTypeVariables cache resolvedAnnotation =
     let
+        -- Build a map from resolved generic names to constraint names.
+        -- Check BOTH directions:
+        -- 1. Forward: a constrained name (number_0) maps to a generic (arg_0)
+        -- 2. Reverse: a generic (arg_0) maps to a constrained name (comparable)
+        -- Case 2 happens with applyInfix operators that use fixed names
+        -- like "comparable" which then get unified with arg variables.
+        constraintOverrides : Dict String String
+        constraintOverrides =
+            Dict.foldl
+                (\key value acc ->
+                    case value of
+                        Annotation.GenericType resolvedName ->
+                            let
+                                keyRestriction =
+                                    nameToRestrictions key
+                            in
+                            case keyRestriction of
+                                NoRestrictions ->
+                                    -- Key has no constraint, but maybe the
+                                    -- resolved name does (reverse direction)
+                                    let
+                                        resolvedRestriction =
+                                            nameToRestrictions resolvedName
+                                    in
+                                    case resolvedRestriction of
+                                        NoRestrictions ->
+                                            acc
+
+                                        _ ->
+                                            -- The target has a constraint — propagate
+                                            -- it to the key name
+                                            Dict.insert key
+                                                (restrictionToName resolvedRestriction)
+                                                acc
+
+                                _ ->
+                                    -- Key has a constraint — propagate to resolved name
+                                    Dict.insert resolvedName
+                                        (restrictionToName keyRestriction)
+                                        acc
+
+                        _ ->
+                            acc
+                )
+                Dict.empty
+                cache
+
         existing : Set String
         existing =
-            getGenericsHelper type_
+            getGenericsHelper resolvedAnnotation
                 |> Set.fromList
     in
-    Tuple.second (rewriteTypeVariablesHelper existing Dict.empty type_)
+    Tuple.second
+        (rewriteTypeVariablesHelper
+            constraintOverrides
+            existing
+            Dict.empty
+            resolvedAnnotation
+        )
 
 
-rewriteTypeVariablesHelper : Set String -> Dict String String -> Annotation.TypeAnnotation -> ( Dict String String, Annotation.TypeAnnotation )
-rewriteTypeVariablesHelper existing renames type_ =
+restrictionToName : Restrictions -> String
+restrictionToName restriction =
+    case restriction of
+        IsNumber ->
+            "number"
+
+        IsComparable ->
+            "comparable"
+
+        IsAppendable ->
+            "appendable"
+
+        IsAppendableComparable ->
+            "compappend"
+
+        _ ->
+            "a"
+
+
+{-| Rewrite type variable names to clean, simplified forms.
+
+The `overrides` dict maps variable names to constraint names
+(e.g., "arg\_0" → "number") so that typeclass constraints are
+preserved through the renaming process. Pass `Dict.empty` when
+no constraint preservation is needed.
+-}
+rewriteTypeVariablesHelper :
+    Dict String String
+    -> Set String
+    -> Dict String String
+    -> Annotation.TypeAnnotation
+    -> ( Dict String String, Annotation.TypeAnnotation )
+rewriteTypeVariablesHelper overrides existing renames type_ =
     case type_ of
         Annotation.GenericType varName ->
             case Dict.get varName renames of
@@ -1306,10 +1402,14 @@ rewriteTypeVariablesHelper existing renames type_ =
                     let
                         simplified : String
                         simplified =
-                            simplify varName
+                            case Dict.get varName overrides of
+                                Just constraintName ->
+                                    constraintName
+
+                                Nothing ->
+                                    simplify varName
                     in
                     if Set.member simplified existing && varName /= simplified then
-                        -- We would have collided with an existing generic name
                         ( renames, Annotation.GenericType simplified )
 
                     else
@@ -1326,7 +1426,7 @@ rewriteTypeVariablesHelper existing renames type_ =
                             (\(Node _ typevar) ( varUsed, varList ) ->
                                 let
                                     ( oneUsed, oneType ) =
-                                        rewriteTypeVariablesHelper existing varUsed typevar
+                                        rewriteTypeVariablesHelper overrides existing varUsed typevar
                                 in
                                 ( oneUsed, nodify oneType :: varList )
                             )
@@ -1351,10 +1451,10 @@ rewriteTypeVariablesHelper existing renames type_ =
         Annotation.FunctionTypeAnnotation (Node _ one) (Node _ two) ->
             let
                 ( oneUsed, oneType ) =
-                    rewriteTypeVariablesHelper existing renames one
+                    rewriteTypeVariablesHelper overrides existing renames one
 
                 ( twoUsed, twoType ) =
-                    rewriteTypeVariablesHelper existing oneUsed two
+                    rewriteTypeVariablesHelper overrides existing oneUsed two
             in
             ( twoUsed
             , Annotation.FunctionTypeAnnotation
