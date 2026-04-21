@@ -142,6 +142,7 @@ import Elm exposing (Expression)
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
+import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Arg
 import Internal.Compiler as Compiler exposing (Module)
 import Internal.Index as Index
@@ -335,10 +336,13 @@ fn desiredName arg toInnerFn sourceLet =
                             Elm.apply
                                 (Compiler.Expression
                                     (\_ ->
-                                        { innerFnDetails
-                                            | expression =
-                                                Exp.FunctionOrValue []
-                                                    name
+                                        { expression =
+                                            Exp.FunctionOrValue [] name
+                                        , annotation =
+                                            letFnAnnotation
+                                                [ argDetails.details.annotation ]
+                                                innerFnDetails.annotation
+                                        , imports = innerFnDetails.imports
                                         }
                                     )
                                 )
@@ -347,6 +351,45 @@ fn desiredName arg toInnerFn sourceLet =
                     }
                 )
             )
+
+
+{-| Build the function type annotation for a let-bound function's
+reference expression. Takes the arg annotations (in order) and the
+body's annotation, and produces `arg1 -> arg2 -> ... -> body`.
+
+This is needed because `Elm.apply` needs a proper function type
+annotation to derive the return type when calling the let-bound
+function. Without this, the call would use the body's annotation
+directly, which is the return type rather than a function type.
+-}
+letFnAnnotation :
+    List (Result (List Compiler.InferenceError) Compiler.Inference)
+    -> Result (List Compiler.InferenceError) Compiler.Inference
+    -> Result (List Compiler.InferenceError) Compiler.Inference
+letFnAnnotation argAnnotations bodyAnnotation =
+    List.foldr
+        (\argResult resultSoFar ->
+            Result.map2
+                (\argAnn soFar ->
+                    { type_ =
+                        Annotation.FunctionTypeAnnotation
+                            (Compiler.nodify argAnn.type_)
+                            (Compiler.nodify soFar.type_)
+                    , inferences =
+                        Compiler.mergeInferences
+                            argAnn.inferences
+                            soFar.inferences
+                    , aliases =
+                        Compiler.mergeAliases
+                            argAnn.aliases
+                            soFar.aliases
+                    }
+                )
+                argResult
+                resultSoFar
+        )
+        bodyAnnotation
+        argAnnotations
 
 
 {-| -}
@@ -399,10 +442,15 @@ fn2 desiredName argOne argTwo toInnerFn sourceLet =
                         Elm.apply
                             (Compiler.Expression
                                 (\_ ->
-                                    { innerFnDetails
-                                        | expression =
-                                            Exp.FunctionOrValue []
-                                                name
+                                    { expression =
+                                        Exp.FunctionOrValue [] name
+                                    , annotation =
+                                        letFnAnnotation
+                                            [ argOneDetails.details.annotation
+                                            , argTwoDetails.details.annotation
+                                            ]
+                                            innerFnDetails.annotation
+                                    , imports = innerFnDetails.imports
                                     }
                                 )
                             )
@@ -473,10 +521,16 @@ fn3 desiredName argOne argTwo argThree toInnerFn sourceLet =
                         Elm.apply
                             (Compiler.Expression
                                 (\_ ->
-                                    { innerFnDetails
-                                        | expression =
-                                            Exp.FunctionOrValue []
-                                                name
+                                    { expression =
+                                        Exp.FunctionOrValue [] name
+                                    , annotation =
+                                        letFnAnnotation
+                                            [ argOneDetails.details.annotation
+                                            , argTwoDetails.details.annotation
+                                            , argThreeDetails.details.annotation
+                                            ]
+                                            innerFnDetails.annotation
+                                    , imports = innerFnDetails.imports
                                     }
                                 )
                             )

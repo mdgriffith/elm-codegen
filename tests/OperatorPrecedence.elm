@@ -133,4 +133,20 @@ pipes =
                         (Elm.fn (Elm.Arg.var "y") (\y -> y))
                     |> Elm.Expect.renderedAs
                         """"hello" |> (\\x -> x) |> (\\y -> y)"""
+        , test "pipeLeft with lambda is parenthesized" <|
+            \_ ->
+                Elm.Op.pipeLeft
+                    (Elm.fn (Elm.Arg.var "x") (\x -> x))
+                    (Elm.string "hello")
+                    |> Elm.Expect.renderedAs
+                        """(\\x -> x) <| "hello\""""
+        , test "pipeLeft with lambda applied to complex expression" <|
+            \_ ->
+                Elm.Op.pipeLeft
+                    (Elm.fn (Elm.Arg.var "x")
+                        (\x -> Elm.Op.append x (Elm.string "!"))
+                    )
+                    (Elm.string "hello")
+                    |> Elm.Expect.renderedAs
+                        """(\\x -> x ++ "!") <| "hello\""""
         ]
