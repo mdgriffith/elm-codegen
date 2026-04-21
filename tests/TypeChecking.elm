@@ -337,6 +337,74 @@ generatedCode =
                             in
                             myFn 1 2 3
                         """
+        , describe "Typeclass constraints preserved in polymorphic annotations"
+            [ test "number constraint: polymorphic plus produces number annotation" <|
+                \_ ->
+                    Elm.Declare.fn2 "addBoth"
+                        (Arg.var "a")
+                        (Arg.var "b")
+                        (\a b -> Elm.Op.plus a b)
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            addBoth : number -> number -> number
+                            addBoth a b =
+                                a + b
+                            """
+            , test "comparable constraint: polymorphic compare produces comparable annotation" <|
+                \_ ->
+                    Elm.Declare.fn2 "compareBoth"
+                        (Arg.var "a")
+                        (Arg.var "b")
+                        (\a b -> Elm.Op.lt a b)
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            compareBoth : comparable -> comparable -> Bool
+                            compareBoth a b =
+                                a < b
+                            """
+            , test "appendable constraint: polymorphic append produces appendable annotation" <|
+                \_ ->
+                    Elm.Declare.fn2 "appendBoth"
+                        (Arg.var "a")
+                        (Arg.var "b")
+                        (\a b -> Elm.Op.append a b)
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            appendBoth : appendable -> appendable -> appendable
+                            appendBoth a b =
+                                a ++ b
+                            """
+            , test "number constraint narrows to Float via nested arithmetic" <|
+                -- Both polymorphic args flow through arithmetic with a
+                -- Float literal, so both narrow to Float.
+                \_ ->
+                    Elm.Declare.fn2 "addToFloat"
+                        (Arg.var "a")
+                        (Arg.var "b")
+                        (\a b -> Elm.Op.plus a (Elm.Op.plus b (Elm.float 1.0)))
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            addToFloat : Float -> Float -> Float
+                            addToFloat a b =
+                                a + (b + 1)
+                            """
+            , test "comparable used with concrete Char" <|
+                \_ ->
+                    Elm.Declare.fn "isLessThanZ"
+                        (Arg.var "c")
+                        (\c -> Elm.Op.lt c (Elm.char 'z'))
+                        |> .declaration
+                        |> Elm.Expect.declarationAs
+                            """
+                            isLessThanZ : Char.Char -> Bool
+                            isLessThanZ c =
+                                c < 'z'
+                            """
+            ]
         , test "Triple with mixed Float and Int infers correct types" <|
             \_ ->
                 Elm.declaration "myTriple"
