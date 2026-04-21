@@ -290,6 +290,8 @@ generatedCode =
                             describe : { name : name, age : age } -> ( name, { name : name, age : age } )
                             describe ({ name, age } as person) =
                                 ( name, person )
+                            """
+            ]
         , test "Elm.Let.fn declaration has a type annotation" <|
             \_ ->
                 Elm.declaration "useLetFn"
