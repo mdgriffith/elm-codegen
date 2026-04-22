@@ -272,6 +272,66 @@ generatedCode =
                                 ( 1 + 2, x )
                             """
             ]
+        , test "Elm.unwrapper omits annotation to let Elm infer it" <|
+            -- unwrapper creates `\(Wrapper val) -> val` but can't
+            -- derive a valid type annotation because it doesn't know
+            -- the inner type of Wrapper. Any annotation we could
+            -- generate (like `Wrapper -> a`) would be rejected by Elm
+            -- because the extracted value has a concrete type, not a
+            -- polymorphic one. So we omit the annotation and let Elm
+            -- infer it from the custom type definition.
+            \_ ->
+                Elm.declaration "extract"
+                    (Elm.unwrapper [] "Wrapper")
+                    |> Elm.Expect.declarationAs
+                        """
+                        extract (Wrapper val) =
+                            val
+                        """
+        , test "Elm.unwrapper respects withType when caller provides an annotation" <|
+            \_ ->
+                Elm.declaration "extract"
+                    (Elm.unwrapper [] "Wrapper"
+                        |> Elm.withType (Type.function [ Type.named [] "Wrapper" ] Type.string)
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        extract : Wrapper -> String
+                        extract (Wrapper val) =
+                            val
+                        """
+        , test "Elm.unwrap result propagates through downstream inference" <|
+            -- Even though unwrapper itself can't produce a type
+            -- annotation, `apply` synthesizes a fresh generic return
+            -- type when the function's type is unknown, so outer
+            -- expressions can still unify and infer correctly.
+            \_ ->
+                Elm.declaration "foo"
+                    (Elm.Op.plus (Elm.int 1)
+                        (Elm.unwrap [] "Wrapper" (Elm.val "wrapped"))
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        foo : Int
+                        foo =
+                            1 + (\\(Wrapper val) -> val) wrapped
+                        """
+        , test "Elm.apply with zero args on an unknown function stays unknown" <|
+            -- `apply fn []` with an unknown fn type should not fabricate
+            -- a return type out of thin air. Without this guard, the
+            -- outer Op.plus would unify the fabricated generic with
+            -- `number` and emit `foo : Int`, even though the body is
+            -- `1 + (\(Wrapper val) -> val)` (adding an int to a lambda).
+            \_ ->
+                Elm.declaration "foo"
+                    (Elm.Op.plus (Elm.int 1)
+                        (Elm.apply (Elm.unwrapper [] "Wrapper") [])
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        foo =
+                            1 + (\\(Wrapper val) -> val)
+                        """
         , describe "aliasAs pattern type"
             [ test "aliasAs on record pattern uses the underlying record type" <|
                 \_ ->
