@@ -1473,8 +1473,30 @@ applyType :
     -> Result (List InferenceError) Inference
 applyType index annotation args =
     case annotation of
-        Err err ->
+        Err ((_ :: _) as err) ->
             Err err
+
+        Err [] ->
+            -- The function's type is intentionally unknown (e.g.
+            -- Elm.unwrapper can't derive an annotation for its lambda).
+            -- Synthesize a fresh generic return type so downstream
+            -- inference can still flow through the application.
+            if Index.typecheck index then
+                case mergeArgInferences args [] Dict.empty of
+                    Ok mergedArgs ->
+                        Ok
+                            { type_ =
+                                Annotation.GenericType
+                                    (Index.protectTypeName "result" index)
+                            , inferences = mergedArgs.inferences
+                            , aliases = emptyAliases
+                            }
+
+                    Err _ ->
+                        Err []
+
+            else
+                Err []
 
         Ok fnAnnotation ->
             if Index.typecheck index then

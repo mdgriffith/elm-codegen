@@ -287,6 +287,34 @@ generatedCode =
                         extract (Wrapper val) =
                             val
                         """
+        , test "Elm.unwrapper respects withType when caller provides an annotation" <|
+            \_ ->
+                Elm.declaration "extract"
+                    (Elm.unwrapper [] "Wrapper"
+                        |> Elm.withType (Type.function [ Type.named [] "Wrapper" ] Type.string)
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        extract : Wrapper -> String
+                        extract (Wrapper val) =
+                            val
+                        """
+        , test "Elm.unwrap result propagates through downstream inference" <|
+            -- Even though unwrapper itself can't produce a type
+            -- annotation, `apply` synthesizes a fresh generic return
+            -- type when the function's type is unknown, so outer
+            -- expressions can still unify and infer correctly.
+            \_ ->
+                Elm.declaration "foo"
+                    (Elm.Op.plus (Elm.int 1)
+                        (Elm.unwrap [] "Wrapper" (Elm.val "wrapped"))
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        foo : Int
+                        foo =
+                            1 + (\\(Wrapper val) -> val) wrapped
+                        """
         , test "Triple with mixed Float and Int infers correct types" <|
             \_ ->
                 Elm.declaration "myTriple"
