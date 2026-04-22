@@ -558,10 +558,6 @@ unwrapper modName typename =
                 argVal : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
                 argVal =
                     Compiler.toVar index "val"
-
-                return : { name : String, typename : String, val : Compiler.Expression, index : Index.Index }
-                return =
-                    Compiler.toVar argVal.index "unwrapped"
             in
             { expression =
                 Exp.LambdaExpression
