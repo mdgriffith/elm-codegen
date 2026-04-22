@@ -316,6 +316,22 @@ generatedCode =
                         foo =
                             1 + (\\(Wrapper val) -> val) wrapped
                         """
+        , test "Elm.apply with zero args on an unknown function stays unknown" <|
+            -- `apply fn []` with an unknown fn type should not fabricate
+            -- a return type out of thin air. Without this guard, the
+            -- outer Op.plus would unify the fabricated generic with
+            -- `number` and emit `foo : Int`, even though the body is
+            -- `1 + (\(Wrapper val) -> val)` (adding an int to a lambda).
+            \_ ->
+                Elm.declaration "foo"
+                    (Elm.Op.plus (Elm.int 1)
+                        (Elm.apply (Elm.unwrapper [] "Wrapper") [])
+                    )
+                    |> Elm.Expect.declarationAs
+                        """
+                        foo =
+                            1 + (\\(Wrapper val) -> val)
+                        """
         , describe "aliasAs pattern type"
             [ test "aliasAs on record pattern uses the underlying record type" <|
                 \_ ->

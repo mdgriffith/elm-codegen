@@ -1581,22 +1581,27 @@ applyType index annotation args =
             -- Elm.unwrapper can't derive an annotation for its lambda).
             -- Synthesize a fresh generic return type so downstream
             -- inference can still flow through the application.
-            if Index.typecheck index then
-                case mergeArgInferences args [] Dict.empty of
-                    Ok mergedArgs ->
-                        Ok
-                            { type_ =
-                                Annotation.GenericType
-                                    (Index.protectTypeName "result" index)
-                            , inferences = mergedArgs.inferences
-                            , aliases = emptyAliases
-                            }
+            --
+            -- Only synthesize when args is non-empty; `apply fn []`
+            -- with an unknown fn is still "unknown" (the result is
+            -- the fn itself, whose type we still don't know).
+            case ( Index.typecheck index, args ) of
+                ( True, _ :: _ ) ->
+                    case mergeArgInferences args [] Dict.empty of
+                        Ok mergedArgs ->
+                            Ok
+                                { type_ =
+                                    Annotation.GenericType
+                                        (Index.protectTypeName "result" index)
+                                , inferences = mergedArgs.inferences
+                                , aliases = emptyAliases
+                                }
 
-                    Err _ ->
-                        Err []
+                        Err _ ->
+                            Err []
 
-            else
-                Err []
+                _ ->
+                    Err []
 
         Ok fnAnnotation ->
             if Index.typecheck index then
