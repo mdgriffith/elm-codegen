@@ -182,8 +182,20 @@ aliasAs aliasName (Arg toArgDetails) =
                 innerArgDetails =
                     toArgDetails index
 
-                ( aliasVal, _, _ ) =
-                    val innerArgDetails.index aliasName
+                -- The alias refers to the same value as the underlying
+                -- pattern, so it should have the same type. Use the
+                -- inner pattern's annotation (the record type, tuple
+                -- type, etc.) rather than creating a fresh type variable.
+                aliasVal : Compiler.Expression
+                aliasVal =
+                    Compiler.Expression <|
+                        \_ ->
+                            { expression =
+                                Exp.FunctionOrValue []
+                                    (Format.sanitize aliasName)
+                            , annotation = innerArgDetails.details.annotation
+                            , imports = []
+                            }
             in
             { details =
                 { imports = innerArgDetails.details.imports
