@@ -6,6 +6,7 @@ module Elm.Arg exposing
     , ignore, string, char, int
     , list, item, items, listRemaining
     , customType, customTypeWith
+    , map
     )
 
 {-| An `Arg` can be used to pattern match on the arguments of a function.
@@ -65,6 +66,11 @@ Will generate
 @docs list, item, items, listRemaining
 
 @docs customType, customTypeWith
+
+
+## Advanced
+
+@docs map
 
 -}
 
@@ -296,3 +302,10 @@ customTypeWith :
     -> Arg a
 customTypeWith =
     Internal.Arg.customTypeWith
+
+
+{-| Transforms an argument using the given function.
+-}
+map : (a -> b) -> Arg a -> Arg b
+map =
+    Internal.Arg.map
