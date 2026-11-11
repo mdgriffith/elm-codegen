@@ -162,7 +162,7 @@ async function run_generator(output_dir: string, moduleName: string, elm_source:
   }
 }
 
-async function generate(debug: boolean, elm_file: string, moduleName: string, output_dir: string, cwd: string, flags: any) : Promise<void> {
+async function generate(debug: boolean, elm_file: string, moduleName: string, output_dir: string, cwd: string, flags: any) : Promise<boolean> {
   try {
     const data = elm_compiler.compileToStringSync([elm_file], {
       cwd: cwd,
@@ -172,9 +172,11 @@ async function generate(debug: boolean, elm_file: string, moduleName: string, ou
 
     // @ts-ignore
     await new run_generator(output_dir, moduleName, data.toString(), flags)
+    return true
   } catch (error: unknown) {
     // This is generally an elm make error from the elm_compiler
-    console.log(error)
+    console.error(error)
+    return false
   }
 }
 
@@ -560,7 +562,9 @@ export type Options = {
 
 export async function run(elmFile: string, options: Options) {
   const moduleName = path.parse(elmFile).name
-  await generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags)
+  if (!(await generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags))) {
+    process.exit(1)
+  }
 }
 
 export type CliOptions = {
@@ -700,6 +704,8 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
   } else {
     //         skipping clearing files because in my test case it was failing with permission denied all the time.
     //         clear(output)
-    await generate(options.debug, elmFile, moduleName, output, cwd, flags)
+    if (!(await generate(options.debug, elmFile, moduleName, output, cwd, flags))) {
+      process.exit(1)
+    }
   }
 }
